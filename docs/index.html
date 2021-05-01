@@ -1,0 +1,81 @@
+<html lang="en">
+<head>
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
+<title>
+Jovial RPN - Reverse Polish Notation Calculator
+</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="keywords" content="calculator, RPN">
+<meta name="description" content="JRPN Reverse Polish Notation Calculator inspired by the HP-16C">
+<meta http-equiv="Content-Language" content="en-us">
+</head>
+<body bgcolor="#ffffff">
+<p style="text-align: center; font-size: x-large; font-weight: bold;">
+    JRPN - Jovial Reverse Polish Notation Calculator
+
+<p>
+    <img src="screen_shot.png"alt="Screenshot" style="display: block; margin-left: auto; margin-right: auto; max-width:70%;"></a>
+<p>&nbsp;
+<p>JRPN is calculator simulator inspired by the 
+<a href="https://en.wikipedia.org/wiki/HP-16C" rel="nofollow">HP 16-C</a>
+"Computer Scientist"
+calculator that came out in 1982.  I've tried to make it work the same as a
+real 16C, and to mimic the appearance as closely as possible.  This is a
+completely clean-room implementation; I didn't have access to any of the
+calculator's source code.  I just read the manual (very closely!), and ask a 
+<a href="https://www.hpmuseum.org/forum/thread-16595-post-146096.html">question</a>
+or two about how the real thing behaves, and I played around with a couple
+of other simulators out there.
+<p>
+The User's Guide for this simulator is basically the HP-16C Owner's Handbook,
+which can be easily found on the web.  A couple of little things are different:
+<ul>
+    <li>To access the functions you normally get by holding the on button and
+        pressing another, you press the on button (with the calculator "on"),
+        and then press the other button.  To turn the calculator off,
+        you press "on" twice.
+    <li>You can disable the windowing function.  If you do,
+        then the digits on the LCD shrink so that they all fit.
+        They get pretty small on a 64 bit binary number!  You can
+        disable windowing from settings, or temporarily by pressing
+        clear-prefix in integer mode.
+    <li>You can copy the contents of the display to the clipboard.
+    <li>From the menu, you can share the calculator state, either
+        to/from the clipboard, or to an application.
+    <li>The app can interpret a URL that contains an encoding of
+        the calculator state.  This works in the web version, and
+        also on the mobile versions:  Both iOS and Android apps
+        register to intercept navigation to the calculator's domain.
+    <li>If you want calculator programs to run faster, there's a 
+        setting for that.  But watching the 7-segment flashing 
+        "running" message is, to my mind, part of the fun!
+</ul>
+<p>
+Full source is available <a href="https://github.com/zathras/jrpn/">here</a>.
+It's built using Google's <a href="https://flutter.dev/">Flutter</a>, which
+means it can build it for a large variety of platforms.  It's available
+free of charge; it's a hobby project.  Of course, there is no warranty
+of any kind.  For avoidance of doubt:
+<blockquote>
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+    DEALINGS IN THE SOFTWARE.
+</blockquote>
+
+<p>
+This is, in some sense, a 2.0 version of what I'm now calling 
+<a href="https://legacy.jrpn.jovial.com">"Legacy JRPN"</a>, which in turn
+was an adaptation of <a href="http://www.emmet-gray.com/" rel="nofollow">Emmet
+Gray's</a> <a href="http://www.wrpn.emmet-gray.com/">WRPN
+calculator</a>.
+<p style="float: right; align-items: center; font-style: italic;">
+<a href="http://en.wikipedia.org/wiki/Vi"><img alt="*" src="vi.powered.gif"></a>
+<p style="float: right; align-items: center; font-style: italic;">
+<a href="https://bill.jovial.com/">Bill Foote</a>&nbsp;&nbsp;&nbsp;&nbsp;
+</body>
+</html>
