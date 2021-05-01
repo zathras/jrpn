@@ -1,8 +1,12 @@
 # JRPN
 
-![](dartdoc/screenshot.png)
+![](docs/screen_shot.png)
 
-A clean-room calculator simulator inspired by the HP-16C.
+NOTE:  Source code has not yet been published.  I plan to do that
+soon after deploying a release, which should happen before the
+end of May, 2021.
+
+JRPN is a clean-room calculator simulator inspired by the HP-16C.
 It uses a simulated seven-segment LCD for display, and
 generally tries to remain faithful to the look-and-feel
 of a real 16C.  It's a bit like a modern Harley Davidson
