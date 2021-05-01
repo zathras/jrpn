@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "settings": {
+        "menuEnabled": false,
+        "windowEnabled": false,
+        "euroComma": false,
+        "hideComplement": false,
+        "showWordSize": false,
+        "traceProgramToStdout": false
+    },
+    "displayMode": "d",
+    "integerSignMode": "u",
+    "wordSize": 64,
+    "stack": [
+        "3824430fa6287",
+        "b3a73cf8186",
+        "8ac7230489e80000",
+        "1"
+    ],
+    "lastX": "0",
+    "flags": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "memory": {
+        "storage": "4d957f9b839c83be21c0bfbe245f380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008ac7230489e80000",
+        "program": {
+            "lines": 15,
+            "currentLine": 15
+        },
+        "I": "0",
+        "commentProgramListing": [
+            "001 -- 43,22, 1    0x4d  LBL 1",
+            "002 --    42  3    0x95  UNSGN",
+            "003 --    43 20    0x7f  DBLx",
+            "004 --    44  1    0x9b  STO 1",
+            "005 --       34    0x83  X<-->Y",
+            "006 --    44  2    0x9c  STO 2",
+            "007 --       34    0x83  X<-->Y",
+            "008 --    45  0    0xbe  RCL 0",
+            "009 --    43  9    0x21  DBLR",
+            "010 --    45  2    0xc0  RCL 2",
+            "011 --    45  1    0xbf  RCL 1",
+            "012 --    45  0    0xbe  RCL 0",
+            "013 --    43 10    0x24  DBL/",
+            "014 --       24    0x5f  DEC",
+            "015 --    43 21    0x38  RTN"
+        ]
+    }
+}
+
