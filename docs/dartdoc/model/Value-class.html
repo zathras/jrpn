@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the Value class from the model library, for the Dart programming language.">
+  <title>Value class - model library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static-assets/github.css">
+  <link rel="stylesheet" href="../static-assets/styles.css">
+  <link rel="icon" href="../static-assets/favicon.png">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jrpn</a></li>
+    <li><a href="../model/model-library.html">model</a></li>
+    <li class="self-crumb">Value class</li>
+  </ol>
+  <div class="self-name">Value</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li><a href="../model/model-library.html">model</a></li>
+  <li class="self-crumb">Value class</li>
+</ol>
+
+
+    <h5>model library</h5>
+    <ol>
+  <li class="section-title"><a href="../model/model-library.html#classes">Classes</a></li>
+  <li><a href="../model/CalculatorError-class.html">CalculatorError</a></li>
+  <li><a href="../model/DebugLog-class.html">DebugLog</a></li>
+  <li><a href="../model/DisplayMode-class.html">DisplayMode</a></li>
+  <li><a href="../model/DisplayModel-class.html">DisplayModel</a></li>
+  <li><a href="../model/DisplayModeSelector-class.html">DisplayModeSelector</a></li>
+  <li><a href="../model/DoubleWordStatus-class.html">DoubleWordStatus</a></li>
+  <li><a href="../model/IntegerDisplayMode-class.html">IntegerDisplayMode</a></li>
+  <li><a href="../model/IntegerSignMode-class.html">IntegerSignMode</a></li>
+  <li><a href="../model/Key-class.html">Key</a></li>
+  <li><a href="../model/LcdContents-class.html">LcdContents</a></li>
+  <li><a href="../model/Memory-class.html">Memory</a></li>
+  <li><a href="../model/Model-class.html">Model</a></li>
+  <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
+  <li><a href="../model/Observable-class.html">Observable</a></li>
+  <li><a href="../model/OperationMap-class.html">OperationMap</a></li>
+  <li><a href="../model/ProgramInstruction-class.html">ProgramInstruction</a></li>
+  <li><a href="../model/ProgramListener-class.html">ProgramListener</a></li>
+  <li><a href="../model/ProgramMemory-class.html">ProgramMemory</a></li>
+  <li><a href="../model/ProgramOperation-class.html">ProgramOperation</a></li>
+  <li><a href="../model/Registers-class.html">Registers</a></li>
+  <li><a href="../model/Settings-class.html">Settings</a></li>
+  <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
+  <li><a href="../model/SignMode-class.html">SignMode</a></li>
+  <li><a href="../model/Value-class.html">Value</a></li>
+
+
+  <li class="section-title"><a href="../model/model-library.html#mixins">Mixins</a></li>
+  <li><a href="../model/ShiftKeySelected-mixin.html">ShiftKeySelected</a></li>
+
+
+
+
+
+
+</ol>
+
+  </div>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-class">Value</span> class 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Immutable calculator value</p>
+<p>Floats are stored in something close to what I think is the 16C's internal
+format</p>
+<p>This format is interesting.  It's big-endian BCD.  The mantissa is
+sign-magnitude, with the sign in a nybble that is 0 for positive, and
+9 for negative.  The exponent is 1000's complement BCD, with a magnitude
+between 0 and 99 (inclusive).  So it looks like:</p>
+<pre class="language-dart"><code> smmmmmmmmmmeee
+</code></pre>
+<p>s = mantissa sign (0/9)
+m = mantissa magnitude
+e = exponent (1 is 001, -1 is 0x999, -2 is 0x998, etc)</p>
+<p>The most significant digit of the mantissa is always non-zero.  In other
+words, 0.1e-99 underflows to zero.  The mantissa is NOT stored in
+complement form.  So, a mantissa of -4.2 is 0x94200000000.</p>
+<p>Note that I didn't refer to a ROM image to figure this out, or anything
+like that.  I just asked what the behavior of the real calculator is
+for a couple of data points.
+cf. <a href="https://www.hpmuseum.org/forum/thread-16595-post-145554.html#pid145554">https://www.hpmuseum.org/forum/thread-16595-post-145554.html#pid145554</a></p>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+
+
+
+
+
+        <dt>Annotations</dt>
+        <dd><ul class="annotation-list clazz-relationships">
+          <li>@<a href="https://pub.dev/documentation/meta/1.3.0/meta/immutable-constant.html">immutable</a></li>
+        </ul></dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="constructors">
+      <h2>Constructors</h2>
+
+      <dl class="constructor-summary-list">
+        <dt id="Value.fromInternal" class="callable">
+          <span class="name"><a href="../model/Value/Value.fromInternal.html">Value.fromInternal</a></span><span class="signature">(<span class="parameter" id="fromInternal-param-internal"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a></span> <span class="parameter-name">internal</span></span>)</span>
+        </dt>
+        <dd>
+           
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="asDouble" class="property">
+  <span class="name"><a href="../model/Value/asDouble.html">asDouble</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> 
+
+</dt>
+<dd>
+  Interpret this value as a floating point, and convert to a double.
+There is no corresponding asInt method, because the int interpretation
+depends on the bit size and the sign mode - cf. IntegerSingMode.toBigInt() 
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="floatPrefix" class="property">
+  <span class="name"><a href="../model/Value/floatPrefix.html">floatPrefix</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="hashCode" class="property">
+  <span class="name"><a href="../model/Value/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+  The hash code for this object. <a href="../model/Value/hashCode.html">[...]</a>
+  <div class="features">read-only, override</div>
+
+</dd>
+
+        <dt id="internal" class="property">
+  <span class="name"><a href="../model/Value/internal.html">internal</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a></span> 
+
+</dt>
+<dd>
+  The calculator's internal representation of a value, as an <em>unsigned</em>
+integer of (up to) 64 bits in normal operation (128 for the double
+integer operations).  It's a BigInt rather than an int because
+Javascript Is Evil (tm).  That said, it does let us handle the double
+integer operations easily. 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span> 
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object. 
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-methods">
+      <h2>Methods</h2>
+      <dl class="callables">
+        <dt id="changeBitSize" class="callable">
+  <span class="name"><a href="../model/Value/changeBitSize.html">changeBitSize</a></span><span class="signature">(<wbr><span class="parameter" id="changeBitSize-param-bitMask"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a></span> <span class="parameter-name">bitMask</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../model/Value-class.html">Value</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="isZero" class="callable">
+  <span class="name"><a href="../model/Value/isZero.html">isZero</a></span><span class="signature">(<wbr><span class="parameter" id="isZero-param-m"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">m</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Determine if this value is zero.  In 1's complement mode,
+-0 isZero, too. 
+  
+
+</dd>
+
+        <dt id="negateAsFloat" class="callable">
+  <span class="name"><a href="../model/Value/negateAsFloat.html">negateAsFloat</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../model/Value-class.html">Value</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a non-existent method or property is accessed. <a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="toJson" class="callable">
+  <span class="name"><a href="../model/Value/toJson.html">toJson</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="toString" class="callable">
+  <span class="name"><a href="../model/Value/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  A string representation of this object. <a href="../model/Value/toString.html">[...]</a>
+  <div class="features">override</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="operators">
+      <h2>Operators</h2>
+      <dl class="callables">
+        <dt id="operator ==" class="callable">
+  <span class="name"><a href="../model/Value/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a>?</span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  The equality operator. <a href="../model/Value/operator_equals.html">[...]</a>
+  <div class="features">override</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="static-properties">
+      <h2>Static Properties</h2>
+
+      <dl class="properties">
+        <dt id="fInfinity" class="property">
+  <span class="name"><a href="../model/Value/fInfinity.html">fInfinity</a></span>
+  <span class="signature">&#8594; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="fNegativeInfinity" class="property">
+  <span class="name"><a href="../model/Value/fNegativeInfinity.html">fNegativeInfinity</a></span>
+  <span class="signature">&#8594; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="zero" class="property">
+  <span class="name"><a href="../model/Value/zero.html">zero</a></span>
+  <span class="signature">&#8594; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+  Zero for both floats and ints 
+  <div class="features">final</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="static-methods">
+      <h2>Static Methods</h2>
+      <dl class="callables">
+        <dt id="fromDouble" class="callable">
+  <span class="name"><a href="../model/Value/fromDouble.html">fromDouble</a></span><span class="signature">(<wbr><span class="parameter" id="fromDouble-param-num"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">num</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../model/Value-class.html">Value</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="fromJson" class="callable">
+  <span class="name"><a href="../model/Value/fromJson.html">fromJson</a></span><span class="signature">(<wbr><span class="parameter" id="fromJson-param-v"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">v</span>, </span><span class="parameter" id="fromJson-param-maxInternal">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a>?</span> <span class="parameter-name">maxInternal</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="../model/Value-class.html">Value</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+      </dl>
+    </section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <ol>
+
+    <li class="section-title"><a href="../model/Value-class.html#constructors">Constructors</a></li>
+    <li><a href="../model/Value/Value.fromInternal.html">fromInternal</a></li>
+
+
+    <li class="section-title">
+      <a href="../model/Value-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="../model/Value/asDouble.html">asDouble</a></li>
+    <li><a href="../model/Value/floatPrefix.html">floatPrefix</a></li>
+    <li><a href="../model/Value/hashCode.html">hashCode</a></li>
+    <li><a href="../model/Value/internal.html">internal</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../model/Value-class.html#instance-methods">Methods</a></li>
+    <li><a href="../model/Value/changeBitSize.html">changeBitSize</a></li>
+    <li><a href="../model/Value/isZero.html">isZero</a></li>
+    <li><a href="../model/Value/negateAsFloat.html">negateAsFloat</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../model/Value/toJson.html">toJson</a></li>
+    <li><a href="../model/Value/toString.html">toString</a></li>
+
+    <li class="section-title"><a href="../model/Value-class.html#operators">Operators</a></li>
+    <li><a href="../model/Value/operator_equals.html">operator ==</a></li>
+
+
+    <li class="section-title"><a href="../model/Value-class.html#static-properties">Static properties</a></li>
+    <li><a href="../model/Value/fInfinity.html">fInfinity</a></li>
+    <li><a href="../model/Value/fNegativeInfinity.html">fNegativeInfinity</a></li>
+    <li><a href="../model/Value/zero.html">zero</a></li>
+
+    <li class="section-title"><a href="../model/Value-class.html#static-methods">Static methods</a></li>
+    <li><a href="../model/Value/fromDouble.html">fromDouble</a></li>
+    <li><a href="../model/Value/fromJson.html">fromJson</a></li>
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js"></script>
+<script src="../static-assets/script.js"></script>
+
+
+
+</body>
+
+</html>
+

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the Model class from the model library, for the Dart programming language.">
+  <title>Model class - model library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static-assets/github.css">
+  <link rel="stylesheet" href="../static-assets/styles.css">
+  <link rel="icon" href="../static-assets/favicon.png">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jrpn</a></li>
+    <li><a href="../model/model-library.html">model</a></li>
+    <li class="self-crumb">Model<span class="signature">&lt;<wbr><span class="type-parameter">OT extends <a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span> class</li>
+  </ol>
+  <div class="self-name">Model</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li><a href="../model/model-library.html">model</a></li>
+  <li class="self-crumb">Model<span class="signature">&lt;<wbr><span class="type-parameter">OT extends <a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span> class</li>
+</ol>
+
+
+    <h5>model library</h5>
+    <ol>
+  <li class="section-title"><a href="../model/model-library.html#classes">Classes</a></li>
+  <li><a href="../model/CalculatorError-class.html">CalculatorError</a></li>
+  <li><a href="../model/DebugLog-class.html">DebugLog</a></li>
+  <li><a href="../model/DisplayMode-class.html">DisplayMode</a></li>
+  <li><a href="../model/DisplayModel-class.html">DisplayModel</a></li>
+  <li><a href="../model/DisplayModeSelector-class.html">DisplayModeSelector</a></li>
+  <li><a href="../model/DoubleWordStatus-class.html">DoubleWordStatus</a></li>
+  <li><a href="../model/IntegerDisplayMode-class.html">IntegerDisplayMode</a></li>
+  <li><a href="../model/IntegerSignMode-class.html">IntegerSignMode</a></li>
+  <li><a href="../model/Key-class.html">Key</a></li>
+  <li><a href="../model/LcdContents-class.html">LcdContents</a></li>
+  <li><a href="../model/Memory-class.html">Memory</a></li>
+  <li><a href="../model/Model-class.html">Model</a></li>
+  <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
+  <li><a href="../model/Observable-class.html">Observable</a></li>
+  <li><a href="../model/OperationMap-class.html">OperationMap</a></li>
+  <li><a href="../model/ProgramInstruction-class.html">ProgramInstruction</a></li>
+  <li><a href="../model/ProgramListener-class.html">ProgramListener</a></li>
+  <li><a href="../model/ProgramMemory-class.html">ProgramMemory</a></li>
+  <li><a href="../model/ProgramOperation-class.html">ProgramOperation</a></li>
+  <li><a href="../model/Registers-class.html">Registers</a></li>
+  <li><a href="../model/Settings-class.html">Settings</a></li>
+  <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
+  <li><a href="../model/SignMode-class.html">SignMode</a></li>
+  <li><a href="../model/Value-class.html">Value</a></li>
+
+
+  <li class="section-title"><a href="../model/model-library.html#mixins">Mixins</a></li>
+  <li><a href="../model/ShiftKeySelected-mixin.html">ShiftKeySelected</a></li>
+
+
+
+
+
+
+</ol>
+
+  </div>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-class">Model&lt;<wbr><span class="type-parameter">OT extends ProgramOperation</span>&gt;</span> class 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Our model, the main entry point to this module.  See the library-level
+documentation for a description, and an explanation of the model's
+structure.</p>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+
+        <dt>Implemented types</dt>
+        <dd>
+          <ul class="comma-separated clazz-relationships">
+            <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
+          </ul>
+        </dd>
+
+
+
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="constructors">
+      <h2>Constructors</h2>
+
+      <dl class="constructor-summary-list">
+        <dt id="Model" class="callable">
+          <span class="name"><a href="../model/Model/Model.html">Model</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+           
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="captureDebugLog" class="property">
+  <span class="name"><a href="../model/Model/captureDebugLog.html">captureDebugLog</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+  Starts or stops capturing debug log information.  A debug log captures
+the calculator state, and subsequent keystrokes.  It's meant to be a
+tool to facilitate bug reports. 
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="cFlag" class="property">
+  <span class="name"><a href="../model/Model/cFlag.html">cFlag</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write, override</div>
+
+</dd>
+
+        <dt id="debugLog" class="property">
+  <span class="name"><a href="../model/Model/debugLog.html">debugLog</a></span>
+  <span class="signature">&#8594; <a href="../model/DebugLog-class.html">DebugLog</a>?</span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="display" class="property">
+  <span class="name"><a href="../model/Model/display.html">display</a></span>
+  <span class="signature">&#8594; <a href="../model/DisplayModel-class.html">DisplayModel</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final, late</div>
+
+</dd>
+
+        <dt id="displayLeadingZeros" class="property">
+  <span class="name"><a href="../model/Model/displayLeadingZeros.html">displayLeadingZeros</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="displayMode" class="property">
+  <span class="name"><a href="../model/Model/displayMode.html">displayMode</a></span>
+  <span class="signature">&#8596; <a href="../model/DisplayMode-class.html">DisplayMode</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="doubleWordStatus" class="property">
+  <span class="name"><a href="../model/Model/doubleWordStatus.html">doubleWordStatus</a></span>
+  <span class="signature">&#8594; <a href="../model/DoubleWordStatus-class.html">DoubleWordStatus</a></span> 
+
+</dt>
+<dd>
+  Gives a helper object for implementation of the double-integer multiply,
+remainder and divide operations. 
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="gFlag" class="property">
+  <span class="name"><a href="../model/Model/gFlag.html">gFlag</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write, override</div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd class="inherited">
+  The hash code for this object. <a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">[...]</a>
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="integerSignMode" class="property">
+  <span class="name"><a href="../model/Model/integerSignMode.html">integerSignMode</a></span>
+  <span class="signature">&#8596; <a href="../model/IntegerSignMode-class.html">IntegerSignMode</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="isFloatMode" class="property">
+  <span class="name"><a href="../model/Model/isFloatMode.html">isFloatMode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only, override</div>
+
+</dd>
+
+        <dt id="isRunningProgram" class="property">
+  <span class="name"><a href="../model/Model/isRunningProgram.html">isRunningProgram</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="lastX" class="property">
+  <span class="name"><a href="../model/Model/lastX.html">lastX</a></span>
+  <span class="signature">&#8596; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="maxInt" class="property">
+  <span class="name"><a href="../model/Model/maxInt.html">maxInt</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only, override</div>
+
+</dd>
+
+        <dt id="memory" class="property">
+  <span class="name"><a href="../model/Model/memory.html">memory</a></span>
+  <span class="signature">&#8594; <a href="../model/Memory-class.html">Memory</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final, late</div>
+
+</dd>
+
+        <dt id="minInt" class="property">
+  <span class="name"><a href="../model/Model/minInt.html">minInt</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only, override</div>
+
+</dd>
+
+        <dt id="onIsPressed" class="property">
+  <span class="name"><a href="../model/Model/onIsPressed.html">onIsPressed</a></span>
+  <span class="signature">&#8594; <a href="../model/Observable-class.html">Observable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="popSetResultX" class="property">
+  <span class="name"><a href="../model/Model/popSetResultX.html">popSetResultX</a></span>
+  <span class="signature">&#8592; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+  Pop the stack and set X, setting lastX 
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="popSetResultXF" class="property">
+  <span class="name"><a href="../model/Model/popSetResultXF.html">popSetResultXF</a></span>
+  <span class="signature">&#8592; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> 
+
+</dt>
+<dd>
+  Pop the stack and set X from a Dart double, setting lastX 
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="popSetResultXI" class="property">
+  <span class="name"><a href="../model/Model/popSetResultXI.html">popSetResultXI</a></span>
+  <span class="signature">&#8592; <a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a></span> 
+
+</dt>
+<dd>
+  Pop the stack and set X from a signed BigInt, setting lastX 
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="prgmFlag" class="property">
+  <span class="name"><a href="../model/Model/prgmFlag.html">prgmFlag</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="program" class="property">
+  <span class="name"><a href="../model/Model/program.html">program</a></span>
+  <span class="signature">&#8594; <a href="../model/ProgramMemory-class.html">ProgramMemory</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="resultX" class="property">
+  <span class="name"><a href="../model/Model/resultX.html">resultX</a></span>
+  <span class="signature">&#8592; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+  Set a result in X, which saves the old X value in lastX 
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="resultXF" class="property">
+  <span class="name"><a href="../model/Model/resultXF.html">resultXF</a></span>
+  <span class="signature">&#8592; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="resultXI" class="property">
+  <span class="name"><a href="../model/Model/resultXI.html">resultXI</a></span>
+  <span class="signature">&#8592; <a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">write-only</div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span> 
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object. 
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="settings" class="property">
+  <span class="name"><a href="../model/Model/settings.html">settings</a></span>
+  <span class="signature">&#8594; <a href="../model/Settings-class.html">Settings</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final, late</div>
+
+</dd>
+
+        <dt id="shift" class="property">
+  <span class="name"><a href="../model/Model/shift.html">shift</a></span>
+  <span class="signature">&#8596; <a href="../model/ShiftKey-class.html">ShiftKey</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="signMask" class="property">
+  <span class="name"><a href="../model/Model/signMask.html">signMask</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only, override</div>
+
+</dd>
+
+        <dt id="signMode" class="property">
+  <span class="name"><a href="../model/Model/signMode.html">signMode</a></span>
+  <span class="signature">&#8594; <a href="../model/SignMode-class.html">SignMode</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="wordMask" class="property">
+  <span class="name"><a href="../model/Model/wordMask.html">wordMask</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only, override</div>
+
+</dd>
+
+        <dt id="wordSize" class="property">
+  <span class="name"><a href="../model/Model/wordSize.html">wordSize</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+  Set the word size, and fix up the values on the stack for the new
+size.  A size of 0 is interpreted as 64, as per the 16C. 
+  <div class="features">read / write, override-getter</div>
+
+</dd>
+
+        <dt id="x" class="property">
+  <span class="name"><a href="../model/Model/x.html">x</a></span>
+  <span class="signature">&#8596; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="xF" class="property">
+  <span class="name"><a href="../model/Model/xF.html">xF</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> 
+
+</dt>
+<dd>
+  Get x as a Dart double 
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="xI" class="property">
+  <span class="name"><a href="../model/Model/xI.html">xI</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a></span> 
+
+</dt>
+<dd>
+  Get x as a signed BigInt 
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="y" class="property">
+  <span class="name"><a href="../model/Model/y.html">y</a></span>
+  <span class="signature">&#8596; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="yF" class="property">
+  <span class="name"><a href="../model/Model/yF.html">yF</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="yI" class="property">
+  <span class="name"><a href="../model/Model/yI.html">yI</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/BigInt-class.html">BigInt</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="z" class="property">
+  <span class="name"><a href="../model/Model/z.html">z</a></span>
+  <span class="signature">&#8594; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-methods">
+      <h2>Methods</h2>
+      <dl class="callables">
+        <dt id="compare" class="callable">
+  <span class="name"><a href="../model/Model/compare.html">compare</a></span><span class="signature">(<wbr><span class="parameter" id="compare-param-x"><span class="type-annotation"><a href="../model/Value-class.html">Value</a></span> <span class="parameter-name">x</span>, </span><span class="parameter" id="compare-param-y"><span class="type-annotation"><a href="../model/Value-class.html">Value</a></span> <span class="parameter-name">y</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Compare two values according to the current sign mode 
+  
+
+</dd>
+
+        <dt id="decodeJson" class="callable">
+  <span class="name"><a href="../model/Model/decodeJson.html">decodeJson</a></span><span class="signature">(<wbr><span class="parameter" id="decodeJson-param-json"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">json</span>, </span><span class="parameter" id="decodeJson-param-needsSave">{<span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">needsSave</span>}</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Convert from a data structure that comes from JSON.  If there's an
+error in the middle, it might be partially read, but not in a way
+that causes bad behavior in the calculator. 
+  
+
+</dd>
+
+        <dt id="getFlag" class="callable">
+  <span class="name"><a href="../model/Model/getFlag.html">getFlag</a></span><span class="signature">(<wbr><span class="parameter" id="getFlag-param-i"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">i</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="getStackByIndex" class="callable">
+  <span class="name"><a href="../model/Model/getStackByIndex.html">getStackByIndex</a></span><span class="signature">(<wbr><span class="parameter" id="getStackByIndex-param-i"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">i</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../model/Value-class.html">Value</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="initializeFromJsonOrUri" class="callable">
+  <span class="name"><a href="../model/Model/initializeFromJsonOrUri.html">initializeFromJsonOrUri</a></span><span class="signature">(<wbr><span class="parameter" id="initializeFromJsonOrUri-param-linkOrJson"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">linkOrJson</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="isZero" class="callable">
+  <span class="name"><a href="../model/Model/isZero.html">isZero</a></span><span class="signature">(<wbr><span class="parameter" id="isZero-param-v"><span class="type-annotation"><a href="../model/Value-class.html">Value</a></span> <span class="parameter-name">v</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Determine if this value is 0 or, if applicable, -0.  Not for use with an
+index register value, since it can have a different representation
+for -0 -- cf. Memory.isZeroI() 
+  
+
+</dd>
+
+        <dt id="negateX" class="callable">
+  <span class="name"><a href="../model/Model/negateX.html">negateX</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Negate the value in x, according to the current sign mode. 
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a non-existent method or property is accessed. <a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="popStack" class="callable">
+  <span class="name"><a href="../model/Model/popStack.html">popStack</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="pushStack" class="callable">
+  <span class="name"><a href="../model/Model/pushStack.html">pushStack</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  "lift" stack, after which one can write to x 
+  
+
+</dd>
+
+        <dt id="readFromPersistentStorage" class="callable">
+  <span class="name"><a href="../model/Model/readFromPersistentStorage.html">readFromPersistentStorage</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="reset" class="callable">
+  <span class="name"><a href="../model/Model/reset.html">reset</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Reset the calculator to its default state. 
+  
+
+</dd>
+
+        <dt id="resetFromPersistentStorage" class="callable">
+  <span class="name"><a href="../model/Model/resetFromPersistentStorage.html">resetFromPersistentStorage</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="rotateStackDown" class="callable">
+  <span class="name"><a href="../model/Model/rotateStackDown.html">rotateStackDown</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  the R<down arrow=""> key</down> 
+  
+
+</dd>
+
+        <dt id="rotateStackUp" class="callable">
+  <span class="name"><a href="../model/Model/rotateStackUp.html">rotateStackUp</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  The R<up arrow=""> key</up> 
+  
+
+</dd>
+
+        <dt id="setFlag" class="callable">
+  <span class="name"><a href="../model/Model/setFlag.html">setFlag</a></span><span class="signature">(<wbr><span class="parameter" id="setFlag-param-i"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">i</span>, </span><span class="parameter" id="setFlag-param-v"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">v</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="setYZT" class="callable">
+  <span class="name"><a href="../model/Model/setYZT.html">setYZT</a></span><span class="signature">(<wbr><span class="parameter" id="setYZT-param-v"><span class="type-annotation"><a href="../model/Value-class.html">Value</a></span> <span class="parameter-name">v</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="swapXY" class="callable">
+  <span class="name"><a href="../model/Model/swapXY.html">swapXY</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="toJson" class="callable">
+  <span class="name"><a href="../model/Model/toJson.html">toJson</a></span><span class="signature">(<wbr><span class="parameter" id="toJson-param-comments">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">comments</span> = <span class="default-value">false</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Convert to a data structure that can be serialized as JSON. 
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object. <a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="tryParseValue" class="callable">
+  <span class="name"><a href="../model/Model/tryParseValue.html">tryParseValue</a></span><span class="signature">(<wbr><span class="parameter" id="tryParseValue-param-s"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">s</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../model/Value-class.html">Value</a>?</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Try to parse <code>s</code> consistent with the current display mode, giving a
+Value on success. 
+  
+
+</dd>
+
+        <dt id="writeToPersistentStorage" class="callable">
+  <span class="name"><a href="../model/Model/writeToPersistentStorage.html">writeToPersistentStorage</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor inherited" id="operators">
+      <h2>Operators</h2>
+      <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator. <a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <ol>
+
+    <li class="section-title"><a href="../model/Model-class.html#constructors">Constructors</a></li>
+    <li><a href="../model/Model/Model.html">Model</a></li>
+
+
+    <li class="section-title">
+      <a href="../model/Model-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="../model/Model/captureDebugLog.html">captureDebugLog</a></li>
+    <li><a href="../model/Model/cFlag.html">cFlag</a></li>
+    <li><a href="../model/Model/debugLog.html">debugLog</a></li>
+    <li><a href="../model/Model/display.html">display</a></li>
+    <li><a href="../model/Model/displayLeadingZeros.html">displayLeadingZeros</a></li>
+    <li><a href="../model/Model/displayMode.html">displayMode</a></li>
+    <li><a href="../model/Model/doubleWordStatus.html">doubleWordStatus</a></li>
+    <li><a href="../model/Model/gFlag.html">gFlag</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li><a href="../model/Model/integerSignMode.html">integerSignMode</a></li>
+    <li><a href="../model/Model/isFloatMode.html">isFloatMode</a></li>
+    <li><a href="../model/Model/isRunningProgram.html">isRunningProgram</a></li>
+    <li><a href="../model/Model/lastX.html">lastX</a></li>
+    <li><a href="../model/Model/maxInt.html">maxInt</a></li>
+    <li><a href="../model/Model/memory.html">memory</a></li>
+    <li><a href="../model/Model/minInt.html">minInt</a></li>
+    <li><a href="../model/Model/onIsPressed.html">onIsPressed</a></li>
+    <li><a href="../model/Model/popSetResultX.html">popSetResultX</a></li>
+    <li><a href="../model/Model/popSetResultXF.html">popSetResultXF</a></li>
+    <li><a href="../model/Model/popSetResultXI.html">popSetResultXI</a></li>
+    <li><a href="../model/Model/prgmFlag.html">prgmFlag</a></li>
+    <li><a href="../model/Model/program.html">program</a></li>
+    <li><a href="../model/Model/resultX.html">resultX</a></li>
+    <li><a href="../model/Model/resultXF.html">resultXF</a></li>
+    <li><a href="../model/Model/resultXI.html">resultXI</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+    <li><a href="../model/Model/settings.html">settings</a></li>
+    <li><a href="../model/Model/shift.html">shift</a></li>
+    <li><a href="../model/Model/signMask.html">signMask</a></li>
+    <li><a href="../model/Model/signMode.html">signMode</a></li>
+    <li><a href="../model/Model/wordMask.html">wordMask</a></li>
+    <li><a href="../model/Model/wordSize.html">wordSize</a></li>
+    <li><a href="../model/Model/x.html">x</a></li>
+    <li><a href="../model/Model/xF.html">xF</a></li>
+    <li><a href="../model/Model/xI.html">xI</a></li>
+    <li><a href="../model/Model/y.html">y</a></li>
+    <li><a href="../model/Model/yF.html">yF</a></li>
+    <li><a href="../model/Model/yI.html">yI</a></li>
+    <li><a href="../model/Model/z.html">z</a></li>
+
+    <li class="section-title"><a href="../model/Model-class.html#instance-methods">Methods</a></li>
+    <li><a href="../model/Model/compare.html">compare</a></li>
+    <li><a href="../model/Model/decodeJson.html">decodeJson</a></li>
+    <li><a href="../model/Model/getFlag.html">getFlag</a></li>
+    <li><a href="../model/Model/getStackByIndex.html">getStackByIndex</a></li>
+    <li><a href="../model/Model/initializeFromJsonOrUri.html">initializeFromJsonOrUri</a></li>
+    <li><a href="../model/Model/isZero.html">isZero</a></li>
+    <li><a href="../model/Model/negateX.html">negateX</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../model/Model/popStack.html">popStack</a></li>
+    <li><a href="../model/Model/pushStack.html">pushStack</a></li>
+    <li><a href="../model/Model/readFromPersistentStorage.html">readFromPersistentStorage</a></li>
+    <li><a href="../model/Model/reset.html">reset</a></li>
+    <li><a href="../model/Model/resetFromPersistentStorage.html">resetFromPersistentStorage</a></li>
+    <li><a href="../model/Model/rotateStackDown.html">rotateStackDown</a></li>
+    <li><a href="../model/Model/rotateStackUp.html">rotateStackUp</a></li>
+    <li><a href="../model/Model/setFlag.html">setFlag</a></li>
+    <li><a href="../model/Model/setYZT.html">setYZT</a></li>
+    <li><a href="../model/Model/swapXY.html">swapXY</a></li>
+    <li><a href="../model/Model/toJson.html">toJson</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+    <li><a href="../model/Model/tryParseValue.html">tryParseValue</a></li>
+    <li><a href="../model/Model/writeToPersistentStorage.html">writeToPersistentStorage</a></li>
+
+    <li class="section-title inherited"><a href="../model/Model-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js"></script>
+<script src="../static-assets/script.js"></script>
+
+
+
+</body>
+
+</html>
+

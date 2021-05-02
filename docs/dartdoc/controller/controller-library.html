@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="controller library API docs, for the Dart programming language.">
+  <title>controller library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static-assets/github.css">
+  <link rel="stylesheet" href="../static-assets/styles.css">
+  <link rel="icon" href="../static-assets/favicon.png">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jrpn</a></li>
+    <li class="self-crumb">controller library</li>
+  </ol>
+  <div class="self-name">controller</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li class="self-crumb">controller library</li>
+</ol>
+
+
+    <h5><span class="package-name">jrpn</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../controller/controller-library.html">controller</a></li>
+      <li><a href="../controller.operations/controller.operations-library.html">controller.operations</a></li>
+      <li><a href="../controller.states/controller.states-library.html">controller.states</a></li>
+      <li><a href="../generated_plugin_registrant/generated_plugin_registrant-library.html">generated_plugin_registrant</a></li>
+      <li><a href="../main/main-library.html">main</a></li>
+      <li><a href="../model/model-library.html">model</a></li>
+      <li><a href="../view.buttons/view.buttons-library.html">view.buttons</a></li>
+      <li><a href="../view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
+      <li><a href="../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
+</ol>
+
+  </div>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-library">controller</span> library 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>The main controller for the application.  The controller receives
+<a href="../controller/Operation-class.html">Operation</a> instances from the view in response to button presses,
+and manipulates the <a href="../model/Model-class.html">Model</a>.</p>
+<p>The <a href="../controller.operations/Operations-class.html">Operations</a> are split out into a separate library, so that they
+are prevented from accessing private parts of the controller.  Similarly,
+the concrete <a href="../controller.states/ControllerState-class.html">ControllerState</a> types are put in a separate Dart library.
+Operations and states are fairly complex, reflecting the sophisticated
+design of the original HP-16C.  Keeping them encapsulated from the
+controller's internals helps make the code easier to follow.</p>
+<p>See <a href="../controller.states/ControllerState-class.html">ControllerState</a> for a detailed description of the controller's
+state machine.  See <a href="../controller/Operation-class.html">Operation</a> for a description
+of the operation type hierarchy.
+<br>
+<br>
+<img src="dartdoc/controller/main.svg" style="width: 100%;">
+<br></p>
+</section>
+
+
+    <section class="summary offset-anchor" id="classes">
+      <h2>Classes</h2>
+
+      <dl>
+        <dt id="BranchingArgOperation">
+  <span class="name "><a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></span> 
+
+</dt>
+<dd>
+  A <a href="../controller/BranchingOperation-class.html">BranchingOperation</a> that takes an argument, namely B? (bit test) 
+</dd>
+
+        <dt id="BranchingOperation">
+  <span class="name "><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
+
+</dt>
+<dd>
+  A program branching operation.  These operations only function when running
+a program.  They represent a condition.  If that condition is true, the next
+instruction executes normally; otherwise, it is skipped. 
+</dd>
+
+        <dt id="Controller">
+  <span class="name "><a href="../controller/Controller-class.html">Controller</a></span> 
+
+</dt>
+<dd>
+  The main controller for the application.  This abstract class is implemented
+by a <a href="../controller/RealController-class.html">RealController</a> for normal calculator, and by by <a href="../controller/RunningController-class.html">RunningController</a>,
+which manages a running calculator program. 
+</dd>
+
+        <dt id="FloatKeyArg">
+  <span class="name "><a href="../controller/FloatKeyArg-class.html">FloatKeyArg</a></span> 
+
+</dt>
+<dd>
+  The description of an argument for the float mode key.  It's special
+because stack lift is enabled when going from int mode to float mode,
+but it's stack neutral if staying in float mode. 
+</dd>
+
+        <dt id="GosubOperationArg">
+  <span class="name "><a href="../controller/GosubOperationArg-class.html">GosubOperationArg</a></span> 
+
+</dt>
+<dd>
+  The description of an argument for GSB, which requires a special state
+for inputting the argument to preview the instruction that's about to
+be executed. 
+</dd>
+
+        <dt id="LimitedOperation">
+  <span class="name "><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
+
+</dt>
+<dd>
+  Operations that do something when the key is pressed, even when the
+calculator is in program entry state.  They're called "limited," because
+the set of handleXXX() calls is limited to those supported by
+<a href="../controller.states/ProgramEntry-class.html">ProgramEntry</a>. <a href="../controller/LimitedOperation-class.html">[...]</a>
+</dd>
+
+        <dt id="NormalArgOperation">
+  <span class="name "><a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></span> 
+
+</dt>
+<dd>
+  A <a href="../controller/NormalOperation-class.html">NormalOperation</a> that takes an argument.  For example, the RCL and STO
+operations take an argument, giving the register to store to or recall from. 
+</dd>
+
+        <dt id="NormalOperation">
+  <span class="name "><a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  A "normal" calculator operation.  Generally, they perform some kind of
+calculation, or otherwise manipulate the model. 
+</dd>
+
+        <dt id="NumberEntry">
+  <span class="name "><a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
+
+</dt>
+<dd>
+  One of the number keys, from 0 to f. 
+</dd>
+
+        <dt id="Operation">
+  <span class="name "><a href="../controller/Operation-class.html">Operation</a></span> 
+
+</dt>
+<dd>
+  An operation, triggered by a key on the calculator keyboard, or executed
+as part of a program. 
+</dd>
+
+        <dt id="OperationArg">
+  <span class="name "><a href="../controller/OperationArg-class.html">OperationArg</a></span> 
+
+</dt>
+<dd>
+  A description of the argument for a <a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a> or a
+<a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a>.  This includes the calculation that is to be
+performed when the argument value is available. 
+</dd>
+
+        <dt id="RealController">
+  <span class="name "><a href="../controller/RealController-class.html">RealController</a></span> 
+
+</dt>
+<dd>
+  A controller for normal calculator operation.  When a program is
+running, the real controller continues to exist, for when the program
+stops. 
+</dd>
+
+        <dt id="RunningController">
+  <span class="name "><a href="../controller/RunningController-class.html">RunningController</a></span> 
+
+</dt>
+<dd>
+  A controller for when a program is running. 
+</dd>
+
+        <dt id="SelfTests">
+  <span class="name "><a href="../controller/SelfTests-class.html">SelfTests</a></span> 
+
+</dt>
+<dd>
+  Some built-in regression tests.  There aren't just an excuse to flash
+"running" when a user triggers the 16C's self test fonction.  It's also
+a way of easily running some of the tests involving integer and floating
+point behavior in different browsers. This might be a bit of a pain point
+for Dart, since the numeric types behave differently given JavaScript's
+deficiencies in ths regard. <a href="../controller/SelfTests-class.html">[...]</a>
+</dd>
+
+        <dt id="StackLift">
+  <span class="name "><a href="../controller/StackLift-class.html">StackLift</a></span> 
+
+</dt>
+<dd>
+  A declarative description of an <a href="../controller/Operation-class.html">Operation</a>'s effect on stack lift, when
+its calculation has been performed.  This covers the most common effects
+that operations can have on stack lift.  See Page 99, "Operations Affecting
+Stack Lift" in Appendix B of the 16C's manual. 
+</dd>
+
+        <dt id="StackLiftModifier">
+  <span class="name "><a href="../controller/StackLiftModifier-class.html">StackLiftModifier</a></span> 
+
+</dt>
+<dd>
+  A type that can be used by states to access the library-private
+<a href="../controller/RealController-class.html">RealController</a> <code>_stackLiftEnabled</code> flag.  This provides enhanced
+encapsulation, by explicitly marking states that do this. 
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+
+
+
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <h5>controller library</h5>
+    <ol>
+  <li class="section-title"><a href="../controller/controller-library.html#classes">Classes</a></li>
+  <li><a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></li>
+  <li><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></li>
+  <li><a href="../controller/Controller-class.html">Controller</a></li>
+  <li><a href="../controller/FloatKeyArg-class.html">FloatKeyArg</a></li>
+  <li><a href="../controller/GosubOperationArg-class.html">GosubOperationArg</a></li>
+  <li><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></li>
+  <li><a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></li>
+  <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
+  <li><a href="../controller/NumberEntry-class.html">NumberEntry</a></li>
+  <li><a href="../controller/Operation-class.html">Operation</a></li>
+  <li><a href="../controller/OperationArg-class.html">OperationArg</a></li>
+  <li><a href="../controller/RealController-class.html">RealController</a></li>
+  <li><a href="../controller/RunningController-class.html">RunningController</a></li>
+  <li><a href="../controller/SelfTests-class.html">SelfTests</a></li>
+  <li><a href="../controller/StackLift-class.html">StackLift</a></li>
+  <li><a href="../controller/StackLiftModifier-class.html">StackLiftModifier</a></li>
+
+
+
+
+
+
+
+
+</ol>
+
+  </div><!--/sidebar-offcanvas-right-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js"></script>
+<script src="../static-assets/script.js"></script>
+
+
+
+</body>
+
+</html>
+

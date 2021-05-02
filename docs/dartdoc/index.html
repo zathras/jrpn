@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="generator" content="made with love by dartdoc 0.42.0">
+  <meta name="description" content="jrpn API docs, for the Dart programming language.">
+  <title>jrpn - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="static-assets/github.css">
+  <link rel="stylesheet" href="static-assets/styles.css">
+  <link rel="icon" href="static-assets/favicon.png">
+
+  
+</head>
+
+
+<body data-base-href=""
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li class="self-crumb">jrpn package</li>
+  </ol>
+  <div class="self-name">jrpn</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li class="self-crumb">jrpn package</li>
+</ol>
+
+
+    <h5 class="hidden-xs"><span class="package-name">jrpn</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="controller/controller-library.html">controller</a></li>
+      <li><a href="controller.operations/controller.operations-library.html">controller.operations</a></li>
+      <li><a href="controller.states/controller.states-library.html">controller.states</a></li>
+      <li><a href="generated_plugin_registrant/generated_plugin_registrant-library.html">generated_plugin_registrant</a></li>
+      <li><a href="main/main-library.html">main</a></li>
+      <li><a href="model/model-library.html">model</a></li>
+      <li><a href="view.buttons/view.buttons-library.html">view.buttons</a></li>
+      <li><a href="view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
+      <li><a href="view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
+</ol>
+
+  </div>
+
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <h1 id="jrpn">JRPN</h1>
+<p><img src="dartdoc/screenshot.png" alt=""></p>
+<p>A clean-room calculator simulator inspired by the HP-16C.
+It uses a simulated seven-segment LCD for display, and
+generally tries to remain faithful to the look-and-feel
+of a real 16C.  It's a bit like a modern Harley Davidson
+motorcycle - I rented one once, and they engineer in a
+certain amount of vibration and engine noise that are
+totally unnecessary, but that make you feel like you're
+"taming the iron horse."  In a similar way, this simulator
+includes a slight delay and a bit of a blink on the LCD
+when you do a calculator operation, and in other ways it
+attempts to simulate a 1982-vintage calculator.</p>
+<p>The calculator has some interesting features:</p>
+<ul>
+<li>
+<p>You can disable the windowing function.  If you do,
+then the digits on the LCD shrink so that they all fit.
+They get pretty small on a 64 bit binary number!  You can
+disable windowing from settings, or temporarily by pressing
+clear-prefix in integer mode.</p>
+</li>
+<li>
+<p>You can copy the contents of the display to the clipboard.</p>
+</li>
+<li>
+<p>From the menu, you can share the calculator state, either
+to/from the clipboard, or to an application.</p>
+</li>
+<li>
+<p>The app can interpret a URL that contains an encoding of
+the calculator state.  This works in the web version, and
+also on the mobile versions:  Both iOS and Android apps
+register to intercept navigation to the calculator's domain.</p>
+</li>
+<li>
+<p>If you want calculator programs to run faster, there's a setting
+for that.  But watching the 7-segment flashing "running" message
+is, to my mind, part of the fun!</p>
+</li>
+<li>
+<p>The self-test function is implemented, and it actually does
+something!  I put some of the unit tests in the calculator --
+notably, the ones involving float and integer calculations,
+since JavaScript is a little crippled in that regard.</p>
+</li>
+<li>
+<p>Programs and registers are stored in a common 406-nybble
+storage area, to faithfully reproduce the limitations of
+the 16C, and the behavior of registers when the word
+size is changed.  See <code>Memory</code> under <code>model</code> for some
+words about that implementation.</p>
+</li>
+</ul>
+<p>The design is a pretty has a pretty strict MVC separation.
+Notably, the model doesn't have API dependencies on the
+view or the controller.</p>
+<p>The state model of the 16C is pretty complicated -- they really
+made the most out of a small package!  This complexity is managed
+though extensive use of the GoF state pattern, especially in
+<code>controller</code> and <code>controller.states</code>.  The controller uses the
+command pattern to manage the complexity of the operations.
+Check out <code>controller.operations</code> for details.</p>
+<p>The LCD display is created using some trig.  The drawings where I
+worked this out are fun -- see <code>Segments</code> under <code>view.lcd_display</code>.</p>
+<p>As a general statement, I tried to provide good overviews, and
+design documentation.  I find that this helps me to refine the
+design and spot problems, but I this case I thought there might
+be some value in using this project as a sort of design clinic.
+It's a good size for that:  At about 10K LOC it's big enough to
+have an interesting design, but not so big as to be overwhelming.
+It ends up using a fair number of OO design idioms, and it's pretty
+faithful to the standard GoF patterns.</p>
+<p>This app pushes the Dart type system a bit -- Dart's (mostly) 
+sound static typing was a big help in getting the code right, 
+but it did expose one place where Dart's unsound covariance 
+rules hurt a bit.  See <code>DisplayModeSelector</code> under <code>model</code>
+for more details on that.</p>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="controller">
+  <span class="name"><a href="controller/controller-library.html">controller</a></span> 
+
+</dt>
+<dd>The main controller for the application.  The controller receives
+<a href="controller/Operation-class.html">Operation</a> instances from the view in response to button presses,
+and manipulates the <a href="model/Model-class.html">Model</a>. <a href="controller/controller-library.html">[...]</a>
+</dd>
+
+          <dt id="controller.operations">
+  <span class="name"><a href="controller.operations/controller.operations-library.html">controller.operations</a></span> 
+
+</dt>
+<dd>The calculator operations.  This is split into its own library so that
+it's encapsulated from the controller internals.  Operations are split
+into various types, viz: <a href="controller.operations/controller.operations-library.html">[...]</a>
+</dd>
+
+          <dt id="controller.states">
+  <span class="name"><a href="controller.states/controller.states-library.html">controller.states</a></span> 
+
+</dt>
+<dd>The states of the controller, reflecting the input mode of the calculator.
+There are three main states:  <a href="controller.states/Resting-class.html">Resting</a> (the state it's usually in,
+waiting for something to do), <a href="controller.states/DigitEntry-class.html">DigitEntry</a> and <a href="controller.states/ProgramEntry-class.html">ProgramEntry</a>.  There
+are a large number of additional states, such as argument input,
+or running a program.  The full hierarchy looks like this: <a href="controller.states/controller.states-library.html">[...]</a>
+</dd>
+
+          <dt id="generated_plugin_registrant">
+  <span class="name"><a href="generated_plugin_registrant/generated_plugin_registrant-library.html">generated_plugin_registrant</a></span> 
+
+</dt>
+<dd> 
+</dd>
+
+          <dt id="main">
+  <span class="name"><a href="main/main-library.html">main</a></span> 
+
+</dt>
+<dd> 
+</dd>
+
+          <dt id="model">
+  <span class="name"><a href="model/model-library.html">model</a></span> 
+
+</dt>
+<dd>The model for the calculator, centered around <a href="model/Model-class.html">Model</a>.  It retains the
+state of the calculator, most of which is saved persistently.  It
+also functions as a helper to the controller, by providing states
+using the state pattern for calculator modes, like the <a href="model/DisplayMode-class.html">DisplayMode</a>
+and the <a href="model/SignMode-class.html">SignMode</a>.  The overall structure looks like this: <a href="model/model-library.html">[...]</a>
+</dd>
+
+          <dt id="view.buttons">
+  <span class="name"><a href="view.buttons/view.buttons-library.html">view.buttons</a></span> 
+
+</dt>
+<dd>Buttons for the keyboard.  When pressed, buttons consult the <a href="model/Model-class.html">Model</a> to see 
+if a shift key has been pressed, and dispatch an appropriate
+<a href="controller/Operation-class.html">Operation</a> to the <a href="controller/Controller-class.html">Controller</a>. <a href="view.buttons/view.buttons-library.html">[...]</a>
+</dd>
+
+          <dt id="view.lcd_display">
+  <span class="name"><a href="view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></span> 
+
+</dt>
+<dd>Widget to draw the LCD Display, using a <code>CustomPainter</code> and
+direct drawing commands.  The main eleven-digit display doesn't
+use a font; the individual segments are drawn. <a href="view.lcd_display/view.lcd_display-library.html">[...]</a>
+</dd>
+
+          <dt id="view.main_screen">
+  <span class="name"><a href="view.main_screen/view.main_screen-library.html">view.main_screen</a></span> 
+
+</dt>
+<dd>The main screen of the calculator.  It uses <a href="view.main_screen/ScreenPositioner-class.html">ScreenPositioner</a> to
+exactly position widgets, and scale them to the screen size. 
+</dd>
+
+        </dl>
+      </section>
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+<script src="static-assets/highlight.pack.js"></script>
+<script src="static-assets/script.js"></script>
+
+
+
+</body>
+
+</html>
+

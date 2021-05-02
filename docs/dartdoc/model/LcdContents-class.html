@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the LcdContents class from the model library, for the Dart programming language.">
+  <title>LcdContents class - model library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static-assets/github.css">
+  <link rel="stylesheet" href="../static-assets/styles.css">
+  <link rel="icon" href="../static-assets/favicon.png">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jrpn</a></li>
+    <li><a href="../model/model-library.html">model</a></li>
+    <li class="self-crumb">LcdContents class</li>
+  </ol>
+  <div class="self-name">LcdContents</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li><a href="../model/model-library.html">model</a></li>
+  <li class="self-crumb">LcdContents class</li>
+</ol>
+
+
+    <h5>model library</h5>
+    <ol>
+  <li class="section-title"><a href="../model/model-library.html#classes">Classes</a></li>
+  <li><a href="../model/CalculatorError-class.html">CalculatorError</a></li>
+  <li><a href="../model/DebugLog-class.html">DebugLog</a></li>
+  <li><a href="../model/DisplayMode-class.html">DisplayMode</a></li>
+  <li><a href="../model/DisplayModel-class.html">DisplayModel</a></li>
+  <li><a href="../model/DisplayModeSelector-class.html">DisplayModeSelector</a></li>
+  <li><a href="../model/DoubleWordStatus-class.html">DoubleWordStatus</a></li>
+  <li><a href="../model/IntegerDisplayMode-class.html">IntegerDisplayMode</a></li>
+  <li><a href="../model/IntegerSignMode-class.html">IntegerSignMode</a></li>
+  <li><a href="../model/Key-class.html">Key</a></li>
+  <li><a href="../model/LcdContents-class.html">LcdContents</a></li>
+  <li><a href="../model/Memory-class.html">Memory</a></li>
+  <li><a href="../model/Model-class.html">Model</a></li>
+  <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
+  <li><a href="../model/Observable-class.html">Observable</a></li>
+  <li><a href="../model/OperationMap-class.html">OperationMap</a></li>
+  <li><a href="../model/ProgramInstruction-class.html">ProgramInstruction</a></li>
+  <li><a href="../model/ProgramListener-class.html">ProgramListener</a></li>
+  <li><a href="../model/ProgramMemory-class.html">ProgramMemory</a></li>
+  <li><a href="../model/ProgramOperation-class.html">ProgramOperation</a></li>
+  <li><a href="../model/Registers-class.html">Registers</a></li>
+  <li><a href="../model/Settings-class.html">Settings</a></li>
+  <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
+  <li><a href="../model/SignMode-class.html">SignMode</a></li>
+  <li><a href="../model/Value-class.html">Value</a></li>
+
+
+  <li class="section-title"><a href="../model/model-library.html#mixins">Mixins</a></li>
+  <li><a href="../model/ShiftKeySelected-mixin.html">ShiftKeySelected</a></li>
+
+
+
+
+
+
+</ol>
+
+  </div>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-class">LcdContents</span> class 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>A comparable data holder for the contents of what is displayed on the LCD</p>
+</section>
+
+
+
+    <section class="summary offset-anchor" id="constructors">
+      <h2>Constructors</h2>
+
+      <dl class="constructor-summary-list">
+        <dt id="LcdContents" class="callable">
+          <span class="name"><a href="../model/LcdContents/LcdContents.html">LcdContents</a></span><span class="signature">(<span class="parameter" id="-param-mainText">{<span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">mainText</span>, </span><span class="parameter" id="-param-shift"><span>required</span> <span class="type-annotation"><a href="../model/ShiftKey-class.html">ShiftKey</a></span> <span class="parameter-name">shift</span>, </span><span class="parameter" id="-param-sign"><span>required</span> <span class="type-annotation"><a href="../model/SignMode-class.html">SignMode</a></span> <span class="parameter-name">sign</span>, </span><span class="parameter" id="-param-bits"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">bits</span>, </span><span class="parameter" id="-param-cFlag"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">cFlag</span>, </span><span class="parameter" id="-param-gFlag"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">gFlag</span>, </span><span class="parameter" id="-param-prgmFlag"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">prgmFlag</span>, </span><span class="parameter" id="-param-rightJustify"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">rightJustify</span>, </span><span class="parameter" id="-param-windowEnabled"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">windowEnabled</span>, </span><span class="parameter" id="-param-euroComma"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">euroComma</span>, </span><span class="parameter" id="-param-hideComplement"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">hideComplement</span>, </span><span class="parameter" id="-param-wordSize"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">wordSize</span>, </span><span class="parameter" id="-param-extraShift"><span class="type-annotation"><a href="../model/ShiftKey-class.html">ShiftKey</a>?</span> <span class="parameter-name">extraShift</span>}</span>)</span>
+        </dt>
+        <dd>
+           
+        </dd>
+        <dt id="LcdContents.blank" class="callable">
+          <span class="name"><a href="../model/LcdContents/LcdContents.blank.html">LcdContents.blank</a></span><span class="signature">(<span class="parameter" id="blank-param-timer">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-async/Timer-class.html">Timer</a>?</span> <span class="parameter-name">timer</span>}</span>)</span>
+        </dt>
+        <dd>
+           
+        </dd>
+        <dt id="LcdContents.powerOn" class="callable">
+          <span class="name"><a href="../model/LcdContents/LcdContents.powerOn.html">LcdContents.powerOn</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+           
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="bits" class="property">
+  <span class="name"><a href="../model/LcdContents/bits.html">bits</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="blank" class="property">
+  <span class="name"><a href="../model/LcdContents/blank.html">blank</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="cFlag" class="property">
+  <span class="name"><a href="../model/LcdContents/cFlag.html">cFlag</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="euroComma" class="property">
+  <span class="name"><a href="../model/LcdContents/euroComma.html">euroComma</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="extraShift" class="property">
+  <span class="name"><a href="../model/LcdContents/extraShift.html">extraShift</a></span>
+  <span class="signature">&#8594; <a href="../model/ShiftKey-class.html">ShiftKey</a>?</span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="gFlag" class="property">
+  <span class="name"><a href="../model/LcdContents/gFlag.html">gFlag</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd class="inherited">
+  The hash code for this object. <a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">[...]</a>
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="hideComplement" class="property">
+  <span class="name"><a href="../model/LcdContents/hideComplement.html">hideComplement</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="mainText" class="property">
+  <span class="name"><a href="../model/LcdContents/mainText.html">mainText</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="prgmFlag" class="property">
+  <span class="name"><a href="../model/LcdContents/prgmFlag.html">prgmFlag</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="rightJustify" class="property">
+  <span class="name"><a href="../model/LcdContents/rightJustify.html">rightJustify</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span> 
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object. 
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="shift" class="property">
+  <span class="name"><a href="../model/LcdContents/shift.html">shift</a></span>
+  <span class="signature">&#8594; <a href="../model/ShiftKey-class.html">ShiftKey</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="sign" class="property">
+  <span class="name"><a href="../model/LcdContents/sign.html">sign</a></span>
+  <span class="signature">&#8594; <a href="../model/SignMode-class.html">SignMode</a></span> 
+
+</dt>
+<dd>
+  For self test 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="windowEnabled" class="property">
+  <span class="name"><a href="../model/LcdContents/windowEnabled.html">windowEnabled</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="wordSize" class="property">
+  <span class="name"><a href="../model/LcdContents/wordSize.html">wordSize</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-methods">
+      <h2>Methods</h2>
+      <dl class="callables">
+        <dt id="equivalent" class="callable">
+  <span class="name"><a href="../model/LcdContents/equivalent.html">equivalent</a></span><span class="signature">(<wbr><span class="parameter" id="equivalent-param-other"><span class="type-annotation"><a href="../model/LcdContents-class.html">LcdContents</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a non-existent method or property is accessed. <a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="toString" class="callable">
+  <span class="name"><a href="../model/LcdContents/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  A string representation of this object. <a href="../model/LcdContents/toString.html">[...]</a>
+  <div class="features">override</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor inherited" id="operators">
+      <h2>Operators</h2>
+      <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator. <a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <ol>
+
+    <li class="section-title"><a href="../model/LcdContents-class.html#constructors">Constructors</a></li>
+    <li><a href="../model/LcdContents/LcdContents.html">LcdContents</a></li>
+    <li><a href="../model/LcdContents/LcdContents.blank.html">blank</a></li>
+    <li><a href="../model/LcdContents/LcdContents.powerOn.html">powerOn</a></li>
+
+
+    <li class="section-title">
+      <a href="../model/LcdContents-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="../model/LcdContents/bits.html">bits</a></li>
+    <li><a href="../model/LcdContents/blank.html">blank</a></li>
+    <li><a href="../model/LcdContents/cFlag.html">cFlag</a></li>
+    <li><a href="../model/LcdContents/euroComma.html">euroComma</a></li>
+    <li><a href="../model/LcdContents/extraShift.html">extraShift</a></li>
+    <li><a href="../model/LcdContents/gFlag.html">gFlag</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li><a href="../model/LcdContents/hideComplement.html">hideComplement</a></li>
+    <li><a href="../model/LcdContents/mainText.html">mainText</a></li>
+    <li><a href="../model/LcdContents/prgmFlag.html">prgmFlag</a></li>
+    <li><a href="../model/LcdContents/rightJustify.html">rightJustify</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+    <li><a href="../model/LcdContents/shift.html">shift</a></li>
+    <li><a href="../model/LcdContents/sign.html">sign</a></li>
+    <li><a href="../model/LcdContents/windowEnabled.html">windowEnabled</a></li>
+    <li><a href="../model/LcdContents/wordSize.html">wordSize</a></li>
+
+    <li class="section-title"><a href="../model/LcdContents-class.html#instance-methods">Methods</a></li>
+    <li><a href="../model/LcdContents/equivalent.html">equivalent</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../model/LcdContents/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../model/LcdContents-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js"></script>
+<script src="../static-assets/script.js"></script>
+
+
+
+</body>
+
+</html>
+

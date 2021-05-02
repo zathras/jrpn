@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the ProgramMemory class from the model library, for the Dart programming language.">
+  <title>ProgramMemory class - model library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static-assets/github.css">
+  <link rel="stylesheet" href="../static-assets/styles.css">
+  <link rel="icon" href="../static-assets/favicon.png">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jrpn</a></li>
+    <li><a href="../model/model-library.html">model</a></li>
+    <li class="self-crumb">ProgramMemory<span class="signature">&lt;<wbr><span class="type-parameter">OT extends <a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span> class</li>
+  </ol>
+  <div class="self-name">ProgramMemory</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li><a href="../model/model-library.html">model</a></li>
+  <li class="self-crumb">ProgramMemory<span class="signature">&lt;<wbr><span class="type-parameter">OT extends <a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span> class</li>
+</ol>
+
+
+    <h5>model library</h5>
+    <ol>
+  <li class="section-title"><a href="../model/model-library.html#classes">Classes</a></li>
+  <li><a href="../model/CalculatorError-class.html">CalculatorError</a></li>
+  <li><a href="../model/DebugLog-class.html">DebugLog</a></li>
+  <li><a href="../model/DisplayMode-class.html">DisplayMode</a></li>
+  <li><a href="../model/DisplayModel-class.html">DisplayModel</a></li>
+  <li><a href="../model/DisplayModeSelector-class.html">DisplayModeSelector</a></li>
+  <li><a href="../model/DoubleWordStatus-class.html">DoubleWordStatus</a></li>
+  <li><a href="../model/IntegerDisplayMode-class.html">IntegerDisplayMode</a></li>
+  <li><a href="../model/IntegerSignMode-class.html">IntegerSignMode</a></li>
+  <li><a href="../model/Key-class.html">Key</a></li>
+  <li><a href="../model/LcdContents-class.html">LcdContents</a></li>
+  <li><a href="../model/Memory-class.html">Memory</a></li>
+  <li><a href="../model/Model-class.html">Model</a></li>
+  <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
+  <li><a href="../model/Observable-class.html">Observable</a></li>
+  <li><a href="../model/OperationMap-class.html">OperationMap</a></li>
+  <li><a href="../model/ProgramInstruction-class.html">ProgramInstruction</a></li>
+  <li><a href="../model/ProgramListener-class.html">ProgramListener</a></li>
+  <li><a href="../model/ProgramMemory-class.html">ProgramMemory</a></li>
+  <li><a href="../model/ProgramOperation-class.html">ProgramOperation</a></li>
+  <li><a href="../model/Registers-class.html">Registers</a></li>
+  <li><a href="../model/Settings-class.html">Settings</a></li>
+  <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
+  <li><a href="../model/SignMode-class.html">SignMode</a></li>
+  <li><a href="../model/Value-class.html">Value</a></li>
+
+
+  <li class="section-title"><a href="../model/model-library.html#mixins">Mixins</a></li>
+  <li><a href="../model/ShiftKeySelected-mixin.html">ShiftKeySelected</a></li>
+
+
+
+
+
+
+</ol>
+
+  </div>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-class">ProgramMemory&lt;<wbr><span class="type-parameter">OT extends ProgramOperation</span>&gt;</span> class 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>A representation of the calculator's 406 nybble data store as a list
+of program instructions.  ProgramMemory takes over space from register
+storage as needed.  We also keep the return stack for GSB instructions
+here, and the current program line.</p>
+</section>
+
+
+
+    <section class="summary offset-anchor" id="constructors">
+      <h2>Constructors</h2>
+
+      <dl class="constructor-summary-list">
+        <dt id="ProgramMemory" class="callable">
+          <span class="name"><a href="../model/ProgramMemory/ProgramMemory.html">ProgramMemory</a></span><span class="signature">(<span class="parameter" id="-param-_memory"><span class="type-annotation"><a href="../model/Memory-class.html">Memory</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">_memory</span>, </span><span class="parameter" id="-param-_registerStorage"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/ByteData-class.html">ByteData</a></span> <span class="parameter-name">_registerStorage</span>, </span><span class="parameter" id="-param-_operationTable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span> <span class="parameter-name">_operationTable</span></span>)</span>
+        </dt>
+        <dd>
+           
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="bytesToNextAllocation" class="property">
+  <span class="name"><a href="../model/ProgramMemory/bytesToNextAllocation.html">bytesToNextAllocation</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="currentLine" class="property">
+  <span class="name"><a href="../model/ProgramMemory/currentLine.html">currentLine</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd class="inherited">
+  The hash code for this object. <a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">[...]</a>
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="lines" class="property">
+  <span class="name"><a href="../model/ProgramMemory/lines.html">lines</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+  Number of lines in the program 
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="listing" class="property">
+  <span class="name"><a href="../model/ProgramMemory/listing.html">listing</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="programBytes" class="property">
+  <span class="name"><a href="../model/ProgramMemory/programBytes.html">programBytes</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="programListener" class="property">
+  <span class="name"><a href="../model/ProgramMemory/programListener.html">programListener</a></span>
+  <span class="signature">&#8596; <a href="../model/ProgramListener-class.html">ProgramListener</a></span> 
+
+</dt>
+<dd>
+  This is a testing hook.  In normal operation, it's always null. 
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="returnStackUnderflow" class="property">
+  <span class="name"><a href="../model/ProgramMemory/returnStackUnderflow.html">returnStackUnderflow</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span> 
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object. 
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-methods">
+      <h2>Methods</h2>
+      <dl class="callables">
+        <dt id="decodeJson" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/decodeJson.html">decodeJson</a></span><span class="signature">(<wbr><span class="parameter" id="decodeJson-param-json"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">json</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Must be called after the register storage has been read in, so any
+stray data will be propely zeroed out. 
+  
+
+</dd>
+
+        <dt id="deleteCurrent" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/deleteCurrent.html">deleteCurrent</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="displayCurrent" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/displayCurrent.html">displayCurrent</a></span><span class="signature">(<wbr><span class="parameter" id="displayCurrent-param-flash">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">flash</span> = <span class="default-value">false</span>}</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="doNextIf" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/doNextIf.html">doNextIf</a></span><span class="signature">(<wbr><span class="parameter" id="doNextIf-param-condition"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">condition</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="getCurrent" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/getCurrent.html">getCurrent</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../model/ProgramInstruction-class.html">ProgramInstruction</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="gosub" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/gosub.html">gosub</a></span><span class="signature">(<wbr><span class="parameter" id="gosub-param-label"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">label</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="goto" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/goto.html">goto</a></span><span class="signature">(<wbr><span class="parameter" id="goto-param-label"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">label</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="handleRunStopKepyress" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/handleRunStopKepyress.html">handleRunStopKepyress</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  A RunStop keypress can resume a program, in which case the return stack
+shoould be left undisturbed.  It can also start a "new" program run,
+so we need to be sure the return stack isn't in underflow 
+  
+
+</dd>
+
+        <dt id="incrementCurrentLine" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/incrementCurrentLine.html">incrementCurrentLine</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Increment the current line, up to a max of lines, wrapping to 0.
+To be clear, there are lines+1 possible values. <a href="../model/ProgramMemory/incrementCurrentLine.html">[...]</a>
+  
+
+</dd>
+
+        <dt id="insert" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/insert.html">insert</a></span><span class="signature">(<wbr><span class="parameter" id="insert-param-instruction"><span class="type-annotation"><a href="../model/ProgramInstruction-class.html">ProgramInstruction</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span> <span class="parameter-name">instruction</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Insert a new instruction, and increment currentLine to refer to it. 
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a non-existent method or property is accessed. <a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="opcodeAt" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/opcodeAt.html">opcodeAt</a></span><span class="signature">(<wbr><span class="parameter" id="opcodeAt-param-line"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">line</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="popReturnStack" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/popReturnStack.html">popReturnStack</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="reset" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/reset.html">reset</a></span><span class="signature">(<wbr><span class="parameter" id="reset-param-zeroMemory">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">zeroMemory</span> = <span class="default-value">true</span>}</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="resetReturnStack" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/resetReturnStack.html">resetReturnStack</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="stepCurrentLine" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/stepCurrentLine.html">stepCurrentLine</a></span><span class="signature">(<wbr><span class="parameter" id="stepCurrentLine-param-sign"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">sign</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="toJson" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/toJson.html">toJson</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object. <a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="operators">
+      <h2>Operators</h2>
+      <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator. <a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="operator []" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/operator_get.html">operator []</a></span><span class="signature">(<wbr><span class="parameter" id="[]-param-line"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">line</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../model/ProgramInstruction-class.html">ProgramInstruction</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  line counts from 1 
+  
+
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <ol>
+
+    <li class="section-title"><a href="../model/ProgramMemory-class.html#constructors">Constructors</a></li>
+    <li><a href="../model/ProgramMemory/ProgramMemory.html">ProgramMemory</a></li>
+
+
+    <li class="section-title">
+      <a href="../model/ProgramMemory-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="../model/ProgramMemory/bytesToNextAllocation.html">bytesToNextAllocation</a></li>
+    <li><a href="../model/ProgramMemory/currentLine.html">currentLine</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li><a href="../model/ProgramMemory/lines.html">lines</a></li>
+    <li><a href="../model/ProgramMemory/listing.html">listing</a></li>
+    <li><a href="../model/ProgramMemory/programBytes.html">programBytes</a></li>
+    <li><a href="../model/ProgramMemory/programListener.html">programListener</a></li>
+    <li><a href="../model/ProgramMemory/returnStackUnderflow.html">returnStackUnderflow</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../model/ProgramMemory-class.html#instance-methods">Methods</a></li>
+    <li><a href="../model/ProgramMemory/decodeJson.html">decodeJson</a></li>
+    <li><a href="../model/ProgramMemory/deleteCurrent.html">deleteCurrent</a></li>
+    <li><a href="../model/ProgramMemory/displayCurrent.html">displayCurrent</a></li>
+    <li><a href="../model/ProgramMemory/doNextIf.html">doNextIf</a></li>
+    <li><a href="../model/ProgramMemory/getCurrent.html">getCurrent</a></li>
+    <li><a href="../model/ProgramMemory/gosub.html">gosub</a></li>
+    <li><a href="../model/ProgramMemory/goto.html">goto</a></li>
+    <li><a href="../model/ProgramMemory/handleRunStopKepyress.html">handleRunStopKepyress</a></li>
+    <li><a href="../model/ProgramMemory/incrementCurrentLine.html">incrementCurrentLine</a></li>
+    <li><a href="../model/ProgramMemory/insert.html">insert</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../model/ProgramMemory/opcodeAt.html">opcodeAt</a></li>
+    <li><a href="../model/ProgramMemory/popReturnStack.html">popReturnStack</a></li>
+    <li><a href="../model/ProgramMemory/reset.html">reset</a></li>
+    <li><a href="../model/ProgramMemory/resetReturnStack.html">resetReturnStack</a></li>
+    <li><a href="../model/ProgramMemory/stepCurrentLine.html">stepCurrentLine</a></li>
+    <li><a href="../model/ProgramMemory/toJson.html">toJson</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+    <li class="section-title"><a href="../model/ProgramMemory-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+    <li><a href="../model/ProgramMemory/operator_get.html">operator []</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js"></script>
+<script src="../static-assets/script.js"></script>
+
+
+
+</body>
+
+</html>
+

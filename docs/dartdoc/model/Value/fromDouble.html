@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the fromDouble method from the Value class, for the Dart programming language.">
+  <title>fromDouble method - Value class - model library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../../static-assets/github.css">
+  <link rel="stylesheet" href="../../static-assets/styles.css">
+  <link rel="icon" href="../../static-assets/favicon.png">
+
+  
+</head>
+
+
+<body data-base-href="../../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jrpn</a></li>
+    <li><a href="../../model/model-library.html">model</a></li>
+    <li><a href="../../model/Value-class.html">Value</a></li>
+    <li class="self-crumb">fromDouble method</li>
+  </ol>
+  <div class="self-name">fromDouble</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">jrpn</a></li>
+  <li><a href="../../model/model-library.html">model</a></li>
+  <li><a href="../../model/Value-class.html">Value</a></li>
+  <li class="self-crumb">fromDouble method</li>
+</ol>
+
+
+    <h5>Value class</h5>
+    <ol>
+
+    <li class="section-title"><a href="../../model/Value-class.html#constructors">Constructors</a></li>
+    <li><a href="../../model/Value/Value.fromInternal.html">fromInternal</a></li>
+
+
+    <li class="section-title">
+      <a href="../../model/Value-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="../../model/Value/asDouble.html">asDouble</a></li>
+    <li><a href="../../model/Value/floatPrefix.html">floatPrefix</a></li>
+    <li><a href="../../model/Value/hashCode.html">hashCode</a></li>
+    <li><a href="../../model/Value/internal.html">internal</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../../model/Value-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../model/Value/changeBitSize.html">changeBitSize</a></li>
+    <li><a href="../../model/Value/isZero.html">isZero</a></li>
+    <li><a href="../../model/Value/negateAsFloat.html">negateAsFloat</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../../model/Value/toJson.html">toJson</a></li>
+    <li><a href="../../model/Value/toString.html">toString</a></li>
+
+    <li class="section-title"><a href="../../model/Value-class.html#operators">Operators</a></li>
+    <li><a href="../../model/Value/operator_equals.html">operator ==</a></li>
+
+
+    <li class="section-title"><a href="../../model/Value-class.html#static-properties">Static properties</a></li>
+    <li><a href="../../model/Value/fInfinity.html">fInfinity</a></li>
+    <li><a href="../../model/Value/fNegativeInfinity.html">fNegativeInfinity</a></li>
+    <li><a href="../../model/Value/zero.html">zero</a></li>
+
+    <li class="section-title"><a href="../../model/Value-class.html#static-methods">Static methods</a></li>
+    <li><a href="../../model/Value/fromDouble.html">fromDouble</a></li>
+    <li><a href="../../model/Value/fromJson.html">fromJson</a></li>
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">fromDouble</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="../../model/Value-class.html">Value</a></span>
+<span class="name ">fromDouble</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="fromDouble-param-num"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">num</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static Value fromDouble(double num) {
+  if (num == double.infinity) {
+    return fInfinity;
+  } else if (num == double.negativeInfinity) {
+    return fNegativeInfinity;
+  } else if (num == double.nan) {
+    assert(false);
+    return fInfinity;
+  }
+
+  &#47;&#47; Slow but simple
+  final String s = num.toStringAsExponential(9);
+  BigInt mantissa = BigInt.zero;
+  &#47;&#47; Huh!  It looks like ints are limited to 32 bits under JS, at least
+  &#47;&#47; as regards left-shift as of April 2021.
+  int i = 0;
+  while (true) {
+    final int c = s.codeUnitAt(i);
+    if (c == &#39;-&#39;.codeUnitAt(0)) {
+      assert(mantissa == BigInt.zero, &quot;$c in &#39;$s&#39; at $i&quot;);
+      mantissa = BigInt.from(9);
+    } else if (c == &#39;.&#39;.codeUnitAt(0)) {
+      &#47;&#47; do nothing
+    } else if (c == &#39;e&#39;.codeUnitAt(0)) {
+      i++;
+      break;
+    } else {
+      final int d = c - &#39;0&#39;.codeUnitAt(0);
+      assert(d &gt;= 0 &amp;&amp; d &lt; 10, &#39;$d in &quot;$s&quot; at $i&#39;);
+      mantissa = (mantissa &lt;&lt; 4) | BigInt.from(d);
+    }
+    i++;
+  }
+  assert(i &gt;= 12 &amp;&amp; i &lt;= 13, &#39;$i $s&#39;);
+  bool negativeExponent = false;
+  int exponent = 0;
+  while (i &lt; s.length) {
+    final int c = s.codeUnitAt(i);
+    if (c == &#39;-&#39;.codeUnitAt(0)) {
+      assert(exponent == 0);
+      negativeExponent = true;
+    } else if (c == &#39;+&#39;.codeUnitAt(0)) {
+      assert(exponent == 0 &amp;&amp; !negativeExponent);
+      &#47;&#47; do nothing
+    } else {
+      final int d = c - &#39;0&#39;.codeUnitAt(0);
+      assert(d &gt;= 0 &amp;&amp; d &lt; 10, &#39;for character ${s.substring(i, i + 1)}&#39;);
+      exponent = (exponent &lt;&lt; 4) | d;
+    }
+    i++;
+  }
+  if (exponent &gt;= 0x100) {
+    if (negativeExponent) {
+      return zero;
+    } else if (mantissa &amp; _mantissaSign == BigInt.zero) {
+      &#47;&#47; positive mantissa
+      return fInfinity;
+    } else {
+      return fNegativeInfinity;
+    }
+  } else if (negativeExponent) {
+    exponent = ((0x999 + 1) - exponent); &#47;&#47; 1000&#39;s complement in BCD
+  }
+  return Value._fromMantissaAndExponent(mantissa, exponent);
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js"></script>
+<script src="../../static-assets/script.js"></script>
+
+
+
+</body>
+
+</html>
+

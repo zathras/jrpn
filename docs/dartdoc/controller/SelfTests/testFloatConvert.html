@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the testFloatConvert method from the SelfTests class, for the Dart programming language.">
+  <title>testFloatConvert method - SelfTests class - controller library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../../static-assets/github.css">
+  <link rel="stylesheet" href="../../static-assets/styles.css">
+  <link rel="icon" href="../../static-assets/favicon.png">
+
+  
+</head>
+
+
+<body data-base-href="../../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jrpn</a></li>
+    <li><a href="../../controller/controller-library.html">controller</a></li>
+    <li><a href="../../controller/SelfTests-class.html">SelfTests</a></li>
+    <li class="self-crumb">testFloatConvert method</li>
+  </ol>
+  <div class="self-name">testFloatConvert</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">jrpn</a></li>
+  <li><a href="../../controller/controller-library.html">controller</a></li>
+  <li><a href="../../controller/SelfTests-class.html">SelfTests</a></li>
+  <li class="self-crumb">testFloatConvert method</li>
+</ol>
+
+
+    <h5>SelfTests class</h5>
+    <ol>
+
+    <li class="section-title"><a href="../../controller/SelfTests-class.html#constructors">Constructors</a></li>
+    <li><a href="../../controller/SelfTests/SelfTests.html">SelfTests</a></li>
+
+
+    <li class="section-title">
+      <a href="../../controller/SelfTests-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="../../controller/SelfTests/errorsSeen.html">errorsSeen</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li><a href="../../controller/SelfTests/inCalculator.html">inCalculator</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+    <li><a href="../../controller/SelfTests/testsRun.html">testsRun</a></li>
+
+    <li class="section-title"><a href="../../controller/SelfTests-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../controller/SelfTests/fd.html">fd</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../../controller/SelfTests/runAll.html">runAll</a></li>
+    <li><a href="../../controller/SelfTests/testFloatConvert.html">testFloatConvert</a></li>
+    <li><a href="../../controller/SelfTests/testFloatValues.html">testFloatValues</a></li>
+    <li><a href="../../controller/SelfTests/testIntOperations.html">testIntOperations</a></li>
+    <li><a href="../../controller/SelfTests/testIntValues.html">testIntValues</a></li>
+    <li><a href="../../controller/SelfTests/testJson.html">testJson</a></li>
+    <li><a href="../../controller/SelfTests/testNumbers.html">testNumbers</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../../controller/SelfTests-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">testFloatConvert</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">testFloatConvert</span>(<wbr>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; testFloatConvert() async {
+  await _test(&#39;Convert from int to float&#39;, () async {
+    final Model model = Model();
+    model.wordSize = 32;
+    model.yI = BigInt.from(0x25e47);
+    model.xI = BigInt.zero;
+    model.displayMode = DisplayMode.float(2);
+    await _expect(model.xF, 155207.0);
+
+    model.displayMode = DisplayMode.hex;
+    model.integerSignMode = SignMode.unsigned;
+    model.yI = BigInt.one;
+    model.xI = BigInt.zero;
+    model.displayMode = DisplayMode.float(4);
+    model.displayMode = DisplayMode.hex;
+    await _expect(model.xI, BigInt.parse(&#39;ffffffffffffe1&#39;, radix: 16));
+    await _expect(model.yI, BigInt.parse(&#39;80000000&#39;, radix: 16));
+  });
+  await _test(&#39;int DisplayMode mode convert from float&#39;, () async {
+    await _testConvertFromFloat(0, BigInt.zero, 0);
+    await _testConvertFromFloat(
+        512, BigInt.one &lt;&lt; 31, -22); &#47;&#47; 512 = 2&lt;&lt;31 * 2^-22
+    await _testConvertFromFloat(
+        513, BigInt.one &lt;&lt; 31 | BigInt.one &lt;&lt; 22, -22); &#47;&#47; 512 = 2&lt;&lt;31 * 2^-22
+
+    await _testConvertFromFloat(5e-62, BigInt.parse(&#39;2760698539&#39;), -235);
+    await _testConvertFromFloat(5e-52, BigInt.parse(&#39;3213876089&#39;), -202);
+    await _testConvertFromFloat(1.284e-17, BigInt.parse(&#39;3973787526&#39;), -88);
+  });
+  await _test(
+      &#39;DisplayMode from float to int and back at power of two boundaries&#39;,
+      () async {
+    &#47;&#47;&#47; go from a little over 1e-99 to a little under 9.999999999e99,
+    &#47;&#47;&#47; concentrating on the areas around powers of two.  This is meant to
+    &#47;&#47;&#47; tease out any rounding errors, especially around the log()
+    &#47;&#47;&#47; calculations in _IntegerMode.convertValuesFromFloat
+    Model model = Model();
+    model.displayMode = DisplayMode.float(9);
+    await _testFloatConvertAndBack(model, 0.0);
+    await _testFloatConvertAndBack(model, 1);
+    await _testFloatConvertAndBack(model, 123);
+    await _testFloatConvertAndBack(model, 5.678e99);
+    await _testFloatConvertAndBack(model, 5.678e-99);
+    for (int exp = -328; exp &lt;= 332; exp++) {
+      final double base = pow(2.0, exp).toDouble();
+      for (double delta = -pow(10.0, -8.0).toDouble();
+          delta &lt;= pow(10.0, -8);
+          delta += pow(10.0, -10) * 3) {
+        await _testFloatConvertAndBack(model, base + delta * base);
+      }
+    }
+  });
+
+  await _test(&#39;DisplayMode from float to int and back with random values&#39;,
+      () async {
+    Model model = Model();
+    model.displayMode = DisplayMode.float(9);
+    await _testFloatConvertAndBack(model, 1.0625892214194362e+58);
+    final Random r = Random();
+    const limit = kIsWeb ? 100 : 2000;
+    for (int i = 0; i &lt; limit; i++) {
+      if (i &gt; 0 &amp;&amp; i % 2000 == 0) {
+        final percent = (i * 100 &#47; limit).toStringAsFixed(0);
+        print(&#39;Random float count $i of limit - $percent%&#39;);
+      }
+      final double m = 22 * r.nextDouble() - 11;
+      final int e = r.nextInt(250) - 125; &#47;&#47; Generate some out of range
+      final double dv = m * pow(10.0, e);
+      await _testFloatConvertAndBack(model, dv);
+    }
+  });
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js"></script>
+<script src="../../static-assets/script.js"></script>
+
+
+
+</body>
+
+</html>
+

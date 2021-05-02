@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the SelfTests class from the controller library, for the Dart programming language.">
+  <title>SelfTests class - controller library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static-assets/github.css">
+  <link rel="stylesheet" href="../static-assets/styles.css">
+  <link rel="icon" href="../static-assets/favicon.png">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jrpn</a></li>
+    <li><a href="../controller/controller-library.html">controller</a></li>
+    <li class="self-crumb">SelfTests class</li>
+  </ol>
+  <div class="self-name">SelfTests</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li><a href="../controller/controller-library.html">controller</a></li>
+  <li class="self-crumb">SelfTests class</li>
+</ol>
+
+
+    <h5>controller library</h5>
+    <ol>
+  <li class="section-title"><a href="../controller/controller-library.html#classes">Classes</a></li>
+  <li><a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></li>
+  <li><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></li>
+  <li><a href="../controller/Controller-class.html">Controller</a></li>
+  <li><a href="../controller/FloatKeyArg-class.html">FloatKeyArg</a></li>
+  <li><a href="../controller/GosubOperationArg-class.html">GosubOperationArg</a></li>
+  <li><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></li>
+  <li><a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></li>
+  <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
+  <li><a href="../controller/NumberEntry-class.html">NumberEntry</a></li>
+  <li><a href="../controller/Operation-class.html">Operation</a></li>
+  <li><a href="../controller/OperationArg-class.html">OperationArg</a></li>
+  <li><a href="../controller/RealController-class.html">RealController</a></li>
+  <li><a href="../controller/RunningController-class.html">RunningController</a></li>
+  <li><a href="../controller/SelfTests-class.html">SelfTests</a></li>
+  <li><a href="../controller/StackLift-class.html">StackLift</a></li>
+  <li><a href="../controller/StackLiftModifier-class.html">StackLiftModifier</a></li>
+
+
+
+
+
+
+
+
+</ol>
+
+  </div>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-class">SelfTests</span> class 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Some built-in regression tests.  There aren't just an excuse to flash
+"running" when a user triggers the 16C's self test fonction.  It's also
+a way of easily running some of the tests involving integer and floating
+point behavior in different browsers. This might be a bit of a pain point
+for Dart, since the numeric types behave differently given JavaScript's
+deficiencies in ths regard.</p>
+<p>I note that I've seen Dart documentation that mention the 53 bit mantissa
+of the underlying double that JavaScript uses, but it seems that Dart
+clamps ints on (perhaps only some?) JavaScript runtime to 32 bits.  It
+seems the prudent thing to do for interoperable code is to limit usage
+of the int type to 32 bit ints, which is unfortunate.  In fairness, the
+Dart language designers were in a bit of a bind, with no really good answers
+for putting a normal type system on top of JavaScript's odd (and IMHO
+terrible) choice as regards numeric types.</p>
+</section>
+
+
+
+    <section class="summary offset-anchor" id="constructors">
+      <h2>Constructors</h2>
+
+      <dl class="constructor-summary-list">
+        <dt id="SelfTests" class="callable">
+          <span class="name"><a href="../controller/SelfTests/SelfTests.html">SelfTests</a></span><span class="signature">(<span class="parameter" id="-param-inCalculator">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">inCalculator</span> = <span class="default-value">true</span>}</span>)</span>
+        </dt>
+        <dd>
+           
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="errorsSeen" class="property">
+  <span class="name"><a href="../controller/SelfTests/errorsSeen.html">errorsSeen</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd class="inherited">
+  The hash code for this object. <a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">[...]</a>
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="inCalculator" class="property">
+  <span class="name"><a href="../controller/SelfTests/inCalculator.html">inCalculator</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span> 
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object. 
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="testsRun" class="property">
+  <span class="name"><a href="../controller/SelfTests/testsRun.html">testsRun</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">read / write</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-methods">
+      <h2>Methods</h2>
+      <dl class="callables">
+        <dt id="fd" class="callable">
+  <span class="name"><a href="../controller/SelfTests/fd.html">fd</a></span><span class="signature">(<wbr><span class="parameter" id="fd-param-d"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">d</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a non-existent method or property is accessed. <a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="runAll" class="callable">
+  <span class="name"><a href="../controller/SelfTests/runAll.html">runAll</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="testFloatConvert" class="callable">
+  <span class="name"><a href="../controller/SelfTests/testFloatConvert.html">testFloatConvert</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="testFloatValues" class="callable">
+  <span class="name"><a href="../controller/SelfTests/testFloatValues.html">testFloatValues</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="testIntOperations" class="callable">
+  <span class="name"><a href="../controller/SelfTests/testIntOperations.html">testIntOperations</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="testIntValues" class="callable">
+  <span class="name"><a href="../controller/SelfTests/testIntValues.html">testIntValues</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="testJson" class="callable">
+  <span class="name"><a href="../controller/SelfTests/testJson.html">testJson</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="testNumbers" class="callable">
+  <span class="name"><a href="../controller/SelfTests/testNumbers.html">testNumbers</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object. <a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor inherited" id="operators">
+      <h2>Operators</h2>
+      <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator. <a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <ol>
+
+    <li class="section-title"><a href="../controller/SelfTests-class.html#constructors">Constructors</a></li>
+    <li><a href="../controller/SelfTests/SelfTests.html">SelfTests</a></li>
+
+
+    <li class="section-title">
+      <a href="../controller/SelfTests-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="../controller/SelfTests/errorsSeen.html">errorsSeen</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li><a href="../controller/SelfTests/inCalculator.html">inCalculator</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+    <li><a href="../controller/SelfTests/testsRun.html">testsRun</a></li>
+
+    <li class="section-title"><a href="../controller/SelfTests-class.html#instance-methods">Methods</a></li>
+    <li><a href="../controller/SelfTests/fd.html">fd</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../controller/SelfTests/runAll.html">runAll</a></li>
+    <li><a href="../controller/SelfTests/testFloatConvert.html">testFloatConvert</a></li>
+    <li><a href="../controller/SelfTests/testFloatValues.html">testFloatValues</a></li>
+    <li><a href="../controller/SelfTests/testIntOperations.html">testIntOperations</a></li>
+    <li><a href="../controller/SelfTests/testIntValues.html">testIntValues</a></li>
+    <li><a href="../controller/SelfTests/testJson.html">testJson</a></li>
+    <li><a href="../controller/SelfTests/testNumbers.html">testNumbers</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../controller/SelfTests-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js"></script>
+<script src="../static-assets/script.js"></script>
+
+
+
+</body>
+
+</html>
+

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="controller.states library API docs, for the Dart programming language.">
+  <title>controller.states library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static-assets/github.css">
+  <link rel="stylesheet" href="../static-assets/styles.css">
+  <link rel="icon" href="../static-assets/favicon.png">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jrpn</a></li>
+    <li class="self-crumb">controller.states library</li>
+  </ol>
+  <div class="self-name">controller.states</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li class="self-crumb">controller.states library</li>
+</ol>
+
+
+    <h5><span class="package-name">jrpn</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../controller/controller-library.html">controller</a></li>
+      <li><a href="../controller.operations/controller.operations-library.html">controller.operations</a></li>
+      <li><a href="../controller.states/controller.states-library.html">controller.states</a></li>
+      <li><a href="../generated_plugin_registrant/generated_plugin_registrant-library.html">generated_plugin_registrant</a></li>
+      <li><a href="../main/main-library.html">main</a></li>
+      <li><a href="../model/model-library.html">model</a></li>
+      <li><a href="../view.buttons/view.buttons-library.html">view.buttons</a></li>
+      <li><a href="../view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
+      <li><a href="../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
+</ol>
+
+  </div>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-library">controller.states</span> library 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>The states of the controller, reflecting the input mode of the calculator.
+There are three main states:  <a href="../controller.states/Resting-class.html">Resting</a> (the state it's usually in,
+waiting for something to do), <a href="../controller.states/DigitEntry-class.html">DigitEntry</a> and <a href="../controller.states/ProgramEntry-class.html">ProgramEntry</a>.  There
+are a large number of additional states, such as argument input,
+or running a program.  The full hierarchy looks like this:</p><br>
+<br>
+<img src="dartdoc/controller.states/hierarchy.svg" style="width: 100%;">
+<br>
+<br>
+<p>The state pattern is used to help manage the complexity of the calculator's
+behavior in the various state.  Correctly managing stack lift is an
+interesting challenge.  The three main states use functions attached to
+<a href="../controller/Operation-class.html">Operation</a>s to do their work.  The API presented to the <a href="../controller.states/ProgramEntry-class.html">ProgramEntry</a>
+state is a reduced one, presented by <a href="../controller.states/LimitedState-class.html">LimitedState</a>.  Note that this
+introduces a contravariant relationship between states and operations,
+which isn't completely captured by the Dart type relationships.  This
+does result in a downcast in two places, but it's appropriately guarded.
+Segmenting the API in this way makes the static type checker ensure that
+we don't accidentally reference a method that should not be available
+for the type of operation; this helped simplify development, and removes
+a potential source of bugs.</p>
+</section>
+
+
+    <section class="summary offset-anchor" id="classes">
+      <h2>Classes</h2>
+
+      <dl>
+        <dt id="ActiveState">
+  <span class="name "><a href="../controller.states/ActiveState-class.html">ActiveState</a></span> 
+
+</dt>
+<dd>
+  Supertype for the two states that process pressed and calculation
+functions for <a href="../controller/NormalOperation-class.html">NormalOperation</a>s.  This is where stack lift
+is exposed, because usually stack lift is enabled after performing
+a calculation on the model.  It is performed when entering digits,
+or recalling a value from a register or lastX. 
+</dd>
+
+        <dt id="ArgInputState">
+  <span class="name "><a href="../controller.states/ArgInputState-class.html">ArgInputState</a></span> 
+
+</dt>
+<dd>
+  Inputting an argument.  Generally, the calculator silently waits for
+keypresses giving the argument value.  For example, when recalling
+register 1c, the user presses "RCL . c"; the calculator is in this
+state while waiting for the ". c" to be pressed. 
+</dd>
+
+        <dt id="CalculatorOff">
+  <span class="name "><a href="../controller.states/CalculatorOff-class.html">CalculatorOff</a></span> 
+
+</dt>
+<dd>
+  State when the calculator is off.  On desktop and mobile, the calculator
+screen is dismissed, but that's awkward on the web, especially if the
+calculator is embedded in a page.  So, in the web case, we turn off the
+LCD display, and wait in this state to see if the user presses ON at
+some point. 
+</dd>
+
+        <dt id="ControllerState">
+  <span class="name "><a href="../controller.states/ControllerState-class.html">ControllerState</a></span> 
+
+</dt>
+<dd>
+  Superclass for all states of a <a href="../controller/Controller-class.html">Controller</a>.  See the
+<code>controller.states</code> library documentation for an overview, including
+a diagram. 
+</dd>
+
+        <dt id="DigitEntry">
+  <span class="name "><a href="../controller.states/DigitEntry-class.html">DigitEntry</a></span> 
+
+</dt>
+<dd>
+  The state the calculator's in while entering digits. 
+</dd>
+
+        <dt id="DoNothing">
+  <span class="name "><a href="../controller.states/DoNothing-class.html">DoNothing</a></span> 
+
+</dt>
+<dd>
+  State where we ignore keypresses, because the calculator is off or
+running self-tests. 
+</dd>
+
+        <dt id="FloatKeyArgInputState">
+  <span class="name "><a href="../controller.states/FloatKeyArgInputState-class.html">FloatKeyArgInputState</a></span> 
+
+</dt>
+<dd>
+  Inputting the argument for the FLOAT key.  This is a little different
+than a normal <a href="../controller.states/ArgInputState-class.html">ArgInputState</a> in that the "." key, by itself, means
+"go to scientific display," which we model as ten digits after the
+decimal point (which doesn't fit on the LCD display). 
+</dd>
+
+        <dt id="GosubArgInputState">
+  <span class="name "><a href="../controller.states/GosubArgInputState-class.html">GosubArgInputState</a></span> 
+
+</dt>
+<dd>
+  Inputting the argument for GSB.  See <a href="../controller.states/GosubArgInputState/handleGosubEntryDone.html">handleGosubEntryDone</a>. 
+</dd>
+
+        <dt id="LimitedState">
+  <span class="name "><a href="../controller.states/LimitedState-class.html">LimitedState</a></span> 
+
+</dt>
+<dd>
+  Supertype for the three states that process pressed functions
+from <a href="../controller/LimitedOperation-class.html">LimitedOperation</a>s (which includes all <a href="../controller/NormalOperation-class.html">NormalOperation</a>s).
+This is the contravariant typing relationship mentioned in our
+library overview.  cf. the controller.operations library's class
+diagram, notably the dashed subtype line from <a href="../controller/LimitedOperation-class.html">LimitedOperation</a>
+to <a href="../controller/NormalOperation-class.html">NormalOperation</a>. 
+</dd>
+
+        <dt id="MessageShowing">
+  <span class="name "><a href="../controller.states/MessageShowing-class.html">MessageShowing</a></span> 
+
+</dt>
+<dd>
+  State while a message is showing, like "Error 2." 
+</dd>
+
+        <dt id="OnOffKeyPressed">
+  <span class="name "><a href="../controller.states/OnOffKeyPressed-class.html">OnOffKeyPressed</a></span> 
+
+</dt>
+<dd>
+  State for after the ON key is pressed, while we're waiting to see if they
+pick a special function, or maybe press the ON key again to turn the
+calculator off. 
+</dd>
+
+        <dt id="ProgramEntry">
+  <span class="name "><a href="../controller.states/ProgramEntry-class.html">ProgramEntry</a></span> 
+
+</dt>
+<dd>
+  State while entering a program. 
+</dd>
+
+        <dt id="Resting">
+  <span class="name "><a href="../controller.states/Resting-class.html">Resting</a></span> 
+
+</dt>
+<dd>
+  The initial state of the calculator, when it's waiting for input telling
+it to do something. 
+</dd>
+
+        <dt id="Running">
+  <span class="name "><a href="../controller.states/Running-class.html">Running</a></span> 
+
+</dt>
+<dd>
+  State while we're running a program.  While we're in this state, our
+<a href="../controller/Controller-class.html">Controller</a> stays in <a href="../controller.states/Running-class.html">Running</a>, but we create a <a href="../controller/RunningController-class.html">RunningController</a>
+that has its own <a href="../controller.states/ControllerState-class.html">ControllerState</a>. 
+</dd>
+
+        <dt id="ShowState">
+  <span class="name "><a href="../controller.states/ShowState-class.html">ShowState</a></span> 
+
+</dt>
+<dd>
+  State while we're temporarily showing something, while a button is still
+pressed.  For example "f show Hex" lands us in this state. 
+</dd>
+
+        <dt id="SingleStepping">
+  <span class="name "><a href="../controller.states/SingleStepping-class.html">SingleStepping</a></span> 
+
+</dt>
+<dd>
+  State while single-stepping through a program.  Like <a href="../controller.states/Running-class.html">Running</a>, this state
+creates a <a href="../controller/RunningController-class.html">RunningController</a> that has its own <a href="../controller.states/ControllerState-class.html">ControllerState</a>. 
+</dd>
+
+        <dt id="WaitingForGotoDot">
+  <span class="name "><a href="../controller.states/WaitingForGotoDot-class.html">WaitingForGotoDot</a></span> 
+
+</dt>
+<dd>
+  State after the GTO key is pressed, when we don't know if the user
+will press "." (meaning navigate to a specific line number), or a
+label.  In the spirit of Beckett, we do hope one arrives before
+too long. 
+</dd>
+
+        <dt id="WaitingForGotoDotLines">
+  <span class="name "><a href="../controller.states/WaitingForGotoDotLines-class.html">WaitingForGotoDotLines</a></span> 
+
+</dt>
+<dd>
+  After "GTO ." is pressed, we're in this state collecting the
+three-digit line number. 
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+
+
+
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <h5>controller.states library</h5>
+    <ol>
+  <li class="section-title"><a href="../controller.states/controller.states-library.html#classes">Classes</a></li>
+  <li><a href="../controller.states/ActiveState-class.html">ActiveState</a></li>
+  <li><a href="../controller.states/ArgInputState-class.html">ArgInputState</a></li>
+  <li><a href="../controller.states/CalculatorOff-class.html">CalculatorOff</a></li>
+  <li><a href="../controller.states/ControllerState-class.html">ControllerState</a></li>
+  <li><a href="../controller.states/DigitEntry-class.html">DigitEntry</a></li>
+  <li><a href="../controller.states/DoNothing-class.html">DoNothing</a></li>
+  <li><a href="../controller.states/FloatKeyArgInputState-class.html">FloatKeyArgInputState</a></li>
+  <li><a href="../controller.states/GosubArgInputState-class.html">GosubArgInputState</a></li>
+  <li><a href="../controller.states/LimitedState-class.html">LimitedState</a></li>
+  <li><a href="../controller.states/MessageShowing-class.html">MessageShowing</a></li>
+  <li><a href="../controller.states/OnOffKeyPressed-class.html">OnOffKeyPressed</a></li>
+  <li><a href="../controller.states/ProgramEntry-class.html">ProgramEntry</a></li>
+  <li><a href="../controller.states/Resting-class.html">Resting</a></li>
+  <li><a href="../controller.states/Running-class.html">Running</a></li>
+  <li><a href="../controller.states/ShowState-class.html">ShowState</a></li>
+  <li><a href="../controller.states/SingleStepping-class.html">SingleStepping</a></li>
+  <li><a href="../controller.states/WaitingForGotoDot-class.html">WaitingForGotoDot</a></li>
+  <li><a href="../controller.states/WaitingForGotoDotLines-class.html">WaitingForGotoDotLines</a></li>
+
+
+
+
+
+
+
+
+</ol>
+
+  </div><!--/sidebar-offcanvas-right-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js"></script>
+<script src="../static-assets/script.js"></script>
+
+
+
+</body>
+
+</html>
+
