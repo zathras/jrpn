@@ -9,7 +9,8 @@ end of May, 2021.
 JRPN is a clean-room calculator simulator inspired by the HP-16C.
 It uses a simulated seven-segment LCD for display, and
 generally tries to remain faithful to the look-and-feel
-of a real 16C.  It's a bit like a modern Harley Davidson
+of a real 16C.  I think of the 16C as the "vi" of calculators,
+but the simulator is a bit like a modern Harley Davidson
 motorcycle - I rented one once, and they engineer in a
 certain amount of vibration and engine noise that are
 totally unnecessary, but that make you feel like you're
