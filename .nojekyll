@@ -1,0 +1,2 @@
+Turn off Jekyll so that .well-known will be served
+https://github.community/t/also-serving-hidden-folders-after-publishing-to-github-pages-using-github-actions/18120
