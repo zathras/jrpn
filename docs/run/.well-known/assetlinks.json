@@ -1,0 +1,26 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.jovial.jrpn",
+            "sha256_cert_fingerprints": [
+                "5D:39:23:59:AC:9E:F8:96:B9:BB:83:64:00:77:07:C3:28:BD:29:15:29:DA:73:A4:53:89:95:D7:DC:6F:67:CD"
+]
+        }
+    },
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.jovial.jrpn",
+            "sha256_cert_fingerprints": [
+                "69:A5:F4:26:17:45:E7:65:80:F7:D1:3A:FD:D7:3F:FB:3F:7D:F4:40:C3:40:BA:07:C1:DF:A6:C0:35:2C:9F:F9"
+]
+        }
+    }
+]
