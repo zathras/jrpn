@@ -61,6 +61,7 @@
       <li><a href="generated_plugin_registrant/generated_plugin_registrant-library.html">generated_plugin_registrant</a></li>
       <li><a href="main/main-library.html">main</a></li>
       <li><a href="model/model-library.html">model</a></li>
+      <li><a href="view.back_panel/view.back_panel-library.html">view.back_panel</a></li>
       <li><a href="view.buttons/view.buttons-library.html">view.buttons</a></li>
       <li><a href="view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
       <li><a href="view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
@@ -72,11 +73,12 @@
       
 <section class="desc markdown">
   <h1 id="jrpn">JRPN</h1>
-<p><img src="dartdoc/screenshot.png" alt=""></p>
-<p>A clean-room calculator simulator inspired by the HP-16C.
+<p><img src="docs/screen_shot.png" alt=""></p>
+<p>JRPN is a clean-room calculator simulator inspired by the HP-16C.
 It uses a simulated seven-segment LCD for display, and
 generally tries to remain faithful to the look-and-feel
-of a real 16C.  It's a bit like a modern Harley Davidson
+of a real 16C.  I think of the 16C as the "vi" of calculators,
+but the simulator is a bit like a modern Harley Davidson
 motorcycle - I rented one once, and they engineer in a
 certain amount of vibration and engine noise that are
 totally unnecessary, but that make you feel like you're
@@ -209,11 +211,18 @@ using the state pattern for calculator modes, like the <a href="model/DisplayMod
 and the <a href="model/SignMode-class.html">SignMode</a>.  The overall structure looks like this: <a href="model/model-library.html">[...]</a>
 </dd>
 
+          <dt id="view.back_panel">
+  <span class="name"><a href="view.back_panel/view.back_panel-library.html">view.back_panel</a></span> 
+
+</dt>
+<dd>The back panel of the calculator. 
+</dd>
+
           <dt id="view.buttons">
   <span class="name"><a href="view.buttons/view.buttons-library.html">view.buttons</a></span> 
 
 </dt>
-<dd>Buttons for the keyboard.  When pressed, buttons consult the <a href="model/Model-class.html">Model</a> to see 
+<dd>Buttons for the keyboard.  When pressed, buttons consult the <a href="model/Model-class.html">Model</a> to see
 if a shift key has been pressed, and dispatch an appropriate
 <a href="controller/Operation-class.html">Operation</a> to the <a href="controller/Controller-class.html">Controller</a>. <a href="view.buttons/view.buttons-library.html">[...]</a>
 </dd>
@@ -248,7 +257,7 @@ exactly position widgets, and scale them to the screen size.
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

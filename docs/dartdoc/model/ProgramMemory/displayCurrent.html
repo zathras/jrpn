@@ -118,7 +118,8 @@
       
 
 <span class="returntype">void</span>
-<span class="name ">displayCurrent</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="displayCurrent-param-flash">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">flash</span> = <span class="default-value">false</span>}</span></li>
+<span class="name ">displayCurrent</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="displayCurrent-param-flash">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">flash</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="displayCurrent-param-delayed"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">delayed</span> = <span class="default-value">false</span>}</span></li>
 </ol>)
 
       
@@ -130,16 +131,30 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void displayCurrent({bool flash = false}) {
+  <pre class="language-dart"><code class="language-dart">void displayCurrent({bool flash = false, bool delayed = false}) {
   final display = _memory._model.display;
+  final String newText;
   if (currentLine == 0) {
-    display.current = &#39;000-      &#39;;
+    newText = &#39;000-      &#39;;
   } else {
     String ls = currentLine.toRadixString(10).padLeft(3, &#39;0&#39;);
     String disp = getCurrent().programDisplay;
-    display.current = &#39;$ls-$disp&#39;;
+    newText = &#39;$ls-$disp&#39;;
   }
-  display.update(flash: flash);
+  if (delayed) {
+    final initial = _memory._model._newLcdContents();
+    display.current = newText;
+    final delayed = _memory._model._newLcdContents();
+    final t = Timer(Duration(milliseconds: 1400), () {
+      display.show(delayed);
+    });
+    delayed._myTimer = t;
+    initial._myTimer = t;
+    display.show(initial);
+  } else {
+    display.current = newText;
+    display.update(flash: flash);
+  }
 }</code></pre>
 </section>
 
@@ -154,7 +169,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

@@ -61,12 +61,13 @@
     <ol>
 
     <li class="section-title"><a href="../../view.buttons/ButtonFactory-class.html#constructors">Constructors</a></li>
-    <li><a href="../../view.buttons/ButtonFactory/ButtonFactory.landscape.html">landscape</a></li>
+    <li><a href="../../view.buttons/ButtonFactory/ButtonFactory.html">ButtonFactory</a></li>
 
 
     <li class="section-title">
       <a href="../../view.buttons/ButtonFactory-class.html#instance-properties">Properties</a>
     </li>
+    <li><a href="../../view.buttons/ButtonFactory/acceleratorTextStyle.html">acceleratorTextStyle</a></li>
     <li><a href="../../view.buttons/ButtonFactory/context.html">context</a></li>
     <li><a href="../../view.buttons/ButtonFactory/controller.html">controller</a></li>
     <li><a href="../../view.buttons/ButtonFactory/enterKeyTextOffset.html">enterKeyTextOffset</a></li>
@@ -78,12 +79,15 @@
     <li><a href="../../view.buttons/ButtonFactory/gKeyTextOffset.html">gKeyTextOffset</a></li>
     <li><a href="../../view.buttons/ButtonFactory/gTextOffset.html">gTextOffset</a></li>
     <li><a href="../../view.buttons/ButtonFactory/gTextStyle.html">gTextStyle</a></li>
+    <li><a href="../../view.buttons/ButtonFactory/gTextStyleForLJ.html">gTextStyleForLJ</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
     <li><a href="../../view.buttons/ButtonFactory/height.html">height</a></li>
     <li><a href="../../view.buttons/ButtonFactory/innerBorder.html">innerBorder</a></li>
     <li><a href="../../view.buttons/ButtonFactory/keyTextOffset.html">keyTextOffset</a></li>
     <li><a href="../../view.buttons/ButtonFactory/keyTextStyle.html">keyTextStyle</a></li>
     <li><a href="../../view.buttons/ButtonFactory/lowerSurface.html">lowerSurface</a></li>
+    <li><a href="../../view.buttons/ButtonFactory/numColumns.html">numColumns</a></li>
+    <li><a href="../../view.buttons/ButtonFactory/numRows.html">numRows</a></li>
     <li><a href="../../view.buttons/ButtonFactory/onKeyTextOffset.html">onKeyTextOffset</a></li>
     <li><a href="../../view.buttons/ButtonFactory/outerBorder.html">outerBorder</a></li>
     <li><a href="../../view.buttons/ButtonFactory/padRight.html">padRight</a></li>
@@ -95,9 +99,13 @@
     <li><a href="../../view.buttons/ButtonFactory/width.html">width</a></li>
 
     <li class="section-title"><a href="../../view.buttons/ButtonFactory-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../view.buttons/ButtonFactory/addUpperGoldLabels.html">addUpperGoldLabels</a></li>
     <li><a href="../../view.buttons/ButtonFactory/buildButtons.html">buildButtons</a></li>
+    <li><a href="../../view.buttons/ButtonFactory/buttonLayout.html">buttonLayout</a></li>
+    <li><a href="../../view.buttons/ButtonFactory/enterPos.html">enterPos</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+    <li><a href="../../view.buttons/ButtonFactory/totalButtonHeight.html">totalButtonHeight</a></li>
 
     <li class="section-title inherited"><a href="../../view.buttons/ButtonFactory-class.html#operators">Operators</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
@@ -134,33 +142,18 @@
   <pre class="language-dart"><code class="language-dart">List&lt;Widget&gt; buildButtons(Rect pos) {
   double y = pos.top;
   final result = List&lt;Widget&gt;.empty(growable: true);
-  final double bw = pos.width * (width &#47; (10 * width + 9 * padRight));
+  final double bw = pos.width *
+      (width &#47; (numColumns * width + (numColumns - 1) * padRight));
   final double tw = bw * (width + padRight) &#47; width;
   final double bh = bw * height &#47; width;
-  final double th = (pos.height - 4 * bh) &#47; 3 + bh;
+  &#47;&#47; Total height for each button, including any label
+  final double th = totalButtonHeight(pos.height, bh);
 
   &#47;&#47; Add the upper yellow labels
-  result.add(screen.box(
-      Rect.fromLTRB(pos.left + 2 * tw - 0.05, y + th - 0.14,
-          pos.left + 5 * tw + bw + 0.05, y + th + 0.11),
-      CustomPaint(
-          painter:
-              _UpperLabel(&#39;SHOW&#39;, fTextStyle, height * (0.14 + 0.11) &#47; bh))));
-  result.add(screen.box(
-      Rect.fromLTRB(pos.left + 2 * tw - 0.05, y + 2 * th - 0.155,
-          pos.left + 4 * tw + bw + 0.05, y + 2 * th + 0.065),
-      CustomPaint(
-          painter: _UpperLabel(&#39;CLEAR&#39;, fTextSmallLabelStyle,
-              height * (0.065 + 0.155) &#47; bh))));
-  result.add(screen.box(
-      Rect.fromLTRB(pos.left + 6 * tw - 0.05, y + 2 * th - 0.155,
-          pos.left + 8 * tw + bw + 0.05, y + 2 * th + 0.065),
-      CustomPaint(
-          painter: _UpperLabel(&#39;SET COMPL&#39;, fTextSmallLabelStyle,
-              height * (0.065 + 0.155) &#47; bh))));
+  y += addUpperGoldLabels(result, pos, th: th, tw: tw, bh: bh, bw: bw);
 
   final buttons = _Buttons(this, th, bh);
-  final List&lt;List&lt;CalculatorButton?&gt;&gt; rc = buttons.normalSizeLandscape;
+  final List&lt;List&lt;CalculatorButton?&gt;&gt; rc = buttonLayout(buttons);
   for (int i = 0; i &lt; rc.length; i++) {
     double x = pos.left;
     for (int j = 0; j &lt; rc[i].length; j++) {
@@ -173,8 +166,7 @@
     y += th;
   }
   result.add(screen.box(
-      Rect.fromLTWH(pos.left + 5 * tw, pos.top + 2 * th, bw, bh + th),
-      buttons.enter));
+      enterPos(pos, th: th, tw: tw, bh: bh, bw: bw), buttons.enter));
 
   return result;
 }</code></pre>
@@ -191,7 +183,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

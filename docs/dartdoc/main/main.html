@@ -59,9 +59,16 @@
     <ol>
   <li class="section-title"><a href="../main/main-library.html#classes">Classes</a></li>
   <li><a href="../main/Jrpn-class.html">Jrpn</a></li>
+  <li><a href="../main/JrpnState-class.html">JrpnState</a></li>
 
 
 
+  <li class="section-title"><a href="../main/main-library.html#constants">Constants</a></li>
+  <li><a href="../main/APPLICATION_ISSUE_ADDRESS-constant.html">APPLICATION_ISSUE_ADDRESS</a></li>
+  <li><a href="../main/APPLICATION_VERSION-constant.html">APPLICATION_VERSION</a></li>
+  <li><a href="../main/APPLICATION_WEB_ADDRESS-constant.html">APPLICATION_WEB_ADDRESS</a></li>
+  <li><a href="../main/MIT_LICENSE-constant.html">MIT_LICENSE</a></li>
+  <li><a href="../main/NON_WARRANTY-constant.html">NON_WARRANTY</a></li>
 
 
   <li class="section-title"><a href="../main/main-library.html#functions">Functions</a></li>
@@ -94,6 +101,16 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void main() async {
+  &#47;&#47; Get there first!
+  LicenseRegistry.addLicense(_getLicenses);
+
+  if (Platform.isIOS) {
+    &#47;&#47; Get rid of ugly black bar along bottom.  It doesn&#39;t seem to do
+    &#47;&#47; anything -- maybe to be functional it has to be configured
+    &#47;&#47; somehow?
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+  }
   final j = Jrpn(Controller(Model()));
   runApp(j);
 }</code></pre>
@@ -110,7 +127,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

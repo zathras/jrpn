@@ -220,7 +220,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static final NormalOperation rrn = NormalOperation.intOnly(
-    intCalc: (Model m) =&gt; m.popSetResultX = _rotateRight(m.xI, m.y, m),
+    intCalc: (Model m) =&gt; m.popSetResultX = _rotateRight(m.xI.abs(), m.y, m),
     name: &#39;RRn&#39;);
 
 </code></pre>
@@ -237,7 +237,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

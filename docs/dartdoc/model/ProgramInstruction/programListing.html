@@ -122,6 +122,10 @@
       as = &#39; (i)&#39;;
     } else if (argIsI) {
       as = &#39; I&#39;;
+    } else if (argValue == 10 &amp;&amp; op.maxArg == 10) {
+      as = &#39; .&#39;;
+      &#47;&#47; See above, under programDisplay.  &quot;f FLOAT .&quot; is better than
+      &#47;&#47; &quot;f FLOAT a,&quot; under similar reasoning.
     } else {
       as = &#39; ${argValue.toRadixString(16)}&#39;;
     }
@@ -145,7 +149,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

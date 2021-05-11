@@ -99,8 +99,7 @@
       
 
 <span class="returntype">void</span>
-<span class="name ">initModelState</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="initModelState-param-model"><span class="type-annotation"><a href="../../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">model</span></span></li>
-</ol>)
+<span class="name ">initModelState</span>(<wbr>)
 
       
 
@@ -111,9 +110,9 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void initModelState(final Model model) {
-  model._debugLog = null;
-  _initialState = model.toJson(comments: false);
+  <pre class="language-dart"><code class="language-dart">void initModelState() {
+  assert(_model._debugLog == null);
+  _initialState = _model.toJson(comments: false);
 }</code></pre>
 </section>
 
@@ -128,7 +127,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

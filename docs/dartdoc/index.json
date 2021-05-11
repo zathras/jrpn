@@ -152,6 +152,18 @@
   }
  },
  {
+  "name": "keyboard",
+  "qualifiedName": "controller.Controller.keyboard",
+  "href": "controller/Controller/keyboard.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "Controller",
+   "type": "class"
+  }
+ },
+ {
   "name": "model",
   "qualifiedName": "controller.Controller.model",
   "href": "controller/Controller/model.html",
@@ -164,9 +176,33 @@
   }
  },
  {
+  "name": "pasteToX",
+  "qualifiedName": "controller.Controller.pasteToX",
+  "href": "controller/Controller/pasteToX.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "Controller",
+   "type": "class"
+  }
+ },
+ {
   "name": "reset",
   "qualifiedName": "controller.Controller.reset",
   "href": "controller/Controller/reset.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "Controller",
+   "type": "class"
+  }
+ },
+ {
+  "name": "resetAll",
+  "qualifiedName": "controller.Controller.resetAll",
+  "href": "controller/Controller/resetAll.html",
   "type": "method",
   "overriddenDepth": 0,
   "packageName": "jrpn",
@@ -316,6 +352,114 @@
   "packageName": "jrpn",
   "enclosedBy": {
    "name": "GosubOperationArg",
+   "type": "class"
+  }
+ },
+ {
+  "name": "KeyboardController",
+  "qualifiedName": "controller.KeyboardController",
+  "href": "controller/KeyboardController-class.html",
+  "type": "class",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "controller",
+   "type": "library"
+  }
+ },
+ {
+  "name": "KeyboardController",
+  "qualifiedName": "controller.KeyboardController.KeyboardController",
+  "href": "controller/KeyboardController/KeyboardController.html",
+  "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "KeyboardController",
+   "type": "class"
+  }
+ },
+ {
+  "name": "button",
+  "qualifiedName": "controller.KeyboardController.button",
+  "href": "controller/KeyboardController/button.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "KeyboardController",
+   "type": "class"
+  }
+ },
+ {
+  "name": "controller",
+  "qualifiedName": "controller.KeyboardController.controller",
+  "href": "controller/KeyboardController/controller.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "KeyboardController",
+   "type": "class"
+  }
+ },
+ {
+  "name": "deregister",
+  "qualifiedName": "controller.KeyboardController.deregister",
+  "href": "controller/KeyboardController/deregister.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "KeyboardController",
+   "type": "class"
+  }
+ },
+ {
+  "name": "lastKeyDown",
+  "qualifiedName": "controller.KeyboardController.lastKeyDown",
+  "href": "controller/KeyboardController/lastKeyDown.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "KeyboardController",
+   "type": "class"
+  }
+ },
+ {
+  "name": "onKey",
+  "qualifiedName": "controller.KeyboardController.onKey",
+  "href": "controller/KeyboardController/onKey.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "KeyboardController",
+   "type": "class"
+  }
+ },
+ {
+  "name": "register",
+  "qualifiedName": "controller.KeyboardController.register",
+  "href": "controller/KeyboardController/register.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "KeyboardController",
+   "type": "class"
+  }
+ },
+ {
+  "name": "releasePressedButton",
+  "qualifiedName": "controller.KeyboardController.releasePressedButton",
+  "href": "controller/KeyboardController/releasePressedButton.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "KeyboardController",
    "type": "class"
   }
  },
@@ -956,6 +1100,18 @@
   }
  },
  {
+  "name": "keyboard",
+  "qualifiedName": "controller.RealController.keyboard",
+  "href": "controller/RealController/keyboard.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "RealController",
+   "type": "class"
+  }
+ },
+ {
   "name": "runWithArg",
   "qualifiedName": "controller.RealController.runWithArg",
   "href": "controller/RealController/runWithArg.html",
@@ -1045,6 +1201,18 @@
   "href": "controller/RunningController/handlePSE.html",
   "type": "method",
   "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "RunningController",
+   "type": "class"
+  }
+ },
+ {
+  "name": "keyboard",
+  "qualifiedName": "controller.RunningController.keyboard",
+  "href": "controller/RunningController/keyboard.html",
+  "type": "property",
+  "overriddenDepth": 0,
   "packageName": "jrpn",
   "enclosedBy": {
    "name": "RunningController",
@@ -1340,9 +1508,9 @@
   }
  },
  {
-  "name": "StackLiftModifier",
-  "qualifiedName": "controller.StackLiftModifier",
-  "href": "controller/StackLiftModifier-class.html",
+  "name": "StackLiftEnabledUser",
+  "qualifiedName": "controller.StackLiftEnabledUser",
+  "href": "controller/StackLiftEnabledUser-class.html",
   "type": "class",
   "overriddenDepth": 0,
   "packageName": "jrpn",
@@ -1352,38 +1520,38 @@
   }
  },
  {
-  "name": "StackLiftModifier",
-  "qualifiedName": "controller.StackLiftModifier.StackLiftModifier",
-  "href": "controller/StackLiftModifier/StackLiftModifier.html",
+  "name": "StackLiftEnabledUser",
+  "qualifiedName": "controller.StackLiftEnabledUser.StackLiftEnabledUser",
+  "href": "controller/StackLiftEnabledUser/StackLiftEnabledUser.html",
   "type": "constructor",
   "overriddenDepth": 0,
   "packageName": "jrpn",
   "enclosedBy": {
-   "name": "StackLiftModifier",
+   "name": "StackLiftEnabledUser",
    "type": "class"
   }
  },
  {
   "name": "controller",
-  "qualifiedName": "controller.StackLiftModifier.controller",
-  "href": "controller/StackLiftModifier/controller.html",
+  "qualifiedName": "controller.StackLiftEnabledUser.controller",
+  "href": "controller/StackLiftEnabledUser/controller.html",
   "type": "property",
   "overriddenDepth": 0,
   "packageName": "jrpn",
   "enclosedBy": {
-   "name": "StackLiftModifier",
+   "name": "StackLiftEnabledUser",
    "type": "class"
   }
  },
  {
   "name": "stackLiftEnabled",
-  "qualifiedName": "controller.StackLiftModifier.stackLiftEnabled",
-  "href": "controller/StackLiftModifier/stackLiftEnabled.html",
+  "qualifiedName": "controller.StackLiftEnabledUser.stackLiftEnabled",
+  "href": "controller/StackLiftEnabledUser/stackLiftEnabled.html",
   "type": "property",
   "overriddenDepth": 0,
   "packageName": "jrpn",
   "enclosedBy": {
-   "name": "StackLiftModifier",
+   "name": "StackLiftEnabledUser",
    "type": "class"
   }
  },
@@ -4536,6 +4704,18 @@
   }
  },
  {
+  "name": "fromProgramEntry",
+  "qualifiedName": "controller.states.ShowState.fromProgramEntry",
+  "href": "controller.states/ShowState/fromProgramEntry.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ShowState",
+   "type": "class"
+  }
+ },
+ {
   "name": "SingleStepping",
   "qualifiedName": "controller.states.SingleStepping",
   "href": "controller.states/SingleStepping-class.html",
@@ -4732,6 +4912,42 @@
   "packageName": "jrpn"
  },
  {
+  "name": "APPLICATION_ISSUE_ADDRESS",
+  "qualifiedName": "main.APPLICATION_ISSUE_ADDRESS",
+  "href": "main/APPLICATION_ISSUE_ADDRESS-constant.html",
+  "type": "top-level constant",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "main",
+   "type": "library"
+  }
+ },
+ {
+  "name": "APPLICATION_VERSION",
+  "qualifiedName": "main.APPLICATION_VERSION",
+  "href": "main/APPLICATION_VERSION-constant.html",
+  "type": "top-level constant",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "main",
+   "type": "library"
+  }
+ },
+ {
+  "name": "APPLICATION_WEB_ADDRESS",
+  "qualifiedName": "main.APPLICATION_WEB_ADDRESS",
+  "href": "main/APPLICATION_WEB_ADDRESS-constant.html",
+  "type": "top-level constant",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "main",
+   "type": "library"
+  }
+ },
+ {
   "name": "Jrpn",
   "qualifiedName": "main.Jrpn",
   "href": "main/Jrpn-class.html",
@@ -4825,6 +5041,126 @@
   "enclosedBy": {
    "name": "Jrpn",
    "type": "class"
+  }
+ },
+ {
+  "name": "JrpnState",
+  "qualifiedName": "main.JrpnState",
+  "href": "main/JrpnState-class.html",
+  "type": "class",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "main",
+   "type": "library"
+  }
+ },
+ {
+  "name": "JrpnState",
+  "qualifiedName": "main.JrpnState.JrpnState",
+  "href": "main/JrpnState/JrpnState.html",
+  "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "JrpnState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "build",
+  "qualifiedName": "main.JrpnState.build",
+  "href": "main/JrpnState/build.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "JrpnState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "controller",
+  "qualifiedName": "main.JrpnState.controller",
+  "href": "main/JrpnState/controller.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "JrpnState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "didChangeAppLifecycleState",
+  "qualifiedName": "main.JrpnState.didChangeAppLifecycleState",
+  "href": "main/JrpnState/didChangeAppLifecycleState.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "JrpnState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "dispose",
+  "qualifiedName": "main.JrpnState.dispose",
+  "href": "main/JrpnState/dispose.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "JrpnState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "initState",
+  "qualifiedName": "main.JrpnState.initState",
+  "href": "main/JrpnState/initState.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "JrpnState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "keyboard",
+  "qualifiedName": "main.JrpnState.keyboard",
+  "href": "main/JrpnState/keyboard.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "JrpnState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "MIT_LICENSE",
+  "qualifiedName": "main.MIT_LICENSE",
+  "href": "main/MIT_LICENSE-constant.html",
+  "type": "top-level constant",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "main",
+   "type": "library"
+  }
+ },
+ {
+  "name": "NON_WARRANTY",
+  "qualifiedName": "main.NON_WARRANTY",
+  "href": "main/NON_WARRANTY-constant.html",
+  "type": "top-level constant",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "main",
+   "type": "library"
   }
  },
  {
@@ -5196,6 +5532,18 @@
   }
  },
  {
+  "name": "tryParse",
+  "qualifiedName": "model.DisplayMode.tryParse",
+  "href": "model/DisplayMode/tryParse.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "DisplayMode",
+   "type": "class"
+  }
+ },
+ {
   "name": "DisplayModeSelector",
   "qualifiedName": "model.DisplayModeSelector",
   "href": "model/DisplayModeSelector-class.html",
@@ -5448,6 +5796,18 @@
   }
  },
  {
+  "name": "integerSignMode",
+  "qualifiedName": "model.DoubleWordStatus.integerSignMode",
+  "href": "model/DoubleWordStatus/integerSignMode.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "DoubleWordStatus",
+   "type": "class"
+  }
+ },
+ {
   "name": "isFloatMode",
   "qualifiedName": "model.DoubleWordStatus.isFloatMode",
   "href": "model/DoubleWordStatus/isFloatMode.html",
@@ -5583,6 +5943,18 @@
   "name": "signMode",
   "qualifiedName": "model.IntegerDisplayMode.signMode",
   "href": "model/IntegerDisplayMode/signMode.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "IntegerDisplayMode",
+   "type": "class"
+  }
+ },
+ {
+  "name": "tryParse",
+  "qualifiedName": "model.IntegerDisplayMode.tryParse",
+  "href": "model/IntegerDisplayMode/tryParse.html",
   "type": "method",
   "overriddenDepth": 1,
   "packageName": "jrpn",
@@ -6900,6 +7272,18 @@
   }
  },
  {
+  "name": "integerSignMode",
+  "qualifiedName": "model.NumStatus.integerSignMode",
+  "href": "model/NumStatus/integerSignMode.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "NumStatus",
+   "type": "class"
+  }
+ },
+ {
   "name": "isFloatMode",
   "qualifiedName": "model.NumStatus.isFloatMode",
   "href": "model/NumStatus/isFloatMode.html",
@@ -7788,6 +8172,18 @@
   }
  },
  {
+  "name": "helper68",
+  "qualifiedName": "model.Registers.helper68",
+  "href": "model/Registers/helper68.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "Registers",
+   "type": "class"
+  }
+ },
+ {
   "name": "incrementI",
   "qualifiedName": "model.Registers.incrementI",
   "href": "model/Registers/incrementI.html",
@@ -7935,6 +8331,18 @@
   "name": "msPerInstruction",
   "qualifiedName": "model.Settings.msPerInstruction",
   "href": "model/Settings/msPerInstruction.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "Settings",
+   "type": "class"
+  }
+ },
+ {
+  "name": "showAccelerators",
+  "qualifiedName": "model.Settings.showAccelerators",
+  "href": "model/Settings/showAccelerators.html",
   "type": "property",
   "overriddenDepth": 0,
   "packageName": "jrpn",
@@ -8472,6 +8880,254 @@
   }
  },
  {
+  "name": "view.back_panel",
+  "qualifiedName": "view.back_panel",
+  "href": "view.back_panel/view.back_panel-library.html",
+  "type": "library",
+  "overriddenDepth": 0,
+  "packageName": "jrpn"
+ },
+ {
+  "name": "BackPanel",
+  "qualifiedName": "view.back_panel.BackPanel",
+  "href": "view.back_panel/BackPanel-class.html",
+  "type": "class",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "view.back_panel",
+   "type": "library"
+  }
+ },
+ {
+  "name": "BackPanel",
+  "qualifiedName": "view.back_panel.BackPanel.BackPanel",
+  "href": "view.back_panel/BackPanel/BackPanel.html",
+  "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "arrowLeft",
+  "qualifiedName": "view.back_panel.BackPanel.arrowLeft",
+  "href": "view.back_panel/BackPanel/arrowLeft.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "arrowRight",
+  "qualifiedName": "view.back_panel.BackPanel.arrowRight",
+  "href": "view.back_panel/BackPanel/arrowRight.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "buildLandscape",
+  "qualifiedName": "view.back_panel.BackPanel.buildLandscape",
+  "href": "view.back_panel/BackPanel/buildLandscape.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "buildPortrait",
+  "qualifiedName": "view.back_panel.BackPanel.buildPortrait",
+  "href": "view.back_panel/BackPanel/buildPortrait.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "carry",
+  "qualifiedName": "view.back_panel.BackPanel.carry",
+  "href": "view.back_panel/BackPanel/carry.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "cell",
+  "qualifiedName": "view.back_panel.BackPanel.cell",
+  "href": "view.back_panel/BackPanel/cell.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "cellEB",
+  "qualifiedName": "view.back_panel.BackPanel.cellEB",
+  "href": "view.back_panel/BackPanel/cellEB.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "center",
+  "qualifiedName": "view.back_panel.BackPanel.center",
+  "href": "view.back_panel/BackPanel/center.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "errorTable",
+  "qualifiedName": "view.back_panel.BackPanel.errorTable",
+  "href": "view.back_panel/BackPanel/errorTable.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "flagTable",
+  "qualifiedName": "view.back_panel.BackPanel.flagTable",
+  "href": "view.back_panel/BackPanel/flagTable.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "list",
+  "qualifiedName": "view.back_panel.BackPanel.list",
+  "href": "view.back_panel/BackPanel/list.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "operationTable",
+  "qualifiedName": "view.back_panel.BackPanel.operationTable",
+  "href": "view.back_panel/BackPanel/operationTable.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "point",
+  "qualifiedName": "view.back_panel.BackPanel.point",
+  "href": "view.back_panel/BackPanel/point.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "registerBox",
+  "qualifiedName": "view.back_panel.BackPanel.registerBox",
+  "href": "view.back_panel/BackPanel/registerBox.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "row",
+  "qualifiedName": "view.back_panel.BackPanel.row",
+  "href": "view.back_panel/BackPanel/row.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "space",
+  "qualifiedName": "view.back_panel.BackPanel.space",
+  "href": "view.back_panel/BackPanel/space.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "sqrtText",
+  "qualifiedName": "view.back_panel.BackPanel.sqrtText",
+  "href": "view.back_panel/BackPanel/sqrtText.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
+  "name": "text",
+  "qualifiedName": "view.back_panel.BackPanel.text",
+  "href": "view.back_panel/BackPanel/text.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "BackPanel",
+   "type": "class"
+  }
+ },
+ {
   "name": "view.buttons",
   "qualifiedName": "view.buttons",
   "href": "view.buttons/view.buttons-library.html",
@@ -8492,9 +9148,57 @@
   }
  },
  {
+  "name": "ButtonFactory",
+  "qualifiedName": "view.buttons.ButtonFactory.ButtonFactory",
+  "href": "view.buttons/ButtonFactory/ButtonFactory.html",
+  "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "acceleratorTextStyle",
+  "qualifiedName": "view.buttons.ButtonFactory.acceleratorTextStyle",
+  "href": "view.buttons/ButtonFactory/acceleratorTextStyle.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "addUpperGoldLabels",
+  "qualifiedName": "view.buttons.ButtonFactory.addUpperGoldLabels",
+  "href": "view.buttons/ButtonFactory/addUpperGoldLabels.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ButtonFactory",
+   "type": "class"
+  }
+ },
+ {
   "name": "buildButtons",
   "qualifiedName": "view.buttons.ButtonFactory.buildButtons",
   "href": "view.buttons/ButtonFactory/buildButtons.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "buttonLayout",
+  "qualifiedName": "view.buttons.ButtonFactory.buttonLayout",
+  "href": "view.buttons/ButtonFactory/buttonLayout.html",
   "type": "method",
   "overriddenDepth": 0,
   "packageName": "jrpn",
@@ -8532,6 +9236,18 @@
   "qualifiedName": "view.buttons.ButtonFactory.enterKeyTextOffset",
   "href": "view.buttons/ButtonFactory/enterKeyTextOffset.html",
   "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "enterPos",
+  "qualifiedName": "view.buttons.ButtonFactory.enterPos",
+  "href": "view.buttons/ButtonFactory/enterPos.html",
+  "type": "method",
   "overriddenDepth": 0,
   "packageName": "jrpn",
   "enclosedBy": {
@@ -8636,6 +9352,18 @@
   }
  },
  {
+  "name": "gTextStyleForLJ",
+  "qualifiedName": "view.buttons.ButtonFactory.gTextStyleForLJ",
+  "href": "view.buttons/ButtonFactory/gTextStyleForLJ.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ButtonFactory",
+   "type": "class"
+  }
+ },
+ {
   "name": "height",
   "qualifiedName": "view.buttons.ButtonFactory.height",
   "href": "view.buttons/ButtonFactory/height.html",
@@ -8684,10 +9412,10 @@
   }
  },
  {
-  "name": "ButtonFactory.landscape",
-  "qualifiedName": "view.buttons.ButtonFactory.landscape",
-  "href": "view.buttons/ButtonFactory/ButtonFactory.landscape.html",
-  "type": "constructor",
+  "name": "lowerSurface",
+  "qualifiedName": "view.buttons.ButtonFactory.lowerSurface",
+  "href": "view.buttons/ButtonFactory/lowerSurface.html",
+  "type": "property",
   "overriddenDepth": 0,
   "packageName": "jrpn",
   "enclosedBy": {
@@ -8696,9 +9424,21 @@
   }
  },
  {
-  "name": "lowerSurface",
-  "qualifiedName": "view.buttons.ButtonFactory.lowerSurface",
-  "href": "view.buttons/ButtonFactory/lowerSurface.html",
+  "name": "numColumns",
+  "qualifiedName": "view.buttons.ButtonFactory.numColumns",
+  "href": "view.buttons/ButtonFactory/numColumns.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "numRows",
+  "qualifiedName": "view.buttons.ButtonFactory.numRows",
+  "href": "view.buttons/ButtonFactory/numRows.html",
   "type": "property",
   "overriddenDepth": 0,
   "packageName": "jrpn",
@@ -8780,6 +9520,18 @@
   }
  },
  {
+  "name": "totalButtonHeight",
+  "qualifiedName": "view.buttons.ButtonFactory.totalButtonHeight",
+  "href": "view.buttons/ButtonFactory/totalButtonHeight.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ButtonFactory",
+   "type": "class"
+  }
+ },
+ {
   "name": "upperSurface",
   "qualifiedName": "view.buttons.ButtonFactory.upperSurface",
   "href": "view.buttons/ButtonFactory/upperSurface.html",
@@ -8828,6 +9580,30 @@
   }
  },
  {
+  "name": "acceleratorKey",
+  "qualifiedName": "view.buttons.CalculatorButton.acceleratorKey",
+  "href": "view.buttons/CalculatorButton/acceleratorKey.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButton",
+   "type": "class"
+  }
+ },
+ {
+  "name": "acceleratorLabel",
+  "qualifiedName": "view.buttons.CalculatorButton.acceleratorLabel",
+  "href": "view.buttons/CalculatorButton/acceleratorLabel.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButton",
+   "type": "class"
+  }
+ },
+ {
   "name": "bFactory",
   "qualifiedName": "view.buttons.CalculatorButton.bFactory",
   "href": "view.buttons/CalculatorButton/bFactory.html",
@@ -8855,6 +9631,18 @@
   "name": "drawBlueText",
   "qualifiedName": "view.buttons.CalculatorButton.drawBlueText",
   "href": "view.buttons/CalculatorButton/drawBlueText.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButton",
+   "type": "class"
+  }
+ },
+ {
+  "name": "drawKeyboardAccelerator",
+  "qualifiedName": "view.buttons.CalculatorButton.drawKeyboardAccelerator",
+  "href": "view.buttons/CalculatorButton/drawKeyboardAccelerator.html",
   "type": "method",
   "overriddenDepth": 0,
   "packageName": "jrpn",
@@ -9140,6 +9928,150 @@
   }
  },
  {
+  "name": "CalculatorButtonState",
+  "qualifiedName": "view.buttons.CalculatorButtonState",
+  "href": "view.buttons/CalculatorButtonState-class.html",
+  "type": "class",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "view.buttons",
+   "type": "library"
+  }
+ },
+ {
+  "name": "CalculatorButtonState",
+  "qualifiedName": "view.buttons.CalculatorButtonState.CalculatorButtonState",
+  "href": "view.buttons/CalculatorButtonState/CalculatorButtonState.html",
+  "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButtonState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "build",
+  "qualifiedName": "view.buttons.CalculatorButtonState.build",
+  "href": "view.buttons/CalculatorButtonState/build.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButtonState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "didUpdateWidget",
+  "qualifiedName": "view.buttons.CalculatorButtonState.didUpdateWidget",
+  "href": "view.buttons/CalculatorButtonState/didUpdateWidget.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButtonState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "dispose",
+  "qualifiedName": "view.buttons.CalculatorButtonState.dispose",
+  "href": "view.buttons/CalculatorButtonState/dispose.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButtonState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "factory",
+  "qualifiedName": "view.buttons.CalculatorButtonState.factory",
+  "href": "view.buttons/CalculatorButtonState/factory.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButtonState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "initState",
+  "qualifiedName": "view.buttons.CalculatorButtonState.initState",
+  "href": "view.buttons/CalculatorButtonState/initState.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButtonState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "keyPressed",
+  "qualifiedName": "view.buttons.CalculatorButtonState.keyPressed",
+  "href": "view.buttons/CalculatorButtonState/keyPressed.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButtonState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "keyReleased",
+  "qualifiedName": "view.buttons.CalculatorButtonState.keyReleased",
+  "href": "view.buttons/CalculatorButtonState/keyReleased.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButtonState",
+   "type": "class"
+  }
+ },
+ {
+  "name": "CalculatorButtonWithLJ",
+  "qualifiedName": "view.buttons.CalculatorButtonWithLJ",
+  "href": "view.buttons/CalculatorButtonWithLJ-class.html",
+  "type": "class",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "view.buttons",
+   "type": "library"
+  }
+ },
+ {
+  "name": "CalculatorButtonWithLJ",
+  "qualifiedName": "view.buttons.CalculatorButtonWithLJ.CalculatorButtonWithLJ",
+  "href": "view.buttons/CalculatorButtonWithLJ/CalculatorButtonWithLJ.html",
+  "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButtonWithLJ",
+   "type": "class"
+  }
+ },
+ {
+  "name": "drawBlueText",
+  "qualifiedName": "view.buttons.CalculatorButtonWithLJ.drawBlueText",
+  "href": "view.buttons/CalculatorButtonWithLJ/drawBlueText.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorButtonWithLJ",
+   "type": "class"
+  }
+ },
+ {
   "name": "CalculatorEnterButton",
   "qualifiedName": "view.buttons.CalculatorEnterButton",
   "href": "view.buttons/CalculatorEnterButton-class.html",
@@ -9296,6 +10228,18 @@
   }
  },
  {
+  "name": "extraAcceleratorName",
+  "qualifiedName": "view.buttons.CalculatorFButton.extraAcceleratorName",
+  "href": "view.buttons/CalculatorFButton/extraAcceleratorName.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorFButton",
+   "type": "class"
+  }
+ },
+ {
   "name": "innerBorderColor",
   "qualifiedName": "view.buttons.CalculatorFButton.innerBorderColor",
   "href": "view.buttons/CalculatorFButton/innerBorderColor.html",
@@ -9396,6 +10340,18 @@
   "qualifiedName": "view.buttons.CalculatorGButton.CalculatorGButton",
   "href": "view.buttons/CalculatorGButton/CalculatorGButton.html",
   "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorGButton",
+   "type": "class"
+  }
+ },
+ {
+  "name": "extraAcceleratorName",
+  "qualifiedName": "view.buttons.CalculatorGButton.extraAcceleratorName",
+  "href": "view.buttons/CalculatorGButton/extraAcceleratorName.html",
+  "type": "property",
   "overriddenDepth": 0,
   "packageName": "jrpn",
   "enclosedBy": {
@@ -9656,6 +10612,54 @@
   }
  },
  {
+  "name": "CalculatorShiftButton",
+  "qualifiedName": "view.buttons.CalculatorShiftButton",
+  "href": "view.buttons/CalculatorShiftButton-class.html",
+  "type": "class",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "view.buttons",
+   "type": "library"
+  }
+ },
+ {
+  "name": "CalculatorShiftButton",
+  "qualifiedName": "view.buttons.CalculatorShiftButton.CalculatorShiftButton",
+  "href": "view.buttons/CalculatorShiftButton/CalculatorShiftButton.html",
+  "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorShiftButton",
+   "type": "class"
+  }
+ },
+ {
+  "name": "drawKeyboardAccelerator",
+  "qualifiedName": "view.buttons.CalculatorShiftButton.drawKeyboardAccelerator",
+  "href": "view.buttons/CalculatorShiftButton/drawKeyboardAccelerator.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorShiftButton",
+   "type": "class"
+  }
+ },
+ {
+  "name": "extraAcceleratorName",
+  "qualifiedName": "view.buttons.CalculatorShiftButton.extraAcceleratorName",
+  "href": "view.buttons/CalculatorShiftButton/extraAcceleratorName.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "CalculatorShiftButton",
+   "type": "class"
+  }
+ },
+ {
   "name": "CalculatorSqrtButton",
   "qualifiedName": "view.buttons.CalculatorSqrtButton",
   "href": "view.buttons/CalculatorSqrtButton-class.html",
@@ -9688,6 +10692,198 @@
   "packageName": "jrpn",
   "enclosedBy": {
    "name": "CalculatorSqrtButton",
+   "type": "class"
+  }
+ },
+ {
+  "name": "LandscapeButtonFactory",
+  "qualifiedName": "view.buttons.LandscapeButtonFactory",
+  "href": "view.buttons/LandscapeButtonFactory-class.html",
+  "type": "class",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "view.buttons",
+   "type": "library"
+  }
+ },
+ {
+  "name": "LandscapeButtonFactory",
+  "qualifiedName": "view.buttons.LandscapeButtonFactory.LandscapeButtonFactory",
+  "href": "view.buttons/LandscapeButtonFactory/LandscapeButtonFactory.html",
+  "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "LandscapeButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "addUpperGoldLabels",
+  "qualifiedName": "view.buttons.LandscapeButtonFactory.addUpperGoldLabels",
+  "href": "view.buttons/LandscapeButtonFactory/addUpperGoldLabels.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "LandscapeButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "buttonLayout",
+  "qualifiedName": "view.buttons.LandscapeButtonFactory.buttonLayout",
+  "href": "view.buttons/LandscapeButtonFactory/buttonLayout.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "LandscapeButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "enterPos",
+  "qualifiedName": "view.buttons.LandscapeButtonFactory.enterPos",
+  "href": "view.buttons/LandscapeButtonFactory/enterPos.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "LandscapeButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "numColumns",
+  "qualifiedName": "view.buttons.LandscapeButtonFactory.numColumns",
+  "href": "view.buttons/LandscapeButtonFactory/numColumns.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "LandscapeButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "numRows",
+  "qualifiedName": "view.buttons.LandscapeButtonFactory.numRows",
+  "href": "view.buttons/LandscapeButtonFactory/numRows.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "LandscapeButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "totalButtonHeight",
+  "qualifiedName": "view.buttons.LandscapeButtonFactory.totalButtonHeight",
+  "href": "view.buttons/LandscapeButtonFactory/totalButtonHeight.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "LandscapeButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "PortraitButtonFactory",
+  "qualifiedName": "view.buttons.PortraitButtonFactory",
+  "href": "view.buttons/PortraitButtonFactory-class.html",
+  "type": "class",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "view.buttons",
+   "type": "library"
+  }
+ },
+ {
+  "name": "PortraitButtonFactory",
+  "qualifiedName": "view.buttons.PortraitButtonFactory.PortraitButtonFactory",
+  "href": "view.buttons/PortraitButtonFactory/PortraitButtonFactory.html",
+  "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "PortraitButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "addUpperGoldLabels",
+  "qualifiedName": "view.buttons.PortraitButtonFactory.addUpperGoldLabels",
+  "href": "view.buttons/PortraitButtonFactory/addUpperGoldLabels.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "PortraitButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "buttonLayout",
+  "qualifiedName": "view.buttons.PortraitButtonFactory.buttonLayout",
+  "href": "view.buttons/PortraitButtonFactory/buttonLayout.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "PortraitButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "enterPos",
+  "qualifiedName": "view.buttons.PortraitButtonFactory.enterPos",
+  "href": "view.buttons/PortraitButtonFactory/enterPos.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "PortraitButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "numColumns",
+  "qualifiedName": "view.buttons.PortraitButtonFactory.numColumns",
+  "href": "view.buttons/PortraitButtonFactory/numColumns.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "PortraitButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "numRows",
+  "qualifiedName": "view.buttons.PortraitButtonFactory.numRows",
+  "href": "view.buttons/PortraitButtonFactory/numRows.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "PortraitButtonFactory",
+   "type": "class"
+  }
+ },
+ {
+  "name": "totalButtonHeight",
+  "qualifiedName": "view.buttons.PortraitButtonFactory.totalButtonHeight",
+  "href": "view.buttons/PortraitButtonFactory/totalButtonHeight.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "PortraitButtonFactory",
    "type": "class"
   }
  },
@@ -10068,6 +11264,66 @@
   }
  },
  {
+  "name": "ErrorDialog",
+  "qualifiedName": "view.main_screen.ErrorDialog",
+  "href": "view.main_screen/ErrorDialog-class.html",
+  "type": "class",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "view.main_screen",
+   "type": "library"
+  }
+ },
+ {
+  "name": "ErrorDialog",
+  "qualifiedName": "view.main_screen.ErrorDialog.ErrorDialog",
+  "href": "view.main_screen/ErrorDialog/ErrorDialog.html",
+  "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ErrorDialog",
+   "type": "class"
+  }
+ },
+ {
+  "name": "build",
+  "qualifiedName": "view.main_screen.ErrorDialog.build",
+  "href": "view.main_screen/ErrorDialog/build.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ErrorDialog",
+   "type": "class"
+  }
+ },
+ {
+  "name": "exception",
+  "qualifiedName": "view.main_screen.ErrorDialog.exception",
+  "href": "view.main_screen/ErrorDialog/exception.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ErrorDialog",
+   "type": "class"
+  }
+ },
+ {
+  "name": "message",
+  "qualifiedName": "view.main_screen.ErrorDialog.message",
+  "href": "view.main_screen/ErrorDialog/message.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "ErrorDialog",
+   "type": "class"
+  }
+ },
+ {
   "name": "MainMenu",
   "qualifiedName": "view.main_screen.MainMenu",
   "href": "view.main_screen/MainMenu-class.html",
@@ -10116,6 +11372,18 @@
   }
  },
  {
+  "name": "screen",
+  "qualifiedName": "view.main_screen.MainMenu.screen",
+  "href": "view.main_screen/MainMenu/screen.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "MainMenu",
+   "type": "class"
+  }
+ },
+ {
   "name": "MainScreen",
   "qualifiedName": "view.main_screen.MainScreen",
   "href": "view.main_screen/MainScreen-class.html",
@@ -10152,9 +11420,21 @@
   }
  },
  {
-  "name": "build",
-  "qualifiedName": "view.main_screen.MainScreen.build",
-  "href": "view.main_screen/MainScreen/build.html",
+  "name": "buildLandscape",
+  "qualifiedName": "view.main_screen.MainScreen.buildLandscape",
+  "href": "view.main_screen/MainScreen/buildLandscape.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "MainScreen",
+   "type": "class"
+  }
+ },
+ {
+  "name": "buildPortrait",
+  "qualifiedName": "view.main_screen.MainScreen.buildPortrait",
+  "href": "view.main_screen/MainScreen/buildPortrait.html",
   "type": "method",
   "overriddenDepth": 1,
   "packageName": "jrpn",
@@ -10176,6 +11456,42 @@
   }
  },
  {
+  "name": "deadZoneColor",
+  "qualifiedName": "view.main_screen.MainScreen.deadZoneColor",
+  "href": "view.main_screen/MainScreen/deadZoneColor-constant.html",
+  "type": "constant",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "MainScreen",
+   "type": "class"
+  }
+ },
+ {
+  "name": "keyFrameSilver",
+  "qualifiedName": "view.main_screen.MainScreen.keyFrameSilver",
+  "href": "view.main_screen/MainScreen/keyFrameSilver-constant.html",
+  "type": "constant",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "MainScreen",
+   "type": "class"
+  }
+ },
+ {
+  "name": "keyboardBaseColor",
+  "qualifiedName": "view.main_screen.MainScreen.keyboardBaseColor",
+  "href": "view.main_screen/MainScreen/keyboardBaseColor-constant.html",
+  "type": "constant",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "MainScreen",
+   "type": "class"
+  }
+ },
+ {
   "name": "model",
   "qualifiedName": "view.main_screen.MainScreen.model",
   "href": "view.main_screen/MainScreen/model.html",
@@ -10188,14 +11504,86 @@
   }
  },
  {
-  "name": "screen",
-  "qualifiedName": "view.main_screen.MainScreen.screen",
-  "href": "view.main_screen/MainScreen/screen.html",
+  "name": "OrientedScreen",
+  "qualifiedName": "view.main_screen.OrientedScreen",
+  "href": "view.main_screen/OrientedScreen-class.html",
+  "type": "class",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "view.main_screen",
+   "type": "library"
+  }
+ },
+ {
+  "name": "OrientedScreen",
+  "qualifiedName": "view.main_screen.OrientedScreen.OrientedScreen",
+  "href": "view.main_screen/OrientedScreen/OrientedScreen.html",
+  "type": "constructor",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "OrientedScreen",
+   "type": "class"
+  }
+ },
+ {
+  "name": "build",
+  "qualifiedName": "view.main_screen.OrientedScreen.build",
+  "href": "view.main_screen/OrientedScreen/build.html",
+  "type": "method",
+  "overriddenDepth": 1,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "OrientedScreen",
+   "type": "class"
+  }
+ },
+ {
+  "name": "buildLandscape",
+  "qualifiedName": "view.main_screen.OrientedScreen.buildLandscape",
+  "href": "view.main_screen/OrientedScreen/buildLandscape.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "OrientedScreen",
+   "type": "class"
+  }
+ },
+ {
+  "name": "buildPortrait",
+  "qualifiedName": "view.main_screen.OrientedScreen.buildPortrait",
+  "href": "view.main_screen/OrientedScreen/buildPortrait.html",
+  "type": "method",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "OrientedScreen",
+   "type": "class"
+  }
+ },
+ {
+  "name": "landscape",
+  "qualifiedName": "view.main_screen.OrientedScreen.landscape",
+  "href": "view.main_screen/OrientedScreen/landscape.html",
   "type": "property",
   "overriddenDepth": 0,
   "packageName": "jrpn",
   "enclosedBy": {
-   "name": "MainScreen",
+   "name": "OrientedScreen",
+   "type": "class"
+  }
+ },
+ {
+  "name": "portrait",
+  "qualifiedName": "view.main_screen.OrientedScreen.portrait",
+  "href": "view.main_screen/OrientedScreen/portrait.html",
+  "type": "property",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "OrientedScreen",
    "type": "class"
   }
  },
@@ -10257,6 +11645,18 @@
   "enclosedBy": {
    "name": "ScreenPositioner",
    "type": "class"
+  }
+ },
+ {
+  "name": "showErrorDialog",
+  "qualifiedName": "view.main_screen.showErrorDialog",
+  "href": "view.main_screen/showErrorDialog.html",
+  "type": "function",
+  "overriddenDepth": 0,
+  "packageName": "jrpn",
+  "enclosedBy": {
+   "name": "view.main_screen",
+   "type": "library"
   }
  }
 ]

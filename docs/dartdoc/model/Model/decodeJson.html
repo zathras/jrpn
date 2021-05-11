@@ -193,7 +193,7 @@ that causes bad behavior in the calculator.</p>
   if (debugLog == null) {
     _debugLog = null;
   } else {
-    _debugLog = DebugLog.fromJson(debugLog as Map&lt;String, dynamic&gt;);
+    _debugLog = DebugLog.fromJson(debugLog as Map&lt;String, dynamic&gt;, this);
   }
   display.window = 0;
   _needsSave = needsSave;
@@ -211,7 +211,7 @@ that causes bad behavior in the calculator.</p>
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

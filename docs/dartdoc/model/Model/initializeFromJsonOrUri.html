@@ -150,7 +150,7 @@
     <section class="multi-line-signature">
       
 
-<span class="returntype">void</span>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
 <span class="name ">initializeFromJsonOrUri</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="initializeFromJsonOrUri-param-linkOrJson"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">linkOrJson</span></span></li>
 </ol>)
 
@@ -163,11 +163,14 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void initializeFromJsonOrUri(String linkOrJson) {
+  <pre class="language-dart"><code class="language-dart">bool initializeFromJsonOrUri(String linkOrJson) {
   final String js;
   if (linkOrJson.startsWith(&#39;http:&#47;&#47;&#39;) || linkOrJson.startsWith(&#39;https:&#47;&#47;&#39;)) {
     final q = Uri.tryParse(linkOrJson)?.queryParameters;
-    final String? qs = (q == null) ? null : q[&#39;state&#39;];
+    if (q == null || q.isEmpty) {
+      return false;
+    }
+    final String? qs = q[&#39;state&#39;];
     if (qs == null) {
       throw ArgumentError(&#39;No state query parameter in $linkOrJson&#39;);
     }
@@ -181,6 +184,7 @@
   } finally {
     display.displayX(flash: false);
   }
+  return true;
 }</code></pre>
 </section>
 
@@ -195,7 +199,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

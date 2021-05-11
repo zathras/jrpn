@@ -60,12 +60,17 @@
   <li class="section-title"><a href="../view.buttons/view.buttons-library.html#classes">Classes</a></li>
   <li><a href="../view.buttons/ButtonFactory-class.html">ButtonFactory</a></li>
   <li><a href="../view.buttons/CalculatorButton-class.html">CalculatorButton</a></li>
+  <li><a href="../view.buttons/CalculatorButtonState-class.html">CalculatorButtonState</a></li>
+  <li><a href="../view.buttons/CalculatorButtonWithLJ-class.html">CalculatorButtonWithLJ</a></li>
   <li><a href="../view.buttons/CalculatorEnterButton-class.html">CalculatorEnterButton</a></li>
   <li><a href="../view.buttons/CalculatorFButton-class.html">CalculatorFButton</a></li>
   <li><a href="../view.buttons/CalculatorGButton-class.html">CalculatorGButton</a></li>
   <li><a href="../view.buttons/CalculatorOnButton-class.html">CalculatorOnButton</a></li>
   <li><a href="../view.buttons/CalculatorOnSpecialButton-class.html">CalculatorOnSpecialButton</a></li>
+  <li><a href="../view.buttons/CalculatorShiftButton-class.html">CalculatorShiftButton</a></li>
   <li><a href="../view.buttons/CalculatorSqrtButton-class.html">CalculatorSqrtButton</a></li>
+  <li><a href="../view.buttons/LandscapeButtonFactory-class.html">LandscapeButtonFactory</a></li>
+  <li><a href="../view.buttons/PortraitButtonFactory-class.html">PortraitButtonFactory</a></li>
 
 
 
@@ -117,7 +122,7 @@ up depends on the specific font, which is bundled with the app.</p>
 
       <dl class="constructor-summary-list">
         <dt id="CalculatorSqrtButton" class="callable">
-          <span class="name"><a href="../view.buttons/CalculatorSqrtButton/CalculatorSqrtButton.html">CalculatorSqrtButton</a></span><span class="signature">(<span class="parameter" id="-param-factory"><span class="type-annotation"><a href="../view.buttons/ButtonFactory-class.html">ButtonFactory</a></span> <span class="parameter-name">factory</span>, </span><span class="parameter" id="-param-uText"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">uText</span>, </span><span class="parameter" id="-param-fText"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">fText</span>, </span><span class="parameter" id="-param-gText"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">gText</span>, </span><span class="parameter" id="-param-uKey"><span class="type-annotation"><a href="../controller/NormalOperation-class.html">NormalOperation</a></span> <span class="parameter-name">uKey</span>, </span><span class="parameter" id="-param-fKey"><span class="type-annotation"><a href="../controller/NormalOperation-class.html">NormalOperation</a></span> <span class="parameter-name">fKey</span>, </span><span class="parameter" id="-param-gKey"><span class="type-annotation"><a href="../controller/NormalOperation-class.html">NormalOperation</a></span> <span class="parameter-name">gKey</span></span>)</span>
+          <span class="name"><a href="../view.buttons/CalculatorSqrtButton/CalculatorSqrtButton.html">CalculatorSqrtButton</a></span><span class="signature">(<span class="parameter" id="-param-factory"><span class="type-annotation"><a href="../view.buttons/ButtonFactory-class.html">ButtonFactory</a></span> <span class="parameter-name">factory</span>, </span><span class="parameter" id="-param-uText"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">uText</span>, </span><span class="parameter" id="-param-fText"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">fText</span>, </span><span class="parameter" id="-param-gText"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">gText</span>, </span><span class="parameter" id="-param-uKey"><span class="type-annotation"><a href="../controller/NormalOperation-class.html">NormalOperation</a></span> <span class="parameter-name">uKey</span>, </span><span class="parameter" id="-param-fKey"><span class="type-annotation"><a href="../controller/NormalOperation-class.html">NormalOperation</a></span> <span class="parameter-name">fKey</span>, </span><span class="parameter" id="-param-gKey"><span class="type-annotation"><a href="../controller/NormalOperation-class.html">NormalOperation</a></span> <span class="parameter-name">gKey</span>, </span><span class="parameter" id="-param-rawKeyboardKey"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rawKeyboardKey</span></span>)</span>
         </dt>
         <dd>
            
@@ -129,6 +134,28 @@ up depends on the specific font, which is bundled with the app.</p>
       <h2>Properties</h2>
 
       <dl class="properties">
+        <dt id="acceleratorKey" class="property inherited">
+  <span class="name"><a href="../view.buttons/CalculatorButton/acceleratorKey.html">acceleratorKey</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> 
+
+</dt>
+<dd class="inherited">
+  Key (or keys) to generate a press of this button 
+  <div class="features">final, inherited</div>
+
+</dd>
+
+        <dt id="acceleratorLabel" class="property inherited">
+  <span class="name"><a href="../view.buttons/CalculatorButton/acceleratorLabel.html">acceleratorLabel</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> 
+
+</dt>
+<dd class="inherited">
+   
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
         <dt id="bFactory" class="property inherited">
   <span class="name"><a href="../view.buttons/CalculatorButton/bFactory.html">bFactory</a></span>
   <span class="signature">&#8594; <a href="../view.buttons/ButtonFactory-class.html">ButtonFactory</a></span> 
@@ -425,7 +452,7 @@ up depends on the specific font, which is bundled with the app.</p>
 
         <dt id="createState" class="callable inherited">
   <span class="name"><a href="../view.buttons/CalculatorButton/createState.html">createState</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; _CalculatorButtonState</span>
+    <span class="returntype parameter">&#8594; <a href="../view.buttons/CalculatorButtonState-class.html">CalculatorButtonState</a></span>
   </span>
   
 
@@ -476,6 +503,19 @@ children. <a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree
 
 </dd>
 
+        <dt id="drawKeyboardAccelerator" class="callable inherited">
+  <span class="name"><a href="../view.buttons/CalculatorButton/drawKeyboardAccelerator.html">drawKeyboardAccelerator</a></span><span class="signature">(<wbr><span class="parameter" id="drawKeyboardAccelerator-param-canvas"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Canvas-class.html">Canvas</a></span> <span class="parameter-name">canvas</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+   
+  <div class="features">inherited</div>
+
+</dd>
+
         <dt id="drawWhiteText" class="callable inherited">
   <span class="name"><a href="../view.buttons/CalculatorButton/drawWhiteText.html">drawWhiteText</a></span><span class="signature">(<wbr><span class="parameter" id="drawWhiteText-param-canvas"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Canvas-class.html">Canvas</a></span> <span class="parameter-name">canvas</span>, </span><span class="parameter" id="drawWhiteText-param-style"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/painting/TextStyle-class.html">TextStyle</a></span> <span class="parameter-name">style</span>, </span><span class="parameter" id="drawWhiteText-param-text"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">text</span>, </span><span class="parameter" id="drawWhiteText-param-w"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">w</span></span>)
     <span class="returntype parameter">&#8594; void</span>
@@ -503,7 +543,7 @@ children. <a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree
 </dd>
 
         <dt id="paintForPainter" class="callable inherited">
-  <span class="name"><a href="../view.buttons/CalculatorButton/paintForPainter.html">paintForPainter</a></span><span class="signature">(<wbr><span class="parameter" id="paintForPainter-param-canvas"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Canvas-class.html">Canvas</a></span> <span class="parameter-name">canvas</span>, </span><span class="parameter" id="paintForPainter-param-size"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Size-class.html">Size</a></span> <span class="parameter-name">size</span>, </span><span class="parameter" id="paintForPainter-param-pressed">{<span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">pressed</span>}</span>)
+  <span class="name"><a href="../view.buttons/CalculatorButton/paintForPainter.html">paintForPainter</a></span><span class="signature">(<wbr><span class="parameter" id="paintForPainter-param-canvas"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Canvas-class.html">Canvas</a></span> <span class="parameter-name">canvas</span>, </span><span class="parameter" id="paintForPainter-param-size"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Size-class.html">Size</a></span> <span class="parameter-name">size</span>, </span><span class="parameter" id="paintForPainter-param-pressed">{<span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">pressed</span>, </span><span class="parameter" id="paintForPainter-param-pressedFromKeyboard"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">pressedFromKeyboard</span>, </span><span class="parameter" id="paintForPainter-param-showAccelerators"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">showAccelerators</span>}</span>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
@@ -618,6 +658,8 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
     <li class="section-title inherited">
       <a href="../view.buttons/CalculatorSqrtButton-class.html#instance-properties">Properties</a>
     </li>
+    <li class="inherited"><a href="../view.buttons/CalculatorButton/acceleratorKey.html">acceleratorKey</a></li>
+    <li class="inherited"><a href="../view.buttons/CalculatorButton/acceleratorLabel.html">acceleratorLabel</a></li>
     <li class="inherited"><a href="../view.buttons/CalculatorButton/bFactory.html">bFactory</a></li>
     <li class="inherited"><a href="../view.buttons/CalculatorButton/fKey.html">fKey</a></li>
     <li class="inherited"><a href="../view.buttons/CalculatorButton/fText.html">fText</a></li>
@@ -650,6 +692,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
     <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/debugDescribeChildren.html">debugDescribeChildren</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties</a></li>
     <li><a href="../view.buttons/CalculatorSqrtButton/drawBlueText.html">drawBlueText</a></li>
+    <li class="inherited"><a href="../view.buttons/CalculatorButton/drawKeyboardAccelerator.html">drawKeyboardAccelerator</a></li>
     <li class="inherited"><a href="../view.buttons/CalculatorButton/drawWhiteText.html">drawWhiteText</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../view.buttons/CalculatorButton/paintForPainter.html">paintForPainter</a></li>
@@ -674,7 +717,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

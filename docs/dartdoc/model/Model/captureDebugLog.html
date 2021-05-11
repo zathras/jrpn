@@ -189,8 +189,14 @@ tool to facilitate bug reports.</p>
 
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">set captureDebugLog(bool v) =&gt;
-    _debugLog ??= (v ? (DebugLog()..initModelState(this)) : null);</code></pre>
+  <pre class="language-dart"><code class="language-dart">set captureDebugLog(bool v) {
+  if (v) {
+    _debugLog ??= (DebugLog(this)
+      ..initModelState());
+  } else {
+    _debugLog = null;
+  }
+}</code></pre>
 </section>
 
 </section>
@@ -205,7 +211,7 @@ tool to facilitate bug reports.</p>
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

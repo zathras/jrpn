@@ -119,7 +119,16 @@
   if (op.maxArg &gt; 0) {
     final String as;
     if (argValue &lt; 16) {
-      as = &#39; ${argValue.toRadixString(16)}&#39;;
+      if (argValue == 10 &amp;&amp; op.maxArg == 10) {
+        as = &#39;48&#39;;
+        &#47;&#47; Special case:  f-FLOAT is the only key that takes arguments
+        &#47;&#47; from 0 to 10, with 10 being input as &quot;.&quot;.  It means &quot;scientific
+        &#47;&#47; notation,&quot; so semantically it&#39;s not really &quot;A&quot;, and the 16C
+        &#47;&#47; displays it is 48 (which is &quot;.&quot;).  I guess the 16C&#39;s behavior
+        &#47;&#47; makes sense!
+      } else {
+        as = &#39; ${argValue.toRadixString(16)}&#39;;
+      }
     } else if (argIsParenI) {
       as = &#39;31&#39;;
     } else if (argIsI) {
@@ -147,7 +156,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

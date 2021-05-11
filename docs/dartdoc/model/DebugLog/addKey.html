@@ -111,7 +111,17 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void addKey(ProgramOperation key) =&gt; _keys.add(key._opCode);</code></pre>
+  <pre class="language-dart"><code class="language-dart">void addKey(ProgramOperation key) {
+  if (_keys.length &gt;= 1000) { &#47;&#47; ridiculously big
+    &#47;&#47; So we reset it, so as to not fill up memory
+    _model._debugLog = null;
+    final replacement = DebugLog(_model)..initModelState();
+    _model._debugLog = replacement;
+    replacement.addKey(key);
+  } else {
+    _keys.add(key._opCode);
+  }
+}</code></pre>
 </section>
 
 
@@ -125,7 +135,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

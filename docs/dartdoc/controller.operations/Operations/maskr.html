@@ -221,7 +221,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static final NormalOperation maskr = NormalOperation.intOnly(
     intCalc: (Model m) =&gt;
-        m.resultX = Value.fromInternal(_maskr(_numberOfBits(m.x, m))),
+        m.resultX = Value.fromInternal(_maskr(_numberOfBits(m.xI.abs(), m))),
     name: &#39;MASKR&#39;);
 
 </code></pre>
@@ -238,7 +238,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

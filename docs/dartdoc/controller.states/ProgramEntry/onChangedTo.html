@@ -139,7 +139,9 @@
   <pre class="language-dart"><code class="language-dart">@override
 void onChangedTo() {
   model.prgmFlag = true;
-  program.displayCurrent();
+  if (!_alreadyDisplayed) {
+    program.displayCurrent();
+  }
 }</code></pre>
 </section>
 
@@ -154,7 +156,7 @@ void onChangedTo() {
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

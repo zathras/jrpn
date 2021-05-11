@@ -136,7 +136,8 @@
   <pre class="language-dart"><code class="language-dart">@override
 void handleShowMem() {
   _handleShowMemImpl(model);
-  changeState(ShowState(this));
+  _alreadyDisplayed = true;
+  changeState(ShowState(this, fromProgramEntry: true));
 }</code></pre>
 </section>
 
@@ -151,7 +152,7 @@ void handleShowMem() {
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

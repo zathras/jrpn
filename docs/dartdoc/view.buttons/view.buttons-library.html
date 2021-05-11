@@ -62,6 +62,7 @@
       <li><a href="../generated_plugin_registrant/generated_plugin_registrant-library.html">generated_plugin_registrant</a></li>
       <li><a href="../main/main-library.html">main</a></li>
       <li><a href="../model/model-library.html">model</a></li>
+      <li><a href="../view.back_panel/view.back_panel-library.html">view.back_panel</a></li>
       <li><a href="../view.buttons/view.buttons-library.html">view.buttons</a></li>
       <li><a href="../view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
       <li><a href="../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
@@ -78,7 +79,7 @@
 
     
 <section class="desc markdown">
-  <p>Buttons for the keyboard.  When pressed, buttons consult the <a href="../model/Model-class.html">Model</a> to see 
+  <p>Buttons for the keyboard.  When pressed, buttons consult the <a href="../model/Model-class.html">Model</a> to see
 if a shift key has been pressed, and dispatch an appropriate
 <a href="../controller/Operation-class.html">Operation</a> to the <a href="../controller/Controller-class.html">Controller</a>.</p>
 <p>The overall structure is this:
@@ -111,6 +112,23 @@ Flutter <code>CustomPaint</code> with a painter that delegates back to the
 method that uses the various <code>drawXXX()</code> methods and the getters defined
 here to draw a button.  The defaults provided here work for most buttons,
 but are specialized for buttons that have a distinct visual appearance. <a href="../view.buttons/CalculatorButton-class.html">[...]</a>
+</dd>
+
+        <dt id="CalculatorButtonState">
+  <span class="name "><a href="../view.buttons/CalculatorButtonState-class.html">CalculatorButtonState</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="CalculatorButtonWithLJ">
+  <span class="name "><a href="../view.buttons/CalculatorButtonWithLJ-class.html">CalculatorButtonWithLJ</a></span> 
+
+</dt>
+<dd>
+  The button that has LJ in blue text.  Deja vu Sans has a really ugly "J",
+so we change the font. 
 </dd>
 
         <dt id="CalculatorEnterButton">
@@ -158,6 +176,14 @@ with the on'off button.  Such buttons show text describing their special
 function when the on/off button has been pressed. 
 </dd>
 
+        <dt id="CalculatorShiftButton">
+  <span class="name "><a href="../view.buttons/CalculatorShiftButton-class.html">CalculatorShiftButton</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
         <dt id="CalculatorSqrtButton">
   <span class="name "><a href="../view.buttons/CalculatorSqrtButton-class.html">CalculatorSqrtButton</a></span> 
 
@@ -166,6 +192,22 @@ function when the on/off button has been pressed.
   The square root button, which draws and extra line above the blue
 label to visually complete the square-root symbol.  Lining this
 up depends on the specific font, which is bundled with the app. 
+</dd>
+
+        <dt id="LandscapeButtonFactory">
+  <span class="name "><a href="../view.buttons/LandscapeButtonFactory-class.html">LandscapeButtonFactory</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="PortraitButtonFactory">
+  <span class="name "><a href="../view.buttons/PortraitButtonFactory-class.html">PortraitButtonFactory</a></span> 
+
+</dt>
+<dd>
+   
 </dd>
 
       </dl>
@@ -187,12 +229,17 @@ up depends on the specific font, which is bundled with the app.
   <li class="section-title"><a href="../view.buttons/view.buttons-library.html#classes">Classes</a></li>
   <li><a href="../view.buttons/ButtonFactory-class.html">ButtonFactory</a></li>
   <li><a href="../view.buttons/CalculatorButton-class.html">CalculatorButton</a></li>
+  <li><a href="../view.buttons/CalculatorButtonState-class.html">CalculatorButtonState</a></li>
+  <li><a href="../view.buttons/CalculatorButtonWithLJ-class.html">CalculatorButtonWithLJ</a></li>
   <li><a href="../view.buttons/CalculatorEnterButton-class.html">CalculatorEnterButton</a></li>
   <li><a href="../view.buttons/CalculatorFButton-class.html">CalculatorFButton</a></li>
   <li><a href="../view.buttons/CalculatorGButton-class.html">CalculatorGButton</a></li>
   <li><a href="../view.buttons/CalculatorOnButton-class.html">CalculatorOnButton</a></li>
   <li><a href="../view.buttons/CalculatorOnSpecialButton-class.html">CalculatorOnSpecialButton</a></li>
+  <li><a href="../view.buttons/CalculatorShiftButton-class.html">CalculatorShiftButton</a></li>
   <li><a href="../view.buttons/CalculatorSqrtButton-class.html">CalculatorSqrtButton</a></li>
+  <li><a href="../view.buttons/LandscapeButtonFactory-class.html">LandscapeButtonFactory</a></li>
+  <li><a href="../view.buttons/PortraitButtonFactory-class.html">PortraitButtonFactory</a></li>
 
 
 
@@ -210,7 +257,7 @@ up depends on the specific font, which is bundled with the app.
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

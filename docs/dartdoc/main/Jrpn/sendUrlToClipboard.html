@@ -123,7 +123,7 @@
   <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; sendUrlToClipboard({required bool comments}) {
   final bytes = ZLibEncoder().encode(_getJson(comments: comments).codeUnits);
   final j = base64UrlEncode(bytes);
-  final s = &#39;https:&#47;&#47;freeshell.de&#47;~jovial&#47;jrpn&#47;index.html?state=$j&#39;;
+  final s = &#39;https:&#47;&#47;jrpn.jovial.com&#47;run&#47;index.html?state=$j&#39;;
   return Clipboard.setData(ClipboardData(text: s));
 }</code></pre>
 </section>
@@ -139,7 +139,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

@@ -67,6 +67,8 @@
     <li class="section-title">
       <a href="../../view.buttons/CalculatorButton-class.html#instance-properties">Properties</a>
     </li>
+    <li><a href="../../view.buttons/CalculatorButton/acceleratorKey.html">acceleratorKey</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/acceleratorLabel.html">acceleratorLabel</a></li>
     <li><a href="../../view.buttons/CalculatorButton/bFactory.html">bFactory</a></li>
     <li><a href="../../view.buttons/CalculatorButton/fKey.html">fKey</a></li>
     <li><a href="../../view.buttons/CalculatorButton/fText.html">fText</a></li>
@@ -99,6 +101,7 @@
     <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/debugDescribeChildren.html">debugDescribeChildren</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties</a></li>
     <li><a href="../../view.buttons/CalculatorButton/drawBlueText.html">drawBlueText</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/drawKeyboardAccelerator.html">drawKeyboardAccelerator</a></li>
     <li><a href="../../view.buttons/CalculatorButton/drawWhiteText.html">drawWhiteText</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../view.buttons/CalculatorButton/paintForPainter.html">paintForPainter</a></li>
@@ -130,7 +133,9 @@
 <span class="returntype">void</span>
 <span class="name ">paintForPainter</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="paintForPainter-param-canvas"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Canvas-class.html">Canvas</a></span> <span class="parameter-name">canvas</span>, </span></li>
 <li><span class="parameter" id="paintForPainter-param-size"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Size-class.html">Size</a></span> <span class="parameter-name">size</span>, </span></li>
-<li><span class="parameter" id="paintForPainter-param-pressed">{<span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">pressed</span>}</span></li>
+<li><span class="parameter" id="paintForPainter-param-pressed">{<span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">pressed</span>, </span></li>
+<li><span class="parameter" id="paintForPainter-param-pressedFromKeyboard"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">pressedFromKeyboard</span>, </span></li>
+<li><span class="parameter" id="paintForPainter-param-showAccelerators"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">showAccelerators</span>}</span></li>
 </ol>)
 
       
@@ -143,13 +148,15 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void paintForPainter(final Canvas canvas, final Size size,
-    {required final bool pressed}) {
+    {required final bool pressed,
+    required final bool pressedFromKeyboard,
+    required final bool showAccelerators}) {
   final double h = height;
   final double w = width;
   assert((size.height &#47; h - size.width &#47; w) &#47; w &lt; 0.0000001);
   canvas.scale(size.height &#47; h);
 
-  &#47;&#47; Draw yellow text
+  &#47;&#47; Draw  gold text
   TextSpan span = TextSpan(style: bFactory.fTextStyle, text: fText);
   TextPainter tp = TextPainter(
       text: span,
@@ -161,10 +168,11 @@
   final Paint p = bFactory.fill;
 
   &#47;&#47; Draw borders
-  p.color = Colors.black;
   &#47;&#47; That&#39;s 1 for all but the enter key
+  p.color = Colors.black;
   canvas.drawRRect(outerBorder, p);
   if (pressed) {
+    canvas.save();
     canvas.translate(0, innerBorder.bottom);
     canvas.scale(1.0, outerBorderPressedScale);
     canvas.translate(0, -innerBorder.bottom);
@@ -186,12 +194,6 @@
   &#47;&#47; draw blue text
   drawBlueText(canvas, w);
   span = TextSpan(style: bFactory.gTextStyle, text: gText);
-  tp = TextPainter(
-      text: span,
-      textAlign: TextAlign.center,
-      textDirection: TextDirection.ltr);
-  tp.layout(minWidth: w);
-  tp.paint(canvas, gTextOffset);
 
   &#47;&#47; draw upper surface
   if (pressed) {
@@ -204,6 +206,20 @@
   }
   canvas.drawRRect(upperSurface, p);
   drawWhiteText(canvas, keyTextStyle, uText, w);
+
+  if (pressed) {
+    if (pressedFromKeyboard) {
+      Paint p = Paint()
+        ..color = Color(0xff00ef00)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2;
+      canvas.drawRRect(outerBorder, p);
+    }
+    canvas.restore();
+  }
+  if (showAccelerators) {
+    drawKeyboardAccelerator(canvas);
+  }
 }</code></pre>
 </section>
 
@@ -218,7 +234,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

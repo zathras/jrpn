@@ -488,12 +488,12 @@ buttonDown(key)</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>570</x>
+      <x>550</x>
       <y>650</y>
-      <w>160</w>
+      <w>180</w>
       <h>90</h>
     </coordinates>
-    <panel_attributes>/StackLiftModifier/
+    <panel_attributes>/StackLiftEnabledUser/
 --
 --
 /get controller/
@@ -506,22 +506,22 @@ set stackLiftEnabled</panel_attributes>
     <coordinates>
       <x>520</x>
       <y>730</y>
-      <w>150</w>
+      <w>140</w>
       <h>70</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>130.0;10.0;130.0;30.0;10.0;30.0;10.0;50.0</additional_attributes>
+    <additional_attributes>120.0;10.0;120.0;30.0;10.0;30.0;10.0;50.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>640</x>
+      <x>630</x>
       <y>730</y>
-      <w>100</w>
+      <w>110</w>
       <h>100</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;30.0;80.0;30.0;80.0;80.0</additional_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0;90.0;30.0;90.0;80.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>

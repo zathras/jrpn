@@ -176,7 +176,7 @@ void paint(Canvas c, Size size) {
   p.color = const Color(0xff7c7c7c);
   c.drawRect(Rect.fromLTRB(x, 0, size.width - x, 0.2 * cm), p);
 
-  &#47;&#47; Darker on top and bottom of raised fram
+  &#47;&#47; Darker on top and bottom of raised frame
   p.color = const Color(0xff2b2b2f);
   c.drawRect(Rect.fromLTRB(0, 0, x, 0.2 * cm), p);
   c.drawRect(Rect.fromLTRB(size.width - x, 0, size.width, 0.2 * cm), p);
@@ -187,18 +187,15 @@ void paint(Canvas c, Size size) {
       p);
 
   &#47;&#47; Outer keyboard base
-  const keyboardBase = Color(0xff373436);
-  p.color = keyboardBase;
+  p.color = MainScreen.keyboardBaseColor;
   y += 0.1 * cm;
   double bottom = size.height - 0.05 * cm;
   c.drawRect(Rect.fromLTRB(x, y, size.width - x, bottom), p);
 
-  &#47;&#47; Brighter silver around the keys
-  const keyFrameSilver = Color(0xffdbdad1);
   x += 0.05 * cm;
   y += 0.05 * cm;
   bottom -= 0.05 * cm;
-  p.color = keyFrameSilver;
+  p.color = MainScreen.keyFrameSilver;
   c.drawRRect(
       RRect.fromLTRBR(
           x, y, size.width - x, bottom, Radius.circular(0.1 * cm)),
@@ -206,7 +203,7 @@ void paint(Canvas c, Size size) {
   x += 0.07 * cm;
   y += 0.07 * cm;
   bottom -= 0.2 * cm;
-  p.color = keyboardBase;
+  p.color = MainScreen.keyboardBaseColor;
   c.drawRRect(
       RRect.fromLTRBR(
           x, y, size.width - x, bottom, Radius.circular(0.05 * cm)),
@@ -215,7 +212,7 @@ void paint(Canvas c, Size size) {
   &#47;&#47; The JRPN URL on the bottom
   final span = TextSpan(
       style: TextStyle(
-          color: keyFrameSilver,
+          color: MainScreen.keyFrameSilver,
           fontFamily: &#39;LogoFont&#39;,
           fontWeight: FontWeight.w400,
           fontSize: 0.26 * cm),
@@ -245,7 +242,7 @@ void paint(Canvas c, Size size) {
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

@@ -224,7 +224,7 @@
     calc: (Model m) {
       m.lastX = m.x;
       bool r =
-          (m.y.internal &amp; (BigInt.one &lt;&lt; _bitNumber(m.x, m))) != BigInt.zero;
+          (m.y.internal &amp; (BigInt.one &lt;&lt; _bitNumber(m.xI.abs(), m))) != BigInt.zero;
       if (m.isRunningProgram) {
         m.program.doNextIf(r);
       }
@@ -245,7 +245,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

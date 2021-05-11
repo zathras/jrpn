@@ -136,7 +136,8 @@
   <pre class="language-dart"><code class="language-dart">@override
 void handleShowStatus() {
   _handleShowStatusImpl(model);
-  changeState(ShowState(this));
+  _alreadyDisplayed = true;
+  changeState(ShowState(this, fromProgramEntry: true));
 }</code></pre>
 </section>
 
@@ -151,7 +152,7 @@ void handleShowStatus() {
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

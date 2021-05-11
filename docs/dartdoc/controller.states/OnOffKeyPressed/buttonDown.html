@@ -127,10 +127,18 @@ void buttonDown(Operation key) {
       try {
         await model.writeToPersistentStorage();
       } finally {
-        if (!kIsWeb) {
+        if (Platform.isLinux || Platform.isWindows) {
+          &#47;&#47; Current version on Linux dumps core on pop.
+          &#47;&#47; Current version on Windows keeps window there.
+          exit(0);
+        } else if (!kIsWeb) {
           await SystemNavigator.pop();
-          &#47;&#47; That should kill us, but just in case it breaks on some platform,
-          &#47;&#47; might as well fall through to web behavior.
+          &#47;&#47; That kills us on some platforms, but it doesn&#39;t make sense on
+          &#47;&#47; web.  It&#39;s a NOP on iOS, because apps terminating themselves
+          &#47;&#47; is against the Apple human interface guidelines (which don&#39;t
+          &#47;&#47; make a bit of sense if you&#39;re turning a calculator off, but
+          &#47;&#47; whatever.)  So, on platforms were we can&#39;t go away, we blank
+          &#47;&#47; the LCD display and wait for the ON button to be pressed.
         }
         model.display.show(LcdContents.blank());
         changeState(CalculatorOff(controller));
@@ -140,6 +148,7 @@ void buttonDown(Operation key) {
   } else if (key == Operations.dot) {
     model.settings.euroComma = !model.settings.euroComma;
     model.display.displayX();
+    changeState(Resting(controller));
   } else if (key == Operations.minus) {
     controller.reset();
     model.reset();
@@ -200,7 +209,7 @@ void buttonDown(Operation key) {
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

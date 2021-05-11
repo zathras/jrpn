@@ -221,7 +221,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static final NormalOperation cb = NormalOperation.intOnly(
     intCalc: (Model m) =&gt; m.popSetResultX = Value.fromInternal(
-        m.y.internal &amp; ((BigInt.one &lt;&lt; _bitNumber(m.x, m)) ^ m.wordMask)),
+        m.y.internal &amp; ((BigInt.one &lt;&lt; _bitNumber(m.xI.abs(), m)) ^ m.wordMask)),
     name: &#39;CB&#39;);
 
 </code></pre>
@@ -238,7 +238,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   

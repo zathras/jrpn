@@ -67,6 +67,8 @@
     <li class="section-title">
       <a href="../../view.buttons/CalculatorOnButton-class.html#instance-properties">Properties</a>
     </li>
+    <li class="inherited"><a href="../../view.buttons/CalculatorButton/acceleratorKey.html">acceleratorKey</a></li>
+    <li class="inherited"><a href="../../view.buttons/CalculatorButton/acceleratorLabel.html">acceleratorLabel</a></li>
     <li class="inherited"><a href="../../view.buttons/CalculatorButton/bFactory.html">bFactory</a></li>
     <li class="inherited"><a href="../../view.buttons/CalculatorButton/fKey.html">fKey</a></li>
     <li class="inherited"><a href="../../view.buttons/CalculatorButton/fText.html">fText</a></li>
@@ -101,6 +103,7 @@
     <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties</a></li>
     <li class="inherited"><a href="../../view.buttons/CalculatorButton/drawBlueText.html">drawBlueText</a></li>
     <li class="inherited"><a href="../../view.buttons/CalculatorOnSpecialButton/drawCustomWhiteText.html">drawCustomWhiteText</a></li>
+    <li class="inherited"><a href="../../view.buttons/CalculatorButton/drawKeyboardAccelerator.html">drawKeyboardAccelerator</a></li>
     <li><a href="../../view.buttons/CalculatorOnButton/drawWhiteText.html">drawWhiteText</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../../view.buttons/CalculatorButton/paintForPainter.html">paintForPainter</a></li>
@@ -134,6 +137,7 @@
 <li><span class="parameter" id="-param-uKey"><span class="type-annotation"><a href="../../controller/Operation-class.html">Operation</a></span> <span class="parameter-name">uKey</span>, </span></li>
 <li><span class="parameter" id="-param-fKey"><span class="type-annotation"><a href="../../controller/Operation-class.html">Operation</a></span> <span class="parameter-name">fKey</span>, </span></li>
 <li><span class="parameter" id="-param-gKey"><span class="type-annotation"><a href="../../controller/Operation-class.html">Operation</a></span> <span class="parameter-name">gKey</span>, </span></li>
+<li><span class="parameter" id="-param-rawKeyboardKey"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rawKeyboardKey</span>, </span></li>
 <li><span class="parameter" id="-param-specialText"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">specialText</span></span></li>
 </ol>)
     </section>
@@ -152,8 +156,10 @@
     Operation uKey,
     Operation fKey,
     Operation gKey,
+    String rawKeyboardKey,
     String specialText)
-    : super(factory, uText, fText, gText, uKey, fKey, gKey, specialText);</code></pre>
+    : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
+          specialText);</code></pre>
 </section>
 
 
@@ -167,7 +173,7 @@
 <footer>
   <span class="no-break">
     jrpn
-      1.0.0+1
+      2.0.0+3
   </span>
 
   
