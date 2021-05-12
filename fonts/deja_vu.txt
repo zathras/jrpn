@@ -1,0 +1,40 @@
+DejaVuSans-Bold font downloaded from http://www.fontspace.com/dejavu/dejavu-sans.
+It is offered there for free download, and licensed as freeware.  It comes with this notice:
+
+
+Internal Info
+copyright
+Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved. Copyright (c) 2006 by Tavmjong Bah. All Rights Reserved. DejaVu changes are in public domain
+license
+Fonts are (c) Bitstream (see below). DejaVu changes are in public domain. Glyphs imported from Arev fonts are (c) Tavmjung Bah (see below) Bitstream Vera Fonts Copyright ------------------------------ Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved. Bitstream Vera is a trademark of Bitstream, Inc. Permission is hereby granted, free of charge, to any person obtaining a copy of the fonts accompanying this license ("Fonts") and associated documentation files (the "Font Software"), to reproduce and distribute the Font Software, including without limitation the rights to use, copy, merge, publish, distribute, and/or sell copies of the Font Software, and to permit persons to whom the Font Software is furnished to do so, subject to the following conditions: The above copyright and trademark notices and this permission notice shall be included in all copies of one or more of the Font Software typefaces. The Font Software may be modified, altered, or added to, and in particular the designs of glyphs or characters in the Fonts may be modified and additional glyphs or characters may be added to the Fonts, only if the fonts are renamed to names not containing either the words "Bitstream" or the word "Vera". This License becomes null and void to the extent applicable to Fonts or Font Software that has been modified and is distributed under the "Bitstream Vera" names. The Font Software may be sold as part of a larger software package but no copy of one or more of the Font Software typefaces may be sold by itself. THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL BITSTREAM OR THE GNOME FOUNDATION BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE. Except as contained in this notice, the names of Gnome, the Gnome Foundation, and Bitstream Inc., shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Font Software without prior written authorization from the Gnome Foundation or Bitstream Inc., respectively. For further information, contact: fonts at gnome dot org. Arev Fonts Copyright ------------------------------ Copyright (c) 2006 by Tavmjong Bah. All Rights Reserved. Permission is hereby granted, free of charge, to any person obtaining a copy of the fonts accompanying this license ("Fonts") and associated documentation files (the "Font Software"), to reproduce and distribute the modifications to the Bitstream Vera Font Software, including without limitation the rights to use, copy, merge, publish, distribute, and/or sell copies of the Font Software, and to permit persons to whom the Font Software is furnished to do so, subject to the following conditions: The above copyright and trademark notices and this permission notice shall be included in all copies of one or more of the Font Software typefaces. The Font Software may be modified, altered, or added to, and in particular the designs of glyphs or characters in the Fonts may be modified and additional glyphs or characters may be added to the Fonts, only if the fonts are renamed to names not containing either the words "Tavmjong Bah" or the word "Arev". This License becomes null and void to the extent applicable to Fonts or Font Software that has been modified and is distributed under the "Tavmjong Bah Arev" names. The Font Software may be sold as part of a larger software package but no copy of one or more of the Font Software typefaces may be sold by itself. THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL TAVMJONG BAH BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE. Except as contained in this notice, the name of Tavmjong Bah shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Font Software without prior written authorization from Tavmjong Bah. For further information, contact: tavmjong @ free . fr.
+licenseUrl
+http://dejavu.sourceforge.net/wiki/index.php/License
+version
+Version 2.33
+vendor
+DejaVu fonts team
+vendorUrl
+http://dejavu.sourceforge.net
+5633 codepoints in 5285 glyphs
+Supported Character Sets
+fsmin
+al1
+al2
+15 Opentype Features
+- Unknown - RQD
+Access All Alternates aalt
+Glyph Composition/Decomposition ccmp
+Discretionary Ligatures dlig
+Terminal Forms fina
+Historical Ligatures hlig
+Initial Forms init
+Standard Ligatures liga
+Localized Forms locl
+Medial Forms medi
+Required Ligatures rlig
+Stylistic Alternates salt
+Kerning kern
+Mark Positioning mark
+Mark to Mark Positioning mkmk
+112 Supported Languages
+en-Latn es-Latn ar-Arab fr-Latn pt-Latn ru-Cyrl id-Latn sw-Latn de-Latn jv-Latn vi-Latn fa-Arab tr-Latn it-Latn fil-Latn pl-Latn om-Latn ha-Latn nl-Latn uk-Cyrl sd-Arab uz-Latn yo-Latn ig-Latn ms-Latn mg-Latn ro-Latn so-Latn zu-Latn cs-Latn sv-Latn el-Grek hu-Latn kk-Cyrl nds-Latn sn-Latn ckb-Arab qu-Latn ak-Latn rw-Latn wo-Latn be-Cyrl xh-Latn az-Latn af-Latn ca-Latn tg-Cyrl he-Hebr bm-Latn sr-Latn ki-Latn bg-Cyrl gsw-Latn sr-Cyrl zgh-Tfng ff-Latn rn-Latn da-Latn hr-Latn sq-Latn sk-Latn tk-Latn ku-Latn fi-Latn hy-Armn nb-Latn luy-Latn lg-Latn bem-Latn lo-Laoo luo-Latn uz-Cyrl ee-Latn ka-Geor mzn-Arab bs-Latn bs-Cyrl kam-Latn kln-Latn gl-Latn tzm-Latn dje-Latn kab-Latn shi-Tfng shi-Latn ln-Latn mn-Cyrl ky-Cyrl sg-Latn nyn-Latn lt-Latn guz-Latn cgg-Latn xog-Latn tt-Cyrl lu-Latn mer-Latn teo-Latn sl-Latn nd-Latn mk-Cyrl mas-Latn nn-Latn kde-Latn seh-Latn mfe-Latn mgh-Latn lv-Latn ga-Latn az-Cyrl eu-Latn yi-Hebr 

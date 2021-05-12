@@ -1,0 +1,71 @@
+name: jrpn
+description: Jovial RPN, a calculator simulator inspired by the HP-16C "Computer Scientist" Calculator
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 2.0.0+3
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  pedantic: ^1.0.8
+  shared_preferences: ^2.0.5
+  share_plus: ^2.0.2
+  uni_links: ^0.5.1
+  uni_links_web: ^0.1.0
+  archive: ^3.1.2
+  url_launcher: ^6.0.3
+  #  Slow on web:  flutter_svg: ^0.21.0-nullsafety.0
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  # cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.9.0
+  effective_dart: ^1.0.0
+  flutter_test:
+    sdk: flutter
+  test: ^1.16.5
+  msix: ^2.0.0
+
+flutter_icons:
+  image_path: assets/icon256.png
+  image_path_ios:  assets/icon_ios.png
+  android: true
+  macos: true
+  linux: true
+  ios: true
+  windows: true
+  # If changed, "flutter pub run flutter_launcher_icons:main"
+  # See https://pub.dev/packages/flutter_launcher_icons
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/jupiter.png
+  fonts:
+    - family: KeyLabelFont
+      fonts:
+          - asset: fonts/deja_vu_sans.ttf
+            style: normal
+            weight: 400
+          - asset: fonts/deja_vu_sans_bold.ttf
+            style: normal
+            weight: 700
+    - family: LogoFont
+      fonts:
+        - asset: fonts/WorkSans-Regular.ttf
+          style: normal
+          weight: 400
+        - asset: fonts/WorkSans-Medium.ttf
+          style: normal
+          weight: 500
