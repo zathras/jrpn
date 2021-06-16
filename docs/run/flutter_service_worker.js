@@ -3,23 +3,23 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "version.json": "4124ca29c3710b10a69fc2dd1f9c881e",
-"index.html": "ae70c0d03b219e8261d13e643a45aeee",
-"/": "ae70c0d03b219e8261d13e643a45aeee",
-"main.dart.js": "97d0e3df289eda0c3138aab447809a76",
+  "version.json": "1ab01377cb64eb9e87c73eab31a664ae",
+"index.html": "23378fadf64691dd5bf37211379fb699",
+"/": "23378fadf64691dd5bf37211379fb699",
+"main.dart.js": "a04d9886a807b7e8c7fb7462e53e48ce",
 "favicon.png": "62caf7572bf369bab8b162642ac2c4b1",
-"icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
-"icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
+"icons/Icon-192.png": "c2f8dfd1fd44e78beda6ff2636329ca2",
+"icons/Icon-512.png": "227a751d4448ced2d6d280bb4d89962f",
 "manifest.json": "e730071a654bcb7b1877cc4ff7ae2299",
-"assets/AssetManifest.json": "7db47e6208e79f441baafd0d4b276570",
-"assets/NOTICES": "0f51847e94f6a41bcf0f7b1f4f5f28eb",
+"assets/AssetManifest.json": "5258ec07c338cb6bbf21c4da6a43b533",
+"assets/NOTICES": "376fda6d40c18a9843f9f294822910e4",
 "assets/FontManifest.json": "8e25f0a17fea26fcd4edf7fd974a6e8b",
 "assets/fonts/WorkSans-Regular.ttf": "994cac96cbeaeb5b5a91d8a01ebc6788",
 "assets/fonts/deja_vu_sans.ttf": "477b826efab0c50483d7c9449c992855",
 "assets/fonts/WorkSans-Medium.ttf": "94cebfaf787544370e9b8d3650f7b2f1",
 "assets/fonts/deja_vu_sans_bold.ttf": "20ff0a26d40cf5ca6304da7eb33739e3",
-"assets/fonts/MaterialIcons-Regular.otf": "1288c9e28052e028aba623321f7826ac",
-"assets/assets/jupiter.png": "4267ed7954a51ac5e9842f3505c576d6"
+"assets/fonts/MaterialIcons-Regular.otf": "4e6447691c9509f7acdbf8a931a85ca1",
+"assets/assets/jupiter.si": "49e82013c76ef1cb161d835091125b5c"
 };
 
 // The application shell files that are downloaded before a service worker can
@@ -37,7 +37,7 @@ self.addEventListener("install", (event) => {
   return event.waitUntil(
     caches.open(TEMP).then((cache) => {
       return cache.addAll(
-        CORE.map((value) => new Request(value + '?revision=' + RESOURCES[value], {'cache': 'reload'})));
+        CORE.map((value) => new Request(value, {'cache': 'reload'})));
     })
   );
 });

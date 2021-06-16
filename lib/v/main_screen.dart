@@ -29,6 +29,7 @@ library view.main_screen;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jovial_svg/jovial_svg.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -97,8 +98,9 @@ abstract class OrientedScreen extends StatelessWidget {
 ///
 class MainScreen extends OrientedScreen {
   final Jrpn app;
+  final ScalableImage icon;
 
-  MainScreen(this.app);
+  MainScreen(this.app, this.icon);
 
   Controller get controller => app.controller;
   Model get model => app.model;
@@ -236,7 +238,7 @@ class MainScreen extends OrientedScreen {
                           children: [
                             CustomPaint(
                                 painter: _RoundedBox(widthCM: 0.9, paint: p)),
-                            Center(child: Image.asset('assets/jupiter.png'))
+                            Center(child: ScalableImageWidget(si: icon))
                             // SvgPicture.asset('assets/jupiter.svg'))
                           ],
                         )),
@@ -477,7 +479,8 @@ class _MainMenuState extends State<MainMenu> {
             PopupMenuItem(
                 value: () {}, child: _SettingsMenu('Settings', model)),
             // PopupMenuDivider(),
-            PopupMenuItem(value: () {}, child: _HelpMenu('Help'))
+            PopupMenuItem(
+                value: () {}, child: _HelpMenu('Help', widget.main.icon))
           ];
         },
       );
@@ -485,8 +488,9 @@ class _MainMenuState extends State<MainMenu> {
 
 class _HelpMenu extends StatelessWidget {
   final String title;
+  final ScalableImage icon;
 
-  _HelpMenu(this.title);
+  _HelpMenu(this.title, this.icon);
 
   @override
   Widget build(BuildContext context) {
@@ -522,7 +526,7 @@ class _HelpMenu extends StatelessWidget {
               Navigator.pop<void>(context, () {});
               showAboutDialog(
                   context: context,
-                  applicationIcon: Image.asset('assets/jupiter.png', scale: 5),
+                  applicationIcon: ScalableImageWidget(si: icon, scale: 0.15),
                   applicationName: 'JRPN 16C',
                   applicationVersion: 'Version $APPLICATION_VERSION',
                   applicationLegalese: '© 2021 Bill Foote',

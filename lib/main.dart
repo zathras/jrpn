@@ -29,6 +29,7 @@ import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jovial_svg/jovial_svg.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uni_links/uni_links.dart';
@@ -80,7 +81,7 @@ void main() async {
     // anything -- maybe to be functional it has to be configured
     // somehow?
     WidgetsFlutterBinding.ensureInitialized();
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+    await SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
   }
   final j = Jrpn(Controller(Model()));
   runApp(j);
@@ -136,6 +137,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   String? _incomingLink;
   Object? _pendingError;
   late final FocusNode keyboard;
+  late final ScalableImage icon;
 
   JrpnState(this.controller) {
     keyboard = FocusNode(
@@ -182,7 +184,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       return _showIncomingLink(link, context);
     }
     return RawKeyboardListener(
-        focusNode: keyboard, autofocus: true, child: MainScreen(widget));
+        focusNode: keyboard, autofocus: true, child: MainScreen(widget, icon));
   }
 
   Widget _showIncomingLink(String link, BuildContext context) {
@@ -283,6 +285,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       return;
     }
     try {
+      icon = await ScalableImage.fromSIAsset(rootBundle, 'assets/jupiter.si');
       String? link;
       bool done = false;
       try {

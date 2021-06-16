@@ -9,7 +9,7 @@ linter:
     rules:
         unawaited_futures: true
         omit_local_variable_types: false
-        public_member_api_docs: false   # @@ TODO
+        public_member_api_docs: false
         avoid_types_on_closure_parameters: false
         camel_case_types: true
         cancel_subscriptions: true
@@ -27,8 +27,6 @@ analyzer:
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false
-  errors:
-#        prefer_single_quotes: ignore
 
 #   exclude:
 #     - path/to/excluded/files/**
