@@ -1000,6 +1000,12 @@ class DisplayModel {
         return ' $_current';
       }
     } else if (model.settings.windowEnabled) {
+      final int maxWindow = ((_numDigits - 1) ~/ 8) * 8;
+      if (_window > maxWindow) {
+        _window = maxWindow;
+        // If, for example, the base changed out from under us, like in
+        // https://github.com/zathras/jrpn/issues/12
+      }
       final int window = (_suspendWindow) ? 0 : _window;
       final int count = _numDigits;
       if (count <= 8) {
@@ -1023,7 +1029,6 @@ class DisplayModel {
       final int start = digitPos[max(0, digitPos.length - 8 - window)];
 
       r = r.substring(start, end);
-      final int maxWindow = ((_numDigits - 1) ~/ 8) * 8;
       final dot = (model.settings.euroComma ? ',' : '.');
       if (window < maxWindow) {
         // Dot before radix letter
