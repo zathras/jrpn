@@ -673,6 +673,8 @@ class KeyboardController {
   PhysicalKeyboardKey? _physicalKeyThatIsDown;
   final button = <String, CalculatorButtonState>{};
   CalculatorButtonState? _buttonThatIsDown;
+  // For < and > accelerators, which imply a g-shift:
+  CalculatorButtonState? _extraShiftThatIsDown;
   DateTime lastKeyDown = DateTime.now();
 
   static final _ignored = <PhysicalKeyboardKey>{
@@ -736,6 +738,14 @@ class KeyboardController {
     final CalculatorButtonState? b = button[ch.first];
     if (b != null) {
       releasePressedButton(); // Just in case, probably does nothing
+      if (e.character == '<' || e.character == '>') {
+        final gShift = button['G'];
+        assert (gShift != null);
+        if (gShift != null) {   // Shut up analyzer
+          gShift.keyPressed();
+          _extraShiftThatIsDown = gShift;
+        }
+      }
       b.keyPressed();
       _buttonThatIsDown = b;
       _physicalKeyThatIsDown = e.physicalKey;
@@ -752,6 +762,8 @@ class KeyboardController {
   }
 
   void releasePressedButton() {
+    _extraShiftThatIsDown?.keyReleased();
+    _extraShiftThatIsDown = null;
     _buttonThatIsDown?.keyReleased();
     _buttonThatIsDown = null;
   }

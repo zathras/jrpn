@@ -1151,7 +1151,8 @@ class DebugLog {
 
   static DebugLog fromJson(Map<String, dynamic> json, Model model) {
     final initialState = json['initialState'] as Map<String, dynamic>;
-    final keys = json['keys'] as List<int>;
+    final keysD = json['keys'] as List<dynamic>;
+    final keys = List.castFrom<dynamic, int>(keysD);
     return DebugLog._p(initialState, keys, model);
   }
 

@@ -387,9 +387,9 @@ class _Buttons {
       Operations.gShift, Operations.gShift, Operations.gShift, 'G\u0007',
       acceleratorLabel: 'G');
   CalculatorButton get sto => CalculatorButton(factory, 'STO', 'WSIZE', '<',
-      Operations.sto, Operations.wSize, Operations.windowRight, 'S');
+      Operations.sto, Operations.wSize, Operations.windowRight, 'S<');
   CalculatorButton get rcl => CalculatorButton(factory, 'RCL', 'FLOAT', '>',
-      Operations.rcl, Operations.floatKey, Operations.windowLeft, 'R');
+      Operations.rcl, Operations.floatKey, Operations.windowLeft, 'R>');
   CalculatorButton get n0 => CalculatorButton(factory, '0', 'MEM', 'x\u2260y',
       Operations.n0, Operations.mem, Operations.xNEy, '0');
   CalculatorButton get dot => CalculatorOnSpecialButton(
