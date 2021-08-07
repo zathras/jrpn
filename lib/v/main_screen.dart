@@ -633,6 +633,38 @@ class __SettingsMenuState extends State<_SettingsMenu> {
               widget.model.display.update();
             },
             child: const Text('Capture Debug Log')),
+        ...(settings.isMobilePlatform
+            ? [
+                CheckedPopupMenuItem(
+                    checked: settings.systemOverlaysDisabled,
+                    value: () => settings.systemOverlaysDisabled =
+                        !settings.systemOverlaysDisabled,
+                    child: const Text('Disable System UI Overlays')),
+                PopupMenuItem(
+                    child: Row(children: [
+                  DropdownButton(
+                      value: settings.orientation,
+                      onChanged: (OrientationSetting? v) {
+                        if (v != null) {
+                          settings.orientation = v;
+                          Navigator.pop(context, () {});
+                        }
+                      },
+                      items: [
+                        DropdownMenuItem(
+                            value: OrientationSetting.auto,
+                            child: Text('Automatic')),
+                        DropdownMenuItem(
+                            value: OrientationSetting.portrait,
+                            child: Text('Portrait')),
+                        DropdownMenuItem(
+                            value: OrientationSetting.landscape,
+                            child: Text('Landscape'))
+                      ]),
+                  Text('    Orientation')
+                ]))
+              ]
+            : []),
         PopupMenuItem(
             child: ListTile(
                 leading: Container(

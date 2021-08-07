@@ -44,9 +44,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:io' show Platform;
 
 import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart'
+    show SystemChrome, DeviceOrientation, SystemUiOverlay;
+import 'package:pedantic/pedantic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'values.dart';
@@ -164,6 +168,8 @@ class CalculatorError {
   String toString() => 'CalculatorError($num)';
 }
 
+enum OrientationSetting { auto, portrait, landscape }
+
 ///
 /// User settings that control the calculator's appearance or behavior
 ///
@@ -178,6 +184,8 @@ class Settings {
   double? _msPerInstruction;
   bool _traceProgramToStdout = false;
   static const double _msPerInstructionDefault = 50;
+  OrientationSetting _orientation = OrientationSetting.auto;
+  bool _systemOverlaysDisabled = false;
 
   Settings(this._model) {
     menuEnabled.addObserver((_) => _model._needsSave = true);
@@ -193,6 +201,10 @@ class Settings {
     showAccelerators.value = false;
     _msPerInstruction = null;
     _traceProgramToStdout = false;
+    _orientation = OrientationSetting.auto;
+    _setPlatformOrientation();
+    _systemOverlaysDisabled = false;
+    _setPlatformOverlays();
   }
 
   ///
@@ -255,6 +267,66 @@ class Settings {
   bool get traceProgramToStdout => _traceProgramToStdout;
 
   ///
+  /// Not really a setting, but we need it in the same places:  Is it possible
+  /// to set the screen orientation on this device?  It is iff we're a native
+  /// mobile app.
+  ///
+  bool get isMobilePlatform =>
+      !kIsWeb && (Platform.isIOS || Platform.isAndroid || Platform.isFuchsia);
+
+  bool get systemOverlaysDisabled => _systemOverlaysDisabled;
+
+  set systemOverlaysDisabled(bool v) {
+    if (!isMobilePlatform) {
+      return;
+    }
+    _systemOverlaysDisabled = v;
+    _setPlatformOverlays();
+    _model._needsSave = true;
+  }
+
+  void _setPlatformOverlays() {
+    if (systemOverlaysDisabled) {
+      SystemChrome.setEnabledSystemUIOverlays([]);
+    } else {
+      SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    }
+  }
+
+  OrientationSetting get orientation => _orientation;
+
+  set orientation(OrientationSetting v) {
+    if (!isMobilePlatform) {
+      return;
+    }
+    _orientation = v;
+    _setPlatformOrientation();
+    _model._needsSave = true;
+  }
+
+  void _setPlatformOrientation() {
+    final List<DeviceOrientation> orientations;
+    switch (orientation) {
+      case OrientationSetting.auto:
+        orientations = [];
+        break;
+      case OrientationSetting.portrait:
+        orientations = [
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown
+        ];
+        break;
+      case OrientationSetting.landscape:
+        orientations = [
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight
+        ];
+        break;
+    }
+    unawaited(SystemChrome.setPreferredOrientations(orientations));
+  }
+
+  ///
   /// Convert to a data structure that can be serialized as JSON.
   ///
   Map<String, dynamic> toJson({bool comments = false}) {
@@ -265,6 +337,8 @@ class Settings {
       'hideComplement': _hideComplement,
       'showWordSize': _showWordSize,
       'showAccelerators': showAccelerators.value,
+      'systemOverlaysDisabled': systemOverlaysDisabled,
+      'orientation': orientation.index
     };
     if (_msPerInstruction != null) {
       r['msPerInstruction'] = _msPerInstruction;
@@ -288,6 +362,17 @@ class Settings {
     _showWordSize = json['showWordSize'] as bool? ?? false;
     showAccelerators.value = json['showAccelerators'] == true; // could be null
     _msPerInstruction = (json['msPerInstruction'] as num?)?.toDouble();
+    _traceProgramToStdout = (json['traceProgramToStdout'] as bool?) ?? false;
+    _systemOverlaysDisabled =
+        (json['systemOverlaysDisabled'] as bool?) ?? false;
+    _setPlatformOverlays();
+    int? ov = json['orientation'] as int?;
+    if (ov == null || ov < 0 || ov > OrientationSetting.values.length) {
+      _orientation = OrientationSetting.auto;
+    } else {
+      _orientation = OrientationSetting.values[ov];
+    }
+    _setPlatformOrientation();
     _traceProgramToStdout = (json['traceProgramToStdout'] as bool?) ?? false;
   }
 }
