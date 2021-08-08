@@ -68,7 +68,7 @@ $NON_WARRANTY
 
 /// package_info doesn't exist for all platforms, so I'm doing it the old
 /// fashioned way.
-const APPLICATION_VERSION = '2.0';
+const APPLICATION_VERSION = '2.0.1';
 const APPLICATION_WEB_ADDRESS = 'https://jrpn.jovial.com';
 const APPLICATION_ISSUE_ADDRESS = 'https://github.com/zathras/jrpn/issues';
 
