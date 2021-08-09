@@ -63,11 +63,29 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    //
+    // Work around an obscure bug in the Google Play Store's handling of a
+    // Chinese phone, Aug 9 2021.  cf.
+    // https://forum.unity.com/threads/error-when-submitting-app-to-google-play.1098139/
+    //
+    // Note that, from the stack backtrace, the bug appears to be in 
+    // com.google.android.apps.photos, perhaps as an automated screen capture.
+    // If the play store submission with this change goes through, it's more
+    // than likely it's just the luck of the draw with a Heisenbug on Google's
+    // end.  That said, this change seems benign.  If I ever notice it in the 
+    // future, though, this line should probably be removed, once Google has
+    // fixed their issue.
+    //
+    aaptOptions {
+        noCompress 'db'
+    }
 }
 
 flutter {
     source '../..'
 }
+
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
