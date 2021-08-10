@@ -72445,7 +72445,7 @@ $S:433}
 Q.aeP.prototype={
 $0:function(){var s=null,r=this.b
 K.cs(r,!1).eS(0,new Q.aeG())
-A.aKG(O.aua(0.15,this.a.d),"\xa9 2021 Bill Foote","JRPN 16C","Version 2.0",H.a([T.fO(s,40,s),R.wz(!1,!0,T.aol(s,s,C.bb,!0,s,Q.cd(s,A.cu(s,s,K.ag(r).x,s,s,s,s,s,s,s,s,18,s,s,s,s,!0,s,s,s,s,s,s,s),"https://jrpn.jovial.com"),C.l,s,s,1,C.I),s,!0,s,s,s,s,s,s,s,s,s,new Q.aeH(),s,s,s)],t.p),r)},
+A.aKG(O.aua(0.15,this.a.d),"\xa9 2021 Bill Foote","JRPN 16C","Version 2.0.1",H.a([T.fO(s,40,s),R.wz(!1,!0,T.aol(s,s,C.bb,!0,s,Q.cd(s,A.cu(s,s,K.ag(r).x,s,s,s,s,s,s,s,s,18,s,s,s,s,!0,s,s,s,s,s,s,s),"https://jrpn.jovial.com"),C.l,s,s,1,C.I),s,!0,s,s,s,s,s,s,s,s,s,new Q.aeH(),s,s,s)],t.p),r)},
 $C:"$0",
 $R:0,
 $S:0}
