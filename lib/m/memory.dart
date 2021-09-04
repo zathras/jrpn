@@ -532,14 +532,16 @@ class ProgramMemory<OT extends ProgramOperation> {
     // We might be at the label, so we start at 0.  Also, remember that
     // line 0 has the phantom return instruction, so we have to
     // iterate over lines+1 "lines".
-    for (int i = 0; i <= lines; i++) {
-      int line = (currentLine + i) % lines;
-      if (line == 0) {
-        line = lines;
-      }
-      if (opcodeAt(line) == wanted) {
-        currentLine = line;
-        return;
+    if (lines != 0) {
+      for (int i = 0; i <= lines; i++) {
+        int line = (currentLine + i) % lines;
+        if (line == 0) {
+          line = lines;
+        }
+        if (opcodeAt(line) == wanted) {
+          currentLine = line;
+          return;
+        }
       }
     }
     throw CalculatorError(4);
