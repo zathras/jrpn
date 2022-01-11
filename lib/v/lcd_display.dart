@@ -43,9 +43,9 @@ this program; if not, see https://www.gnu.org/licenses/ .
 /// (More is available under [Segments].)
 library view.lcd_display;
 
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:pedantic/pedantic.dart';
 import '../m/model.dart';
 
 // See the library comments, above!  (Android Studio  hides them by default.)
@@ -58,7 +58,7 @@ class LcdDisplay extends StatefulWidget {
   final Future<void> Function(BuildContext, Offset) showMenu;
   static const double heightTweak = 0.90;
 
-  LcdDisplay(this.model, this.showMenu);
+  const LcdDisplay(this.model, this.showMenu, {Key? key}) : super(key: key);
 
   @override
   _LcdDisplayState createState() => _LcdDisplayState();
@@ -66,7 +66,7 @@ class LcdDisplay extends StatefulWidget {
 
 class _LcdDisplayState extends State<LcdDisplay> {
   LcdContents _contents = LcdContents.blank();
-  Offset _tapOffset = Offset(0, 0);
+  Offset _tapOffset = const Offset(0, 0);
 
   @override
   void initState() {
@@ -112,13 +112,13 @@ class _DisplayPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final _lcdFrame = Paint()
-      ..color = Color(0xff908d88)
+      ..color = const Color(0xff908d88)
       ..style = PaintingStyle.fill;
     final _outline = Paint()
       ..color = Color(0xff000000 | (0x908d88 * 0.75).floor())
       ..style = PaintingStyle.fill;
     final _lcdBase = Paint()
-      ..color = Color(0xff979980) // that's argb
+      ..color = const Color(0xff979980) // that's argb
       ..style = PaintingStyle.fill;
     // Note that, by default, we are not clipped to our size
     final outlineW = size.width / 20;
@@ -513,8 +513,8 @@ class Segments {
       double yb, double xc, double yc) {
     const deg90 = pi / 2;
     const deg180 = pi;
-    final double r = 2.0;
-    final double s = 1.0;
+    const double r = 2.0;
+    const double s = 1.0;
     double phi = atan2(yc - yb, xc - xb);
     double theta = atan2(ya - yb, xa - xb) - phi;
     double len = (r + s) / sin(theta / 2);

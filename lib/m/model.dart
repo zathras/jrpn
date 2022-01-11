@@ -39,14 +39,11 @@ library model;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 import 'dart:io' show Platform;
 
 import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart'
-    show SystemChrome, DeviceOrientation, SystemUiOverlay;
-import 'package:pedantic/pedantic.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'values.dart';
@@ -283,9 +280,15 @@ class Settings {
 
   void _setPlatformOverlays() {
     if (systemOverlaysDisabled) {
-      SystemChrome.setEnabledSystemUIOverlays([]);
+      unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive));
+    } else if (!kIsWeb && Platform.isIOS) {
+      // Get rid of ugly black bar along bottom.  It doesn't seem to do
+      // anything -- maybe to be functional it has to be configured
+      // somehow?
+      unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+          overlays: [SystemUiOverlay.top]));
     } else {
-      SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+      unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
     }
   }
 
@@ -833,7 +836,7 @@ class Model<OT extends ProgramOperation> implements NumStatus {
         throw ArgumentError('No state query parameter in $linkOrJson');
       }
       js = String.fromCharCodes(
-          ZLibDecoder().decodeBytes(base64Url.decoder.convert(qs)));
+          const ZLibDecoder().decodeBytes(base64Url.decoder.convert(qs)));
     } else {
       js = linkOrJson;
     }
@@ -1090,7 +1093,7 @@ class DisplayModel {
     }
     final LcdContents c = model._newLcdContents(disableWindow: disableWindow);
     if (flash) {
-      final t = Timer(Duration(milliseconds: 40), () {
+      final t = Timer(const Duration(milliseconds: 40), () {
         show(c);
       });
       c._myTimer = t;
@@ -1098,7 +1101,7 @@ class DisplayModel {
     } else if (blink) {
       bool on = true;
       final blank = LcdContents.blank();
-      final t = Timer.periodic(Duration(milliseconds: 400), (_) {
+      final t = Timer.periodic(const Duration(milliseconds: 400), (_) {
         on = !on;
         show(on ? c : blank);
       });
@@ -1121,7 +1124,7 @@ class DisplayModel {
       final initial = model._newLcdContents(disableWindow: disableWindow);
       currentWithWindow = newNumber;
       final delayed = model._newLcdContents(disableWindow: false);
-      final t = Timer(Duration(milliseconds: 1400), () {
+      final t = Timer(const Duration(milliseconds: 1400), () {
         show(delayed);
       });
       delayed._myTimer = t;

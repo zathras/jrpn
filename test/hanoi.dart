@@ -20,6 +20,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 
 void main() {
   for (final move in hanoi(15, 1, 3, 2)) {
+    // ignore: avoid_print
     print(move);
   }
 }
@@ -38,8 +39,8 @@ Iterable<Move> hanoi(int discs, int from, int to, int other) sync* {
   if (discs == 1) {
     yield Move(from, to);
   } else {
-    yield* hanoi(discs-1, from, other, to);
+    yield* hanoi(discs - 1, from, other, to);
     yield Move(from, to);
-    yield* hanoi(discs-1, other, to, from);
+    yield* hanoi(discs - 1, other, to, from);
   }
 }

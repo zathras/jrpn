@@ -52,7 +52,6 @@ import 'dart:math';
 import 'controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:pedantic/pedantic.dart';
 
 import '../m/model.dart';
 import 'operations.dart';
@@ -297,7 +296,7 @@ class Resting extends ActiveState {
   }
 
   @override
-  void handleShift(ShiftKey sk) => model.shift = sk;
+  void handleShift(ShiftKey k) => model.shift = k;
 
   void _calculate(void Function(Model<Operation>) f) {
     try {
@@ -307,7 +306,7 @@ class Resting extends ActiveState {
       controller.showCalculatorError(e);
       // ignore: avoid_catches_without_on_clauses
     } catch (e, s) {
-      print('Unexpected exception $e\n\n$s');
+      debugPrint('Unexpected exception $e\n\n$s');
       controller.showCalculatorError(CalculatorError(9));
     }
   }
@@ -327,7 +326,7 @@ class Resting extends ActiveState {
       controller.showCalculatorError(e);
       // ignore: avoid_catches_without_on_clauses
     } catch (e, s) {
-      print('Unexpected exception $e\n\n$s');
+      debugPrint('Unexpected exception $e\n\n$s');
       controller.showCalculatorError(CalculatorError(9));
     }
     arg.op.possiblyAlterStackLift(controller);
@@ -481,7 +480,6 @@ class DigitEntry extends ActiveState {
       final int noWidth = ent.contains('.') ? 1 : 0;
       int extra = 7 - (ent.length - noWidth);
       String show = ent;
-      ;
       String pad;
       if (extra < 0) {
         if (model.settings.windowEnabled) {
@@ -642,7 +640,7 @@ class DigitEntry extends ActiveState {
   void handleRunStop() => changeState(Resting(controller)).handleRunStop();
 
   @override
-  void handleShift(ShiftKey sk) => model.shift = sk;
+  void handleShift(ShiftKey k) => model.shift = k;
 
   @override
   void onArgComplete(OperationArg arg, int argValue) => unreachable();
@@ -767,7 +765,7 @@ class GosubArgInputState extends ArgInputState {
   bool isDone = false;
 
   @override
-  void done(int label) => lastState.gosubEntryDone(this, label);
+  void done(int argValue) => lastState.gosubEntryDone(this, argValue);
 
   ///
   /// When GSB <label> is pressed (but before it is released), and when we're
@@ -924,14 +922,15 @@ class ProgramEntry extends LimitedState {
   void _handleRepeatingStep(final int delta) {
     assert(_autorepeat == null);
     int ticks = 0;
-    final task = (Timer _) {
+    void task(Timer _) {
       if (ticks == 0 || ticks > 3) {
         program.stepCurrentLine(delta);
         program.displayCurrent();
       }
       ticks++;
-    };
-    Timer t = Timer.periodic(Duration(milliseconds: 350), task);
+    }
+
+    Timer t = Timer.periodic(const Duration(milliseconds: 350), task);
     task(t);
     _autorepeat = t;
   }
@@ -960,7 +959,7 @@ class ProgramEntry extends LimitedState {
   }
 
   @override
-  void handleShift(ShiftKey sk) => model.shift = sk;
+  void handleShift(ShiftKey k) => model.shift = k;
 
   @override
   void handleShowStatus() {
@@ -1134,7 +1133,7 @@ class OnOffKeyPressed extends DoNothing {
       changeState(MessageShowing(r));
     } else if (key == Operations.mult) {
       changeState(DoNothing(controller));
-      final runTests = () async {
+      Future<void> runTests() async {
         try {
           model.display.current = 'RuNNING  ';
           model.display.update(blink: true);
@@ -1161,11 +1160,12 @@ class OnOffKeyPressed extends DoNothing {
           controller.showCalculatorError(e);
           // ignore: avoid_catches_without_on_clauses
         } catch (e, s) {
-          print('Unexpected exception $e\n\n$s');
+          debugPrint('Unexpected exception $e\n\n$s');
           changeState(Resting(controller));
           controller.showCalculatorError(CalculatorError(9));
         }
-      };
+      }
+
       unawaited(runTests());
     } else {
       model.display.displayX();
@@ -1207,7 +1207,7 @@ class Running extends ControllerState {
   /// We delay the showing of the blinking running a little bit, so that
   /// we don't get a very short flash of "running" when msPerInstruction
   /// is set to 0.
-  Timer _showRunning() => Timer(Duration(milliseconds: 20), () {
+  Timer _showRunning() => Timer(const Duration(milliseconds: 20), () {
         assert(model.isRunningProgram);
         model.isRunningProgram = false;
         model.display.current = 'RuNNING  ';
@@ -1279,7 +1279,7 @@ class Running extends ControllerState {
               out.write(v.internal.toRadixString(16));
             }
           }
-          print(out);
+          debugPrint(out.toString());
         }
         pendingDelay = settings.msPerInstruction /
             ((instr.op.numericValue == null) ? 1 : 5);

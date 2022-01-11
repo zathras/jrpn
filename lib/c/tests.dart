@@ -61,28 +61,28 @@ class SelfTests {
       }
     }
     if (val != expected) {
-      print('');
-      print('*** Error in self-test:  $val != $expected');
+      debugPrint('');
+      debugPrint('*** Error in self-test:  $val != $expected');
       if (reason != null) {
-        print('  $reason');
-        print('');
+        debugPrint('  $reason');
+        debugPrint('');
       }
       throw CalculatorError(9);
     }
   }
 
   Future<void> _test(String msg, Future<void> Function() tests) async {
-    print('Running tests:  $msg');
+    debugPrint('Running tests:  $msg');
     testsRun++;
     try {
       await tests();
       // ignore: avoid_catches_without_on_clauses
     } catch (e, s) {
-      print('');
-      print('*** Exception in test:  $e');
-      print('');
-      print(s);
-      print('');
+      debugPrint('');
+      debugPrint('*** Exception in test:  $e');
+      debugPrint('');
+      debugPrint(s.toString());
+      debugPrint('');
       errorsSeen++;
     }
   }
@@ -676,7 +676,7 @@ class SelfTests {
       for (int i = 0; i < limit; i++) {
         if (i > 0 && i % 2000 == 0) {
           final percent = (i * 100 / limit).toStringAsFixed(0);
-          print('Random float count $i of limit - $percent%');
+          debugPrint('Random float count $i of limit - $percent%');
         }
         final double m = 22 * r.nextDouble() - 11;
         final int e = r.nextInt(250) - 125; // Generate some out of range
@@ -792,9 +792,9 @@ class SelfTests {
     await testIntValues();
     await testIntOperations();
     await testNumbers();
-    print('');
-    print('***  $testsRun self tests run.  $errorsSeen errors seen');
-    print('');
+    debugPrint('');
+    debugPrint('***  $testsRun self tests run.  $errorsSeen errors seen');
+    debugPrint('');
     if (errorsSeen > 0) {
       throw CalculatorError(9);
     }

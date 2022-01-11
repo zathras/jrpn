@@ -221,13 +221,13 @@ class RealController extends Controller {
   }
 
   @override
-  void singleStep(DigitEntry? currentDE) {
+  void singleStep(DigitEntry? digitEntryStateFrom) {
     final RunningController rc;
-    if (currentDE == null) {
+    if (digitEntryStateFrom == null) {
       rc = RunningController(this, digitEntryState: false);
     } else {
       rc = RunningController(this, digitEntryState: true);
-      rc.currentDigitEntryState!.takeOverFrom(currentDE);
+      rc.currentDigitEntryState!.takeOverFrom(digitEntryStateFrom);
     }
     state = SingleStepping(rc);
   }
@@ -297,7 +297,7 @@ class RunningController extends Controller {
   }
 
   @override
-  void singleStep(DigitEntry? currentState) {
+  void singleStep(DigitEntry? digitEntryStateFrom) {
     assert(false);
   }
 
@@ -415,7 +415,7 @@ class NumberEntry extends Operation {
   void Function(Model m)? get intCalc => null;
 
   @override
-  void pressed(LimitedState s) => (s as ActiveState).handleNumberKey(value);
+  void pressed(LimitedState arg) => (arg as ActiveState).handleNumberKey(value);
   // See the downcast note in NormalOperation
 
   @override
@@ -452,35 +452,31 @@ class NormalOperation extends Operation {
   NormalOperation.intOnly(
       {void Function(ActiveState)? pressed,
       StackLift? stackLift,
-      required void Function(Model) intCalc,
+      required void Function(Model) this.intCalc,
       required String name})
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
-        intCalc = intCalc,
         floatCalc = null,
         super(name: name);
 
   NormalOperation.floatOnly(
       {void Function(ActiveState)? pressed,
       StackLift? stackLift,
-      required void Function(Model) floatCalc,
+      required void Function(Model) this.floatCalc,
       required String name})
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
-        floatCalc = floatCalc,
         intCalc = null,
         super(name: name);
 
   NormalOperation.differentFloatAndInt(
       {void Function(ActiveState)? pressed,
       StackLift? stackLift,
-      required void Function(Model) floatCalc,
-      required void Function(Model) intCalc,
+      required void Function(Model) this.floatCalc,
+      required void Function(Model) this.intCalc,
       required String name})
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
-        floatCalc = floatCalc,
-        intCalc = intCalc,
         super(name: name);
 
   @override
@@ -649,14 +645,14 @@ class FloatKeyArg extends OperationArg {
       : super(maxArg, floatCalc: calc, intCalc: calc);
 
   @override
-  void onArgComplete(LimitedState state, int arg) {
+  void onArgComplete(LimitedState state, int argValue) {
     if (!state.model.isFloatMode) {
       state.controller._stackLiftEnabled = true;
       // See page 100:  Stack lift is enabled when we go from int mode to
       // float mode, but not when we stay in float mode.  So: CLX,
       // FLOAT 2, 7 will not lift stack.
     }
-    state.onArgComplete(this, arg);
+    state.onArgComplete(this, argValue);
   }
 
   @override
@@ -686,7 +682,7 @@ class KeyboardController {
   };
 
   KeyEventResult onKey(RawKeyEvent e) {
-    if (!(e is RawKeyDownEvent)) {
+    if (e is! RawKeyDownEvent) {
       if (e is RawKeyUpEvent && e.physicalKey == _physicalKeyThatIsDown) {
         releasePressedButton();
         _physicalKeyThatIsDown = null;
@@ -736,8 +732,9 @@ class KeyboardController {
       releasePressedButton(); // Just in case, probably does nothing
       if (e.character == '<' || e.character == '>') {
         final gShift = button['G'];
-        assert (gShift != null);
-        if (gShift != null) {   // Shut up analyzer
+        assert(gShift != null);
+        if (gShift != null) {
+          // Shut up analyzer
           gShift.keyPressed();
           _extraShiftThatIsDown = gShift;
         }

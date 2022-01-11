@@ -153,7 +153,7 @@ void appendixA() {
   }
 }
 
-Future<void> p79_program() async {
+Future<void> p79Program() async {
   final p = TestCalculator()..loadState('p79_example.jrpn');
   final out = StreamIterator<ProgramEvent>(p.output.stream);
   p.enter(Operations.gsb);
@@ -164,7 +164,7 @@ Future<void> p79_program() async {
   expect(p.model.yI, BigInt.parse('731267636031035818'));
 }
 
-Future<void> p93_checksum() async {
+Future<void> p93Checksum() async {
   final p = TestCalculator()..loadState('p93_checksum.jrpn');
   final out = StreamIterator<ProgramEvent>(p.output.stream);
   p.enter(Operations.gsb);
@@ -198,7 +198,7 @@ Iterable<Move> hanoi(int discs, int from, int to) sync* {
   }
 }
 
-Future<void> towers_of_hanoi() async {
+Future<void> towersOfHanoi() async {
   final p = TestCalculator()..loadState('towers_of_hanoi.jrpn');
   final out = StreamIterator<ProgramEvent>(p.output.stream);
   p.enter(Operations.n7);

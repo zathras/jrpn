@@ -181,7 +181,7 @@ class Registers {
       result = Value.fromInternal(_indexValue.internal & _model.wordMask);
     } else {
       if (i == indirectIndex) {
-        i = _IasIndex;
+        i = _regIasIndex;
       }
       if (i < 0 || i >= length) {
         throw CalculatorError(3);
@@ -209,7 +209,7 @@ class Registers {
       _indexValue = helper68.signExtendFrom(v);
       return;
     } else if (i == indirectIndex) {
-      i = _IasIndex;
+      i = _regIasIndex;
     }
     if (i < 0 || i >= length) {
       throw CalculatorError(3);
@@ -228,7 +228,7 @@ class Registers {
   /// Calculate the value of the I register for use as an index.  If that
   /// value is too big to be an index, then any int that is too big will do,
   /// since we'll just end up generating a CalculatorError anyway.
-  int get _IasIndex {
+  int get _regIasIndex {
     if (_model.isFloatMode) {
       Value masked = Value.fromInternal(_indexValue.internal & _model.wordMask);
       double d = masked.asDouble.abs();
@@ -464,7 +464,7 @@ class ProgramMemory<OT extends ProgramOperation> {
       final initial = _memory._model._newLcdContents();
       display.current = newText;
       final delayed = _memory._model._newLcdContents();
-      final t = Timer(Duration(milliseconds: 1400), () {
+      final t = Timer(const Duration(milliseconds: 1400), () {
         display.show(delayed);
       });
       delayed._myTimer = t;
@@ -605,12 +605,12 @@ abstract class ProgramOperation {
 /// [ProgramOperation]s are on the portrait layout of the keyboard, because
 /// they are displayed on the LCD display as row-column numbers.
 ///
-class Key<OT extends ProgramOperation> {
+class MKey<OT extends ProgramOperation> {
   final OT unshifted;
   final OT fShifted;
   final OT gShifted;
 
-  Key(this.unshifted, this.fShifted, this.gShifted);
+  MKey(this.unshifted, this.fShifted, this.gShifted);
 }
 
 ///
@@ -700,7 +700,7 @@ class ProgramInstruction<OT extends ProgramOperation> {
 /// to assign op codes and labels to [ProgramOperation]s.
 ///
 class OperationMap<OT extends ProgramOperation> {
-  final List<List<Key<OT>?>> keys;
+  final List<List<MKey<OT>?>> keys;
   final List<OT> numbers;
   final List<OT> special;
   final Map<OT, ProgramInstruction> shortcuts;
@@ -721,7 +721,7 @@ class OperationMap<OT extends ProgramOperation> {
   static OperationMap? _instance;
 
   factory OperationMap(
-      {required List<List<Key<OT>?>> keys,
+      {required List<List<MKey<OT>?>> keys,
       required List<OT> numbers,
       required List<OT> special,
       required Map<OT, ProgramInstruction> shortcuts,
@@ -785,7 +785,7 @@ class OperationMap<OT extends ProgramOperation> {
     for (int row = 0; row < keys.length; row++) {
       final keyRow = keys[row];
       for (int col = 0; col < keyRow.length; col++) {
-        final Key<OT>? key = keyRow[col];
+        final MKey<OT>? key = keyRow[col];
         if (key == null) {
           continue;
         }
@@ -794,7 +794,7 @@ class OperationMap<OT extends ProgramOperation> {
           if (key.unshifted._programDisplay != '') {
             // A number key
             assert(key.unshifted.maxArg == 0);
-            rcText = '${key.unshifted._programDisplay}';
+            rcText = key.unshifted._programDisplay;
           } else {
             rcText = '${row + 1}${(col + 1) % 10}';
           }
@@ -861,5 +861,5 @@ class ProgramListener {
 
   /// A future that completes when we should resume from a pause instruction,
   /// after [onPause()] is called.
-  Future<void> resumeFromPause() => Future.delayed(Duration(seconds: 1));
+  Future<void> resumeFromPause() => Future.delayed(const Duration(seconds: 1));
 }

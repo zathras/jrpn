@@ -108,8 +108,8 @@ abstract class IntegerSignMode extends SignMode {
   }
 
   @override
-  Value increment(NumStatus m, Value v, int by) =>
-      fromBigInt(toBigInt(v, m) + BigInt.from(by), m);
+  Value increment(NumStatus m, Value valueI, int by) =>
+      fromBigInt(toBigInt(valueI, m) + BigInt.from(by), m);
 }
 
 class _OnesComplement extends IntegerSignMode {

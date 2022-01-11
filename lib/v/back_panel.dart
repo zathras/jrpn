@@ -23,7 +23,6 @@ this program; if not, see https://www.gnu.org/licenses/ .
 library view.back_panel;
 
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'main_screen.dart';
@@ -32,6 +31,8 @@ import 'main_screen.dart';
 /// The calculator's back panel.
 ///
 class BackPanel extends OrientedScreen {
+  const BackPanel({Key? key}) : super(key: key);
+
   @override
   Widget buildPortrait(BuildContext context, final ScreenPositioner screen) {
     return GestureDetector(
@@ -44,12 +45,13 @@ class BackPanel extends OrientedScreen {
                 child: Stack(fit: StackFit.expand, children: [
                   Container(color: MainScreen.keyboardBaseColor),
                   screen.box(Rect.fromLTWH(screen.width - 0.8, 0.0, 0.8, 0.8),
-                      Icon(Icons.arrow_back, color: Colors.white)),
-                  screen.box(Rect.fromLTWH(1.175, 1.5, 5.65, 6.5),
+                      const Icon(Icons.arrow_back, color: Colors.white)),
+                  screen.box(const Rect.fromLTWH(1.175, 1.5, 5.65, 6.5),
                       operationTable(5.65)),
+                  screen.box(const Rect.fromLTWH(0.45, 8.5, 4.97, 4),
+                      errorTable(4.97)),
                   screen.box(
-                      Rect.fromLTWH(0.45, 8.5, 4.97, 4), errorTable(4.97)),
-                  screen.box(Rect.fromLTWH(6.0, 8.5, 1.57, 3), flagTable(1.57)),
+                      const Rect.fromLTWH(6.0, 8.5, 1.57, 3), flagTable(1.57)),
                 ]))));
   }
 
@@ -64,13 +66,15 @@ class BackPanel extends OrientedScreen {
                 aspectRatio: screen.width / screen.height,
                 child: Stack(fit: StackFit.expand, children: [
                   Container(color: MainScreen.keyboardBaseColor),
-                  screen.box(Rect.fromLTWH(11.8, 0.0, 0.8, 0.8),
-                      Icon(Icons.arrow_back, color: Colors.white)),
-                  screen.box(Rect.fromLTWH(0.10, 3, 4.97, 4), errorTable(4.97)),
+                  screen.box(const Rect.fromLTWH(11.8, 0.0, 0.8, 0.8),
+                      const Icon(Icons.arrow_back, color: Colors.white)),
+                  screen.box(
+                      const Rect.fromLTWH(0.10, 3, 4.97, 4), errorTable(4.97)),
                   screen.box(
                       Rect.fromLTWH(5.225, 1.1, 5.65, screen.height - 1.5),
                       operationTable(5.65)),
-                  screen.box(Rect.fromLTWH(11.03, 3, 1.57, 3), flagTable(1.57)),
+                  screen.box(
+                      const Rect.fromLTWH(11.03, 3, 1.57, 3), flagTable(1.57)),
                 ]))));
   }
 
@@ -82,7 +86,7 @@ class BackPanel extends OrientedScreen {
             text('\u200ay\u00F70,'),
             sqrtText('\u221A   '),
             space(-3.4),
-            text('-4', scale: 0.75, offset: Offset(0.2, 0.3)),
+            text('-4', scale: 0.75, offset: const Offset(0.2, 0.3)),
             text(',...')
           ]))
         ]),
@@ -99,7 +103,7 @@ class BackPanel extends OrientedScreen {
           cell(list([
             text('\u200aR'),
             space(-0.8),
-            text('n', scale: 0.80, offset: Offset(0, 0.57)),
+            text('n', scale: 0.80, offset: const Offset(0, 0.57)),
             text('>MEM')
           ]))
         ]),
@@ -112,7 +116,7 @@ class BackPanel extends OrientedScreen {
           cell(text('5', align: _ctr)),
           cell(list([
             text('\u200a>4'),
-            text('RTN', offset: Offset(0.2, 0.2), scale: 0.9, box: true)
+            text('RTN', offset: const Offset(0.2, 0.2), scale: 0.9, box: true)
           ]))
         ]),
         row([cell(text('6', align: _ctr)), cell(text('\u200aR\u2260FLOAT'))]),
@@ -127,24 +131,24 @@ class BackPanel extends OrientedScreen {
         ]),
         row([
           cell(center(list([
-            text('+', offset: Offset(0.3, 0), box: true),
+            text('+', offset: const Offset(0.3, 0), box: true),
             space(1.2),
-            text('\u2212', offset: Offset(0.3, 0), box: true)
+            text('\u2212', offset: const Offset(0.3, 0), box: true)
           ]))),
           cell(text('x', align: _ctr)),
           cell(text('x', align: _ctr)),
           cell(space(0))
         ]),
         row([
-          cell(center(
-              text('\u00D7', box: true, offset: Offset(0.3, 0)))), // multiply
+          cell(center(text('\u00D7',
+              box: true, offset: const Offset(0.3, 0)))), // multiply
           cell(text('--', align: _ctr)),
           cell(text('x', align: _ctr)),
           cell(space(0))
         ]),
         row([
-          cell(center(
-              text('\u00F7', box: true, offset: Offset(0.3, 0)))), //  divide
+          cell(center(text('\u00F7',
+              box: true, offset: const Offset(0.3, 0)))), //  divide
           cell(text('x', align: _ctr)),
           cell(text('x', align: _ctr)),
           cell(list(
@@ -152,7 +156,7 @@ class BackPanel extends OrientedScreen {
         ]),
         row([
           cell(center(sqrtText('\u221Ax',
-              box: true, offset: Offset(0.1, 0.3)))), // sqrt(x)
+              box: true, offset: const Offset(0.1, 0.3)))), // sqrt(x)
           cell(text('x', align: _ctr)),
           cell(text('--', align: _ctr)),
           cell(list(
@@ -161,9 +165,10 @@ class BackPanel extends OrientedScreen {
         row([
           cell(center(list([
             space(0.7),
-            text('\u200aCHS', offset: Offset(0.2, 0), box: true, scale: 0.75),
+            text('\u200aCHS',
+                offset: const Offset(0.2, 0), box: true, scale: 0.75),
             text(','),
-            text(' ABS', offset: Offset(-0.1, 0), box: true, scale: 0.75),
+            text(' ABS', offset: const Offset(-0.1, 0), box: true, scale: 0.75),
             space(0.7)
           ]))),
           cell(text('--', align: _ctr)),
@@ -172,14 +177,18 @@ class BackPanel extends OrientedScreen {
         ]),
         row([
           cell(center(text('DBL\u00D7',
-              offset: Offset(0.5, 0.1), box: true, scale: 0.9))), // multiply
+              offset: const Offset(0.5, 0.1),
+              box: true,
+              scale: 0.9))), // multiply
           cell(text('--', align: _ctr)),
           cell(text('x', align: _ctr)),
           cell(list([text('\u200ay\u2219x'), arrowRight(2), text('X&Y')]))
         ]),
         row([
           cell(center(text('DBL\u00F7',
-              offset: Offset(0.5, 0.1), box: true, scale: 0.91))), // multiply
+              offset: const Offset(0.5, 0.1),
+              box: true,
+              scale: 0.91))), // multiply
           cell(text('x', align: _ctr)),
           cell(text('o', align: _ctr)),
           cell(list([
@@ -194,9 +203,9 @@ class BackPanel extends OrientedScreen {
         ]),
         row([
           cell(center(text('\u200aSL',
-              offset: Offset(0.0, 0.0),
+              offset: const Offset(0.0, 0.0),
               box: true,
-              boxOffset: Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.15),
               scale: 0.88))),
           cell(text('x', align: _ctr)),
           cell(text('--', align: _ctr)),
@@ -213,15 +222,15 @@ class BackPanel extends OrientedScreen {
         ]),
         row([
           cell(center(text('SR',
-              offset: Offset(0.20, 0.0),
+              offset: const Offset(0.20, 0.0),
               box: true,
-              boxOffset: Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.15),
               scale: 0.88))),
           cell(text('x', align: _ctr)),
           cell(text('--', align: _ctr)),
           cellEB(list([
             space(2),
-            text('0', scale: 0.8, offset: Offset(.38, 0.10)),
+            text('0', scale: 0.8, offset: const Offset(.38, 0.10)),
             space(0.5),
             arrowRight(3.7),
             registerBox(
@@ -238,9 +247,9 @@ class BackPanel extends OrientedScreen {
         ]),
         row([
           cell(center(text('\u200aASR',
-              offset: Offset(-0.07, 0.0),
+              offset: const Offset(-0.07, 0.0),
               box: true,
-              boxOffset: Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.15),
               scale: 0.88))),
           cell(text('x', align: _ctr)),
           cell(text('--', align: _ctr)),
@@ -257,9 +266,9 @@ class BackPanel extends OrientedScreen {
               c.drawPath(path, p.thinLine);
               path = Path()
                 ..addPolygon([
-                  Offset(2.9, _Row.heightMM - 0.7),
-                  Offset(2.45, _Row.heightMM - 0.2),
-                  Offset(3.35, _Row.heightMM - 0.2),
+                  const Offset(2.9, _Row.heightMM - 0.7),
+                  const Offset(2.45, _Row.heightMM - 0.2),
+                  const Offset(3.35, _Row.heightMM - 0.2),
                 ], true);
               c.drawPath(path, p.fill);
             }),
@@ -277,9 +286,9 @@ class BackPanel extends OrientedScreen {
         ]),
         row([
           cell(center(text('\u200aRL',
-              offset: Offset(-0.10, -0.04),
+              offset: const Offset(-0.10, -0.04),
               box: true,
-              boxOffset: Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.15),
               scale: 0.88))),
           cell(text('x', align: _ctr)),
           cell(text('--', align: _ctr)),
@@ -306,9 +315,9 @@ class BackPanel extends OrientedScreen {
         ]),
         row([
           cell(center(text('RR',
-              offset: Offset(0.10, -0.04),
+              offset: const Offset(0.10, -0.04),
               box: true,
-              boxOffset: Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.15),
               scale: 0.88))),
           cell(text('x', align: _ctr)),
           cell(text('--', align: _ctr)),
@@ -343,9 +352,9 @@ class BackPanel extends OrientedScreen {
         ]),
         row([
           cell(center(text('\u200aRLC',
-              offset: Offset(-0.10, -0.04),
+              offset: const Offset(-0.10, -0.04),
               box: true,
-              boxOffset: Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.15),
               scale: 0.88))),
           cell(text('x', align: _ctr)),
           cell(text('--', align: _ctr)),
@@ -372,9 +381,9 @@ class BackPanel extends OrientedScreen {
         ]),
         row([
           cell(center(text('RRC',
-              offset: Offset(0.10, -0.04),
+              offset: const Offset(0.10, -0.04),
               box: true,
-              boxOffset: Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.15),
               scale: 0.88))),
           cell(text('x', align: _ctr)),
           cell(text('--', align: _ctr)),
@@ -446,7 +455,7 @@ class BackPanel extends OrientedScreen {
           {bool box = false, Offset offset = Offset.zero}) =>
       _SqrtTextItem(text, box: box, offset: offset);
   static _Item carry() =>
-      registerBox(2.1, text('c', scale: 0.72, offset: Offset(.62, -.08)));
+      registerBox(2.1, text('c', scale: 0.72, offset: const Offset(.62, -.08)));
 }
 
 /// A table on the back panel that scales with the screen size.
@@ -460,7 +469,7 @@ class _Table extends StatelessWidget {
   final List<_Row> rows;
   final double widthCM;
 
-  _Table(this.widthCM, this.rows);
+  const _Table(this.widthCM, this.rows);
 
   static const double thickLineWidth = 0.65; // mm
   static const double thinLineWidth = 0.3; // mm
@@ -507,7 +516,7 @@ class _TablePainter extends CustomPainter {
         (thinW * (columnWidths.length - 1));
     double height = table.rows.length * _Row.heightMM + 2 * thickW - thinW;
     RRect frame = RRect.fromLTRBR(thickW / 2, thickW / 2, width - thickW / 2,
-        height - thickW / 2, Radius.circular(0.1));
+        height - thickW / 2, const Radius.circular(0.1));
     canvas.drawRRect(frame, thickLine);
     double x = thickW - thinW / 2;
     for (int c = 0; c < columnWidths.length - 1; c++) {
@@ -538,7 +547,7 @@ class _Row {
     const double textUp = 0.20;
     c.translate(0, -textUp);
     const double bottomY = heightMM - _Table.thinLineWidth;
-    Offset bottomStart = Offset(0, bottomY);
+    Offset bottomStart = const Offset(0, bottomY);
     for (int i = 0; i < cells.length; i++) {
       final cell = cells[i];
       cell.paint(c, p, x, p.columnWidths[i]);

@@ -23,10 +23,11 @@ this program; if not, see https://www.gnu.org/licenses/ .
 ///
 library view.main_screen;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../c/controller.dart';
@@ -65,6 +66,8 @@ class ScreenPositioner {
 }
 
 abstract class OrientedScreen extends StatelessWidget {
+  const OrientedScreen({Key? key}) : super(key: key);
+
   static final ScreenPositioner landscape = ScreenPositioner(12.7, 8);
   static final ScreenPositioner portrait = ScreenPositioner(8, 12.7);
 
@@ -96,7 +99,7 @@ class MainScreen extends OrientedScreen {
   final Jrpn app;
   final ScalableImage icon;
 
-  MainScreen(this.app, this.icon);
+  const MainScreen(this.app, this.icon, {Key? key}) : super(key: key);
 
   Controller get controller => app.controller;
   Model get model => app.model;
@@ -169,15 +172,15 @@ class MainScreen extends OrientedScreen {
         items: [
           PopupMenuItem(
               value: _copyDisplayToClipboard,
-              child: Row(children: [
-                const Icon(Icons.content_copy),
-                const Text('Copy to Clipboard')
+              child: Row(children: const [
+                Icon(Icons.content_copy),
+                Text('Copy to Clipboard')
               ])),
           PopupMenuItem(
               value: _pasteNumberToModel,
-              child: Row(children: [
-                const Icon(Icons.content_copy),
-                const Text('Paste from Clipboard')
+              child: Row(children: const [
+                Icon(Icons.content_copy),
+                Text('Paste from Clipboard')
               ])),
         ]);
     if (f != null) {
@@ -212,7 +215,7 @@ class MainScreen extends OrientedScreen {
 
   Widget _jrpnIcon() {
     final Paint p = Paint()
-      ..color = Color(0xffe6edf5)
+      ..color = const Color(0xffe6edf5)
       ..style = PaintingStyle.fill;
     const border = 3;
     return Container(
@@ -220,13 +223,13 @@ class MainScreen extends OrientedScreen {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Spacer(flex: border),
+            const Spacer(flex: border),
             Expanded(
               flex: 100,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Spacer(flex: border),
+                    const Spacer(flex: border),
                     Expanded(
                         flex: 64,
                         child: Stack(
@@ -258,10 +261,10 @@ class MainScreen extends OrientedScreen {
                                         color: Colors.black))),
                           ],
                         )),
-                    Spacer(flex: border),
+                    const Spacer(flex: border),
                   ]),
             ),
-            Spacer(flex: border),
+            const Spacer(flex: border),
           ],
         ));
   }
@@ -276,7 +279,7 @@ class DrawnBackground extends CustomPainter {
   DrawnBackground(this.screen);
 
   @override
-  void paint(Canvas c, Size size) {
+  void paint(Canvas canvas, Size size) {
     // conversion factor from cm to the coordinate system of the Canvas
     final double cm = size.width / screen.width;
 
@@ -284,24 +287,25 @@ class DrawnBackground extends CustomPainter {
     final p = Paint()
       ..color = const Color(0xff4b4b50)
       ..style = PaintingStyle.fill;
-    c.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), p);
+    canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), p);
 
     double x = 0.27 * cm;
     double y = 2.5 * cm;
 
     // Silver along top:
     p.color = _topSilverColor;
-    c.drawRect(Rect.fromLTRB(x, 0, size.width - x, y), p);
+    canvas.drawRect(Rect.fromLTRB(x, 0, size.width - x, y), p);
     // Darker silver along very top edge:
     p.color = const Color(0xff7c7c7c);
-    c.drawRect(Rect.fromLTRB(x, 0, size.width - x, 0.2 * cm), p);
+    canvas.drawRect(Rect.fromLTRB(x, 0, size.width - x, 0.2 * cm), p);
 
     // Darker on top and bottom of raised frame
     p.color = const Color(0xff2b2b2f);
-    c.drawRect(Rect.fromLTRB(0, 0, x, 0.2 * cm), p);
-    c.drawRect(Rect.fromLTRB(size.width - x, 0, size.width, 0.2 * cm), p);
-    c.drawRect(Rect.fromLTRB(0, size.height - 0.15 * cm, x, size.height), p);
-    c.drawRect(
+    canvas.drawRect(Rect.fromLTRB(0, 0, x, 0.2 * cm), p);
+    canvas.drawRect(Rect.fromLTRB(size.width - x, 0, size.width, 0.2 * cm), p);
+    canvas.drawRect(
+        Rect.fromLTRB(0, size.height - 0.15 * cm, x, size.height), p);
+    canvas.drawRect(
         Rect.fromLTRB(
             size.width - x, size.height - 0.15 * cm, size.width, size.height),
         p);
@@ -310,13 +314,13 @@ class DrawnBackground extends CustomPainter {
     p.color = MainScreen.keyboardBaseColor;
     y += 0.1 * cm;
     double bottom = size.height - 0.05 * cm;
-    c.drawRect(Rect.fromLTRB(x, y, size.width - x, bottom), p);
+    canvas.drawRect(Rect.fromLTRB(x, y, size.width - x, bottom), p);
 
     x += 0.05 * cm;
     y += 0.05 * cm;
     bottom -= 0.05 * cm;
     p.color = MainScreen.keyFrameSilver;
-    c.drawRRect(
+    canvas.drawRRect(
         RRect.fromLTRBR(
             x, y, size.width - x, bottom, Radius.circular(0.1 * cm)),
         p);
@@ -324,7 +328,7 @@ class DrawnBackground extends CustomPainter {
     y += 0.07 * cm;
     bottom -= 0.2 * cm;
     p.color = MainScreen.keyboardBaseColor;
-    c.drawRRect(
+    canvas.drawRRect(
         RRect.fromLTRBR(
             x, y, size.width - x, bottom, Radius.circular(0.05 * cm)),
         p);
@@ -343,11 +347,11 @@ class DrawnBackground extends CustomPainter {
         textDirection: TextDirection.ltr);
     tp.layout();
     // Background for the text, in keyboardBase
-    c.drawRect(
+    canvas.drawRect(
         Rect.fromLTRB(x + 0.3 * cm, bottom - 1, x + 0.7 * cm + tp.width,
             bottom + 0.2 * cm + 1),
         p);
-    tp.paint(c, Offset(x + 0.5 * cm, bottom - 0.06 * cm));
+    tp.paint(canvas, Offset(x + 0.5 * cm, bottom - 0.06 * cm));
   }
 
   @override
@@ -420,7 +424,7 @@ class MainMenu extends StatefulWidget {
   final MainScreen main;
   final ScreenPositioner screen;
 
-  MainMenu(this.main, this.screen);
+  const MainMenu(this.main, this.screen, {Key? key}) : super(key: key);
 
   @override
   _MainMenuState createState() => _MainMenuState();
@@ -465,7 +469,7 @@ class _MainMenuState extends State<MainMenu> {
   }
 
   Widget _buildMenu(BuildContext context) => PopupMenuButton(
-        icon: Icon(null),
+        icon: const Icon(null),
         onSelected: (void Function() action) => setState(() => action()),
         itemBuilder: (BuildContext context) {
           return <PopupMenuEntry<void Function()>>[
@@ -486,7 +490,7 @@ class _HelpMenu extends StatelessWidget {
   final String title;
   final ScalableImage icon;
 
-  _HelpMenu(this.title, this.icon);
+  const _HelpMenu(this.title, this.icon, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -499,47 +503,51 @@ class _HelpMenu extends StatelessWidget {
       itemBuilder: (BuildContext context) => <PopupMenuEntry<void Function()>>[
         PopupMenuItem(
             value: () {
-              Navigator.pop<void>(context, () {});
+              Navigator.pop<void>(context);
               unawaited(
                   showDialog(context: context, builder: _showNonWarranty));
             },
-            child: Text('Non-warranty')),
+            child: const Text('Non-warranty')),
         PopupMenuItem(
             value: () {
-              Navigator.pop<void>(context, () {});
-              launch(APPLICATION_ISSUE_ADDRESS);
+              Navigator.pop<void>(context);
+              launch(applicationIssueAddress);
             },
-            child: Text('Submit Issue (Web)')),
+            child: const Text('Submit Issue (Web)')),
         PopupMenuItem(
             value: () {
-              Navigator.pop<void>(context, () {});
-              Navigator.push(context,
-                  MaterialPageRoute<void>(builder: (context) => BackPanel()));
+              Navigator.pop<void>(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                      builder: (context) => const BackPanel()));
             },
-            child: Text('Back Panel')),
+            child: const Text('Back Panel')),
         PopupMenuItem(
             value: () {
-              Navigator.pop<void>(context, () {});
+              Navigator.pop<void>(context);
               showAboutDialog(
                   context: context,
                   applicationIcon: ScalableImageWidget(si: icon, scale: 0.15),
                   applicationName: 'JRPN 16C',
-                  applicationVersion: 'Version $APPLICATION_VERSION',
+                  applicationVersion: 'Version $applicationVersion',
                   applicationLegalese: '© 2021 Bill Foote',
                   children: [
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                     InkWell(
-                        onTap: () => unawaited(launch(APPLICATION_WEB_ADDRESS)),
+                        onTap: () => unawaited(launch(applicationWebAddress)),
                         child: RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
                                 style: TextStyle(
                                     fontSize: 18,
-                                    color: Theme.of(context).accentColor),
-                                text: APPLICATION_WEB_ADDRESS)))
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary),
+                                text: applicationWebAddress)))
                   ]);
             },
-            child: Text('About')),
+            child: const Text('About')),
       ],
       child: Row(
         children: [
@@ -553,20 +561,20 @@ class _HelpMenu extends StatelessWidget {
 }
 
 Widget _showNonWarranty(BuildContext context) => AlertDialog(
-        title: Text('Non-Warranty'),
-        content: Text(NON_WARRANTY.replaceAll('\n', ' ')),
+        title: const Text('Non-Warranty'),
+        content: Text(nonWarranty.replaceAll('\n', ' ')),
         actions: [
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'))
+              child: const Text('OK'))
         ]);
 
 class _SettingsMenu extends StatefulWidget {
   final String title;
   final Model model;
-  _SettingsMenu(this.title, this.model);
+  const _SettingsMenu(this.title, this.model, {Key? key}) : super(key: key);
 
   @override
   __SettingsMenuState createState() => __SettingsMenuState();
@@ -646,7 +654,7 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                           Navigator.pop(context, () {});
                         }
                       },
-                      items: [
+                      items: const [
                         DropdownMenuItem(
                             value: OrientationSetting.auto,
                             child: Text('Automatic')),
@@ -657,13 +665,13 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                             value: OrientationSetting.landscape,
                             child: Text('Landscape'))
                       ]),
-                  Text('    Orientation')
+                  const Text('    Orientation')
                 ]))
               ]
             : []),
         PopupMenuItem(
             child: ListTile(
-                leading: Container(
+                leading: SizedBox(
                     width: 40,
                     child: _TextEntry(
                         initial: settings.msPerInstruction
@@ -692,13 +700,18 @@ class _TextEntry extends StatefulWidget {
   const _TextEntry({required this.initial, required this.onDone}) : super();
 
   @override
-  _TextEntryState createState() =>
-      _TextEntryState(TextEditingController(text: initial));
+  _TextEntryState createState() => _TextEntryState();
 }
 
 class _TextEntryState extends State<_TextEntry> {
-  final TextEditingController controller;
-  _TextEntryState(this.controller);
+  late final TextEditingController controller;
+  _TextEntryState();
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: widget.initial);
+  }
 
   @override
   void dispose() {
@@ -723,7 +736,7 @@ class _StateMenu extends StatefulWidget {
   final String title;
   final Jrpn app;
 
-  _StateMenu(this.title, this.app);
+  const _StateMenu(this.title, this.app, {Key? key}) : super(key: key);
 
   @override
   __StateMenuState createState() => __StateMenuState();
@@ -787,7 +800,7 @@ class __StateMenuState extends State<_StateMenu> {
       try {
         widget.app.model.initializeFromJsonOrUri(cd);
       } catch (e, s) {
-        print('\n\n$e\n\n$s');
+        debugPrint('\n\n$e\n\n$s');
         widget.app.controller.showMessage('bad c1ip ');
         return showErrorDialog(context, 'Bad data in clipboard', e);
       }
@@ -800,7 +813,8 @@ class _ExportMenu extends StatefulWidget {
   final Jrpn app;
   final bool comments;
 
-  _ExportMenu(this.title, this.app, this.comments);
+  const _ExportMenu(this.title, this.app, this.comments, {Key? key})
+      : super(key: key);
 
   @override
   __ExportMenuState createState() => __ExportMenuState();
@@ -854,7 +868,7 @@ class ErrorDialog extends StatelessWidget {
   final String message;
   final Object? exception;
 
-  ErrorDialog(this.message, this.exception);
+  const ErrorDialog(this.message, this.exception, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -864,17 +878,17 @@ class ErrorDialog extends StatelessWidget {
       try {
         exs = exception.toString();
       } catch (ex) {
-        print('Error in exception.toString()');
+        debugPrint('Error in exception.toString()');
       }
     }
     // return object of type Dialog
     return AlertDialog(
       title: Text(message),
       content: (exception == null)
-          ? Text('')
+          ? const Text('')
           : SingleChildScrollView(
               child: Column(children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(exs),
               ]),
             ),
@@ -884,7 +898,7 @@ class ErrorDialog extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('OK'),
+          child: const Text('OK'),
         )
       ],
     );

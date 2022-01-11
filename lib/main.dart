@@ -26,7 +26,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uni_links/uni_links.dart';
 
@@ -34,7 +33,7 @@ import 'c/controller.dart';
 import 'm/model.dart';
 import 'v/main_screen.dart';
 
-const NON_WARRANTY = '''
+const nonWarranty = '''
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -44,7 +43,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ''';
 
-const GNU_LICENSE = '''
+const gnuLicense = '''
 Copyright (c) 2021,2022 William Foote
 
 Program includes portions derived from other sources, as specified
@@ -747,9 +746,9 @@ Public License instead of this License.  But first, please read
 
 /// package_info doesn't exist for all platforms, so I'm doing it the old
 /// fashioned way.
-const APPLICATION_VERSION = '2.0.1';
-const APPLICATION_WEB_ADDRESS = 'https://jrpn.jovial.com';
-const APPLICATION_ISSUE_ADDRESS = 'https://github.com/zathras/jrpn/issues';
+const applicationVersion = '2.0.1';
+const applicationWebAddress = 'https://jrpn.jovial.com';
+const applicationIssueAddress = 'https://github.com/zathras/jrpn/issues';
 
 void main() async {
   // Get there first!
@@ -760,14 +759,15 @@ void main() async {
     // anything -- maybe to be functional it has to be configured
     // somehow?
     WidgetsFlutterBinding.ensureInitialized();
-    await SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top]);
   }
   final j = Jrpn(Controller(Model()));
   runApp(j);
 }
 
 Stream<LicenseEntry> _getLicenses() async* {
-  yield LicenseEntryWithLineBreaks(['jrpn'], GNU_LICENSE);
+  yield const LicenseEntryWithLineBreaks(['jrpn'], gnuLicense);
 }
 
 class Jrpn extends StatefulWidget {
@@ -775,12 +775,13 @@ class Jrpn extends StatefulWidget {
   /// and in the Model referenced by the controller.
   final Controller controller;
 
-  Jrpn(this.controller);
+  const Jrpn(this.controller, {Key? key}) : super(key: key);
 
   Model get model => controller.model;
 
   Future<void> sendUrlToClipboard({required bool comments}) {
-    final bytes = ZLibEncoder().encode(_getJson(comments: comments).codeUnits);
+    final bytes =
+        const ZLibEncoder().encode(_getJson(comments: comments).codeUnits);
     final j = base64UrlEncode(bytes);
     final s = 'https://jrpn.jovial.com/run/index.html?state=$j';
     return Clipboard.setData(ClipboardData(text: s));
@@ -795,7 +796,7 @@ class Jrpn extends StatefulWidget {
 
   String _getJson({required bool comments}) {
     if (comments) {
-      return JsonEncoder.withIndent('    ')
+      return const JsonEncoder.withIndent('    ')
               .convert(model.toJson(comments: true)) +
           '\n';
     } else {
@@ -804,12 +805,11 @@ class Jrpn extends StatefulWidget {
   }
 
   @override
-  JrpnState createState() => JrpnState(controller);
+  JrpnState createState() => JrpnState();
 }
 
 // ignore: prefer_mixin
 class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
-  Controller controller;
   bool _initDone = false;
   bool _disposed = false;
   StreamSubscription? _linksSubscription;
@@ -818,14 +818,15 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   late final FocusNode keyboard;
   late final ScalableImage icon;
 
-  JrpnState(this.controller) {
-    keyboard = FocusNode(
-        onKey: (FocusNode _, RawKeyEvent e) => controller.keyboard.onKey(e));
-  }
+  JrpnState();
+
+  Controller get controller => widget.controller;
 
   @override
   void initState() {
     super.initState();
+    keyboard = FocusNode(
+        onKey: (FocusNode _, RawKeyEvent e) => controller.keyboard.onKey(e));
     unawaited(_init());
   }
 
@@ -872,19 +873,16 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       child: Container(
         color: Colors.white,
         child: Column(children: [
-          Text(' ',
-              style:
-                  const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-          Text('Incoming Link',
-              style:
-                  const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-          SizedBox(height: 30),
-          Text('Import the contents of the incoming link?',
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          SizedBox(height: 30),
+          const Text(' ',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+          const Text('Incoming Link',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 30),
+          const Text('Import the contents of the incoming link?',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 30),
           Row(children: [
-            Spacer(flex: 2),
+            const Spacer(flex: 2),
             ElevatedButton(
               onPressed: () {
                 setState(() {
@@ -892,22 +890,22 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
                   _importLink(link);
                 });
               },
-              child: Padding(
+              child: const Padding(
                   padding: EdgeInsets.all(5),
                   child: Text('Import', style: TextStyle(fontSize: 20))),
             ),
-            Spacer(),
+            const Spacer(),
             ElevatedButton(
               onPressed: () {
                 setState(() {
                   _incomingLink = null;
                 });
               },
-              child: Padding(
+              child: const Padding(
                   padding: EdgeInsets.all(5),
                   child: Text('Discard Link', style: TextStyle(fontSize: 20))),
             ),
-            Spacer(flex: 2),
+            const Spacer(flex: 2),
           ])
         ]),
       ),
@@ -919,26 +917,26 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     try {
       exs = _pendingError!.toString();
     } catch (ex) {
-      print('Error in exception.toString()');
+      debugPrint('Error in exception.toString()');
     }
     return Container(
       color: Colors.white,
       child: Column(children: [
-        Text(' ',
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-        Text('Error',
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-        SizedBox(height: 30),
+        const Text(' ',
+            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+        const Text('Error',
+            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 30),
         Text(exs,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        SizedBox(height: 30),
+        const SizedBox(height: 30),
         ElevatedButton(
           onPressed: () {
             setState(() {
               _pendingError = null;
             });
           },
-          child: Padding(
+          child: const Padding(
               padding: EdgeInsets.all(5),
               child: Text('CONTINUE', style: TextStyle(fontSize: 20))),
         ),
@@ -969,12 +967,13 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       bool done = false;
       try {
         link = await getInitialLink();
-      } on PlatformException catch (_) {} on MissingPluginException catch (_) {}
+      } on PlatformException catch (_) {
+      } on MissingPluginException catch (_) {}
       if (link != null) {
         try {
           done = controller.model.initializeFromJsonOrUri(link);
         } catch (e, s) {
-          print('\n$e:\n\n$s\n');
+          debugPrint('\n$e:\n\n$s\n');
           _pendingError = e;
         }
       }
@@ -997,10 +996,10 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
             _incomingLink = link;
           });
         }, onError: (Object err) {
-          print('Error from linkStream:  $err');
+          debugPrint('Error from linkStream:  $err');
         });
       } catch (e) {
-        print('uni_links ignoring stream subscription error');
+        debugPrint('uni_links ignoring stream subscription error');
       }
     }
   }

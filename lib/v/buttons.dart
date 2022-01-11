@@ -49,54 +49,55 @@ abstract class ButtonFactory {
   final double width = 122;
   final double height = 136;
   final double padRight = 25;
-  final TextStyle keyTextStyle = TextStyle(
+  final TextStyle keyTextStyle = const TextStyle(
       fontSize: 40,
       fontFamily: 'KeyLabelFont',
       fontWeight: FontWeight.normal,
       color: Color(0xffffffff),
       height: 0.97);
-  final TextStyle shiftKeyTextStyle = TextStyle(
+  final TextStyle shiftKeyTextStyle = const TextStyle(
       fontSize: 38, fontFamily: 'KeyLabelFont', color: Color(0xff000000));
-  final Offset keyTextOffset = Offset(0, 46);
-  final Offset fKeyTextOffset = Offset(0, 45);
-  final Offset gKeyTextOffset = Offset(0, 39);
-  final Offset onKeyTextOffset = Offset(0, 66);
-  final Offset enterKeyTextOffset = Offset(0, 53);
-  final TextStyle fTextStyle = TextStyle(
+  final Offset keyTextOffset = const Offset(0, 46);
+  final Offset fKeyTextOffset = const Offset(0, 45);
+  final Offset gKeyTextOffset = const Offset(0, 39);
+  final Offset onKeyTextOffset = const Offset(0, 66);
+  final Offset enterKeyTextOffset = const Offset(0, 53);
+  final TextStyle fTextStyle = const TextStyle(
       fontSize: 26,
       fontFamily: 'KeyLabelFont',
       fontWeight: FontWeight.bold,
       color: Color(0xfff98c35));
-  final TextStyle fTextSmallLabelStyle = TextStyle(
+  final TextStyle fTextSmallLabelStyle = const TextStyle(
       fontSize: 17,
       fontFamily: 'KeyLabelFont',
       fontWeight: FontWeight.bold,
       color: Color(0xfff98c35));
-  final Offset fTextOffset = Offset(0, -2);
-  final TextStyle gTextStyle = TextStyle(
+  final Offset fTextOffset = const Offset(0, -2);
+  final TextStyle gTextStyle = const TextStyle(
       fontSize: 26, fontFamily: 'KeyLabelFont', color: Color(0xff12cdff));
-  final TextStyle gTextStyleForLJ = TextStyle(
+  final TextStyle gTextStyleForLJ = const TextStyle(
       fontFamily: 'LogoFont',
       fontWeight: FontWeight.w500,
       fontSize: 26,
       color: Color(0xff12cdff));
-  final Offset gTextOffset = Offset(0, 92);
-  final TextStyle specialButtonTextStyle = TextStyle(
+  final Offset gTextOffset = const Offset(0, 92);
+  final TextStyle specialButtonTextStyle = const TextStyle(
       fontSize: 42,
       fontFamily: 'KeyLabelFont',
       color: Colors.yellow,
       height: 0.97);
-  final TextStyle acceleratorTextStyle = TextStyle(
+  final TextStyle acceleratorTextStyle = const TextStyle(
       fontSize: 32, fontFamily: 'KeyLabelFont', color: Color(0xff5fe88d));
   final RRect outerBorder =
-      RRect.fromLTRBR(0, 26, 122, 136, Radius.circular(7));
+      RRect.fromLTRBR(0, 26, 122, 136, const Radius.circular(7));
   final RRect innerBorder =
-      RRect.fromLTRBR(7, 26 + 7, 122 - 7, 136 - 7, Radius.circular(7));
+      RRect.fromLTRBR(7, 26 + 7, 122 - 7, 136 - 7, const Radius.circular(7));
   final RRect upperSurface = RRect.fromLTRBAndCorners(11, 26 + 11, 122 - 11, 88,
-      topLeft: Radius.circular(7), topRight: Radius.circular(7));
+      topLeft: const Radius.circular(7), topRight: const Radius.circular(7));
   final RRect lowerSurface = RRect.fromLTRBAndCorners(
       11, 88, 122 - 11, 136 - 11,
-      bottomLeft: Radius.circular(7), bottomRight: Radius.circular(7));
+      bottomLeft: const Radius.circular(7),
+      bottomRight: const Radius.circular(7));
   final Paint fill = Paint()..style = PaintingStyle.fill;
 
   @protected
@@ -431,7 +432,7 @@ class _UpperLabel extends CustomPainter {
   _UpperLabel(this.text, this.style, this.height);
 
   final Paint linePaint = Paint()
-    ..color = Color(0xfff98c35)
+    ..color = const Color(0xfff98c35)
     ..style = PaintingStyle.stroke
     ..strokeWidth = 3
     ..strokeCap = StrokeCap.butt;
@@ -445,7 +446,7 @@ class _UpperLabel extends CustomPainter {
         text: span,
         textAlign: TextAlign.center,
         textDirection: TextDirection.ltr);
-    final double x = 2;
+    const double x = 2;
     final double w = (size.width / sf) - 2 * x;
     tp.layout();
     tp.paint(canvas, Offset(x + (w - tp.width) / 2, 0));
@@ -509,8 +510,9 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
 
   CalculatorButton(this.bFactory, this.uText, this.fText, this.gText, this.uKey,
       this.fKey, this.gKey, this.acceleratorKey,
-      {String? acceleratorLabel})
-      : _acceleratorLabel = acceleratorLabel;
+      {String? acceleratorLabel, Key? key})
+      : _acceleratorLabel = acceleratorLabel,
+        super(key: key);
 
   @override
   CalculatorButtonState createState() => CalculatorButtonState();
@@ -596,7 +598,7 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
     if (pressed) {
       if (pressedFromKeyboard) {
         Paint p = Paint()
-          ..color = Color(0xff00ef00)
+          ..color = const Color(0xff00ef00)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2;
         canvas.drawRRect(outerBorder, p);
@@ -610,7 +612,7 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
 
   void drawKeyboardAccelerator(Canvas canvas) {
     final s = bFactory.acceleratorTextStyle;
-    final double x = -25;
+    const double x = -25;
     double y = 7 + s.fontSize!;
     for (String ch in Characters(acceleratorLabel)) {
       TextPainter p = TextPainter(
@@ -662,9 +664,10 @@ class CalculatorOnSpecialButton extends CalculatorButton {
       Operation gKey,
       String rawKeyboardKey,
       this.specialText,
-      {String? acceleratorLabel})
+      {String? acceleratorLabel,
+      Key? key})
       : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            acceleratorLabel: acceleratorLabel);
+            acceleratorLabel: acceleratorLabel, key: key);
 
   @override
   CalculatorButtonState createState() => _CalculatorOnSpecialButtonState();
@@ -705,9 +708,11 @@ class CalculatorOnButton extends CalculatorOnSpecialButton {
       Operation fKey,
       Operation gKey,
       String rawKeyboardKey,
-      String specialText)
+      String specialText,
+      {Key? key})
       : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            specialText);
+            specialText,
+            key: key);
 
   @override
   Color get lowerSurfaceColor => upperSurfaceColor;
@@ -764,18 +769,19 @@ abstract class CalculatorShiftButton extends CalculatorButton {
       Operation fKey,
       Operation gKey,
       String rawKeyboardKey,
-      {String? acceleratorLabel})
+      {String? acceleratorLabel,
+      Key? key})
       : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            acceleratorLabel: acceleratorLabel);
+            acceleratorLabel: acceleratorLabel, key: key);
 
   String get extraAcceleratorName;
 
   @override
   void drawKeyboardAccelerator(Canvas canvas) {
     super.drawKeyboardAccelerator(canvas);
-    final s = TextStyle(
+    const s = TextStyle(
         fontSize: 20, fontFamily: 'KeyLabelFont', color: Color(0xff5fe88d));
-    final double x = -29;
+    const double x = -29;
     double y = 7 + s.fontSize! * 3.7;
     TextPainter p = TextPainter(
         text: TextSpan(style: s, text: extraAcceleratorName),
@@ -800,9 +806,10 @@ class CalculatorFButton extends CalculatorShiftButton {
       Operation fKey,
       Operation gKey,
       String rawKeyboardKey,
-      {String? acceleratorLabel})
+      {String? acceleratorLabel,
+      Key? key})
       : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            acceleratorLabel: acceleratorLabel);
+            acceleratorLabel: acceleratorLabel, key: key);
 
   @override
   Color get innerBorderColor => const Color(0xfffc8f3b);
@@ -836,9 +843,10 @@ class CalculatorGButton extends CalculatorShiftButton {
       Operation fKey,
       Operation gKey,
       String rawKeyboardKey,
-      {String? acceleratorLabel})
+      {String? acceleratorLabel,
+      Key? key})
       : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            acceleratorLabel: acceleratorLabel);
+            acceleratorLabel: acceleratorLabel, key: key);
 
   @override
   Color get innerBorderColor => const Color(0xff30bfdf);
@@ -872,8 +880,10 @@ class CalculatorButtonWithLJ extends CalculatorButton {
       Operation uKey,
       Operation fKey,
       Operation gKey,
-      String rawKeyboardKey)
-      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey);
+      String rawKeyboardKey,
+      {Key? key})
+      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
+            key: key);
 
   @override
   void drawBlueText(Canvas canvas, double w) {
@@ -901,8 +911,10 @@ class CalculatorSqrtButton extends CalculatorButton {
       NormalOperation uKey,
       NormalOperation fKey,
       NormalOperation gKey,
-      String rawKeyboardKey)
-      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey);
+      String rawKeyboardKey,
+      {Key? key})
+      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
+            key: key);
 
   @override
   void drawBlueText(Canvas canvas, double w) {
@@ -933,14 +945,15 @@ class CalculatorEnterButton extends CalculatorButton {
       Operation gKey,
       String rawKeyboardKey,
       {required this.extraHeight,
-      String? acceleratorLabel})
+      String? acceleratorLabel,
+      Key? key})
       : _outerBorder = _calculateOuterBorder(factory, extraHeight),
         _innerBorder = _calculateInnerBorder(factory, extraHeight),
         _lowerSurface = _calculateLowerSurface(factory, extraHeight),
         _upperSurface = _calculateUpperSurface(factory, extraHeight),
         _gTextOffset = factory.gTextOffset.translate(0, extraHeight),
         super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            acceleratorLabel: acceleratorLabel);
+            acceleratorLabel: acceleratorLabel, key: key);
 
   final double extraHeight;
   final RRect _outerBorder;
@@ -1025,19 +1038,19 @@ class CalculatorButtonState extends State<CalculatorButton> {
 
   @override
   @protected
-  void didUpdateWidget(covariant CalculatorButton old) {
+  void didUpdateWidget(covariant CalculatorButton oldWidget) {
     KeyboardController c = widget.bFactory.controller.keyboard;
-    if (old.acceleratorKey != widget.acceleratorKey) {
+    if (oldWidget.acceleratorKey != widget.acceleratorKey) {
       if (_pressed) {
         setState(() {
           _pressed = false;
           _pressedFromKeyboard = false;
         }); // Hard to imagine this happening
       }
-      c.deregister(this, old.acceleratorKey);
+      c.deregister(this, oldWidget.acceleratorKey);
       c.register(this, widget.acceleratorKey);
     }
-    super.didUpdateWidget(old);
+    super.didUpdateWidget(oldWidget);
   }
 
   void _repaint(bool _) => setState(() {});

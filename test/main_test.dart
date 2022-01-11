@@ -32,21 +32,19 @@ Future<void> main() async {
     await tester.pumpWidget(Jrpn(Controller(Model())));
   });
 
-  test('p79 program', p79_program);
-  test('p93 checksum program', p93_checksum);
-  test('stack lift', test_stack_lift);
-  test('registers and word size', test_registers_and_word_size);
-  test('program with error', program_with_error);
-  test('last x', last_x);
-  test('no scroll reset', no_scroll_reset);
+  test('p79 program', p79Program);
+  test('p93 checksum program', p93Checksum);
+  test('stack lift', testStackLift);
+  test('registers and word size', testRegistersAndWordSize);
+  test('program with error', programWithError);
+  test('last x', lastX);
+  test('no scroll reset', noScrollReset);
   appendixA();
-  test('Towers of Hanoi', towers_of_hanoi);
+  test('Towers of Hanoi', towersOfHanoi);
   // Do this last, because it leaves a timer pending:
   test('Built-in self tests', () async {
     await SelfTests(inCalculator: false).runAll();
   });
-
-
 }
 
 void enter(Controller c, Operation key) {
@@ -54,7 +52,7 @@ void enter(Controller c, Operation key) {
   c.buttonUp();
 }
 
-Future<void> no_scroll_reset() async {
+Future<void> noScrollReset() async {
   // p. 100
   final ops = [
     Operations.minus,
@@ -132,7 +130,7 @@ Future<void> no_scroll_reset() async {
   }
 }
 
-Future<void> last_x() async {
+Future<void> lastX() async {
   // p. 100
   final ops = [
     Operations.minus,
@@ -176,7 +174,7 @@ Future<void> last_x() async {
     Operations.sqrtOp,
   ];
   final Value four = Value.fromInternal(BigInt.parse('4'));
-  for (final program in [ false, true ]) {
+  for (final program in [false, true]) {
     for (final Operation op in ops) {
       final tc = TestCalculator();
       final c = tc.controller;
@@ -195,7 +193,7 @@ Future<void> last_x() async {
       enter(c, op);
       if (program) {
         final out = StreamIterator<ProgramEvent>(tc.output.stream);
-        enter(c, Operations.rtn);  // An extra one in case of branching instr.
+        enter(c, Operations.rtn); // An extra one in case of branching instr.
         enter(c, Operations.pr);
         enter(c, Operations.rs);
         expect(await out.moveNext(), true);
@@ -225,7 +223,7 @@ Future<void> last_x() async {
       }
       if (program) {
         final out = StreamIterator<ProgramEvent>(tc.output.stream);
-        enter(c, Operations.rtn);  // An extra one in case of branching instr.
+        enter(c, Operations.rtn); // An extra one in case of branching instr.
         enter(c, Operations.pr);
         enter(c, Operations.rs);
         expect(await out.moveNext(), true);
@@ -237,7 +235,7 @@ Future<void> last_x() async {
   }
 }
 
-Future<void> program_with_error() async {
+Future<void> programWithError() async {
   final tc = TestCalculator();
   final m = tc.model;
   final c = tc.controller;
@@ -280,7 +278,7 @@ Future<void> program_with_error() async {
   expect(m.display.current.trim(), '5.00');
 }
 
-Future<void> test_registers_and_word_size() async {
+Future<void> testRegistersAndWordSize() async {
   // p. 67:
   final m = Model<Operation>();
   final c = Controller(m);
@@ -347,8 +345,8 @@ Future<void> test_registers_and_word_size() async {
   expect(m.z, Value.zero); // 326 & 15
 }
 
-Future<void> test_stack_lift() async {
-  for (final program in [ false, true ]) {
+Future<void> testStackLift() async {
+  for (final program in [false, true]) {
     final tc = TestCalculator();
     final m = tc.model;
     final c = tc.controller;

@@ -11,7 +11,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  pedantic: ^1.0.8
   shared_preferences: ^2.0.5
   share_plus: ^2.0.2
   uni_links: ^0.5.1
@@ -22,7 +21,7 @@ dependencies:
 
 dev_dependencies:
   flutter_launcher_icons: ^0.9.0
-  effective_dart: ^1.0.0
+  flutter_lints: ^1.0.4
   flutter_test:
     sdk: flutter
   test: ^1.16.5
