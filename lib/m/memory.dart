@@ -576,7 +576,12 @@ class ProgramMemory<OT extends ProgramOperation> {
 }
 
 ///
-/// The model's view of an operation.
+/// The model's view of an operation.  This is extended by the controller's
+/// Operation class.  The parts of Operation that are relevant to the model
+/// are lifted into the model class ProgramOperation so that Model doesn't
+/// depend on a controller class.  Model is parameterized by ProgramOperation
+/// so that the controller can refer to members of Operation that are logically
+/// part of the controller.
 ///
 abstract class ProgramOperation {
   late final String _programDisplay;
@@ -597,7 +602,7 @@ abstract class ProgramOperation {
   int? get numericValue => (_opCode >= 0 && _opCode < 16) ? _opCode : null;
 
   @override
-  String toString() => 'ProgramOperation(_programDisplay)';
+  String toString() => 'ProgramOperation($programDisplay)';
 }
 
 ///

@@ -1,0 +1,22 @@
+
+include: package:flutter_lints/flutter.yaml
+
+linter:
+    rules:
+        unawaited_futures: true
+        omit_local_variable_types: false
+        public_member_api_docs: false
+        avoid_types_on_closure_parameters: false
+        camel_case_types: true
+        cancel_subscriptions: true
+        comment_references: true
+        await_only_futures: true
+        exhaustive_cases: true
+
+analyzer:
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+
+#   exclude:
+#     - path/to/excluded/files/**

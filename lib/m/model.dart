@@ -409,12 +409,12 @@ class Model<OT extends ProgramOperation> implements NumStatus {
   BigInt _signMask = BigInt.from(0x8000);
   DisplayMode _displayMode = DisplayMode.hex;
   IntegerSignMode _integerSignMode = SignMode.twosComplement;
+  bool isRunningProgram = false;
 
   /// Not used, but we retain any comments found in the JSON file
   /// so we can write them back out.
   dynamic _comments;
 
-  bool isRunningProgram = false;
   @override
   BigInt get maxInt => _integerSignMode.maxValue(this);
   @override

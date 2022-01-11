@@ -24,12 +24,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/m/model.dart';
 
-import 'package:jrpn/main.dart';
+import 'package:jrpn/generic_main.dart';
 import 'programs.dart';
+
+
+class TestJrpn extends CalculatorKind {
+
+  const TestJrpn();
+
+}
 
 Future<void> main() async {
   testWidgets('Self tests', (WidgetTester tester) async {
-    await tester.pumpWidget(Jrpn(Controller(Model())));
+    await tester.pumpWidget(Jrpn(Controller(Model()), const TestJrpn()));
   });
 
   test('p79 program', p79Program);

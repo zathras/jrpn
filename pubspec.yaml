@@ -27,39 +27,5 @@ dev_dependencies:
   test: ^1.16.5
   msix: ^2.0.0
 
-flutter_icons:
-  image_path: assets/icon256.png
-  image_path_ios:  assets/icon_ios.png
-  android: true
-  macos: true
-  linux: true
-  ios: true
-  windows: true
-  # If changed, "flutter pub run flutter_launcher_icons:main"
-  # See https://pub.dev/packages/flutter_launcher_icons
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter.
 flutter:
   uses-material-design: true
-  assets:
-    - assets/jupiter.si
-  fonts:
-    - family: KeyLabelFont
-      fonts:
-          - asset: fonts/deja_vu_sans.ttf
-            style: normal
-            weight: 400
-          - asset: fonts/deja_vu_sans_bold.ttf
-            style: normal
-            weight: 700
-    - family: LogoFont
-      fonts:
-        - asset: fonts/WorkSans-Regular.ttf
-          style: normal
-          weight: 400
-        - asset: fonts/WorkSans-Medium.ttf
-          style: normal
-          weight: 500

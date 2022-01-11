@@ -750,7 +750,18 @@ const applicationVersion = '2.0.1';
 const applicationWebAddress = 'https://jrpn.jovial.com';
 const applicationIssueAddress = 'https://github.com/zathras/jrpn/issues';
 
-void main() async {
+///
+/// A class to determine the parts of the calculator that vary by model,
+/// that is, between the 15C and the 16C.
+///
+@immutable
+abstract class CalculatorKind {
+
+  const CalculatorKind();
+
+}
+
+void genericMain(CalculatorKind kind) async {
   // Get there first!
   LicenseRegistry.addLicense(_getLicenses);
 
@@ -762,7 +773,7 @@ void main() async {
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top]);
   }
-  final j = Jrpn(Controller(Model()));
+  final j = Jrpn(Controller(Model<Operation>()), kind);
   runApp(j);
 }
 
@@ -774,8 +785,9 @@ class Jrpn extends StatefulWidget {
   /// The state for a calculator instance is held both in the Controller,
   /// and in the Model referenced by the controller.
   final Controller controller;
+  final CalculatorKind kind;
 
-  const Jrpn(this.controller, {Key? key}) : super(key: key);
+  const Jrpn(this.controller, this.kind, {Key? key}) : super(key: key);
 
   Model get model => controller.model;
 

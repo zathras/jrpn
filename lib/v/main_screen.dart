@@ -32,7 +32,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../c/controller.dart';
 import '../m/model.dart';
-import '../main.dart';
+import '../generic_main.dart';
 import 'back_panel.dart';
 import 'buttons.dart';
 import 'lcd_display.dart';
