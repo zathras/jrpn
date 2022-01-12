@@ -422,6 +422,11 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// calculator's state obsolete.
   List<List<MKey<OT>?>> get logicalKeys;
 
+  ///
+  /// The name of this model of the calculator (16C or 15C).
+  ///
+  String get modelName;
+
   /// Not used, but we retain any comments found in the JSON file
   /// so we can write them back out.
   dynamic _comments;

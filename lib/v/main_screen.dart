@@ -33,7 +33,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../c/controller.dart';
 import '../m/model.dart';
 import '../generic_main.dart';
-import 'back_panel.dart';
 import 'buttons.dart';
 import 'lcd_display.dart';
 
@@ -251,7 +250,7 @@ class MainScreen extends OrientedScreen {
                                 painter: _RoundedBox(widthCM: 0.9, paint: p)),
                             CustomPaint(
                                 painter: _ScaledText(
-                                    text: '16C',
+                                    text: model.modelName,
                                     widthCM: 0.9,
                                     embiggen: 1.25,
                                     style: const TextStyle(
@@ -480,7 +479,7 @@ class _MainMenuState extends State<MainMenu> {
                 value: () {}, child: _SettingsMenu('Settings', model)),
             // PopupMenuDivider(),
             PopupMenuItem(
-                value: () {}, child: _HelpMenu('Help', widget.main.icon))
+                value: () {}, child: _HelpMenu('Help', widget.main.icon, controller))
           ];
         },
       );
@@ -489,8 +488,9 @@ class _MainMenuState extends State<MainMenu> {
 class _HelpMenu extends StatelessWidget {
   final String title;
   final ScalableImage icon;
+  final Controller controller;
 
-  const _HelpMenu(this.title, this.icon, {Key? key}) : super(key: key);
+  const _HelpMenu(this.title, this.icon, this.controller, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -520,7 +520,7 @@ class _HelpMenu extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute<void>(
-                      builder: (context) => const BackPanel()));
+                      builder: (context) => controller.getBackPanel()));
             },
             child: const Text('Back Panel')),
         PopupMenuItem(
@@ -529,9 +529,9 @@ class _HelpMenu extends StatelessWidget {
               showAboutDialog(
                   context: context,
                   applicationIcon: ScalableImageWidget(si: icon, scale: 0.15),
-                  applicationName: 'JRPN 16C',
+                  applicationName: 'JRPN ${controller.model.modelName}',
                   applicationVersion: 'Version $applicationVersion',
-                  applicationLegalese: '© 2021 Bill Foote',
+                  applicationLegalese: '© 2021, 2022 Bill Foote',
                   children: [
                     const SizedBox(height: 40),
                     InkWell(

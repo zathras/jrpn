@@ -25,7 +25,7 @@ library view.back_panel;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'main_screen.dart';
+import 'package:jrpn/v/main_screen.dart';
 
 ///
 /// The calculator's back panel.

@@ -24,6 +24,7 @@ import 'package:jrpn/generic_main.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/v/buttons.dart';
 
+import 'back_panel.dart';
 import 'tests16c.dart';
 
 void main() async => genericMain(Jrpn(Controller16(Model16())));
@@ -101,6 +102,8 @@ class Model16 extends Model<Operation> {
   @override
   set gFlag(bool v) => setFlag(5, v);
 
+  @override
+  String get modelName => '16C';
 }
 
 ///
@@ -273,4 +276,7 @@ class Controller16 extends RealController {
   @override
   ButtonLayout getButtonLayout(ButtonFactory factory, double totalHeight,
       double totalButtonHeight) => ButtonLayout16(factory, totalHeight, totalButtonHeight);
+
+  @override
+  BackPanel getBackPanel() => const BackPanel();
 }

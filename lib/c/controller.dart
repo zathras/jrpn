@@ -162,6 +162,8 @@ abstract class Controller {
 
   ButtonLayout getButtonLayout(
       ButtonFactory factory, double totalHeight, double totalButtonHeight);
+
+  Widget getBackPanel();
 }
 
 ///
@@ -324,6 +326,9 @@ class RunningController extends Controller {
   ButtonLayout getButtonLayout(ButtonFactory factory, double totalHeight,
           double totalButtonHeight) =>
       real.getButtonLayout(factory, totalHeight, totalButtonHeight);
+
+  @override
+  Widget getBackPanel() => real.getBackPanel();
 }
 
 ///

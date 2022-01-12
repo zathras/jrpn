@@ -840,7 +840,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'JRPN 16c',
+        title: 'JRPN ${controller.model.modelName}',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
