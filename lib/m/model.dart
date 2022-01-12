@@ -411,6 +411,17 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   IntegerSignMode _integerSignMode = SignMode.twosComplement;
   bool isRunningProgram = false;
 
+  /// The list of "logical" keys.  This has nothing to do with the UI;
+  /// The order of the operations in this list determines the
+  /// externalized form of the operations in the calculator's storage
+  /// (the opcodes).  It also determines the displayed appearance of
+  /// operations in program mode, whether the calculator is in portrait or
+  /// landscape orientation.
+  ///
+  /// Changing the order here would render old JSON files of the
+  /// calculator's state obsolete.
+  List<List<MKey<OT>?>> get logicalKeys;
+
   /// Not used, but we retain any comments found in the JSON file
   /// so we can write them back out.
   dynamic _comments;

@@ -159,6 +159,9 @@ abstract class Controller {
   }
 
   SelfTests newSelfTests({bool inCalculator = true});
+
+  ButtonLayout getButtonLayout(
+      ButtonFactory factory, double totalHeight, double totalButtonHeight);
 }
 
 ///
@@ -197,7 +200,7 @@ abstract class RealController extends Controller {
 
   RealController(Model<Operation> model) : super(model) {
     model.memory.initializeSystem(OperationMap<Operation>(
-        keys: Operations.keys,
+        keys: model.logicalKeys,
         numbers: Operations.numbers,
         special: Operations.special,
         shortcuts: Operations.shortcuts,
@@ -316,6 +319,11 @@ class RunningController extends Controller {
   @override
   SelfTests newSelfTests({bool inCalculator = true}) =>
       real.newSelfTests(inCalculator: inCalculator);
+
+  @override
+  ButtonLayout getButtonLayout(ButtonFactory factory, double totalHeight,
+          double totalButtonHeight) =>
+      real.getButtonLayout(factory, totalHeight, totalButtonHeight);
 }
 
 ///

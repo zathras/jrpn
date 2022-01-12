@@ -30,7 +30,6 @@ library view.buttons;
 import 'package:flutter/material.dart';
 
 import '../c/controller.dart';
-import '../c/operations.dart';
 import '../m/model.dart';
 import 'main_screen.dart' show ScreenPositioner;
 
@@ -132,7 +131,7 @@ abstract class ButtonFactory {
     // Add the upper yellow labels
     y += addUpperGoldLabels(result, pos, th: th, tw: tw, bh: bh, bw: bw);
 
-    final buttons = _Buttons(this, th, bh);
+    final buttons = controller.getButtonLayout(this, th, bh);
     final List<List<CalculatorButton?>> rc = buttonLayout(buttons);
     for (int i = 0; i < rc.length; i++) {
       double x = pos.left;
@@ -151,7 +150,7 @@ abstract class ButtonFactory {
     return result;
   }
 
-  List<List<CalculatorButton?>> buttonLayout(_Buttons buttons);
+  List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons);
 }
 
 class LandscapeButtonFactory extends ButtonFactory {
@@ -207,7 +206,7 @@ class LandscapeButtonFactory extends ButtonFactory {
       Rect.fromLTWH(pos.left + 5 * tw, pos.top + 2 * th, bw, bh + th);
 
   @override
-  List<List<CalculatorButton?>> buttonLayout(_Buttons buttons) =>
+  List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons) =>
       buttons.landscapeLayout;
 }
 
@@ -262,165 +261,19 @@ class PortraitButtonFactory extends ButtonFactory {
       Rect.fromLTWH(pos.left + tw - 0.1, 0.28 + pos.top + 5 * th, bw, bh + th);
 
   @override
-  List<List<CalculatorButton?>> buttonLayout(_Buttons buttons) =>
+  List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons) =>
       buttons.portraitLayout;
 }
 
 ///
-/// This helper just gives names for each of the buttons.
-/// Within this class, the fields are ordered as per the landscape layout,
-/// but they can be placed elsewhere on the screen.
+/// The layout of the buttons.
 ///
-class _Buttons {
-  final ButtonFactory factory;
-  double th;
-  double bh;
+abstract class ButtonLayout {
+  List<List<CalculatorButton?>> get landscapeLayout;
 
-  _Buttons(this.factory, this.th, this.bh);
+  List<List<CalculatorButton?>> get portraitLayout;
 
-  CalculatorButton get a => CalculatorButtonWithLJ(factory, 'A', 'SL',
-      'L\u200AJ', Operations.a, Operations.sl, Operations.lj, 'A');
-  CalculatorButton get b => CalculatorButton(factory, 'B', 'SR', 'ASR',
-      Operations.b, Operations.sr, Operations.asr, 'B');
-  CalculatorButton get c => CalculatorButton(factory, 'C', 'RL', 'RLC',
-      Operations.c, Operations.rl, Operations.rlc, 'C');
-  CalculatorButton get d => CalculatorButton(factory, 'D', 'RR', 'RRC',
-      Operations.d, Operations.rr, Operations.rrc, 'D');
-  CalculatorButton get e => CalculatorButton(factory, 'E', 'RLn', 'RLCn',
-      Operations.e, Operations.rln, Operations.rlcn, 'E');
-  CalculatorButton get f => CalculatorButton(factory, 'F', 'RRn', 'RRCn',
-      Operations.f, Operations.rrn, Operations.rrcn, 'F');
-  CalculatorButton get n7 => CalculatorButton(factory, '7', 'MASKL', '#B',
-      Operations.n7, Operations.maskl, Operations.poundB, '7');
-  CalculatorButton get n8 => CalculatorButton(factory, '8', 'MASKR', 'ABS',
-      Operations.n8, Operations.maskr, Operations.abs, '8');
-  CalculatorButton get n9 => CalculatorButton(factory, '9', 'RMD', 'DBLR',
-      Operations.n9, Operations.rmd, Operations.dblr, '9');
-  CalculatorButton get div => CalculatorButton(factory, '\u00F7', 'XOR',
-      'DBL\u00F7', Operations.div, Operations.xor, Operations.dblDiv, '/');
-
-  CalculatorButton get gsb => CalculatorButton(factory, 'GSB', 'x\u2B0C(i)',
-      'RTN', Operations.gsb, Operations.xSwapParenI, Operations.rtn, 'U');
-  CalculatorButton get gto => CalculatorButton(factory, 'GTO', 'x\u2B0CI',
-      'LBL', Operations.gto, Operations.xSwapI, Operations.lbl, 'T');
-  CalculatorButton get hex => CalculatorButton(factory, 'HEX', '', 'DSZ',
-      Operations.hex, Operations.showHex, Operations.dsz, 'I');
-  CalculatorButton get dec => CalculatorButton(factory, 'DEC', '', 'ISZ',
-      Operations.dec, Operations.showDec, Operations.isz, 'Z');
-  CalculatorButton get oct => CalculatorSqrtButton(factory, 'OCT', '',
-      '\u221Ax', Operations.oct, Operations.showOct, Operations.sqrtOp, 'K');
-  CalculatorButton get bin => CalculatorButton(factory, 'BIN', '', '1/x',
-      Operations.bin, Operations.showBin, Operations.reciprocal, 'L');
-  CalculatorButton get n4 => CalculatorButton(factory, '4', 'SB', 'SF',
-      Operations.n4, Operations.sb, Operations.sf, '4');
-  CalculatorButton get n5 => CalculatorButton(factory, '5', 'CB', 'CF',
-      Operations.n5, Operations.cb, Operations.cf, '5');
-  CalculatorButton get n6 => CalculatorButton(factory, '6', 'B?', 'F?',
-      Operations.n6, Operations.bQuestion, Operations.fQuestion, '6');
-  CalculatorButton get mult => CalculatorOnSpecialButton(
-      factory,
-      '\u00D7',
-      'AND',
-      'DBLx',
-      Operations.mult,
-      Operations.and,
-      Operations.dblx,
-      'X*',
-      'TST',
-      acceleratorLabel: '*\u00d7');
-  CalculatorButton get rs => CalculatorButton(factory, 'R/S', '(i)', 'P/R',
-      Operations.rs, Operations.parenI, Operations.pr, '[');
-  CalculatorButton get sst => CalculatorButton(factory, 'SST', 'I', 'BST',
-      Operations.sst, Operations.I, Operations.bst, ']');
-  CalculatorButton get rdown => CalculatorButton(factory, 'R\u2193', 'PRGM',
-      'R\u2191', Operations.rDown, Operations.clearPrgm, Operations.rUp, 'V');
-  CalculatorButton get xy => CalculatorButton(factory, 'x\u2B0Cy', 'REG', 'PSE',
-      Operations.xy, Operations.clearReg, Operations.pse, 'Y');
-  CalculatorButton get bsp => CalculatorButton(
-      factory,
-      'BSP',
-      'PREFIX',
-      'CLx',
-      Operations.bsp,
-      Operations.clearPrefix,
-      Operations.clx,
-      '\u0008\u007f\uf728',
-      acceleratorLabel: '\u2190');
-  CalculatorButton get enter => CalculatorEnterButton(
-      factory,
-      'E\nN\nT\nE\nR',
-      'WINDOW',
-      'LSTx',
-      Operations.enter,
-      Operations.window,
-      Operations.lstx,
-      '\n\r',
-      extraHeight: factory.height * th / bh,
-      acceleratorLabel: ' \u23ce');
-  CalculatorButton get n1 => CalculatorButton(factory, '1', '1\'s', 'x\u2264y',
-      Operations.n1, Operations.onesCompl, Operations.xLEy, '1');
-  CalculatorButton get n2 => CalculatorButton(factory, '2', '2\'s', 'x<0',
-      Operations.n2, Operations.twosCompl, Operations.xLT0, '2');
-  CalculatorButton get n3 => CalculatorButton(factory, '3', 'UNSGN', 'x>y',
-      Operations.n3, Operations.unsign, Operations.xGTy, '3');
-  CalculatorButton get minus => CalculatorOnSpecialButton(
-      factory,
-      '\u2212',
-      'NOT',
-      'x>0',
-      Operations.minus,
-      Operations.not,
-      Operations.xGT0,
-      '-',
-      'CLR',
-      acceleratorLabel: '\u2212');
-
-  CalculatorButton get onOff => CalculatorOnButton(factory, 'ON', '', '',
-      Operations.onOff, Operations.onOff, Operations.onOff, 'O', 'OFF');
-  CalculatorButton get fShift => CalculatorFButton(factory, 'f', '', '',
-      Operations.fShift, Operations.fShift, Operations.fShift, 'M\u0006',
-      acceleratorLabel: 'M');
-  CalculatorButton get gShift => CalculatorGButton(factory, 'g', '', '',
-      Operations.gShift, Operations.gShift, Operations.gShift, 'G\u0007',
-      acceleratorLabel: 'G');
-  CalculatorButton get sto => CalculatorButton(factory, 'STO', 'WSIZE', '<',
-      Operations.sto, Operations.wSize, Operations.windowRight, 'S<');
-  CalculatorButton get rcl => CalculatorButton(factory, 'RCL', 'FLOAT', '>',
-      Operations.rcl, Operations.floatKey, Operations.windowLeft, 'R>');
-  CalculatorButton get n0 => CalculatorButton(factory, '0', 'MEM', 'x\u2260y',
-      Operations.n0, Operations.mem, Operations.xNEy, '0');
-  CalculatorButton get dot => CalculatorOnSpecialButton(
-      factory,
-      '\u2219',
-      'STATUS',
-      'x\u22600',
-      Operations.dot,
-      Operations.status,
-      Operations.xNE0,
-      '.',
-      '\u2219/\u201a',
-      acceleratorLabel: '\u2219');
-  CalculatorButton get chs => CalculatorButton(factory, 'CHS', 'EEX', 'x=y',
-      Operations.chs, Operations.eex, Operations.xEQy, 'H');
-  CalculatorButton get plus => CalculatorButton(factory, '+', 'OR', 'x=0',
-      Operations.plus, Operations.or, Operations.xEQ0, '+=');
-
-  List<List<CalculatorButton?>> get landscapeLayout => [
-        [a, b, c, d, e, f, n7, n8, n9, div],
-        [gsb, gto, hex, dec, oct, bin, n4, n5, n6, mult],
-        [rs, sst, rdown, xy, bsp, null, n1, n2, n3, minus],
-        [onOff, fShift, gShift, sto, rcl, null, n0, dot, chs, plus]
-      ];
-
-  List<List<CalculatorButton?>> get portraitLayout => [
-        [onOff, rdown, xy, bsp, fShift, gShift],
-        [gsb, gto, hex, dec, oct, bin],
-        [a, b, c, d, e, f],
-        [rs, sst, n7, n8, n9, div],
-        [sto, rcl, n4, n5, n6, mult],
-        [null, null, n1, n2, n3, minus],
-        [null, null, n0, dot, chs, plus],
-      ];
+  CalculatorButton get enter;
 }
 
 /// The gold label above some groups of keys

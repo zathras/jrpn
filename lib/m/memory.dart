@@ -615,7 +615,7 @@ class MKey<OT extends ProgramOperation> {
   final OT fShifted;
   final OT gShifted;
 
-  MKey(this.unshifted, this.fShifted, this.gShifted);
+  const MKey(this.unshifted, this.fShifted, this.gShifted);
 }
 
 ///

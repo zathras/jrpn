@@ -646,66 +646,6 @@ class Operations {
   /// Abbreviated key sequences for (i) used as an argument - cf. manual p. 68
   static final Set<Operation> argParenIops = {Operations.rs, Operations.parenI};
 
-  /// The list of "logical" keys.  This has nothing to do with the UI;
-  /// The order of the operations in this list determines the
-  /// externalized form of the operations in the calculator's storage
-  /// (the opcodes).  It also determines the displayed appearance of
-  /// operation in program mode, whether the calculator is in portrait or
-  /// landscape orientation.
-  ///
-  /// Changing the order here would render old JSON files of the
-  /// calculator's state obsolete.
-  static final List<List<MKey<Operation>?>> keys = [
-    [
-      MKey(Operations.a, Operations.sl, Operations.lj),
-      MKey(Operations.b, Operations.sr, Operations.asr),
-      MKey(Operations.c, Operations.rl, Operations.rlc),
-      MKey(Operations.d, Operations.rr, Operations.rrc),
-      MKey(Operations.e, Operations.rln, Operations.rlcn),
-      MKey(Operations.f, Operations.rrn, Operations.rrcn),
-      MKey(Operations.n7, Operations.maskl, Operations.poundB),
-      MKey(Operations.n8, Operations.maskr, Operations.abs),
-      MKey(Operations.n9, Operations.rmd, Operations.dblr),
-      MKey(Operations.div, Operations.xor, Operations.dblDiv),
-    ],
-    [
-      MKey(Operations.gsb, Operations.xSwapParenI, Operations.rtn),
-      MKey(Operations.gto, Operations.xSwapI, Operations.lbl),
-      MKey(Operations.hex, Operations.showHex, Operations.dsz),
-      MKey(Operations.dec, Operations.showDec, Operations.isz),
-      MKey(Operations.oct, Operations.showOct, Operations.sqrtOp),
-      MKey(Operations.bin, Operations.showBin, Operations.reciprocal),
-      MKey(Operations.n4, Operations.sb, Operations.sf),
-      MKey(Operations.n5, Operations.cb, Operations.cf),
-      MKey(Operations.n6, Operations.bQuestion, Operations.fQuestion),
-      MKey(Operations.mult, Operations.and, Operations.dblx),
-    ],
-    [
-      MKey(Operations.rs, Operations.parenI, Operations.pr),
-      MKey(Operations.sst, Operations.I, Operations.bst),
-      MKey(Operations.rDown, Operations.clearPrgm, Operations.rUp),
-      MKey(Operations.xy, Operations.clearReg, Operations.pse),
-      MKey(Operations.bsp, Operations.clearPrefix, Operations.clx),
-      MKey(Operations.enter, Operations.window, Operations.lstx),
-      MKey(Operations.n1, Operations.onesCompl, Operations.xLEy),
-      MKey(Operations.n2, Operations.twosCompl, Operations.xLT0),
-      MKey(Operations.n3, Operations.unsign, Operations.xGTy),
-      MKey(Operations.minus, Operations.not, Operations.xGT0),
-    ],
-    [
-      MKey(Operations.onOff, Operations.onOff, Operations.onOff),
-      MKey(Operations.fShift, Operations.fShift, Operations.fShift),
-      MKey(Operations.gShift, Operations.gShift, Operations.gShift),
-      MKey(Operations.sto, Operations.wSize, Operations.windowRight),
-      MKey(Operations.rcl, Operations.floatKey, Operations.windowLeft),
-      null,
-      MKey(Operations.n0, Operations.mem, Operations.xNEy),
-      MKey(Operations.dot, Operations.status, Operations.xNE0),
-      MKey(Operations.chs, Operations.eex, Operations.xEQy),
-      MKey(Operations.plus, Operations.or, Operations.xEQ0),
-    ]
-  ];
-
   /// The numbers.  This must be in order.
   static final List<NumberEntry> numbers = [
     Operations.n0,
