@@ -24,7 +24,7 @@ import 'package:jrpn/generic_main.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/v/buttons.dart';
 
-import 'back_panel.dart';
+import 'back_panel16c.dart';
 import 'tests16c.dart';
 
 void main() async => genericMain(Jrpn(Controller16(Model16())));
