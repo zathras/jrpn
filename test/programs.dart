@@ -26,6 +26,7 @@ import 'package:jrpn/c/operations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/m/model.dart';
+import 'package:jrpn16c/main16c.dart';
 
 class ProgramEvent {
   final int? errorNumber;
@@ -39,7 +40,7 @@ class ProgramEvent {
 }
 
 class TestCalculator implements ProgramListener {
-  final controller = Controller(Model<Operation>());
+  final controller = Controller16(Model16());
   Model get model => controller.model;
   // The program's output
   final output = StreamController<ProgramEvent>();

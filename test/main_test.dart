@@ -25,18 +25,15 @@ import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/m/model.dart';
 
 import 'package:jrpn/generic_main.dart';
+import 'package:jrpn16c/main16c.dart';
+import 'package:jrpn16c/tests16c.dart';
 import 'programs.dart';
 
 
-class TestJrpn extends CalculatorKind {
-
-  const TestJrpn();
-
-}
 
 Future<void> main() async {
   testWidgets('Self tests', (WidgetTester tester) async {
-    await tester.pumpWidget(Jrpn(Controller(Model()), const TestJrpn()));
+    await tester.pumpWidget(Jrpn(Controller16(Model16())));
   });
 
   test('p79 program', p79Program);
@@ -50,7 +47,7 @@ Future<void> main() async {
   test('Towers of Hanoi', towersOfHanoi);
   // Do this last, because it leaves a timer pending:
   test('Built-in self tests', () async {
-    await SelfTests(inCalculator: false).runAll();
+    await SelfTests16(inCalculator: false).runAll();
   });
 }
 
@@ -104,8 +101,8 @@ Future<void> noScrollReset() async {
   ];
   final Value four = Value.fromInternal(BigInt.parse('4'));
   for (final Operation op in ops) {
-    final m = Model<Operation>();
-    final c = Controller(m);
+    final m = Model16();
+    final c = Controller16(m);
 
     enter(c, Operations.n3);
     enter(c, Operations.enter);
@@ -119,8 +116,8 @@ Future<void> noScrollReset() async {
     expect(m.lastX, four, reason: 'lastx for ${op.name}');
   }
   for (final Operation op in fops) {
-    final m = Model<Operation>();
-    final c = Controller(m);
+    final m = Model16();
+    final c = Controller16(m);
 
     enter(c, Operations.floatKey);
     enter(c, Operations.n2);
@@ -287,8 +284,8 @@ Future<void> programWithError() async {
 
 Future<void> testRegistersAndWordSize() async {
   // p. 67:
-  final m = Model<Operation>();
-  final c = Controller(m);
+  final m = Model16();
+  final c = Controller16(m);
 
   enter(c, Operations.hex);
   enter(c, Operations.n1);

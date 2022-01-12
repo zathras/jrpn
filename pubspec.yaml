@@ -26,6 +26,10 @@ dev_dependencies:
     sdk: flutter
   test: ^1.16.5
   msix: ^2.0.0
+  jrpn16c:
+    path: '16c'
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/jupiter.si

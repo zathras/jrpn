@@ -1137,7 +1137,7 @@ class OnOffKeyPressed extends DoNothing {
         try {
           model.display.current = 'RuNNING  ';
           model.display.update(blink: true);
-          await SelfTests(inCalculator: true).runAll();
+          await controller.newSelfTests(inCalculator: true).runAll();
           changeState(Resting(controller));
           final d = LcdContents(
               hideComplement: false,

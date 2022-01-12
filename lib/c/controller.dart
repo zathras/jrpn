@@ -40,8 +40,6 @@ this program; if not, see https://www.gnu.org/licenses/ .
 library controller;
 
 import 'dart:convert';
-import 'dart:math';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:jrpn/v/buttons.dart';
@@ -56,7 +54,7 @@ part 'tests.dart';
 
 ///
 /// The main controller for the application.  This abstract class is implemented
-/// by a [RealController] for normal calculator, and by by [RunningController],
+/// by a [RealController] for normal calculator, and by [RunningController],
 /// which manages a running calculator program.
 ///
 abstract class Controller {
@@ -64,9 +62,7 @@ abstract class Controller {
   late ControllerState _state;
   Operation? _lastKey;
 
-  factory Controller(Model<Operation> model) => RealController(model);
-
-  Controller._p(this.model);
+  Controller(this.model);
 
   KeyboardController get keyboard;
   ControllerState get state => _state;
@@ -161,6 +157,8 @@ abstract class Controller {
     state = Resting(this);
     return true;
   }
+
+  SelfTests newSelfTests({bool inCalculator = true});
 }
 
 ///
@@ -187,7 +185,7 @@ abstract class StackLiftEnabledUser {
 /// running, the real controller continues to exist, for when the program
 /// stops.
 ///
-class RealController extends Controller {
+abstract class RealController extends Controller {
   @override
   // The linter is wrong here -- stackLiftEnabled's setter is called.
   // https://github.com/flutter/flutter/issues/80689
@@ -197,7 +195,7 @@ class RealController extends Controller {
   @override
   final KeyboardController keyboard = KeyboardController();
 
-  RealController(Model<Operation> model) : super._p(model) {
+  RealController(Model<Operation> model) : super(model) {
     model.memory.initializeSystem(OperationMap<Operation>(
         keys: Operations.keys,
         numbers: Operations.numbers,
@@ -252,7 +250,7 @@ class RunningController extends Controller {
   CalculatorError? pendingError;
 
   RunningController(this.real, {bool digitEntryState = false})
-      : super._p(real.model) {
+      : super(real.model) {
     if (digitEntryState) {
       state = DigitEntry(this);
     } else {
@@ -314,6 +312,10 @@ class RunningController extends Controller {
 
   @override
   void showCalculatorError(CalculatorError e) => pendingError = e;
+
+  @override
+  SelfTests newSelfTests({bool inCalculator = true}) =>
+      real.newSelfTests(inCalculator: inCalculator);
 }
 
 ///

@@ -397,9 +397,9 @@ abstract class NumStatus {
 ///
 /// Our model, the main entry point to this module.  See the library-level
 /// documentation for a description, and an explanation of the model's
-/// structure.
+/// structure.  Extended by Model15 and Model16.
 ///
-class Model<OT extends ProgramOperation> implements NumStatus {
+abstract class Model<OT extends ProgramOperation> implements NumStatus {
   late final display = DisplayModel(this);
   late final settings = Settings(this);
   bool _needsSave = false;
@@ -594,15 +594,7 @@ class Model<OT extends ProgramOperation> implements NumStatus {
     return _flags[i];
   }
 
-  bool get displayLeadingZeros => _flags[3];
-  @override
-  bool get cFlag => _flags[4];
-  @override
-  set cFlag(bool v) => setFlag(4, v);
-  @override
-  bool get gFlag => _flags[5];
-  @override
-  set gFlag(bool v) => setFlag(5, v);
+  bool get displayLeadingZeros;
 
   void _popStackSetLastX() {
     lastX = _stack[0];

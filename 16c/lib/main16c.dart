@@ -18,13 +18,35 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
+import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/generic_main.dart';
+import 'package:jrpn/m/model.dart';
 
-class HP16C extends CalculatorKind {
+import 'tests16c.dart';
 
-  const HP16C();
+void main() async => genericMain(Jrpn(Controller16(Model16())));
+
+
+class Model16 extends Model<Operation> {
+
+  @override
+  bool get displayLeadingZeros => getFlag(3);
+  @override
+  bool get cFlag => getFlag(4);
+  @override
+  set cFlag(bool v) => setFlag(4, v);
+  @override
+  bool get gFlag => getFlag(5);
+  @override
+  set gFlag(bool v) => setFlag(5, v);
 
 }
 
-void main() async => genericMain(const HP16C());
+class Controller16 extends RealController {
 
+  Controller16(Model<Operation> model) : super(model);
+
+  @override
+  SelfTests newSelfTests({bool inCalculator = true}) =>
+    SelfTests16(inCalculator: inCalculator);
+}
