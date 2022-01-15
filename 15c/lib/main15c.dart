@@ -126,17 +126,17 @@ class ButtonLayout15 extends ButtonLayout {
 
   ButtonLayout15(this.factory, this._totalButtonHeight, this._buttonHeight);
 
-  CalculatorButton get a => CalculatorWhiteSqrtButton(factory, '\u221Ax', 'A',
-      'x^2', Operations.a, Operations.sl, Operations.lj, 'A');
-  CalculatorButton get b => CalculatorButton(factory, 'e^x', 'B', 'LN',
+  CalculatorButton get sqrt => CalculatorWhiteSqrtButton(factory, '\u221Ax',
+      'A', 'x^2', Operations.a, Operations.sl, Operations.lj, 'A');
+  CalculatorButton get eX => CalculatorButton(factory, 'e^x', 'B', 'LN',
       Operations.b, Operations.sr, Operations.asr, 'B');
-  CalculatorButton get c => CalculatorButton(factory, '10^x', 'C', 'LOG',
+  CalculatorButton get tenX => CalculatorButton(factory, '10^x', 'C', 'LOG',
       Operations.c, Operations.rl, Operations.rlc, 'C');
-  CalculatorButton get d => CalculatorButton(factory, 'y^x', 'D', '%',
+  CalculatorButton get yX => CalculatorButton(factory, 'y^x', 'D', '%',
       Operations.d, Operations.rr, Operations.rrc, 'D');
-  CalculatorButton get e => CalculatorButton(factory, '1/x', 'E', '\u0394%',
-      Operations.e, Operations.rln, Operations.rlcn, 'E');
-  CalculatorButton get f => CalculatorButton(factory, 'CHS', 'MATRIX', 'ABS',
+  CalculatorButton get reciprocal => CalculatorButton(factory, '1/x', 'E',
+      '\u0394%', Operations.e, Operations.rln, Operations.rlcn, 'E');
+  CalculatorButton get chs => CalculatorButton(factory, 'CHS', 'MATRIX', 'ABS',
       Operations.f, Operations.rrn, Operations.rrcn, 'F');
   CalculatorButton get n7 => CalculatorButton(factory, '7', 'FIX', 'DEG',
       Operations.n7, Operations.maskl, Operations.poundB, '7');
@@ -147,7 +147,7 @@ class ButtonLayout15 extends ButtonLayout {
   CalculatorButton get div => CalculatorButton(factory, '\u00F7', 'SOLVE',
       'x\u2264y', Operations.div, Operations.xor, Operations.dblDiv, '/');
 
-  CalculatorButton get gsb => CalculatorButton(factory, 'SST', 'LBL', 'BST',
+  CalculatorButton get sst => CalculatorButton(factory, 'SST', 'LBL', 'BST',
       Operations.gsb, Operations.xSwapParenI, Operations.rtn, 'U');
   CalculatorButton get gto => CalculatorButton(
       factory,
@@ -158,7 +158,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations.xSwapI,
       Operations.lbl,
       'T');
-  CalculatorButton get hex => CalculatorButton(
+  CalculatorButton get sin => CalculatorButton(
       factory,
       'SIN',
       'DIM',
@@ -167,7 +167,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations.showHex,
       Operations.dsz,
       'I');
-  CalculatorButton get dec => CalculatorButton(
+  CalculatorButton get cos => CalculatorButton(
       factory,
       'COS',
       '(i)',
@@ -176,7 +176,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations.showDec,
       Operations.isz,
       'Z');
-  CalculatorButton get oct => CalculatorButton(
+  CalculatorButton get tan => CalculatorButton(
       factory,
       'TAN',
       'I',
@@ -185,7 +185,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations.showOct,
       Operations.sqrtOp,
       'K');
-  CalculatorButton get bin => CalculatorButton(factory, 'EEX', 'RESULT',
+  CalculatorButton get eex => CalculatorButton(factory, 'EEX', 'RESULT',
       '\u03c0', Operations.bin, Operations.showBin, Operations.reciprocal, 'L');
   CalculatorButton get n4 => CalculatorButton(factory, '4', 'x\u2b0c', 'SF',
       Operations.n4, Operations.sb, Operations.sf, '4');
@@ -207,7 +207,7 @@ class ButtonLayout15 extends ButtonLayout {
 
   CalculatorButton get rs => CalculatorButton(factory, 'R/S', 'PSE', 'P/R',
       Operations.rs, Operations.parenI, Operations.pr, '[');
-  CalculatorButton get sst => CalculatorButton(factory, 'GSB', '\u03a3', 'RTN',
+  CalculatorButton get gsb => CalculatorButton(factory, 'GSB', '\u03a3', 'RTN',
       Operations.sst, Operations.I, Operations.bst, ']');
   CalculatorButton get rdown => CalculatorButton(factory, 'R\u2193', 'PRGM',
       'R\u2191', Operations.rDown, Operations.clearPrgm, Operations.rUp, 'V');
@@ -278,28 +278,28 @@ class ButtonLayout15 extends ButtonLayout {
       '.',
       '\u2219/\u201a',
       acceleratorLabel: '\u2219');
-  CalculatorButton get chs => CalculatorButton(factory, 'CHS', 'EEX', 'x=y',
+  CalculatorButton get sum => CalculatorButton(factory, 'CHS', 'EEX', 'x=y',
       Operations.chs, Operations.eex, Operations.xEQy, 'H');
   CalculatorButton get plus => CalculatorButton(factory, '+', 'P\u200ay,x',
       'C\u2009y,x', Operations.plus, Operations.or, Operations.xEQ0, '+=');
 
   @override
   List<List<CalculatorButton?>> get landscapeLayout => [
-        [a, b, c, d, e, f, n7, n8, n9, div],
-        [gsb, gto, hex, dec, oct, bin, n4, n5, n6, mult],
-        [rs, sst, rdown, xy, bsp, null, n1, n2, n3, minus],
-        [onOff, fShift, gShift, sto, rcl, null, n0, dot, chs, plus]
+        [sqrt, eX, tenX, yX, reciprocal, chs, n7, n8, n9, div],
+        [sst, gto, sin, cos, tan, eex, n4, n5, n6, mult],
+        [rs, gsb, rdown, xy, bsp, null, n1, n2, n3, minus],
+        [onOff, fShift, gShift, sto, rcl, null, n0, dot, sum, plus]
       ];
 
   @override
   List<List<CalculatorButton?>> get portraitLayout => [
-        [onOff, rdown, xy, bsp, fShift, gShift],
-        [gsb, gto, hex, dec, oct, bin],
-        [a, b, c, d, e, f],
-        [rs, sst, n7, n8, n9, div],
-        [sto, rcl, n4, n5, n6, mult],
+        [sqrt, eX, tenX, yX, reciprocal, onOff],
+        [sst, gto, sin, cos, tan, chs],
+        [rs, gsb, rdown, xy, bsp, eex],
+        [sto, rcl, n7, n8, n9, div],
+        [fShift, gShift, n4, n5, n6, mult],
         [null, null, n1, n2, n3, minus],
-        [null, null, n0, dot, chs, plus],
+        [null, null, n0, dot, sum, plus],
       ];
 }
 
@@ -317,9 +317,9 @@ class LandscapeButtonFactory15 extends LandscapeButtonFactory {
   @override
   double addUpperGoldLabels(List<Widget> result, Rect pos,
       {required double th,
-        required double tw,
-        required double bh,
-        required double bw}) {
+      required double tw,
+      required double bh,
+      required double bw}) {
     double y = pos.top;
     result.add(screen.box(
         Rect.fromLTRB(pos.left + 1 * tw - 0.05, y + 2 * th - 0.155,
@@ -329,7 +329,6 @@ class LandscapeButtonFactory15 extends LandscapeButtonFactory {
                 height * (0.065 + 0.155) / bh))));
     return shiftDownTweak;
   }
-
 }
 
 class PortraitButtonFactory15 extends PortraitButtonFactory {
@@ -343,12 +342,12 @@ class PortraitButtonFactory15 extends PortraitButtonFactory {
   @override
   double addUpperGoldLabels(List<Widget> result, Rect pos,
       {required double th,
-        required double tw,
-        required double bh,
-        required double bw}) {
+      required double tw,
+      required double bh,
+      required double bw}) {
     double y = pos.top;
     result.add(screen.box(
-        Rect.fromLTWH(pos.left + tw - 0.05, y + 0.07, 2 * tw + bw + 0.10, 0.22),
+        Rect.fromLTWH(pos.left + tw - 0.05, y + 2 * th + 0.07, 3 * tw + bw + 0.10, 0.22),
         CustomPaint(
             painter: UpperLabel('CLEAR', fTextSmallLabelStyle,
                 height * (0.065 + 0.155) / bh))));
