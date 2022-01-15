@@ -43,6 +43,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:jrpn/v/buttons.dart';
+import 'package:jrpn/v/main_screen.dart';
 
 import '../m/model.dart';
 import 'operations.dart';
@@ -159,11 +160,6 @@ abstract class Controller {
   }
 
   SelfTests newSelfTests({bool inCalculator = true});
-
-  ButtonLayout getButtonLayout(
-      ButtonFactory factory, double totalHeight, double totalButtonHeight);
-
-  Widget getBackPanel();
 }
 
 ///
@@ -243,6 +239,15 @@ abstract class RealController extends Controller {
 
   @override
   T? _branchingOperationCalc<T>(T? calc) => null;
+
+  ButtonLayout getButtonLayout(
+      ButtonFactory factory, double totalHeight, double totalButtonHeight);
+
+  Widget getBackPanel();
+
+  LandscapeButtonFactory getLandscapeButtonFactory(BuildContext context, ScreenPositioner screen);
+
+  PortraitButtonFactory getPortraitButtonFactory(BuildContext context, ScreenPositioner screen);
 }
 
 ///
@@ -321,14 +326,6 @@ class RunningController extends Controller {
   @override
   SelfTests newSelfTests({bool inCalculator = true}) =>
       real.newSelfTests(inCalculator: inCalculator);
-
-  @override
-  ButtonLayout getButtonLayout(ButtonFactory factory, double totalHeight,
-          double totalButtonHeight) =>
-      real.getButtonLayout(factory, totalHeight, totalButtonHeight);
-
-  @override
-  Widget getBackPanel() => real.getBackPanel();
 }
 
 ///

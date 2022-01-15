@@ -41,7 +41,7 @@ import 'main_screen.dart' show ScreenPositioner;
 abstract class ButtonFactory {
   final BuildContext context;
   final ScreenPositioner screen;
-  final Controller controller;
+  final RealController controller;
 
   // All sizes are based on a hypothetical 122x136 button.  This is
   // scaled to screen pixels in the painter.
@@ -71,7 +71,7 @@ abstract class ButtonFactory {
       fontFamily: 'KeyLabelFont',
       fontWeight: FontWeight.bold,
       color: Color(0xfff98c35));
-  final Offset fTextOffset = const Offset(0, -2);
+  Offset get fTextOffset => const Offset(0, -2);
   final TextStyle gTextStyle = const TextStyle(
       fontSize: 26, fontFamily: 'KeyLabelFont', color: Color(0xff12cdff));
   final TextStyle gTextStyleForLJ = const TextStyle(
@@ -153,9 +153,9 @@ abstract class ButtonFactory {
   List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons);
 }
 
-class LandscapeButtonFactory extends ButtonFactory {
+abstract class LandscapeButtonFactory extends ButtonFactory {
   LandscapeButtonFactory(
-      BuildContext context, ScreenPositioner screen, Controller controller)
+      BuildContext context, ScreenPositioner screen, RealController controller)
       : super(context, screen, controller);
 
   @override
@@ -169,33 +169,7 @@ class LandscapeButtonFactory extends ButtonFactory {
       (height - numRows * buttonHeight) / (numRows - 1) * buttonHeight +
       buttonHeight;
 
-  @override
-  double addUpperGoldLabels(List<Widget> result, Rect pos,
-      {required double th,
-      required double tw,
-      required double bh,
-      required double bw}) {
-    double y = pos.top;
-    result.add(screen.box(
-        Rect.fromLTRB(pos.left + 2 * tw - 0.05, y + th - 0.14,
-            pos.left + 5 * tw + bw + 0.05, y + th + 0.11),
-        CustomPaint(
-            painter:
-                _UpperLabel('SHOW', fTextStyle, height * (0.14 + 0.11) / bh))));
-    result.add(screen.box(
-        Rect.fromLTRB(pos.left + 2 * tw - 0.05, y + 2 * th - 0.155,
-            pos.left + 4 * tw + bw + 0.05, y + 2 * th + 0.065),
-        CustomPaint(
-            painter: _UpperLabel('CLEAR', fTextSmallLabelStyle,
-                height * (0.065 + 0.155) / bh))));
-    result.add(screen.box(
-        Rect.fromLTRB(pos.left + 6 * tw - 0.05, y + 2 * th - 0.155,
-            pos.left + 8 * tw + bw + 0.05, y + 2 * th + 0.065),
-        CustomPaint(
-            painter: _UpperLabel('SET COMPL', fTextSmallLabelStyle,
-                height * (0.065 + 0.155) / bh))));
-    return 0;
-  }
+  double get shiftDownTweak => 0;
 
   @override
   Rect enterPos(Rect pos,
@@ -203,16 +177,16 @@ class LandscapeButtonFactory extends ButtonFactory {
           required double tw,
           required double bh,
           required double bw}) =>
-      Rect.fromLTWH(pos.left + 5 * tw, pos.top + 2 * th, bw, bh + th);
+      Rect.fromLTWH(pos.left + 5 * tw, pos.top + 2 * th + shiftDownTweak, bw, bh + th);
 
   @override
   List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons) =>
       buttons.landscapeLayout;
 }
 
-class PortraitButtonFactory extends ButtonFactory {
+abstract class PortraitButtonFactory extends ButtonFactory {
   PortraitButtonFactory(
-      BuildContext context, ScreenPositioner screen, Controller controller)
+      BuildContext context, ScreenPositioner screen, RealController controller)
       : super(context, screen, controller);
 
   @override
@@ -224,33 +198,6 @@ class PortraitButtonFactory extends ButtonFactory {
   @override
   double totalButtonHeight(double height, double buttonHeight) =>
       (height - numRows * buttonHeight) / numRows * buttonHeight + buttonHeight;
-
-  @override
-  double addUpperGoldLabels(List<Widget> result, Rect pos,
-      {required double th,
-      required double tw,
-      required double bh,
-      required double bw}) {
-    double y = pos.top;
-    result.add(screen.box(
-        Rect.fromLTWH(pos.left + tw - 0.05, y + 0.07, 2 * tw + bw + 0.10, 0.22),
-        CustomPaint(
-            painter: _UpperLabel('CLEAR', fTextSmallLabelStyle,
-                height * (0.065 + 0.155) / bh))));
-    result.add(screen.box(
-        Rect.fromLTWH(
-            pos.left + 2 * tw - 0.05, y + th + 0.18, 3 * tw + bw + 0.10, 0.25),
-        CustomPaint(
-            painter:
-                _UpperLabel('SHOW', fTextStyle, height * (0.14 + 0.11) / bh))));
-    result.add(screen.box(
-        Rect.fromLTWH(pos.left + 2 * tw - 0.05, y + 5 * th + 0.08,
-            2 * tw + bw + 0.1, 0.22),
-        CustomPaint(
-            painter: _UpperLabel('SET COMPL', fTextSmallLabelStyle,
-                height * (0.065 + 0.155) / bh))));
-    return 0.28;
-  }
 
   @override
   Rect enterPos(Rect pos,
@@ -277,12 +224,12 @@ abstract class ButtonLayout {
 }
 
 /// The gold label above some groups of keys
-class _UpperLabel extends CustomPainter {
+class UpperLabel extends CustomPainter {
   final String text;
   final TextStyle style;
   final double height;
 
-  _UpperLabel(this.text, this.style, this.height);
+  UpperLabel(this.text, this.style, this.height);
 
   final Paint linePaint = Paint()
     ..color = const Color(0xfff98c35)
@@ -322,7 +269,7 @@ class _UpperLabel extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _UpperLabel oldDelegate) {
+  bool shouldRepaint(covariant UpperLabel oldDelegate) {
     return false; // We never change
   }
 }
@@ -397,14 +344,7 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
     assert((size.height / h - size.width / w) / w < 0.0000001);
     canvas.scale(size.height / h);
 
-    // Draw  gold text
-    TextSpan span = TextSpan(style: bFactory.fTextStyle, text: fText);
-    TextPainter tp = TextPainter(
-        text: span,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr);
-    tp.layout(minWidth: w);
-    tp.paint(canvas, bFactory.fTextOffset);
+    drawGoldText(canvas, w);
 
     final Paint p = bFactory.fill;
 
@@ -432,9 +372,7 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
     }
     canvas.drawRRect(lowerSurface, p);
 
-    // draw blue text
     drawBlueText(canvas, w);
-    span = TextSpan(style: bFactory.gTextStyle, text: gText);
 
     // draw upper surface
     if (pressed) {
@@ -478,27 +416,95 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
     }
   }
 
-  void drawWhiteText(Canvas canvas, TextStyle style, String text, double w) {
-    // draw white text
-    TextSpan span = TextSpan(style: style, text: text);
+  void drawText(
+      Canvas canvas, TextStyle style, String text, double w, Offset offset) {
+    final String normal;
+    final String? superscript;
+    final String? subscript;
+    final caret = text.indexOf('^');
+    if (caret == -1) {
+      normal = text;
+      superscript = subscript = null;
+    } else {
+      normal = text.substring(0, caret);
+      final remain = text.substring(caret + 1);
+      final caret2 = remain.indexOf('^');
+      if (caret2 == -1) {
+        superscript = remain;
+        subscript = null;
+      } else {
+        superscript = remain.substring(0, caret2);
+        subscript = remain.substring(caret2 + 1);
+      }
+    }
+    TextSpan span = TextSpan(style: style, text: normal);
     TextPainter tp = TextPainter(
         text: span,
         textAlign: TextAlign.center,
         textDirection: TextDirection.ltr);
-    tp.layout(minWidth: w);
-    tp.paint(canvas, keyTextOffset);
+    if (superscript == null && subscript == null) {
+      tp.layout(minWidth: w);
+      tp.paint(canvas, offset);
+    } else {
+      const scale = 0.75;
+      tp.layout();
+      double width = tp.width;
+      final TextPainter? tpSup;
+      final TextPainter? tpSub;
+      if (superscript == null) {
+        tpSup = null;
+      } else {
+        tpSup = TextPainter(
+            text: TextSpan(style: style, text: superscript),
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.ltr);
+        tpSup.layout();
+        width += tpSup.width * scale;
+      }
+      if (subscript == null) {
+        tpSub = null;
+      } else {
+        tpSub = TextPainter(
+            text: TextSpan(style: style, text: subscript),
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.ltr);
+        tpSub.layout();
+        if (tpSup != null) {
+          final extra = tpSub.width - tpSup.width;
+          if (extra > 0) {
+            width += extra * scale;
+          }
+        } else {
+          width += tpSub.width * scale;
+        }
+      }
+      canvas.save();
+      canvas.translate(offset.dx + (w - width) / 2, offset.dy);
+      final integralCheat = normal == '\u222b';
+      if (integralCheat) {
+        canvas.translate(0, -5);
+      }
+      tp.paint(canvas, const Offset(0, 0));
+      if (integralCheat) {
+        canvas.translate(0, -6);
+      }
+      canvas.translate(tp.width, 30 - tp.height);
+      canvas.scale(scale);
+      tpSup?.paint(canvas, const Offset(0, 0));
+      canvas.translate(0, 22);
+      tpSub?.paint(canvas, const Offset(0, 0));
+      canvas.restore();
+    }
   }
 
-  void drawBlueText(Canvas canvas, double w) {
-    // Separated out for the special handling of sqrt(x)
-    TextSpan span = TextSpan(style: bFactory.gTextStyle, text: gText);
-    TextPainter tp = TextPainter(
-        text: span,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr);
-    tp.layout(minWidth: w);
-    tp.paint(canvas, gTextOffset);
-  }
+  void drawGoldText(Canvas canvas, double w) =>
+      drawText(canvas, bFactory.fTextStyle, fText, w, bFactory.fTextOffset);
+
+  void drawWhiteText(Canvas canvas, TextStyle style, String text, double w) =>
+      drawText(canvas, style, text, w, keyTextOffset);
+
+  void drawBlueText(Canvas canvas, double w) =>
+      drawText(canvas, bFactory.gTextStyle, gText, w, gTextOffset);
 }
 
 /// A [CalculatorButton] that has a special function when used with conjunction
@@ -751,12 +757,46 @@ class CalculatorButtonWithLJ extends CalculatorButton {
 }
 
 ///
-/// The square root button, which draws and extra line above the blue
+/// The 15C's square root button, which draws an extra line above the blue
 /// label to visually complete the square-root symbol.  Lining this
 /// up depends on the specific font, which is bundled with the app.
 ///
-class CalculatorSqrtButton extends CalculatorButton {
-  CalculatorSqrtButton(
+class CalculatorWhiteSqrtButton extends CalculatorButton {
+  CalculatorWhiteSqrtButton(
+      ButtonFactory factory,
+      String uText,
+      String fText,
+      String gText,
+      Operation uKey,
+      Operation fKey,
+      Operation gKey,
+      String rawKeyboardKey,
+      {Key? key})
+      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
+            key: key);
+
+  @override
+  void drawWhiteText(Canvas canvas, TextStyle style, String text, double w) {
+    super.drawWhiteText(canvas, style, text, w);
+    // Extend the line on the top of the square root symbol
+    TextSpan span = TextSpan(style: style, text: '\u203E');
+    TextPainter tp = TextPainter(
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr);
+    tp.layout(minWidth: w);
+    tp.paint(canvas, keyTextOffset.translate(8.4, -2.2));
+    tp.paint(canvas, keyTextOffset.translate(16, -2.2));
+  }
+}
+
+///
+/// The 16C's square root button, which draws an extra line above the blue
+/// label to visually complete the square-root symbol.  Lining this
+/// up depends on the specific font, which is bundled with the app.
+///
+class CalculatorBlueSqrtButton extends CalculatorButton {
+  CalculatorBlueSqrtButton(
       ButtonFactory factory,
       String uText,
       String fText,

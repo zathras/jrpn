@@ -772,7 +772,7 @@ Stream<LicenseEntry> _getLicenses() async* {
 class Jrpn extends StatefulWidget {
   /// The state for a calculator instance is held both in the Controller,
   /// and in the Model referenced by the controller.
-  final Controller controller;
+  final RealController controller;
 
   const Jrpn(this.controller, {Key? key}) : super(key: key);
 

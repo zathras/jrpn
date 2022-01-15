@@ -109,16 +109,15 @@ class LcdContents {
         _myTimer = timer,
         extraShift = null;
 
-  LcdContents.powerOn()
-      : blank = false,
-        mainText = '        0 h',
+  LcdContents.powerOn(String text, this.rightJustify)
+      : mainText = rightJustify ? text : ' $text',
+        blank = false,
         shift = ShiftKey.none,
         sign = SignMode.twosComplement,
         bits = 0,
         cFlag = false,
         gFlag = false,
         prgmFlag = false,
-        rightJustify = false,
         windowEnabled = false,
         euroComma = false,
         hideComplement = false,
@@ -404,12 +403,14 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   late final settings = Settings(this);
   bool _needsSave = false;
   ShiftKey _shift = ShiftKey.none;
-  int _wordSize = 16;
+  int _wordSize;
   BigInt _wordMask = BigInt.from(0xffff);
   BigInt _signMask = BigInt.from(0x8000);
-  DisplayMode _displayMode = DisplayMode.hex;
+  DisplayMode _displayMode;
   IntegerSignMode _integerSignMode = SignMode.twosComplement;
   bool isRunningProgram = false;
+
+  Model(this._displayMode, this._wordSize);
 
   /// The list of "logical" keys.  This has nothing to do with the UI;
   /// The order of the operations in this list determines the
@@ -738,6 +739,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       r['comments'] = _comments;
     }
     r['version'] = _jsonVersion;
+    r['modelName'] = modelName;
     r['settings'] = settings.toJson(comments: comments);
     r['displayMode'] = _displayMode.toJson();
     r['integerSignMode'] = _integerSignMode.toJson();
@@ -763,6 +765,13 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     if (_jsonVersion != json['version']) {
       throw ArgumentError("Version ${json['version']} unrecognized");
     }
+    final String jModelName = (json['modelName'] as String?) ?? '16C';
+    // 16C came first, and older 16C versions don't save the model name.
+    if (modelName != jModelName) {
+      throw ArgumentError(
+          'Wrong calculator model.  This is a $modelName, not a $jModelName.');
+    }
+
     _comments = json['comments'];
     settings.decodeJson(json['settings'] as Map<String, dynamic>);
     displayMode = DisplayMode.fromJson(json['displayMode']!);
@@ -979,13 +988,20 @@ class Observable<T> {
 ///
 class DisplayModel {
   final Model model;
-  String _current = '0 h';
+  String _current;
   int _window = 0; // Number of digits scrolled off the right side
   bool _suspendWindow = false;
-  final Observable<LcdContents> _lastShown = Observable(LcdContents.powerOn());
+  final Observable<LcdContents> _lastShown;
   bool get ignoreUpdates => model.isRunningProgram;
 
-  DisplayModel(this.model);
+  DisplayModel(Model model)
+      : this._p(model, model.displayMode.format(model.x, model));
+  // @@ leading spaces
+
+  DisplayModel._p(this.model, String initial)
+      : _current = initial,
+        _lastShown =
+            Observable(LcdContents.powerOn(initial, !model.isFloatMode));
 
   set current(String v) {
     _current = v;

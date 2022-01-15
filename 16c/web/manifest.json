@@ -1,11 +1,11 @@
 {
-    "name": "jrpn",
-    "short_name": "jrpn",
+    "name": "jrpn16c",
+    "short_name": "jrpn16c",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Computer Scientist Calculator.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

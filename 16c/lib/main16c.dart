@@ -18,11 +18,14 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
+import 'package:flutter/material.dart';
+
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/generic_main.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/v/buttons.dart';
+import 'package:jrpn/v/main_screen.dart';
 
 import 'back_panel16c.dart';
 import 'tests16c.dart';
@@ -31,6 +34,8 @@ void main() async => genericMain(Jrpn(Controller16(Model16())));
 
 
 class Model16 extends Model<Operation> {
+
+  Model16() : super(DisplayMode.hex, 16);
 
   @override
   List<List<MKey<Operation>?>> get logicalKeys => _logicalKeys;
@@ -146,7 +151,7 @@ class ButtonLayout16 extends ButtonLayout {
       Operations.hex, Operations.showHex, Operations.dsz, 'I');
   CalculatorButton get dec => CalculatorButton(factory, 'DEC', '', 'ISZ',
       Operations.dec, Operations.showDec, Operations.isz, 'Z');
-  CalculatorButton get oct => CalculatorSqrtButton(factory, 'OCT', '',
+  CalculatorButton get oct => CalculatorBlueSqrtButton(factory, 'OCT', '',
       '\u221Ax', Operations.oct, Operations.showOct, Operations.sqrtOp, 'K');
   CalculatorButton get bin => CalculatorButton(factory, 'BIN', '', '1/x',
       Operations.bin, Operations.showBin, Operations.reciprocal, 'L');
@@ -265,6 +270,73 @@ class ButtonLayout16 extends ButtonLayout {
   ];
 }
 
+class LandscapeButtonFactory16 extends LandscapeButtonFactory {
+
+  LandscapeButtonFactory16(BuildContext context, ScreenPositioner screen, RealController controller) :
+        super(context, screen, controller);
+
+  @override
+  double addUpperGoldLabels(List<Widget> result, Rect pos,
+      {required double th,
+        required double tw,
+        required double bh,
+        required double bw}) {
+    double y = pos.top;
+    result.add(screen.box(
+        Rect.fromLTRB(pos.left + 2 * tw - 0.05, y + th - 0.14,
+            pos.left + 5 * tw + bw + 0.05, y + th + 0.11),
+        CustomPaint(
+            painter:
+            UpperLabel('SHOW', fTextStyle, height * (0.14 + 0.11) / bh))));
+    result.add(screen.box(
+        Rect.fromLTRB(pos.left + 2 * tw - 0.05, y + 2 * th - 0.155,
+            pos.left + 4 * tw + bw + 0.05, y + 2 * th + 0.065),
+        CustomPaint(
+            painter: UpperLabel('CLEAR', fTextSmallLabelStyle,
+                height * (0.065 + 0.155) / bh))));
+    result.add(screen.box(
+        Rect.fromLTRB(pos.left + 6 * tw - 0.05, y + 2 * th - 0.155,
+            pos.left + 8 * tw + bw + 0.05, y + 2 * th + 0.065),
+        CustomPaint(
+            painter: UpperLabel('SET COMPL', fTextSmallLabelStyle,
+                height * (0.065 + 0.155) / bh))));
+    return 0;
+  }
+}
+
+class PortraitButtonFactory16 extends PortraitButtonFactory {
+
+  PortraitButtonFactory16(BuildContext context, ScreenPositioner screen, RealController controller) :
+        super(context, screen, controller);
+
+  @override
+  double addUpperGoldLabels(List<Widget> result, Rect pos,
+      {required double th,
+        required double tw,
+        required double bh,
+        required double bw}) {
+    double y = pos.top;
+    result.add(screen.box(
+        Rect.fromLTWH(pos.left + tw - 0.05, y + 0.07, 2 * tw + bw + 0.10, 0.22),
+        CustomPaint(
+            painter: UpperLabel('CLEAR', fTextSmallLabelStyle,
+                height * (0.065 + 0.155) / bh))));
+    result.add(screen.box(
+        Rect.fromLTWH(
+            pos.left + 2 * tw - 0.05, y + th + 0.18, 3 * tw + bw + 0.10, 0.25),
+        CustomPaint(
+            painter:
+            UpperLabel('SHOW', fTextStyle, height * (0.14 + 0.11) / bh))));
+    result.add(screen.box(
+        Rect.fromLTWH(pos.left + 2 * tw - 0.05, y + 5 * th + 0.08,
+            2 * tw + bw + 0.1, 0.22),
+        CustomPaint(
+            painter: UpperLabel('SET COMPL', fTextSmallLabelStyle,
+                height * (0.065 + 0.155) / bh))));
+    return 0.28;
+  }
+}
+
 class Controller16 extends RealController {
 
   Controller16(Model<Operation> model) : super(model);
@@ -279,4 +351,14 @@ class Controller16 extends RealController {
 
   @override
   BackPanel getBackPanel() => const BackPanel();
+
+  @override
+  LandscapeButtonFactory getLandscapeButtonFactory(
+      BuildContext context, ScreenPositioner screen) =>
+      LandscapeButtonFactory16(context, screen, this);
+
+  @override
+  PortraitButtonFactory getPortraitButtonFactory(
+      BuildContext context, ScreenPositioner screen) =>
+      PortraitButtonFactory16(context, screen, this);
 }

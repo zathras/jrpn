@@ -100,7 +100,7 @@ class MainScreen extends OrientedScreen {
 
   const MainScreen(this.app, this.icon, {Key? key}) : super(key: key);
 
-  Controller get controller => app.controller;
+  RealController get controller => app.controller;
   Model get model => app.model;
 
   /// Midnight blue for area outside of calculator UI
@@ -127,7 +127,7 @@ class MainScreen extends OrientedScreen {
                   const Rect.fromLTWH(
                       0.63, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak),
                   LcdDisplay(controller.model, _showMenu)),
-              ...PortraitButtonFactory(context, screen, controller)
+              ...controller.getPortraitButtonFactory(context, screen)
                   .buildButtons(Rect.fromLTRB(
                       0.7, 2.75, screen.width - 0.7, screen.height - 0.47)),
               MainMenu(this, screen)
@@ -153,7 +153,7 @@ class MainScreen extends OrientedScreen {
                 const Rect.fromLTWH(
                     2.0, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak),
                 LcdDisplay(controller.model, _showMenu)),
-            ...LandscapeButtonFactory(context, screen, controller).buildButtons(
+            ...controller.getLandscapeButtonFactory(context, screen).buildButtons(
                 Rect.fromLTRB(
                     0.7, 2.75, screen.width - 0.7, screen.height - 0.47)),
             MainMenu(this, screen)
@@ -431,7 +431,7 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> {
   Model get model => widget.main.model;
-  Controller get controller => widget.main.controller;
+  RealController get controller => widget.main.controller;
   ScreenPositioner get screen => widget.screen;
 
   void _enabledChanged(bool v) => setState(() {});
@@ -488,7 +488,7 @@ class _MainMenuState extends State<MainMenu> {
 class _HelpMenu extends StatelessWidget {
   final String title;
   final ScalableImage icon;
-  final Controller controller;
+  final RealController controller;
 
   const _HelpMenu(this.title, this.icon, this.controller, {Key? key}) : super(key: key);
 

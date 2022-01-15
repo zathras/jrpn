@@ -11,4 +11,4 @@ PRODUCT_NAME = JRPN 16c
 PRODUCT_BUNDLE_IDENTIFIER = com.jovial.jrpn
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2021 Bill Foote. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2021, 2022 Bill Foote.  All rights reserved.
