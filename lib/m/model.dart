@@ -428,6 +428,13 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ///
   String get modelName;
 
+  int get returnStackSize;
+
+  ///
+  /// Create an instance of the model-specific ProgramInstruction subtype
+  ///
+  ProgramInstruction<OT> newProgramInstruction(OT operation, int argValue);
+
   /// Not used, but we retain any comments found in the JSON file
   /// so we can write them back out.
   dynamic _comments;

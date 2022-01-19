@@ -196,12 +196,13 @@ abstract class RealController extends Controller {
   @override
   final KeyboardController keyboard = KeyboardController();
 
-  RealController(Model<Operation> model) : super(model) {
+  RealController(Model<Operation> model, List<NumberEntry> numbers, Map<NormalOperation, ProgramInstruction> shortcuts)
+      : super(model) {
     model.memory.initializeSystem(OperationMap<Operation>(
         keys: model.logicalKeys,
-        numbers: Operations.numbers,
+        numbers: numbers,
         special: Operations.special,
-        shortcuts: Operations.shortcuts,
+        shortcuts: shortcuts,
         lbl: Operations.lbl));
     state = Resting(this);
     keyboard.controller = this;
@@ -245,9 +246,11 @@ abstract class RealController extends Controller {
 
   Widget getBackPanel();
 
-  LandscapeButtonFactory getLandscapeButtonFactory(BuildContext context, ScreenPositioner screen);
+  LandscapeButtonFactory getLandscapeButtonFactory(
+      BuildContext context, ScreenPositioner screen);
 
-  PortraitButtonFactory getPortraitButtonFactory(BuildContext context, ScreenPositioner screen);
+  PortraitButtonFactory getPortraitButtonFactory(
+      BuildContext context, ScreenPositioner screen);
 }
 
 ///
@@ -435,6 +438,24 @@ class NumberEntry extends Operation {
 }
 
 ///
+/// One of the 15C's letter keys, from 0 to f.
+///
+class LetterLabel extends NumberEntry {
+  LetterLabel(String name, int value) : super(name, value);
+
+  @override
+  void pressed(LimitedState arg) =>
+      (arg as ActiveState).handleLetterLabel(this);
+  // See the downcast note in NormalOperation
+
+  @override
+  StackLift get _stackLift => StackLift.neutral;
+
+  @override
+  int get numericValue => value;
+}
+
+///
 ///  A "normal" calculator operation.  Generally, they perform some kind of
 ///  calculation, or otherwise manipulate the model.
 ///
@@ -516,6 +537,37 @@ class NormalOperation extends Operation {
 }
 
 ///
+/// A [NormalOperation] that doubles as a letter (A-F) on the 15C, as the
+/// argument to LBL, GTO or GSB.  The letters on the 16C are unshifted, so
+/// this doesn't come up there.
+///
+class NormalOperationOrLetter extends NormalOperation {
+  @override
+  final int numericValue;
+
+  NormalOperationOrLetter.floatOnly(
+      {void Function(ActiveState)? pressed,
+      StackLift? stackLift,
+      required void Function(Model) floatCalc,
+      required String name,
+      required LetterLabel letter})
+      : numericValue = letter.numericValue,
+        super.floatOnly(
+            pressed: pressed,
+            stackLift: stackLift,
+            floatCalc: floatCalc,
+            name: name);
+
+  NormalOperationOrLetter(NormalOperation op, LetterLabel letter)
+      : numericValue = letter.numericValue,
+        super.floatOnly(
+            pressed: op._pressed,
+            stackLift: op._stackLift,
+            floatCalc: op.floatCalc!,
+            name: op.name);
+}
+
+///
 /// A [NormalOperation] that takes an argument.  For example, the RCL and STO
 /// operations take an argument, giving the register to store to or recall from.
 ///
@@ -527,13 +579,13 @@ class NormalArgOperation extends Operation {
   final StackLift _stackLift;
 
   NormalArgOperation(
-      {void Function(ActiveState)? xxpressed,
-      StackLift? stackLift,
+      {StackLift? stackLift,
       required this.arg,
       required String name})
       : _stackLift = stackLift ?? StackLift.enable,
         super(name: name) {
     arg.op = this;
+    print("@@ od, op bound to $this");
   }
 
   @override
@@ -616,15 +668,15 @@ class OperationArg {
   late final NormalArgOperation op;
 
   OperationArg(this.maxArg,
-      {required this.floatCalc, required this.intCalc, this.pressed});
+      {required this.floatCalc, required this.intCalc, this.pressed}) { print("@@ oa"); }
 
   OperationArg.both(this.maxArg,
       {required void Function(Model, int) calc, this.pressed})
       : floatCalc = calc,
-        intCalc = calc;
+        intCalc = calc { print("@@ ob"); }
 
   OperationArg.intOnly(this.maxArg, {required this.intCalc, this.pressed})
-      : floatCalc = null;
+      : floatCalc = null { print("@@ oc"); }
 
   void onArgComplete(LimitedState state, int argValue) =>
       state.onArgComplete(this, argValue);

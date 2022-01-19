@@ -247,14 +247,14 @@ Future<void> programWithError() async {
 
   enter(c, Operations.pr);
   enter(c, Operations.lbl);
-  enter(c, Operations.a);
+  enter(c, Operations.letterA);
   enter(c, Operations.floatKey);
   enter(c, Operations.n2);
   enter(c, Operations.n0);
   enter(c, Operations.reciprocal);
   enter(c, Operations.pr);
   enter(c, Operations.gsb);
-  enter(c, Operations.a);
+  enter(c, Operations.letterA);
   await out.moveNext();
   expect(out.current.errorNumber, 0);
   expect(m.display.current, '   error 0  ');
@@ -263,22 +263,22 @@ Future<void> programWithError() async {
   enter(c, Operations.pr); // Program mode
   enter(c, Operations.clearPrgm);
   enter(c, Operations.lbl);
-  enter(c, Operations.a);
+  enter(c, Operations.letterA);
   enter(c, Operations.n1);
   enter(c, Operations.plus);
   enter(c, Operations.gsb);
-  enter(c, Operations.a);
+  enter(c, Operations.letterA);
   enter(c, Operations.pr);
   enter(c, Operations.n0);
   enter(c, Operations.enter);
   enter(c, Operations.enter);
   enter(c, Operations.enter);
   enter(c, Operations.gsb);
-  enter(c, Operations.a);
+  enter(c, Operations.letterA);
   expect(await out.moveNext(), true);
   expect(out.current.errorNumber, 5);
   expect(m.display.current, '   error 5  ');
-  enter(c, Operations.a);
+  enter(c, Operations.letterA);
   expect(m.display.current.trim(), '5.00');
 }
 

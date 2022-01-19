@@ -55,12 +55,12 @@ import 'states.dart';
 class Operations {
   // Unshifted keys:
 
-  static final a = NumberEntry('A', 10);
-  static final b = NumberEntry('B', 11);
-  static final c = NumberEntry('C', 12);
-  static final d = NumberEntry('D', 13);
-  static final e = NumberEntry('E', 14);
-  static final f = NumberEntry('F', 15);
+  static final letterA = NumberEntry('A', 10);
+  static final letterB = NumberEntry('B', 11);
+  static final letterC = NumberEntry('C', 12);
+  static final letterD = NumberEntry('D', 13);
+  static final letterE = NumberEntry('E', 14);
+  static final letterF = NumberEntry('F', 15);
   static final n7 = NumberEntry('7', 7);
   static final n8 = NumberEntry('8', 8);
   static final n9 = NumberEntry('9', 9);
@@ -646,25 +646,311 @@ class Operations {
   /// Abbreviated key sequences for (i) used as an argument - cf. manual p. 68
   static final Set<Operation> argParenIops = {Operations.rs, Operations.parenI};
 
-  /// The numbers.  This must be in order.
-  static final List<NumberEntry> numbers = [
-    Operations.n0,
-    Operations.n1,
-    Operations.n2,
-    Operations.n3,
-    Operations.n4,
-    Operations.n5,
-    Operations.n6,
-    Operations.n7,
-    Operations.n8,
-    Operations.n9,
-    Operations.a,
-    Operations.b,
-    Operations.c,
-    Operations.d,
-    Operations.e,
-    Operations.f
-  ];
+  // ================================
+  // Operations added for the HP-15C.
+  // ================================
+  //
+  // Note that, as a general rule, we just make the model be the union of 15C
+  // and 16C.  The extra operations just aren't accessible via the UI.
+
+  static final letterLabelA = LetterLabel('A', 10);
+  static final letterLabelB = LetterLabel('B', 11);
+  static final letterLabelC = LetterLabel('C', 12);
+  static final letterLabelD = LetterLabel('D', 13);
+  static final letterLabelE = LetterLabel('E', 14);
+  static final letterLabelF = LetterLabel('F', 15);
+
+  static final sqrtOp15 = NormalOperationOrLetter(sqrtOp, letterLabelA);
+  static final NormalOperation eX = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        double x = m.xF;
+        m.resultXF = pow(e, x) as double;
+        m.displayMode.setFloatOverflow(m);
+      },
+      name: 'eX');
+  static final NormalOperation xSquared = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        double x = m.xF;
+        m.resultXF = x * x;
+        m.displayMode.setFloatOverflow(m);
+      },
+      name: 'x^2');
+  static final NormalOperation lnOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        double x = m.xF;
+        m.resultXF = log(x);
+        m.displayMode.setFloatOverflow(m);
+      },
+      name: 'e^x');
+  static final NormalOperation tenX = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        double x = m.xF;
+        m.resultXF = pow(10, x) as double;
+        m.displayMode.setFloatOverflow(m);
+      },
+      name: '10^x');
+  static final NormalOperation logOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        double x = m.xF;
+        m.resultXF = log(x) / ln10;
+        m.displayMode.setFloatOverflow(m);
+      },
+      name: 'log');
+  static final NormalOperation yX = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        m.popSetResultXF = pow(m.xF, m.yF) as double;
+        m.displayMode.setFloatOverflow(m);
+      },
+      name: 'yX');
+  static final NormalOperation percent = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '%');
+  static final NormalOperation deltaPercent = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'delta%');
+  static final NormalOperation matrix = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'MATRIX');
+  static final NormalOperation fix = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'FIX');
+  static final NormalOperation sci = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'SCI');
+  static final NormalOperation eng = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'ENG');
+  static final NormalOperation deg = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'DEG');
+  static final NormalOperation rad = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "TODO";
+      },
+      name: 'RAD');
+  static final NormalOperation grd = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'GRD');
+  static final NormalOperation solve = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'SOLVE');
+  static final NormalOperation hyp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'HYP');
+  static final NormalOperation hypInverse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'HYP-1');
+  static final NormalOperation sin = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'SIN');
+  static final NormalOperation sinInverse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'SIN-1');
+  static final NormalOperation cos = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'COS');
+  static final NormalOperation cosInverse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'COS-1');
+  static final NormalOperation tan = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'TAN');
+  static final NormalOperation tanInverse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'TAN-1');
+  static final NormalOperation dim = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'DIM');
+  static final NormalOperation resultOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'RESULT');
+  static final NormalOperation piOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'PI');
+  static final NormalOperation xExchange = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'x<->');
+  static final NormalOperation dse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'DSE');
+  static final NormalOperation isg = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'ISG');
+  static final NormalOperation integrate = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'integrate');
+  static final NormalOperation clearSigma = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'CLEAR-E');
+  static final NormalOperation rnd = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'RND');
+  static final NormalOperation ranNum = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'RAN #');
+  static final NormalOperation toR = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->R');
+  static final NormalOperation toP = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->P');
+  static final NormalOperation toHMS = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->H.MS');
+  static final NormalOperation toH = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->H');
+  static final NormalOperation toRad = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->RAD');
+  static final NormalOperation toDeg = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->DEG');
+  static final NormalOperation reImSwap = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'Re<=>Im');
+  static final NormalOperation testOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'TEST');
+  static final NormalOperation fracOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'FRAC');
+  static final NormalOperation intOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'INT');
+  static final NormalOperation userOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'USER');
+  static final NormalOperation memOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'MEM');
+  static final NormalOperation xFactorial = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'x!');
+  static final NormalOperation xBar = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'xBar');
+  static final NormalOperation yHatR= NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'yHat,r');
+  static final NormalOperation sOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 's');
+  static final NormalOperation linearRegression = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'L.R.');
+  static final NormalOperation sigmaPlus = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'E+');
+  static final NormalOperation sigmaMinus = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'E-');
+  static final NormalOperation pYX= NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'Py,x');
+  static final NormalOperation cYX = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'Cy,x');
+
+  // ================================
+  // Useful collections of operations
+  // ================================
 
   /// Operations that can't be stored in memory
   static final List<Operation> special = [
@@ -680,14 +966,6 @@ class Operations {
     Operations.mem,
     Operations.status
   ];
-
-  /// Map from operation that is a short cut to what it's a shortcut for, with
-  /// the key as an argument
-  static final Map<NormalOperation, ProgramInstruction> shortcuts = {
-    Operations.I: ProgramInstruction(Operations.rcl, Registers.indexRegister),
-    Operations.parenI:
-        ProgramInstruction(Operations.rcl, Registers.indirectIndex)
-  };
 }
 
 // Taken from https://en.wikipedia.org/wiki/Methods_of_computing_square_roots

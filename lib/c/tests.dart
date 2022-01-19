@@ -175,12 +175,12 @@ abstract class SelfTests {
     await expect(Operations.n7.numericValue, 0x7);
     await expect(Operations.n8.numericValue, 0x8);
     await expect(Operations.n9.numericValue, 0x9);
-    await expect(Operations.a.numericValue, 0xa);
-    await expect(Operations.b.numericValue, 0xb);
-    await expect(Operations.c.numericValue, 0xc);
-    await expect(Operations.d.numericValue, 0xd);
-    await expect(Operations.e.numericValue, 0xe);
-    await expect(Operations.f.numericValue, 0xf);
+    await expect(Operations.letterA.numericValue, 0xa);
+    await expect(Operations.letterB.numericValue, 0xb);
+    await expect(Operations.letterC.numericValue, 0xc);
+    await expect(Operations.letterD.numericValue, 0xd);
+    await expect(Operations.letterE.numericValue, 0xe);
+    await expect(Operations.letterF.numericValue, 0xf);
   }
 
   @mustCallSuper

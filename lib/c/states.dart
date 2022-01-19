@@ -145,6 +145,7 @@ abstract class ActiveState extends LimitedState with StackLiftEnabledUser {
   void handlePSE() => controller.handlePSE();
 
   void handleNumberKey(final int num);
+  void handleLetterLabel(LetterLabel operation);
   void handleCHS();
   void handleEEX();
   void handleShow(IntegerDisplayMode mode);
@@ -188,10 +189,10 @@ class Resting extends ActiveState {
         // If there's a calculation for our current mode
         controller.runWithArg(arg, this);
       } else {
-        key.pressed(this); // TODO  Really?
+        key.pressed(this);
       }
     } else {
-      key.pressed(this); // TODO  Really?
+      key.pressed(this);
       final f = getCalculation(key);
       if (f != null) {
         _calculate(f);
@@ -372,6 +373,38 @@ class Resting extends ActiveState {
   @override
   void gosubEntryDone(GosubArgInputState from, int label) =>
       from.handleGosubEntryDone(label);
+
+  @override
+  void handleLetterLabel(LetterLabel operation) {
+    final program = model.memory.program;
+    assert(controller is RealController);
+    // The 15C's letter labels get translated to GSB <label> when entering
+    // a program, so they cannot occur if we're running a program (i.e.
+    // when controller is RunningController).  The return stack should only
+    // be reset when we're not currently running a program, which is the only
+    // case here.
+    program.resetReturnStack();
+    try {
+      program.gosub(operation.numericValue);
+    } on CalculatorError catch (e) {
+      controller.showCalculatorError(e);
+      return;
+    }
+    program.displayCurrent();
+    final arg = GosubOperationArg.both(26, calc: (_, __) {});
+    arg.op = Operations.gsb;
+    final s = GosubArgInputState(controller, arg, this);
+    s.isDone = true;
+    changeState(s);
+    /* @@ was:
+    final arg = GosubOperationArg.both(17,
+        calc: (Model m, int label) => m.memory.program.gosub(label));
+    arg.op = Operations.gsb;
+    final inState = GosubArgInputState(controller, arg, this);
+    changeState(inState);
+    inState.buttonDown(operation);
+     */
+  }
 }
 
 ///
@@ -655,6 +688,10 @@ class DigitEntry extends ActiveState {
   @override
   void gosubEntryDone(GosubArgInputState from, int label) =>
       changeState(Resting(controller)).gosubEntryDone(from, label);
+
+  @override
+  void handleLetterLabel(LetterLabel operation) =>
+      changeState(Resting(controller)).handleLetterLabel(operation);
 }
 
 ///
@@ -782,7 +819,7 @@ class GosubArgInputState extends ArgInputState {
       }
       assert(controller is RealController);
       final program = model.memory.program;
-      program.resetReturnStack();
+      program.resetReturnStack(); // Since we're starting new program
       try {
         program.gosub(label);
       } on CalculatorError catch (e) {
@@ -801,7 +838,9 @@ class GosubArgInputState extends ArgInputState {
   @override
   void buttonUp(Operation key) {
     if (isDone) {
+      print("@@ a ${arg.op}");
       arg.op.possiblyAlterStackLift(controller);
+      print("@@ b ${arg.op}");
       changeState(Running(controller)).buttonUp(key);
     } else {
       super.buttonUp(key);
@@ -890,7 +929,7 @@ class ProgramEntry extends LimitedState {
   }
 
   void _addOperation(Operation op, int argValue) {
-    model.memory.program.insert(ProgramInstruction(op, argValue));
+    model.memory.program.insert(model.newProgramInstruction(op, argValue));
     // throws CalculatorError if memory full
     program.displayCurrent();
   }
@@ -1234,7 +1273,7 @@ class Running extends ControllerState {
         final ProgramInstruction<Operation> instr;
         final int line = program.currentLine;
         if (line == 0) {
-          instr = ProgramInstruction(Operations.rtn, 0);
+          instr = model.newProgramInstruction(Operations.rtn, 0);
         } else {
           instr = program[line];
           program.incrementCurrentLine();

@@ -29,7 +29,7 @@ class Memory<OT extends ProgramOperation> {
   late final ProgramMemory<OT> program;
   late final registers = Registers(this);
 
-  final Model _model;
+  final Model<OT> _model;
 
   Memory(this._model);
 
@@ -38,7 +38,8 @@ class Memory<OT extends ProgramOperation> {
   /// Called by our controller, which necessarily happens after the Model
   /// exists.
   void initializeSystem(OperationMap<OT> layout) {
-    program = ProgramMemory<OT>(this, _storage, layout._operationTable);
+    program = ProgramMemory<OT>(
+        this, _storage, layout._operationTable, _model.returnStackSize);
 
     // We rely on our Controller to give us an OperationMap with the
     // layout information that tells us the row/column positions of the various
@@ -274,14 +275,14 @@ class Registers {
 /// here, and the current program line.
 ///
 class ProgramMemory<OT extends ProgramOperation> {
-  final Memory _memory;
+  final Memory<OT> _memory;
 
   /// Indexed by opCode
   final List<OT> _operationTable;
 
   int _lines = 0;
 
-  final List<int> _returnStack = List.filled(4, 0);
+  final List<int> _returnStack;
   int _returnStackPos = -1;
 
   /// Current line (editing and/or execution)
@@ -290,7 +291,9 @@ class ProgramMemory<OT extends ProgramOperation> {
   /// This is a testing hook.  In normal operation, it's always null.
   ProgramListener programListener = ProgramListener();
 
-  ProgramMemory(this._memory, this._registerStorage, this._operationTable);
+  ProgramMemory(this._memory, this._registerStorage, this._operationTable,
+      int returnStackSize)
+      : _returnStack = List.filled(returnStackSize, 0);
 
   final ByteData _registerStorage;
 
@@ -354,7 +357,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     final OT op = _operationTable[opCode];
     // throws an exception on an illegal opCode, which is what we want.
     final int arg = opCode - op._opCode;
-    return ProgramInstruction<OT>(op, arg);
+    return _memory._model.newProgramInstruction(op, arg);
     // We're not storing the instructions as nybbles and creating instructions
     // as-needed to save memory.  It's the easiest way of implementing it,
     // given that we want to store the program in a form that is faithful
@@ -622,7 +625,7 @@ class MKey<OT extends ProgramOperation> {
 /// An instruction in a program, consisting of a [ProgramOperation] and,
 /// sometimes, an argument value.
 ///
-class ProgramInstruction<OT extends ProgramOperation> {
+abstract class ProgramInstruction<OT extends ProgramOperation> {
   OT op;
 
   /// 0 if no argument
@@ -632,12 +635,15 @@ class ProgramInstruction<OT extends ProgramOperation> {
 
   final _noWidth = RegExp('[,.]');
 
-  String _rightJustify(String s, int len) {
+  @protected
+  String rightJustify(String s, int len) {
     int nw = _noWidth.allMatches(s).length;
     return s.padLeft(6 + nw);
   }
 
+  ///
   /// How this is displayed in the LCD
+  ///
   String get programDisplay {
     if (op.maxArg > 0) {
       final String as;
@@ -659,9 +665,9 @@ class ProgramInstruction<OT extends ProgramOperation> {
       } else {
         as = ' .${(argValue - 16).toRadixString(16)}';
       }
-      return _rightJustify('${op.programDisplay}$as', 6);
+      return rightJustify('${op.programDisplay}$as', 6);
     } else {
-      return _rightJustify(op.programDisplay, 6);
+      return rightJustify(op.programDisplay, 6);
     }
   }
 

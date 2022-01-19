@@ -130,7 +130,7 @@ void appendixA() {
       p.model.wordSize = 32;
       p.model.x = x;
       p.enter(Operations.gsb);
-      p.enter(Operations.b);
+      p.enter(Operations.letterB);
       expect(await out.moveNext(), true);
       expect(out.current, ProgramEvent.done);
       if (floatFormat[i] >= 8e72) {
@@ -145,7 +145,7 @@ void appendixA() {
       final out = StreamIterator<ProgramEvent>(p.output.stream);
       p.model.x = Value.fromDouble(floatFormat[i]);
       p.enter(Operations.gsb);
-      p.enter(Operations.a);
+      p.enter(Operations.letterA);
       expect(await out.moveNext(), true);
       expect(out.current, ProgramEvent.done);
       final String ieee = canonicalIeee[i] ?? ieeeFormat[i];
@@ -169,7 +169,7 @@ Future<void> p93Checksum() async {
   final p = TestCalculator()..loadState('p93_checksum.jrpn');
   final out = StreamIterator<ProgramEvent>(p.output.stream);
   p.enter(Operations.gsb);
-  p.enter(Operations.d);
+  p.enter(Operations.letterD);
   expect(await out.moveNext(), true);
   expect(out.current, ProgramEvent.done);
   expect(p.model.xI, BigInt.parse('6'));
@@ -204,7 +204,7 @@ Future<void> towersOfHanoi() async {
   final out = StreamIterator<ProgramEvent>(p.output.stream);
   p.enter(Operations.n7);
   p.enter(Operations.gsb);
-  p.enter(Operations.a);
+  p.enter(Operations.letterA);
   for (final Move move in hanoi(0x7, 1, 3)) {
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.pause);

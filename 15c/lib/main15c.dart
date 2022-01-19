@@ -33,6 +33,7 @@ import 'tests15c.dart';
 
 void main() async => genericMain(Jrpn(Controller15(Model15())));
 
+
 class Model15 extends Model<Operation> {
   Model15() : super(DisplayMode.float(4), 56);
 
@@ -51,23 +52,23 @@ class Model15 extends Model<Operation> {
   // calculator's state obsolete.
   static final List<List<MKey<Operation>?>> _logicalKeys = [
     [
-      MKey(Operations.a, Operations.sl, Operations.lj),
-      MKey(Operations.b, Operations.sr, Operations.asr),
-      MKey(Operations.c, Operations.rl, Operations.rlc),
-      MKey(Operations.d, Operations.rr, Operations.rrc),
-      MKey(Operations.e, Operations.rln, Operations.rlcn),
-      MKey(Operations.f, Operations.rrn, Operations.rrcn),
+      MKey(Operations.sqrtOp15, Operations.letterLabelA, Operations.xSquared),
+      MKey(Operations.letterE, Operations.sr, Operations.asr),
+      MKey(Operations.letterC, Operations.rl, Operations.rlc),
+      MKey(Operations.letterD, Operations.rr, Operations.rrc),
+      MKey(Operations.letterE, Operations.rln, Operations.rlcn),
+      MKey(Operations.letterF, Operations.rrn, Operations.rrcn),
       MKey(Operations.n7, Operations.maskl, Operations.poundB),
       MKey(Operations.n8, Operations.maskr, Operations.abs),
       MKey(Operations.n9, Operations.rmd, Operations.dblr),
       MKey(Operations.div, Operations.xor, Operations.dblDiv),
     ],
     [
-      MKey(Operations.gsb, Operations.xSwapParenI, Operations.rtn),
-      MKey(Operations.gto, Operations.xSwapI, Operations.lbl),
+      MKey(Operations.sst, Operations.lbl, Operations.rtn),
+      MKey(Operations.gto, Operations.xSwapI, Operations.xSwapParenI),
       MKey(Operations.hex, Operations.showHex, Operations.dsz),
       MKey(Operations.dec, Operations.showDec, Operations.isz),
-      MKey(Operations.oct, Operations.showOct, Operations.sqrtOp),
+      MKey(Operations.oct, Operations.showOct, Operations.letterA),
       MKey(Operations.bin, Operations.showBin, Operations.reciprocal),
       MKey(Operations.n4, Operations.sb, Operations.sf),
       MKey(Operations.n5, Operations.cb, Operations.cf),
@@ -75,10 +76,10 @@ class Model15 extends Model<Operation> {
       MKey(Operations.mult, Operations.and, Operations.dblx),
     ],
     [
-      MKey(Operations.rs, Operations.parenI, Operations.pr),
-      MKey(Operations.sst, Operations.I, Operations.bst),
+      MKey(Operations.rs, Operations.pse, Operations.pr),
+      MKey(Operations.gsb, Operations.I, Operations.bst),
       MKey(Operations.rDown, Operations.clearPrgm, Operations.rUp),
-      MKey(Operations.xy, Operations.clearReg, Operations.pse),
+      MKey(Operations.xy, Operations.clearReg, Operations.parenI),
       MKey(Operations.bsp, Operations.clearPrefix, Operations.clx),
       MKey(Operations.enter, Operations.window, Operations.lstx),
       MKey(Operations.n1, Operations.onesCompl, Operations.xLEy),
@@ -100,6 +101,14 @@ class Model15 extends Model<Operation> {
     ]
   ];
 
+  static final Set<LetterLabel> _letterLabels = { Operations.letterLabelA,
+    Operations.letterLabelB,
+    Operations.letterLabelC,
+    Operations.letterLabelD,
+    Operations.letterLabelE,
+    Operations.letterLabelF
+  };
+
   @override
   bool get displayLeadingZeros => getFlag(3);
   @override
@@ -113,6 +122,48 @@ class Model15 extends Model<Operation> {
 
   @override
   String get modelName => '15C';
+
+  @override
+  ProgramInstruction<Operation> newProgramInstruction(
+          Operation operation, int argValue)  {
+    if (_letterLabels.contains(operation)) {
+      assert(argValue == 0);
+      argValue = operation.numericValue!;
+      operation = Operations.gsb;
+    }
+    return ProgramInstruction15(operation, argValue);
+  }
+
+  @override
+  int get returnStackSize => 7;
+}
+
+class ProgramInstruction15 extends ProgramInstruction<Operation> {
+  ProgramInstruction15(Operation op, int argValue) : super(op, argValue);
+
+  @override
+  String get programDisplay {
+    if (op.maxArg > 0) {
+      final String as;
+      if (argValue < 16) {
+        if (argValue < 10) {
+          as = ' ${argValue.toRadixString(10)}';
+        } else {
+          as = '1${argValue - 9}';  // A-F are keys R/C 11..16
+        }
+        /*  @@ TODO Maybe?  } else if (argIsParenI) {
+              as = '31';
+            } else if (argIsI) {
+              as = '32';
+        */
+      } else {
+        as = ' .${(argValue - 16).toRadixString(10)}';
+      }
+      return rightJustify('${op.programDisplay}$as', 6);
+    } else {
+      return rightJustify(op.programDisplay, 6);
+    }
+  }
 }
 
 ///
@@ -126,18 +177,25 @@ class ButtonLayout15 extends ButtonLayout {
 
   ButtonLayout15(this.factory, this._totalButtonHeight, this._buttonHeight);
 
-  CalculatorButton get sqrt => CalculatorWhiteSqrtButton(factory, '\u221Ax',
-      'A', 'x^2', Operations.a, Operations.sl, Operations.lj, 'A');
+  CalculatorButton get sqrt => CalculatorWhiteSqrtButton(
+      factory,
+      '\u221Ax',
+      'A',
+      'x^2',
+      Operations.sqrtOp15,
+      Operations.letterLabelA,
+      Operations.xSquared,
+      'A');
   CalculatorButton get eX => CalculatorButton(factory, 'e^x', 'B', 'LN',
-      Operations.b, Operations.sr, Operations.asr, 'B');
+      Operations.letterB, Operations.sr, Operations.asr, 'B');
   CalculatorButton get tenX => CalculatorButton(factory, '10^x', 'C', 'LOG',
-      Operations.c, Operations.rl, Operations.rlc, 'C');
+      Operations.letterC, Operations.rl, Operations.rlc, 'C');
   CalculatorButton get yX => CalculatorButton(factory, 'y^x', 'D', '%',
-      Operations.d, Operations.rr, Operations.rrc, 'D');
+      Operations.letterD, Operations.rr, Operations.rrc, 'D');
   CalculatorButton get reciprocal => CalculatorButton(factory, '1/x', 'E',
-      '\u0394%', Operations.e, Operations.rln, Operations.rlcn, 'E');
+      '\u0394%', Operations.letterE, Operations.rln, Operations.rlcn, 'E');
   CalculatorButton get chs => CalculatorButton(factory, 'CHS', 'MATRIX', 'ABS',
-      Operations.f, Operations.rrn, Operations.rrcn, 'F');
+      Operations.letterF, Operations.rrn, Operations.rrcn, 'F');
   CalculatorButton get n7 => CalculatorButton(factory, '7', 'FIX', 'DEG',
       Operations.n7, Operations.maskl, Operations.poundB, '7');
   CalculatorButton get n8 => CalculatorButton(factory, '8', 'SCI', 'RAD',
@@ -148,7 +206,7 @@ class ButtonLayout15 extends ButtonLayout {
       'x\u2264y', Operations.div, Operations.xor, Operations.dblDiv, '/');
 
   CalculatorButton get sst => CalculatorButton(factory, 'SST', 'LBL', 'BST',
-      Operations.gsb, Operations.xSwapParenI, Operations.rtn, 'U');
+      Operations.sst, Operations.lbl, Operations.bst, 'U');
   CalculatorButton get gto => CalculatorButton(
       factory,
       'GTO',
@@ -183,7 +241,7 @@ class ButtonLayout15 extends ButtonLayout {
       'TAN^\u2009\u22121',
       Operations.oct,
       Operations.showOct,
-      Operations.sqrtOp,
+      Operations.sqrtOp15,
       'K');
   CalculatorButton get eex => CalculatorButton(factory, 'EEX', 'RESULT',
       '\u03c0', Operations.bin, Operations.showBin, Operations.reciprocal, 'L');
@@ -206,9 +264,9 @@ class ButtonLayout15 extends ButtonLayout {
       acceleratorLabel: '*\u00d7');
 
   CalculatorButton get rs => CalculatorButton(factory, 'R/S', 'PSE', 'P/R',
-      Operations.rs, Operations.parenI, Operations.pr, '[');
+      Operations.rs, Operations.pse, Operations.pr, '[');
   CalculatorButton get gsb => CalculatorButton(factory, 'GSB', '\u03a3', 'RTN',
-      Operations.sst, Operations.I, Operations.bst, ']');
+      Operations.gsb, Operations.I, Operations.bst, ']');
   CalculatorButton get rdown => CalculatorButton(factory, 'R\u2193', 'PRGM',
       'R\u2191', Operations.rDown, Operations.clearPrgm, Operations.rUp, 'V');
   CalculatorButton get xy => CalculatorButton(factory, 'x\u2b0cy', 'REG', 'RND',
@@ -347,7 +405,8 @@ class PortraitButtonFactory15 extends PortraitButtonFactory {
       required double bw}) {
     double y = pos.top;
     result.add(screen.box(
-        Rect.fromLTWH(pos.left + tw - 0.05, y + 2 * th + 0.07, 3 * tw + bw + 0.10, 0.22),
+        Rect.fromLTWH(
+            pos.left + tw - 0.05, y + 2 * th + 0.07, 3 * tw + bw + 0.10, 0.22),
         CustomPaint(
             painter: UpperLabel('CLEAR', fTextSmallLabelStyle,
                 height * (0.065 + 0.155) / bh))));
@@ -356,7 +415,21 @@ class PortraitButtonFactory15 extends PortraitButtonFactory {
 }
 
 class Controller15 extends RealController {
-  Controller15(Model<Operation> model) : super(model);
+  Controller15(Model<Operation> model) : super(model, _numbers, const {});
+
+  /// The numbers.  This must be in order.
+  static final List<NumberEntry> _numbers = [
+    Operations.n0,
+    Operations.n1,
+    Operations.n2,
+    Operations.n3,
+    Operations.n4,
+    Operations.n5,
+    Operations.n6,
+    Operations.n7,
+    Operations.n8,
+    Operations.n9
+  ];
 
   @override
   SelfTests newSelfTests({bool inCalculator = true}) =>
