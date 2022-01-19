@@ -40,18 +40,24 @@ class BackPanel15 extends BackPanel {
             color: MainScreen.deadZoneColor,
             child: AspectRatio(
                 aspectRatio: screen.width / screen.height,
-                child: Stack(fit: StackFit.expand, children: [
-                  Container(color: MainScreen.keyboardBaseColor),
-                  screen.box(Rect.fromLTWH(screen.width - 0.8, 0.0, 0.8, 0.8),
-                      const Icon(Icons.arrow_back, color: Colors.white)),
-                  screen.box(const Rect.fromLTWH(1.175, 1.5, 5.65, 6.5),
-                      operationTable(5.65)),
-                  screen.box(const Rect.fromLTWH(0.45, 8.5, 4.97, 4),
-                      errorTable(4.97)),
-                  screen.box(
-                      const Rect.fromLTWH(6.0, 8.5, 1.57, 3), flagTable(1.57)),
-                ]))));
+                child: buildBackPanelPortrait(context, screen)
+        )));
   }
+
+  @override
+  Widget buildBackPanelPortrait(
+      BuildContext context, final ScreenPositioner screen) =>
+      Stack(fit: StackFit.expand, children: [
+        Container(color: MainScreen.keyboardBaseColor),
+        screen.box(Rect.fromLTWH(screen.width - 0.8, 0.0, 0.8, 0.8),
+            const Icon(Icons.arrow_back, color: Colors.white)),
+        screen.box(const Rect.fromLTWH(1.175, 1.5, 5.65, 6.5),
+            operationTable(5.65)),
+        screen.box(const Rect.fromLTWH(0.45, 8.5, 4.97, 4),
+            errorTable(4.97)),
+        screen.box(
+            const Rect.fromLTWH(6.0, 8.5, 1.57, 3), flagTable(1.57)),
+      ]);
 
   @override
   Widget buildLandscape(BuildContext context, final ScreenPositioner screen) {
@@ -62,19 +68,21 @@ class BackPanel15 extends BackPanel {
             color: MainScreen.deadZoneColor,
             child: AspectRatio(
                 aspectRatio: screen.width / screen.height,
-                child: Stack(fit: StackFit.expand, children: [
-                  Container(color: MainScreen.keyboardBaseColor),
-                  screen.box(const Rect.fromLTWH(11.8, 0.0, 0.8, 0.8),
-                      const Icon(Icons.arrow_back, color: Colors.white)),
-                  screen.box(
-                      const Rect.fromLTWH(0.10, 3, 4.97, 4), errorTable(4.97)),
-                  screen.box(
-                      Rect.fromLTWH(5.225, 1.1, 5.65, screen.height - 1.5),
-                      operationTable(5.65)),
-                  screen.box(
-                      const Rect.fromLTWH(11.03, 3, 1.57, 3), flagTable(1.57)),
-                ]))));
+                child: buildBackPanelLandscape(context, screen))));
   }
+
+  @override
+  Widget buildBackPanelLandscape(
+          BuildContext context, final ScreenPositioner screen) =>
+      Stack(fit: StackFit.expand, children: [
+        Container(color: MainScreen.keyboardBaseColor),
+        screen.box(const Rect.fromLTWH(11.8, 0.0, 0.8, 0.8),
+            const Icon(Icons.arrow_back, color: Colors.white)),
+        screen.box(const Rect.fromLTWH(0.10, 3, 4.97, 4), errorTable(4.97)),
+        screen.box(Rect.fromLTWH(5.225, 1.1, 5.65, screen.height - 1.5),
+            operationTable(5.65)),
+        screen.box(const Rect.fromLTWH(11.03, 3, 1.57, 3), flagTable(1.57)),
+      ]);
 
   Widget errorTable(double widthCM) => BPTable(widthCM, [
         row([cell(space(3)), cell(text('Error', align: bpCenter))]),
@@ -117,7 +125,10 @@ class BackPanel15 extends BackPanel {
             text('RTN', offset: const Offset(0.2, 0.2), scale: 0.9, box: true)
           ]))
         ]),
-        row([cell(text('6', align: bpCenter)), cell(text('\u200aR\u2260FLOAT'))]),
+        row([
+          cell(text('6', align: bpCenter)),
+          cell(text('\u200aR\u2260FLOAT'))
+        ]),
       ]);
 
   Widget operationTable(double widthCM) => BPTable(widthCM, [

@@ -11,6 +11,36 @@ import 'package:jrpn/v/main_screen.dart';
 abstract class BackPanel extends OrientedScreen {
   const BackPanel({Key? key}) : super(key: key);
 
+  @override
+  Widget buildPortrait(BuildContext context, final ScreenPositioner screen) {
+    return GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: Container(
+            alignment: Alignment.center,
+            color: MainScreen.deadZoneColor,
+            child: AspectRatio(
+                aspectRatio: screen.width / screen.height,
+                child: buildBackPanelPortrait(context, screen))));
+  }
+
+  Widget buildBackPanelPortrait(
+      BuildContext context, final ScreenPositioner screen);
+
+  @override
+  Widget buildLandscape(BuildContext context, final ScreenPositioner screen) {
+    return GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: Container(
+            alignment: Alignment.center,
+            color: MainScreen.deadZoneColor,
+            child: AspectRatio(
+                aspectRatio: screen.width / screen.height,
+                child: buildBackPanelLandscape(context, screen))));
+  }
+
+  Widget buildBackPanelLandscape(
+      BuildContext context, final ScreenPositioner screen);
+
   @protected
   final TextAlign bpCenter = TextAlign.center;
 
@@ -25,11 +55,11 @@ abstract class BackPanel extends OrientedScreen {
 
   @protected
   BPItem text(String text,
-      {bool box = false,
-        double scale = 1,
-        TextAlign align = TextAlign.left,
-        Offset offset = Offset.zero,
-        Offset boxOffset = Offset.zero}) =>
+          {bool box = false,
+          double scale = 1,
+          TextAlign align = TextAlign.left,
+          Offset offset = Offset.zero,
+          Offset boxOffset = Offset.zero}) =>
       _TextItem(text,
           box: box,
           scale: scale,
@@ -45,7 +75,7 @@ abstract class BackPanel extends OrientedScreen {
       _RegisterBoxItem(width, content);
   BPItem point() => _PointItem();
   BPItem sqrtText(String text,
-      {bool box = false, Offset offset = Offset.zero}) =>
+          {bool box = false, Offset offset = Offset.zero}) =>
       _SqrtTextItem(text, box: box, offset: offset);
   BPItem carry() =>
       registerBox(2.1, text('c', scale: 0.72, offset: const Offset(.62, -.08)));
@@ -95,7 +125,7 @@ class BPTablePainter extends CustomPainter {
   static List<double> _makeColumnWidths(List<BPRow> rows) =>
       List<double>.generate(
           rows[0].cells.length,
-              (i) => rows.fold(
+          (i) => rows.fold(
               0.0, (double soFar, BPRow r) => max(soFar, r.cells[i].width)));
 
   @override
@@ -327,10 +357,10 @@ class _TextItem extends BPItem {
 
   factory _TextItem(String text,
       {bool box = false,
-        double scale = 1,
-        TextAlign align = TextAlign.left,
-        Offset offset = Offset.zero,
-        Offset boxOffset = Offset.zero}) {
+      double scale = 1,
+      TextAlign align = TextAlign.left,
+      Offset offset = Offset.zero,
+      Offset boxOffset = Offset.zero}) {
     final painter = TextPainter(
         text: TextSpan(style: style, text: text),
         textAlign: align,
