@@ -658,7 +658,6 @@ class Operations {
   static final letterLabelC = LetterLabel('C', 12);
   static final letterLabelD = LetterLabel('D', 13);
   static final letterLabelE = LetterLabel('E', 14);
-  static final letterLabelF = LetterLabel('F', 15);
 
   static final sqrtOp15 = NormalOperationOrLetter(sqrtOp, letterLabelA);
   static final NormalOperation eX = NormalOperation.floatOnly(
