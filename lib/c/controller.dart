@@ -585,7 +585,6 @@ class NormalArgOperation extends Operation {
       : _stackLift = stackLift ?? StackLift.enable,
         super(name: name) {
     arg.op = this;
-    print("@@ od, op bound to $this");
   }
 
   @override
@@ -668,15 +667,15 @@ class OperationArg {
   late final NormalArgOperation op;
 
   OperationArg(this.maxArg,
-      {required this.floatCalc, required this.intCalc, this.pressed}) { print("@@ oa"); }
+      {required this.floatCalc, required this.intCalc, this.pressed});
 
   OperationArg.both(this.maxArg,
       {required void Function(Model, int) calc, this.pressed})
       : floatCalc = calc,
-        intCalc = calc { print("@@ ob"); }
+        intCalc = calc;
 
   OperationArg.intOnly(this.maxArg, {required this.intCalc, this.pressed})
-      : floatCalc = null { print("@@ oc"); }
+      : floatCalc = null;
 
   void onArgComplete(LimitedState state, int argValue) =>
       state.onArgComplete(this, argValue);

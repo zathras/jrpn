@@ -18,8 +18,6 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/c/operations.dart';
@@ -442,7 +440,7 @@ class Controller15 extends RealController {
       ButtonLayout15(factory, totalHeight, totalButtonHeight);
 
   @override
-  BackPanel getBackPanel() => const BackPanel();
+  BackPanel15 getBackPanel() => const BackPanel15();
 
   @override
   LandscapeButtonFactory getLandscapeButtonFactory(

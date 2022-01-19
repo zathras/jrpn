@@ -838,9 +838,7 @@ class GosubArgInputState extends ArgInputState {
   @override
   void buttonUp(Operation key) {
     if (isDone) {
-      print("@@ a ${arg.op}");
       arg.op.possiblyAlterStackLift(controller);
-      print("@@ b ${arg.op}");
       changeState(Running(controller)).buttonUp(key);
     } else {
       super.buttonUp(key);
