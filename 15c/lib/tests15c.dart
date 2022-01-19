@@ -18,11 +18,8 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
-import 'dart:math';
-import 'package:flutter/foundation.dart';
 
 import 'package:jrpn/m/model.dart';
-import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/c/controller.dart';
 
 import 'main15c.dart';

@@ -660,7 +660,8 @@ class Operations {
   static final letterLabelE = LetterLabel('E', 14);
 
   static final sqrtOp15 = NormalOperationOrLetter(sqrtOp, letterLabelA);
-  static final NormalOperation eX = NormalOperation.floatOnly(
+  static final NormalOperation eX15 = NormalOperationOrLetter.floatOnly(
+    letter: letterLabelB,
       floatCalc: (Model m) {
         double x = m.xF;
         m.resultXF = pow(e, x) as double;
@@ -681,7 +682,8 @@ class Operations {
         m.displayMode.setFloatOverflow(m);
       },
       name: 'e^x');
-  static final NormalOperation tenX = NormalOperation.floatOnly(
+  static final NormalOperation tenX15 = NormalOperationOrLetter.floatOnly(
+    letter: letterLabelC,
       floatCalc: (Model m) {
         double x = m.xF;
         m.resultXF = pow(10, x) as double;
@@ -695,7 +697,8 @@ class Operations {
         m.displayMode.setFloatOverflow(m);
       },
       name: 'log');
-  static final NormalOperation yX = NormalOperation.floatOnly(
+  static final NormalOperation yX15 = NormalOperationOrLetter.floatOnly(
+    letter: letterLabelD,
       floatCalc: (Model m) {
         m.popSetResultXF = pow(m.xF, m.yF) as double;
         m.displayMode.setFloatOverflow(m);
@@ -706,6 +709,7 @@ class Operations {
         throw "@@ TODO";
       },
       name: '%');
+  static final reciprocal15 = NormalOperationOrLetter(reciprocal, letterLabelE);
   static final NormalOperation deltaPercent = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         throw "@@ TODO";

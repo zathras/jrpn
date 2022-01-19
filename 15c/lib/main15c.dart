@@ -52,10 +52,10 @@ class Model15 extends Model<Operation> {
   static final List<List<MKey<Operation>?>> _logicalKeys = [
     [
       MKey(Operations.sqrtOp15, Operations.letterLabelA, Operations.xSquared),
-      MKey(Operations.eX, Operations.letterLabelB, Operations.lnOp),
-      MKey(Operations.tenX, Operations.letterLabelC, Operations.logOp),
-      MKey(Operations.yX, Operations.letterLabelD, Operations.percent),
-      MKey(Operations.reciprocal, Operations.letterLabelE,
+      MKey(Operations.eX15, Operations.letterLabelB, Operations.lnOp),
+      MKey(Operations.tenX15, Operations.letterLabelC, Operations.logOp),
+      MKey(Operations.yX15, Operations.letterLabelD, Operations.percent),
+      MKey(Operations.reciprocal15, Operations.letterLabelE,
           Operations.deltaPercent),
       MKey(Operations.chs, Operations.matrix, Operations.abs),
       MKey(Operations.n7, Operations.fix, Operations.deg),
@@ -188,13 +188,13 @@ class ButtonLayout15 extends ButtonLayout {
       Operations.xSquared,
       'A');
   CalculatorButton get eX => CalculatorButton(factory, 'e^x', 'B', 'LN',
-      Operations.eX, Operations.letterLabelB, Operations.lnOp, 'B');
+      Operations.eX15, Operations.letterLabelB, Operations.lnOp, 'B');
   CalculatorButton get tenX => CalculatorButton(factory, '10^x', 'C', 'LOG',
-      Operations.tenX, Operations.letterLabelC, Operations.logOp, 'C');
+      Operations.tenX15, Operations.letterLabelC, Operations.logOp, 'C');
   CalculatorButton get yX => CalculatorButton(factory, 'y^x', 'D', '%',
-      Operations.yX, Operations.letterLabelD, Operations.percent, 'D');
+      Operations.yX15, Operations.letterLabelD, Operations.percent, 'D');
   CalculatorButton get reciprocal => CalculatorButton(factory, '1/x', 'E',
-      '\u0394%', Operations.reciprocal, Operations.letterLabelE, Operations.deltaPercent, 'E');
+      '\u0394%', Operations.reciprocal15, Operations.letterLabelE, Operations.deltaPercent, 'E');
   CalculatorButton get chs => CalculatorButton(factory, 'CHS', 'MATRIX', 'ABS',
       Operations.chs, Operations.matrix, Operations.abs, 'F');
   CalculatorButton get n7 => CalculatorButton(factory, '7', 'FIX', 'DEG',
