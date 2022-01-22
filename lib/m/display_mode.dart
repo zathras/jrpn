@@ -36,6 +36,12 @@ abstract class DisplayModeSelector<R, A> {
   R selectFloat(A arg);
 }
 
+///
+/// Display mode and more.  This selects between number base, float versus
+/// integer, and complex versus normal.  The actual code is almost all
+/// concerned with formatting and display, but this is also a convenient place
+/// to select operations based on integer/float/complex mode.
+///
 abstract class DisplayMode {
   DisplayMode._protected();
 
@@ -103,8 +109,9 @@ abstract class DisplayMode {
   String format(Value v, Model m);
 
   bool get isFloatMode => false;
+  bool get isComplexMode => false;
 
-  void setFloatOverflow(Model m) {}
+  void determineFloatOverflow(Model m) {}
 
   ///
   /// Convert values in the model when switching between float and int,
@@ -122,6 +129,8 @@ abstract class DisplayMode {
   /// might be now).
   ///
   SignMode signMode(IntegerSignMode integerSignMode);
+
+  void setComplexMode(Model m, bool v);
 }
 
 abstract class IntegerDisplayMode extends DisplayMode {
@@ -195,6 +204,9 @@ abstract class IntegerDisplayMode extends DisplayMode {
       model.xI = BigInt.from(exp);
     }
   }
+
+  @override
+  void setComplexMode(Model m, bool v) { assert(false); }
 }
 
 abstract class _Pow2IntegerMode extends IntegerDisplayMode {
@@ -319,6 +331,14 @@ class _FloatMode extends DisplayMode {
   _FloatMode(this.digits) : super._protected();
 
   @override
+  void setComplexMode(Model m, bool v) {
+    if (v) {
+      m.displayMode = _ComplexMode(digits);
+      m.setupComplex(v);
+    }
+  }
+
+  @override
   int get radix => 10;
 
   @override
@@ -359,7 +379,7 @@ class _FloatMode extends DisplayMode {
   @override
   String format(Value v, Model m) => _format(v, m);
 
-  String _format(Value v, Model m, {bool setOverflow = false}) {
+  String _format(Value v, Model m, {void Function(Value)? onOverflow}) {
     assert(m.signMode == SignMode.float);
     final double n = v.asDouble;
     String s;
@@ -406,19 +426,17 @@ class _FloatMode extends DisplayMode {
       }
       s = s + exs.substring(i);
     }
-    bool overflowed;
     if (s == '1.000000E+100') {
       // really 9.999999999e+99 or thereabouts
       s = '9.999999E+99';
-      overflowed = true;
+      if (onOverflow != null) {
+        onOverflow(Value.fInfinity);
+      }
     } else if (s == '-1.000000E+100') {
       s = '-9.999999E+99';
-      overflowed = true;
-    } else {
-      overflowed = false;
-    }
-    if (setOverflow) {
-      m.gFlag = overflowed;
+      if (onOverflow != null) {
+        onOverflow(Value.fNegativeInfinity);
+      }
     }
     if (s.contains('.')) {
       nonspaceChars++;
@@ -440,8 +458,12 @@ class _FloatMode extends DisplayMode {
   bool get isFloatMode => true;
 
   @override
-  void setFloatOverflow(Model m) {
-    _format(m.x, m, setOverflow: true);
+  void determineFloatOverflow(Model m) {
+    m.floatOverflow = false;
+    _format(m.x, m, onOverflow: (infinity) {
+      m.x = infinity;
+      m.floatOverflow = true;
+    });
   }
 
   @override
@@ -458,7 +480,7 @@ class _FloatMode extends DisplayMode {
       final Value r = Value.fromDouble(y * pow(2.0, x));
       m.x = r;
       if (r == Value.fInfinity || r == Value.fNegativeInfinity) {
-        m.gFlag = true;
+        m.floatOverflow = true;
       }
     }
     m.setYZT(Value.zero);
@@ -474,4 +496,29 @@ class _FloatMode extends DisplayMode {
 
   @override
   String get _jsonName => 'f$digits';
+}
+
+class _ComplexMode extends _FloatMode {
+
+  _ComplexMode(int digits) : super(digits);
+
+  @override
+  void setComplexMode(Model m, bool v) {
+    if (v) {
+      m.displayMode = _FloatMode(digits);
+      m.setupComplex(v);
+    }
+  }
+
+  @override
+  bool get isComplexMode => true;
+
+  @override
+  void determineFloatOverflow(Model m) {
+    super.determineFloatOverflow(m);
+    _format(m.xImaginary, m, onOverflow: (infinity) {
+      m.xImaginary = infinity;
+      m.floatOverflow = true;
+    });
+  }
 }

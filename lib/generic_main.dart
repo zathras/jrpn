@@ -979,8 +979,10 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       if (!done) {
         try {
           await controller.model.readFromPersistentStorage();
-        } catch (e) {
+        } catch (e, st) {
           _pendingError = e;
+          debugPrint(e.toString());
+          debugPrintStack(stackTrace: st);
         }
       }
     } finally {

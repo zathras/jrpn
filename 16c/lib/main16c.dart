@@ -33,7 +33,7 @@ import 'tests16c.dart';
 void main() async => genericMain(Jrpn(Controller16(Model16())));
 
 class Model16 extends Model<Operation> {
-  Model16() : super(DisplayMode.hex, 16);
+  Model16() : super(DisplayMode.hex, 16, 6);
 
   @override
   List<List<MKey<Operation>?>> get logicalKeys => _logicalKeys;
@@ -114,6 +114,17 @@ class Model16 extends Model<Operation> {
 
   @override
   int get returnStackSize => 4;
+
+  @override
+  bool get floatOverflow => gFlag;
+  @override
+  set floatOverflow(bool v) => gFlag = v;
+
+  @override
+  bool get errorBlink => false;
+
+  @override
+  int get registerNumberBase => 16;
 }
 
 class ProgramInstruction16 extends ProgramInstruction<Operation> {

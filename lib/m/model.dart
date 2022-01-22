@@ -46,6 +46,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'complex.dart';
+
 part 'values.dart';
 part 'display_mode.dart';
 part 'sign_mode.dart';
@@ -410,7 +412,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   IntegerSignMode _integerSignMode = SignMode.twosComplement;
   bool isRunningProgram = false;
 
-  Model(this._displayMode, this._wordSize);
+  Model(this._displayMode, this._wordSize, int numFlags)
+      : _flags = List<bool>.filled(numFlags, false, growable: false);
 
   /// The list of "logical" keys.  This has nothing to do with the UI;
   /// The order of the operations in this list determines the
@@ -445,6 +448,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   BigInt get minInt => _integerSignMode.minValue(this);
   @override
   bool get isFloatMode => displayMode.isFloatMode;
+
+  bool get isComplexMode => displayMode.isComplexMode;
   DoubleWordStatus? _doubleWordStatus; // for double divide, multiply
   late final Memory<OT> memory = Memory<OT>(this);
   final Observable<bool> onIsPressed = Observable(false);
@@ -453,6 +458,15 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   static const int _jsonVersion = 1;
 
   final List<Value> _stack = List<Value>.filled(4, Value.zero, growable: false);
+  List<Value>? _imaginaryStack;
+  Complex _getComplex(int i) =>
+      Complex(_stack[i].asDouble, _imaginaryStack![i].asDouble);
+  void _setComplex(int i, Complex v) {
+    _stack[i] = Value.fromDouble(v.real);
+    _imaginaryStack![i] = Value.fromDouble(v.imaginary);
+    _needsSave = true;
+  }
+
   Value get x => _stack[0];
 
   /// Get x as a signed BigInt
@@ -460,6 +474,13 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   /// Get x as a Dart double
   double get xF => _stack[0].asDouble;
+
+  /// Get x as a complex value
+  Complex get xC => _getComplex(0);
+
+  /// Just the imaginary part of x
+  Value get xImaginary => _imaginaryStack![0];
+  set xImaginary(Value v) => _imaginaryStack![0] = v;
 
   set x(Value v) {
     _stack[0] = v;
@@ -472,6 +493,9 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   /// Set x from a Dart double
   set xF(double v) => x = Value.fromDouble(v);
+
+  /// Set x from a complex value
+  set xC(Complex v) => _setComplex(0, v);
 
   /// Pop the stack and set X, setting lastX
   // ignore: avoid_setters_without_getters
@@ -491,6 +515,15 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   // ignore: avoid_setters_without_getters
   set popSetResultXF(double v) => popSetResultX = Value.fromDouble(v);
 
+  /// Pop the stack and set X from a Dart double, setting lastX
+  // ignore: avoid_setters_without_getters
+  set popSetResultXC(Complex v) {
+    _lastXImaginary = _imaginaryStack![0];
+    _popStackSetLastX();
+    _setComplex(0, v);
+    _needsSave = true;
+  }
+
   /// Set a result in X, which saves the old X value in lastX
   // ignore: avoid_setters_without_getters
   set resultX(Value v) {
@@ -503,10 +536,18 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set resultXI(BigInt v) => resultX = _integerSignMode.fromBigInt(v, this);
   // ignore: avoid_setters_without_getters
   set resultXF(double v) => resultX = Value.fromDouble(v);
+  // ignore: avoid_setters_without_getters
+  set resultXC(Complex v) {
+    lastX = x;
+    _lastXImaginary = _imaginaryStack![0];
+    xC = v;
+    _needsSave = true;
+  }
 
   Value get y => _stack[1];
   BigInt get yI => _integerSignMode.toBigInt(_stack[1], this);
   double get yF => _stack[1].asDouble;
+  Complex get yC => _getComplex(1);
   set y(Value v) {
     _stack[1] = v;
     _needsSave = true;
@@ -514,20 +555,33 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   set yI(BigInt v) => y = _integerSignMode.fromBigInt(v, this);
   set yF(double v) => y = Value.fromDouble(v);
+  set yC(Complex v) => _setComplex(1, v);
+
   Value get z => _stack[2];
+  Complex get zC => _getComplex(2);
+
   void setYZT(Value v) {
     _stack[3] = _stack[2] = _stack[1] = v;
     _needsSave = true;
   }
 
   Value _lastX = Value.zero;
+  Value? _lastXImaginary;
+
   Value get lastX => _lastX;
+  Complex get lastXC => Complex(_lastX.asDouble, _lastXImaginary!.asDouble);
   set lastX(Value v) {
     _lastX = v;
     _needsSave = true;
   }
+  set lastXC(Complex v) {
+    _lastX = Value.fromDouble(v.real);
+    _lastXImaginary = Value.fromDouble(v.imaginary);
+    _needsSave = true;
+  }
 
   Value getStackByIndex(int i) => _stack[i];
+  Complex getStackByIndexC(int i) => _getComplex(i);
 
   @override
   int get wordSize => _wordSize;
@@ -599,7 +653,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     display.update();
   }
 
-  final List<bool> _flags = List<bool>.filled(6, false, growable: false);
+  final List<bool> _flags;
+  int get numberOfFlags => _flags.length;
 
   // ignore: avoid_positional_boolean_parameters
   void setFlag(int i, bool v) {
@@ -671,6 +726,17 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     display.window = 0;
     _needsSave = true;
   }
+
+  /// The float overflow flag, which is stored as gFlag on the 16C.  On the 15C,
+  /// it causes errorFlash to be true.
+  set floatOverflow(bool v);
+  bool get floatOverflow;
+
+  bool get errorBlink;
+  void resetErrorBlink() { }
+
+  /// Are register numbers base 10 (15C), or base 16 (16C)?
+  int get registerNumberBase;
 
   ///
   /// Try to parse `s` consistent with the current display mode, giving a
@@ -753,6 +819,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     r['wordSize'] = _wordSize;
     r['stack'] = _stack.map((v) => v.toJson()).toList();
     r['lastX'] = _lastX.toJson();
+    r['imaginaryStack'] = _imaginaryStack?.map((v) => v.toJson()).toList();
+    r['lastXImaginary'] = _lastXImaginary?.toJson();
     r['flags'] = _flags;
     r['memory'] = memory.toJson(comments: comments);
     final debugLog = _debugLog;
@@ -790,6 +858,24 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       _stack[i++] = Value.fromJson(v as String);
     }
     _lastX = Value.fromJson(json['lastX'] as String);
+    {
+      final List<dynamic>? ims = json['imaginaryStack'] as List<dynamic>?;
+      if (ims == null) {
+        _imaginaryStack = null;
+      } else {
+        _imaginaryStack = List<Value>.filled(4, Value.zero, growable: false);
+        i = 0;
+        for (final v in ims) {
+          _imaginaryStack![i] = Value.fromJson(v as String);
+        }
+      }
+      final imx = json['lastXImaginary'] as String?;
+      if (imx == null) {
+        _lastXImaginary = null;
+      } else {
+        _lastXImaginary = Value.fromJson(imx);
+      }
+    }
     i = 0;
     for (final v in json['flags'] as List<dynamic>) {
       _flags[i++] = v as bool;
@@ -870,6 +956,11 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       display.displayX(flash: false);
     }
     return true;
+  }
+
+  void setupComplex(bool toComplex) {
+    assert(toComplex == isComplexMode);
+    // @@ TODO
   }
 }
 
@@ -1122,23 +1213,31 @@ class DisplayModel {
     if (ignoreUpdates) {
       return;
     }
+    print("@@ update, blink $blink, eb ${model.errorBlink}");
     final LcdContents c = model._newLcdContents(disableWindow: disableWindow);
-    if (flash) {
-      final t = Timer(const Duration(milliseconds: 40), () {
-        show(c);
-      });
-      c._myTimer = t;
-      show(LcdContents.blank().._myTimer = t);
-    } else if (blink) {
+    if (blink || model.errorBlink) {
       bool on = true;
       final blank = LcdContents.blank();
-      final t = Timer.periodic(const Duration(milliseconds: 400), (_) {
+      final Duration d;
+      if (blink) {
+        d = const Duration(milliseconds: 400);
+      } else {
+        d = const Duration(milliseconds: 200);
+      }
+
+      final t = Timer.periodic(d, (_) {
         on = !on;
         show(on ? c : blank);
       });
       c._myTimer = t;
       blank._myTimer = t;
       show(c);
+    } else if (flash) {
+      final t = Timer(const Duration(milliseconds: 40), () {
+        show(c);
+      });
+      c._myTimer = t;
+      show(LcdContents.blank().._myTimer = t);
     } else {
       c._myTimer = null;
       show(c);

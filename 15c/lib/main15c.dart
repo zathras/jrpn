@@ -31,8 +31,9 @@ import 'tests15c.dart';
 
 void main() async => genericMain(Jrpn(Controller15(Model15())));
 
+/// TODO:  @@ Overflow is flashing display not G
 class Model15 extends Model<Operation> {
-  Model15() : super(DisplayMode.float(4), 56);
+  Model15() : super(DisplayMode.float(4), 56, 10);
 
   @override
   reset() {
@@ -113,11 +114,16 @@ class Model15 extends Model<Operation> {
   @override
   bool get cFlag => false;
   @override
-  set cFlag(bool v) { assert(false); }
+  set cFlag(bool v) {
+    assert(false);
+  }
+
   @override
   bool get gFlag => false;
   @override
-  set gFlag(bool v) { assert(false); }
+  set gFlag(bool v) {
+    assert(false);
+  }
 
   @override
   String get modelName => '15C';
@@ -135,6 +141,32 @@ class Model15 extends Model<Operation> {
 
   @override
   int get returnStackSize => 7;
+
+  @override
+  bool get floatOverflow => getFlag(9);
+
+  @override
+  set floatOverflow(bool v) {
+    if (v) {
+      setFlag(9, v);
+    }
+  }
+
+  @override
+  void setFlag(int i, bool v) {
+    super.setFlag(i, v);
+    if (i == 8) {
+      displayMode.setComplexMode(this, v);
+    }
+  }
+
+  @override
+  bool get errorBlink => floatOverflow;
+  @override
+  void resetErrorBlink() => setFlag(9, false);
+
+  @override
+  int get registerNumberBase => 10;
 }
 
 class ProgramInstruction15 extends ProgramInstruction<Operation> {
@@ -191,8 +223,15 @@ class ButtonLayout15 extends ButtonLayout {
       Operations.tenX15, Operations.letterLabelC, Operations.logOp, 'C');
   CalculatorButton get yX => CalculatorButton(factory, 'y^x', 'D', '%',
       Operations.yX15, Operations.letterLabelD, Operations.percent, 'D');
-  CalculatorButton get reciprocal => CalculatorButton(factory, '1/x', 'E',
-      '\u0394%', Operations.reciprocal15, Operations.letterLabelE, Operations.deltaPercent, 'E');
+  CalculatorButton get reciprocal => CalculatorButton(
+      factory,
+      '1/x',
+      'E',
+      '\u0394%',
+      Operations.reciprocal15,
+      Operations.letterLabelE,
+      Operations.deltaPercent,
+      'E');
   CalculatorButton get chs => CalculatorButton(factory, 'CHS', 'MATRIX', 'ABS',
       Operations.chs, Operations.matrix, Operations.abs, 'F');
   CalculatorButton get n7 => CalculatorButton(factory, '7', 'FIX', 'DEG',
@@ -335,8 +374,15 @@ class ButtonLayout15 extends ButtonLayout {
       '.',
       '\u2219/\u201a',
       acceleratorLabel: '\u2219');
-  CalculatorButton get sum => CalculatorButton(factory, '\u03a3+', 'L.R.', '\u03a3-',
-      Operations.sigmaPlus, Operations.linearRegression, Operations.sigmaMinus, 'H');
+  CalculatorButton get sum => CalculatorButton(
+      factory,
+      '\u03a3+',
+      'L.R.',
+      '\u03a3-',
+      Operations.sigmaPlus,
+      Operations.linearRegression,
+      Operations.sigmaMinus,
+      'H');
   CalculatorButton get plus => CalculatorButton(factory, '+', 'P\u200ay,x',
       'C\u2009y,x', Operations.plus, Operations.pYX, Operations.cYX, '+=');
 

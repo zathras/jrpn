@@ -290,6 +290,7 @@ class Resting extends ActiveState {
   @override
   void handleOnOff() {
     model.onIsPressed.value = true;
+    model.resetErrorBlink();
     model.display.current = '0ff?   ';
     model.display.update();
     stackLiftEnabled = true;

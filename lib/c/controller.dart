@@ -198,6 +198,7 @@ abstract class RealController extends Controller {
 
   RealController(Model<Operation> model, List<NumberEntry> numbers, Map<NormalOperation, ProgramInstruction> shortcuts)
       : super(model) {
+    Operations.numberOfFlags = model.numberOfFlags;
     model.memory.initializeSystem(OperationMap<Operation>(
         keys: model.logicalKeys,
         numbers: numbers,
