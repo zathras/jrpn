@@ -1483,6 +1483,8 @@ class _ArgOperationSelector
   void Function(Model, int)? selectInteger(OperationArg arg) => arg.intCalc;
   @override
   void Function(Model, int)? selectFloat(OperationArg arg) => arg.floatCalc;
+  @override
+  void Function(Model, int)? selectComplex(OperationArg arg) => throw "@@ TODO";
 }
 
 class _OperationSelector
@@ -1493,4 +1495,6 @@ class _OperationSelector
   void Function(Model)? selectInteger(Operation arg) => arg.intCalc;
   @override
   void Function(Model)? selectFloat(Operation arg) => arg.floatCalc;
+  @override
+  void Function(Model)? selectComplex(Operation arg) => throw "@@ TODO";
 }

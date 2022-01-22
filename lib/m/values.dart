@@ -84,10 +84,12 @@ class Value {
 
   /// Zero for both floats and ints
   static final Value zero = Value.fromInternal(BigInt.from(0));
-  static final Value fInfinity = Value._fromMantissaAndExponent(
+  static final Value fMaxValue= Value._fromMantissaAndExponent(
       BigInt.parse('09999999999', radix: 16), 0x099);
-  static final Value fNegativeInfinity = Value._fromMantissaAndExponent(
+  static final Value fMinValue = Value._fromMantissaAndExponent(
       BigInt.parse('99999999999', radix: 16), 0x099);
+  static final Value fInfinity = Value.fromInternal(BigInt.parse('0100000000009a', radix: 16));
+  static final Value fNegativeInfinity = Value.fromInternal(BigInt.parse('9100000000009a', radix: 16));
 
   static final BigInt _mask12 = (BigInt.one << 12) - BigInt.one;
   static final BigInt _mask52 = (BigInt.one << 52) - BigInt.one;
@@ -166,7 +168,7 @@ class Value {
 
   /// Interpret this value as a floating point, and convert to a double.
   /// There is no corresponding asInt method, because the int interpretation
-  /// depends on the bit size and the sign mode - cf. IntegerSingMode.toBigInt()
+  /// depends on the bit size and the sign mode - cf. IntegerSignMode.toBigInt()
   double get asDouble {
     final BigInt upper52 = _upper52;
     int mantissa = 0;

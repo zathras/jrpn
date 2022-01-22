@@ -34,10 +34,11 @@ abstract class DisplayModeSelector<R, A> {
   const DisplayModeSelector();
   R selectInteger(A arg);
   R selectFloat(A arg);
+  R selectComplex(A arg);
 }
 
 ///
-/// Display mode and more.  This selects between number base, float versus
+/// Display mode and a bit more.  This selects between number base, float versus
 /// integer, and complex versus normal.  The actual code is almost all
 /// concerned with formatting and display, but this is also a convenient place
 /// to select operations based on integer/float/complex mode.
@@ -110,8 +111,6 @@ abstract class DisplayMode {
 
   bool get isFloatMode => false;
   bool get isComplexMode => false;
-
-  void determineFloatOverflow(Model m) {}
 
   ///
   /// Convert values in the model when switching between float and int,
@@ -379,7 +378,7 @@ class _FloatMode extends DisplayMode {
   @override
   String format(Value v, Model m) => _format(v, m);
 
-  String _format(Value v, Model m, {void Function(Value)? onOverflow}) {
+  String _format(Value v, Model m) {
     assert(m.signMode == SignMode.float);
     final double n = v.asDouble;
     String s;
@@ -429,14 +428,8 @@ class _FloatMode extends DisplayMode {
     if (s == '1.000000E+100') {
       // really 9.999999999e+99 or thereabouts
       s = '9.999999E+99';
-      if (onOverflow != null) {
-        onOverflow(Value.fInfinity);
-      }
     } else if (s == '-1.000000E+100') {
       s = '-9.999999E+99';
-      if (onOverflow != null) {
-        onOverflow(Value.fNegativeInfinity);
-      }
     }
     if (s.contains('.')) {
       nonspaceChars++;
@@ -456,15 +449,6 @@ class _FloatMode extends DisplayMode {
 
   @override
   bool get isFloatMode => true;
-
-  @override
-  void determineFloatOverflow(Model m) {
-    m.floatOverflow = false;
-    _format(m.x, m, onOverflow: (infinity) {
-      m.x = infinity;
-      m.floatOverflow = true;
-    });
-  }
 
   @override
   void convertValuesTo(DisplayMode next, Model m) =>
@@ -514,11 +498,6 @@ class _ComplexMode extends _FloatMode {
   bool get isComplexMode => true;
 
   @override
-  void determineFloatOverflow(Model m) {
-    super.determineFloatOverflow(m);
-    _format(m.xImaginary, m, onOverflow: (infinity) {
-      m.xImaginary = infinity;
-      m.floatOverflow = true;
-    });
-  }
+  R select<R, A>(DisplayModeSelector<R, A> selector, A arg) =>
+      selector.selectComplex(arg);
 }

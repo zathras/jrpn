@@ -480,12 +480,29 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   /// Just the imaginary part of x
   Value get xImaginary => _imaginaryStack![0];
-  set xImaginary(Value v) => _imaginaryStack![0] = v;
 
   set x(Value v) {
+    if (identical(v, Value.fInfinity)) {
+      floatOverflow = true;
+      v = Value.fMaxValue;
+    } else if (identical(v, Value.fNegativeInfinity)) {
+      floatOverflow = true;
+      v = Value.fMinValue;
+    }
     _stack[0] = v;
     _needsSave = true;
     display.window = 0;
+  }
+
+  set xImaginary(Value v) {
+    if (identical(v, Value.fInfinity)) {
+      floatOverflow = true;
+      v = Value.fMaxValue;
+    } else if (identical(v, Value.fNegativeInfinity)) {
+      floatOverflow = true;
+      v = Value.fMinValue;
+    }
+    _imaginaryStack![0] = v;
   }
 
   /// Set x from a signed BigInt
@@ -1213,7 +1230,6 @@ class DisplayModel {
     if (ignoreUpdates) {
       return;
     }
-    print("@@ update, blink $blink, eb ${model.errorBlink}");
     final LcdContents c = model._newLcdContents(disableWindow: disableWindow);
     if (blink || model.errorBlink) {
       bool on = true;

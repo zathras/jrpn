@@ -100,8 +100,8 @@ abstract class SelfTests {
   Future<void> testFloatValues() async {
     await test('Float Value constants', () async {
       await expect(Value.zero, Value.fromDouble(0.0));
-      await expect(Value.fInfinity, Value.fromDouble(9.999999999e99));
-      await expect(Value.fNegativeInfinity, Value.fromDouble(-9.999999999e99));
+      await expect(Value.fMaxValue, Value.fromDouble(9.999999999e99));
+      await expect(Value.fMinValue, Value.fromDouble(-9.999999999e99));
     });
     await test('Float Value internal representation', () async {
       Model m = newModel();
@@ -145,10 +145,8 @@ abstract class SelfTests {
       await expect(Value.fromDouble(9.9999999996e99), Value.fInfinity);
       await expect(
           Value.fromDouble(-9.9999999996e99), Value.fNegativeInfinity);
-      await expect(
-          fd(Value.fromDouble(9.9999999996e99).asDouble), fd(9.999999999e99));
-      await expect(
-          fd(Value.fromDouble(-9.9999999996e99).asDouble), fd(-9.999999999e99));
+      await expect(Value.fromDouble(9.9999999996e99), Value.fInfinity);
+      await expect(Value.fromDouble(-9.9999999996e99), Value.fNegativeInfinity);
     });
   }
 

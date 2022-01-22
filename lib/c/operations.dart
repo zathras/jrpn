@@ -54,8 +54,9 @@ import 'states.dart';
 ///
 class Operations {
 
-  /// Initialized by model
-  static late final int numberOfFlags;
+  /// Initialized by model.  Harmlessley re-initialized when units tests
+  /// are run.
+  static late int numberOfFlags;
 
   // Unshifted keys:
 
@@ -72,8 +73,8 @@ class Operations {
   static final NormalOperation div = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
         try {
+          m.floatOverflow = false;
           m.popSetResultXF = m.yF / m.xF;
-          m.displayMode.determineFloatOverflow(m);
           // ignore: avoid_catches_without_on_clauses
         } catch (e) {
           throw CalculatorError(0);
@@ -133,8 +134,8 @@ class Operations {
 
   static final NormalOperation mult = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
+        m.floatOverflow = false;
         m.popSetResultXF = m.xF * m.yF;
-        m.displayMode.determineFloatOverflow(m);
       },
       intCalc: (Model m) => _storeMultDiv(m.xI * m.yI, m),
       name: '*');
@@ -168,8 +169,8 @@ class Operations {
 
   static final NormalOperation minus = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
+        m.floatOverflow = false;
         m.popSetResultXF = m.yF - m.xF;
-        m.displayMode.determineFloatOverflow(m);
       },
       intCalc: (Model m) => m.integerSignMode.intSubtract(m),
       name: '-');
@@ -209,8 +210,8 @@ class Operations {
 
   static final NormalOperation plus = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
+        m.floatOverflow = false;
         m.popSetResultXF = m.yF + m.xF;
-        m.displayMode.determineFloatOverflow(m);
       },
       intCalc: (Model m) => m.integerSignMode.intAdd(m),
       name: '+');
@@ -407,8 +408,8 @@ class Operations {
   static final NormalArgOperation floatKey = NormalArgOperation(
       stackLift: StackLift.neutral, // But see also FloatKeyArg.onArgComplete()
       arg: FloatKeyArg(10, calc: (Model m, int arg) {
+        m.floatOverflow = false;
         m.displayMode = DisplayMode.float(arg);
-        m.displayMode.determineFloatOverflow(m);
       }),
       name: 'FLOAT');
 
@@ -542,8 +543,8 @@ class Operations {
         if (x == 0.0) {
           throw CalculatorError(0);
         } else {
+          m.floatOverflow = false;
           m.resultXF = 1.0 / m.xF;
-          m.displayMode.determineFloatOverflow(m);
         }
       },
       name: '1/x');
@@ -552,7 +553,6 @@ class Operations {
       arg: OperationArg.both(numberOfFlags - 1,
           calc: (Model m, int arg) {
             m.setFlag(arg, true);
-            print("@@ SF");
           }),
       name: 'SF');
 
@@ -671,57 +671,57 @@ class Operations {
     letter: letterLabelB,
       floatCalc: (Model m) {
         double x = m.xF;
+        m.floatOverflow = false;
         m.resultXF = pow(e, x) as double;
-        m.displayMode.determineFloatOverflow(m);
       },
       name: 'eX');
   static final NormalOperation xSquared = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         double x = m.xF;
+        m.floatOverflow = false;
         m.resultXF = x * x;
-        m.displayMode.determineFloatOverflow(m);
       },
       name: 'x^2');
   static final NormalOperation lnOp = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         double x = m.xF;
+        m.floatOverflow = false;
         m.resultXF = log(x);
-        m.displayMode.determineFloatOverflow(m);
       },
       name: 'e^x');
   static final NormalOperation tenX15 = NormalOperationOrLetter.floatOnly(
     letter: letterLabelC,
       floatCalc: (Model m) {
         double x = m.xF;
+        m.floatOverflow = false;
         m.resultXF = pow(10, x) as double;
-        m.displayMode.determineFloatOverflow(m);
       },
       name: '10^x');
   static final NormalOperation logOp = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         double x = m.xF;
+        m.floatOverflow = false;
         m.resultXF = log(x) / ln10;
-        m.displayMode.determineFloatOverflow(m);
       },
       name: 'log');
   static final NormalOperation yX15 = NormalOperationOrLetter.floatOnly(
     letter: letterLabelD,
       floatCalc: (Model m) {
+        m.floatOverflow = false;
         m.popSetResultXF = pow(m.xF, m.yF) as double;
-        m.displayMode.determineFloatOverflow(m);
       },
       name: 'yX');
   static final NormalOperation percent = NormalOperation.floatOnly(
       floatCalc: (Model m) {
+        m.floatOverflow = false;
         m.resultXF = m.xF * 0.01 * m.yF;
-        m.displayMode.determineFloatOverflow(m);
       },
       name: '%');
   static final reciprocal15 = NormalOperationOrLetter(reciprocal, letterLabelE);
   static final NormalOperation deltaPercent = NormalOperation.floatOnly(
       floatCalc: (Model m) {
+        m.floatOverflow = false;
         m.resultXF = ((m.xF - m.yF) / m.yF) * 100.0;
-        m.displayMode.determineFloatOverflow(m);
       },
       name: 'delta%');
   static final NormalOperation matrix = NormalOperation.floatOnly(
