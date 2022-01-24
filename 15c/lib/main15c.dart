@@ -66,8 +66,8 @@ class Model15 extends Model<Operation> {
       MKey(Operations.sst, Operations.lbl, Operations.bst),
       MKey(Operations.gto, Operations.hyp, Operations.hypInverse),
       MKey(Operations.sin, Operations.dim, Operations.sinInverse),
-      MKey(Operations.cos, Operations.parenI, Operations.cosInverse),
-      MKey(Operations.tan, Operations.I, Operations.tanInverse),
+      MKey(Operations.cos, Operations.parenI15, Operations.cosInverse),
+      MKey(Operations.tan, Operations.I15, Operations.tanInverse),
       MKey(Operations.eex, Operations.resultOp, Operations.piOp),
       MKey(Operations.n4, Operations.xExchange, Operations.sf),
       MKey(Operations.n5, Operations.dse, Operations.cf),
@@ -111,8 +111,10 @@ class Model15 extends Model<Operation> {
 
   @override
   bool get displayLeadingZeros => false;
+
   @override
   bool get cFlag => false;
+
   @override
   set cFlag(bool v) {
     assert(false);
@@ -120,6 +122,7 @@ class Model15 extends Model<Operation> {
 
   @override
   bool get gFlag => false;
+
   @override
   set gFlag(bool v) {
     assert(false);
@@ -129,8 +132,8 @@ class Model15 extends Model<Operation> {
   String get modelName => '15C';
 
   @override
-  ProgramInstruction<Operation> newProgramInstruction(
-      Operation operation, int argValue) {
+  ProgramInstruction<Operation> newProgramInstruction(Operation operation,
+      int argValue) {
     if (_letterLabels.contains(operation)) {
       assert(argValue == 0);
       argValue = operation.numericValue!;
@@ -154,10 +157,16 @@ class Model15 extends Model<Operation> {
 
   @override
   void setFlag(int i, bool v) {
-    super.setFlag(i, v);
     if (i == 8) {
-      displayMode.setComplexMode(this, v);
+      isComplexMode = v;
+    } else {
+      super.setFlag(i, v);
     }
+  }
+
+  @override
+  set isComplexMode(bool v) {
+    super.setFlag(8, v);
   }
 
   @override
@@ -269,7 +278,7 @@ class ButtonLayout15 extends ButtonLayout {
       '(i)',
       'COS^\u2009\u22121',
       Operations.cos,
-      Operations.parenI,
+      Operations.parenI15,
       Operations.cosInverse,
       'Z');
   CalculatorButton get tan => CalculatorButton(
@@ -278,7 +287,7 @@ class ButtonLayout15 extends ButtonLayout {
       'I',
       'TAN^\u2009\u22121',
       Operations.tan,
-      Operations.I,
+      Operations.I15,
       Operations.tanInverse,
       'K');
   CalculatorButton get eex => CalculatorButton(factory, 'EEX', 'RESULT',

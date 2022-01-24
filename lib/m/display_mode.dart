@@ -110,7 +110,6 @@ abstract class DisplayMode {
   String format(Value v, Model m);
 
   bool get isFloatMode => false;
-  bool get isComplexMode => false;
 
   ///
   /// Convert values in the model when switching between float and int,
@@ -333,7 +332,6 @@ class _FloatMode extends DisplayMode {
   void setComplexMode(Model m, bool v) {
     if (v) {
       m.displayMode = _ComplexMode(digits);
-      m.setupComplex(v);
     }
   }
 
@@ -490,12 +488,8 @@ class _ComplexMode extends _FloatMode {
   void setComplexMode(Model m, bool v) {
     if (v) {
       m.displayMode = _FloatMode(digits);
-      m.setupComplex(v);
     }
   }
-
-  @override
-  bool get isComplexMode => true;
 
   @override
   R select<R, A>(DisplayModeSelector<R, A> selector, A arg) =>

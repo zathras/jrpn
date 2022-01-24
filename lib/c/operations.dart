@@ -343,6 +343,9 @@ class Operations {
           m.popSetResultX = Value.fromInternal(m.x.internal & m.y.internal),
       name: 'AND');
 
+  ///
+  /// The HP 16's (i) operation, related to the index register
+  ///
   static final NormalOperation parenI = NormalOperation(
       pressed: (ActiveState s) => s.liftStackIfEnabled(),
       calc: (Model m) {
@@ -351,6 +354,9 @@ class Operations {
       },
       name: '(i)');
 
+  ///
+  /// The HP 16's I operation, related to the index register
+  ///
   static final NormalOperation I = NormalOperation(
       pressed: (ActiveState s) => s.liftStackIfEnabled(),
       calc: (Model m) {
@@ -665,6 +671,26 @@ class Operations {
   static final letterLabelC = LetterLabel('C', 12);
   static final letterLabelD = LetterLabel('D', 13);
   static final letterLabelE = LetterLabel('E', 14);
+
+  ///
+  /// The HP15'c I operation, for entry of imaginary numbers.
+  ///
+  // ignore: non_constant_identifier_names
+  static final NormalOperation I15 = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        m.isComplexMode = true;
+        I15.complexCalc!(m);
+      },
+      name: 'I');
+
+  ///
+  /// The HP 15's (i) operation, to see the imaginary part.
+  ///
+  static final NormalOperation parenI15 = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw CalculatorError(3);
+      },
+      name: '(i)');
 
   static final sqrtOp15 = NormalOperationOrLetter(sqrtOp, letterLabelA);
   static final NormalOperation eX15 = NormalOperationOrLetter.floatOnly(

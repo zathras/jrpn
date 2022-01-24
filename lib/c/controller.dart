@@ -352,6 +352,9 @@ abstract class Operation extends ProgramOperation {
   /// The calculation performed when the calculator is in integer mode.
   void Function(Model m)? get intCalc;
 
+  /// The calculation performed when the calculator is in complex mode.
+  void Function(Model m)? get complexCalc;
+
   StackLift get _stackLift;
 
   @override
@@ -407,6 +410,8 @@ class LimitedOperation extends Operation implements NormalOperation {
   void Function(Model m)? get floatCalc => null;
   @override
   void Function(Model m)? get intCalc => null;
+  @override
+  void Function(Model m)? get complexCalc => null;
 
   @override
   void pressed(LimitedState arg) => _pressed(arg);
@@ -429,6 +434,8 @@ class NumberEntry extends Operation {
   void Function(Model m)? get floatCalc => null;
   @override
   void Function(Model m)? get intCalc => null;
+  @override
+  void Function(Model m)? get complexCalc => null;
 
   @override
   void pressed(LimitedState arg) => (arg as ActiveState).handleNumberKey(value);
@@ -466,6 +473,10 @@ class NormalOperation extends Operation {
 
   @override
   final void Function(Model m)? intCalc;
+
+  @override
+  final void Function(Model m)? complexCalc = null;
+
 
   final void Function(ActiveState)? _pressed;
 
@@ -592,6 +603,8 @@ class NormalArgOperation extends Operation {
   void Function(Model m)? get floatCalc => null;
   @override
   void Function(Model m)? get intCalc => null;
+  @override
+  void Function(Model m)? get complexCalc => null;
 
   ///
   /// Do nothing -- we don't know our argument yet.
