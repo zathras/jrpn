@@ -67,7 +67,8 @@ class LcdContents {
   /// For self test
   final SignMode sign;
   final int bits;
-  final bool cFlag;
+  final bool cFlag;   // 16C's carry flag
+  final bool complexFlag;  // 16C's complex flag, not in same place as cFlag
   final bool gFlag;
   final bool prgmFlag;
   final bool rightJustify;
@@ -84,6 +85,7 @@ class LcdContents {
       required this.sign,
       required this.bits,
       required this.cFlag,
+      required this.complexFlag,
       required this.gFlag,
       required this.prgmFlag,
       required this.rightJustify,
@@ -101,6 +103,7 @@ class LcdContents {
         sign = SignMode.twosComplement,
         bits = 0,
         cFlag = false,
+        complexFlag = false,
         gFlag = false,
         prgmFlag = false,
         rightJustify = false,
@@ -118,6 +121,7 @@ class LcdContents {
         sign = SignMode.twosComplement,
         bits = 0,
         cFlag = false,
+        complexFlag = false,
         gFlag = false,
         prgmFlag = false,
         windowEnabled = false,
@@ -450,6 +454,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   bool get isFloatMode => displayMode.isFloatMode;
 
   bool get isComplexMode => _imaginaryStack != null;
+  @mustCallSuper
   set isComplexMode(bool v) {
     if (v != isComplexMode) {
       _setupComplex(v);
@@ -597,6 +602,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     _lastX = v;
     _needsSave = true;
   }
+
   set lastXC(Complex v) {
     _lastX = Value.fromDouble(v.real);
     _lastXImaginary = Value.fromDouble(v.imaginary);
@@ -700,52 +706,88 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   void _popStackSetLastX() {
     lastX = _stack[0];
+    _lastXImaginary = _imaginaryStack?[0];
     popStack();
     _needsSave = true;
   }
 
   void popStack() {
-    _stack[0] = _stack[1];
-    _stack[1] = _stack[2];
-    _stack[2] = _stack[3];
+    void f(final List<Value>? st) {
+      if (st != null) {
+        st[0] = st[1];
+        st[1] = st[2];
+        st[2] = st[3];
+      }
+    }
+
+    f(_stack);
+    f(_imaginaryStack);
     display.window = 0;
     _needsSave = true;
   }
 
   void swapXY() {
-    Value t = _stack[0];
-    _stack[0] = _stack[1];
-    _stack[1] = t;
+    void f(final List<Value>? st) {
+      if (st != null) {
+        Value t = st[0];
+        st[0] = st[1];
+        st[1] = t;
+      }
+    }
+
+    f(_stack);
+    f(_imaginaryStack);
     display.window = 0;
     _needsSave = true;
   }
 
   /// "lift" stack, after which one can write to x
   void pushStack() {
-    _stack[3] = _stack[2];
-    _stack[2] = _stack[1];
-    _stack[1] = _stack[0];
+    void f(final List<Value>? st) {
+      if (st != null) {
+        st[3] = st[2];
+        st[2] = st[1];
+        st[1] = st[0];
+      }
+    }
+
+    f(_stack);
+    f(_imaginaryStack);
     _needsSave = true;
   }
 
   /// the R<down arrow> key
   void rotateStackDown() {
-    Value t = _stack[0];
-    _stack[0] = _stack[1];
-    _stack[1] = _stack[2];
-    _stack[2] = _stack[3];
-    _stack[3] = t;
+    void f(final List<Value>? st) {
+      if (st != null) {
+        Value t = st[0];
+        st[0] = st[1];
+        st[1] = st[2];
+        st[2] = st[3];
+        st[3] = t;
+      }
+    }
+
+    f(_stack);
+    f(_imaginaryStack);
     display.window = 0;
     _needsSave = true;
   }
 
   /// The R<up arrow> key
   void rotateStackUp() {
-    Value t = _stack[3];
-    _stack[3] = _stack[2];
-    _stack[2] = _stack[1];
-    _stack[1] = _stack[0];
-    _stack[0] = t;
+    void f(final List<Value>? st) {
+      if (st != null) {
+        Value t = st[3];
+        st[3] = st[2];
+        st[2] = st[1];
+        st[1] = st[0];
+        st[0] = t;
+      }
+    }
+
+    f(_stack);
+    f(_imaginaryStack);
     display.window = 0;
     _needsSave = true;
   }
@@ -756,7 +798,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   bool get floatOverflow;
 
   bool get errorBlink;
-  void resetErrorBlink() { }
+  void resetErrorBlink() {}
 
   /// Are register numbers base 10 (15C), or base 16 (16C)?
   int get registerNumberBase;
@@ -775,6 +817,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         sign: signMode,
         bits: wordSize,
         cFlag: cFlag,
+        complexFlag: isComplexMode,
         gFlag: gFlag,
         prgmFlag: prgmFlag,
         rightJustify: displayMode.rightJustify,
@@ -993,6 +1036,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       _lastXImaginary = null;
     }
   }
+
+  LcdContents selfTestContents();
 }
 
 ///
@@ -1125,7 +1170,6 @@ class DisplayModel {
 
   DisplayModel(Model model)
       : this._p(model, model.displayMode.format(model.x, model));
-  // @@ leading spaces
 
   DisplayModel._p(this.model, String initial)
       : _current = initial,

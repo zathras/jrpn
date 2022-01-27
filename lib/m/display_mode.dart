@@ -204,7 +204,9 @@ abstract class IntegerDisplayMode extends DisplayMode {
   }
 
   @override
-  void setComplexMode(Model m, bool v) { assert(false); }
+  void setComplexMode(Model m, bool v) {
+    assert(false);
+  }
 }
 
 abstract class _Pow2IntegerMode extends IntegerDisplayMode {
@@ -380,54 +382,62 @@ class _FloatMode extends DisplayMode {
     assert(m.signMode == SignMode.float);
     final double n = v.asDouble;
     String s;
-    if (digits == 10) {
-      s = n.toStringAsExponential(7);
+    int nonspaceChars = 0;
+    if (n == double.infinity) {
+      s = '9.999999E+99';
+      nonspaceChars++; // The E
+    } else if (n == double.negativeInfinity) {
+      s = '-9.999999E+99';
+      nonspaceChars++; // The E
     } else {
-      s = n.abs().toStringAsFixed(digits);
-      if (digits == 0) {
-        s = '$s.';
-      }
-      if (s.length > 11) {
-        int d = digits + 11 - s.length;
-        if (d < 0) {
-          s = n.abs().toStringAsExponential(7);
-        } else {
-          s = n.abs().toStringAsFixed(d);
-          if (d == 0) {
-            s = '$s.';
+      if (digits == 10) {
+        s = n.toStringAsExponential(7);
+      } else {
+        s = n.abs().toStringAsFixed(digits);
+        if (digits == 0) {
+          s = '$s.';
+        }
+        if (s.length > 11) {
+          int d = digits + 11 - s.length;
+          if (d < 0) {
+            s = n.abs().toStringAsExponential(7);
+          } else {
+            s = n.abs().toStringAsFixed(d);
+            if (d == 0) {
+              s = '$s.';
+            }
           }
         }
+        if (n < 0.0) {
+          s = '-$s';
+        }
+        if (v != Value.zero && s == 0.0.toStringAsFixed(digits)) {
+          s = n.toStringAsExponential();
+        }
       }
-      if (n < 0.0) {
-        s = '-$s';
+      if (s.contains('e')) {
+        // Round to 7 decimal digits of mantissa.  So, for example,
+        // 9.999999999e30 becomes 1.000000e31
+        final exs = n.toStringAsExponential(6);
+        int i = exs.indexOf('e');
+        s = '${exs.substring(0, i)}E'; // cf. Digit.digits['E']
+        nonspaceChars++; // The E
+        i++;
+        final String sign = exs.substring(i, i + 1);
+        assert(sign == '-' || sign == '+', 'exponent sign not found in $exs');
+        i++;
+        s = s + sign;
+        if (i == exs.length - 1) {
+          s = '${s}0';
+        }
+        s = s + exs.substring(i);
       }
-      if (v != Value.zero && s == 0.0.toStringAsFixed(digits)) {
-        s = n.toStringAsExponential();
+      if (s == '1.000000E+100') {
+        // really 9.999999999e+99 or thereabouts
+        s = '9.999999E+99';
+      } else if (s == '-1.000000E+100') {
+        s = '-9.999999E+99';
       }
-    }
-    int nonspaceChars = 0;
-    if (s.contains('e')) {
-      // Round to 7 decimal digits of mantissa.  So, for example,
-      // 9.999999999e30 becomes 1.000000e31
-      final exs = n.toStringAsExponential(6);
-      int i = exs.indexOf('e');
-      s = '${exs.substring(0, i)}E'; // cf. Digit.digits['E']
-      nonspaceChars++; // The E
-      i++;
-      final String sign = exs.substring(i, i + 1);
-      assert(sign == '-' || sign == '+', 'exponent sign not found in $exs');
-      i++;
-      s = s + sign;
-      if (i == exs.length - 1) {
-        s = '${s}0';
-      }
-      s = s + exs.substring(i);
-    }
-    if (s == '1.000000E+100') {
-      // really 9.999999999e+99 or thereabouts
-      s = '9.999999E+99';
-    } else if (s == '-1.000000E+100') {
-      s = '-9.999999E+99';
     }
     if (s.contains('.')) {
       nonspaceChars++;
@@ -481,7 +491,6 @@ class _FloatMode extends DisplayMode {
 }
 
 class _ComplexMode extends _FloatMode {
-
   _ComplexMode(int digits) : super(digits);
 
   @override

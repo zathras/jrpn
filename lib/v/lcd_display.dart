@@ -212,6 +212,15 @@ class _DisplayPainter extends CustomPainter {
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.65, size.height * annY));
     }
+    if (contents.complexFlag) {
+      final TextSpan span = TextSpan(style: aStyle, text: 'C');
+      final TextPainter tp = TextPainter(
+          text: span,
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr);
+      tp.layout();
+      tp.paint(canvas, Offset(size.width * 0.78, size.height * annY));
+    }
     if (contents.prgmFlag) {
       final TextSpan span = TextSpan(style: aStyle, text: 'PRGM');
       final TextPainter tp = TextPainter(
@@ -219,7 +228,7 @@ class _DisplayPainter extends CustomPainter {
           textAlign: TextAlign.center,
           textDirection: TextDirection.ltr);
       tp.layout();
-      tp.paint(canvas, Offset(size.width * 0.80, size.height * annY));
+      tp.paint(canvas, Offset(size.width * 0.82, size.height * annY));
     }
 
     // Digits:

@@ -84,12 +84,14 @@ class Value {
 
   /// Zero for both floats and ints
   static final Value zero = Value.fromInternal(BigInt.from(0));
-  static final Value fMaxValue= Value._fromMantissaAndExponent(
+  static final Value fMaxValue = Value._fromMantissaAndExponent(
       BigInt.parse('09999999999', radix: 16), 0x099);
   static final Value fMinValue = Value._fromMantissaAndExponent(
       BigInt.parse('99999999999', radix: 16), 0x099);
-  static final Value fInfinity = Value.fromInternal(BigInt.parse('0100000000009a', radix: 16));
-  static final Value fNegativeInfinity = Value.fromInternal(BigInt.parse('9100000000009a', radix: 16));
+  static final Value fInfinity =
+      Value.fromInternal(BigInt.parse('0100000000009a', radix: 16));
+  static final Value fNegativeInfinity =
+      Value.fromInternal(BigInt.parse('9100000000009a', radix: 16));
 
   static final BigInt _mask12 = (BigInt.one << 12) - BigInt.one;
   static final BigInt _mask52 = (BigInt.one << 52) - BigInt.one;
@@ -221,7 +223,15 @@ class Value {
   // The 16C doesn't do sign extension when the bit size increases.
 
   @override
-  String toString() => 'Value(0x${internal.toRadixString(16)})';
+  String toString() {
+    double d;
+    try {
+      d = asDouble;
+    } catch (ignored) {
+      d = double.nan;
+    }
+    return 'Value(0x${internal.toRadixString(16)}, $d)';
+  }
 
   static Value fromJson(String v, {BigInt? maxInternal}) {
     maxInternal ??= _maxNormalInternal;

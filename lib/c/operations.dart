@@ -36,10 +36,13 @@ this program; if not, see https://www.gnu.org/licenses/ .
 library controller.operations;
 
 import 'dart:math';
+import 'dart:math' as dart;
 
+import '../m/complex.dart';
 import '../m/model.dart';
 import 'controller.dart';
 import 'states.dart';
+import 'package:flutter/foundation.dart';
 
 // See the library comments, above!  (Android Studio  hides them by default.)
 
@@ -53,7 +56,6 @@ import 'states.dart';
 /// of the different [Operation] types.
 ///
 class Operations {
-
   /// Initialized by model.  Harmlessley re-initialized when units tests
   /// are run.
   static late int numberOfFlags;
@@ -540,6 +542,9 @@ class Operations {
           throw CalculatorError(0);
         }
       },
+      complexCalc: (Model m) {
+        m.resultXC = m.xC.sqrt();
+      },
       intCalc: (Model m) => m.resultXI = _sqrtI(m.xI, m),
       name: 'sqrt(x)');
 
@@ -556,10 +561,9 @@ class Operations {
       name: '1/x');
 
   static final NormalArgOperation sf = NormalArgOperation(
-      arg: OperationArg.both(numberOfFlags - 1,
-          calc: (Model m, int arg) {
-            m.setFlag(arg, true);
-          }),
+      arg: OperationArg.both(numberOfFlags - 1, calc: (Model m, int arg) {
+        m.setFlag(arg, true);
+      }),
       name: 'SF');
 
   static final NormalArgOperation cf = NormalArgOperation(
@@ -681,24 +685,32 @@ class Operations {
         m.isComplexMode = true;
         I15.complexCalc!(m);
       },
+      complexCalc: (Model m) {
+        final im = m.x;
+        m.popStack();
+        m.xImaginary = im;
+      },
       name: 'I');
 
   ///
   /// The HP 15's (i) operation, to see the imaginary part.
   ///
-  static final NormalOperation parenI15 = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw CalculatorError(3);
-      },
-      name: '(i)');
+  static final NormalOperation parenI15 = LimitedOperation(
+      pressed: (LimitedState cs) => cs.handleShowImaginary(), name: '(i)');
 
   static final sqrtOp15 = NormalOperationOrLetter(sqrtOp, letterLabelA);
   static final NormalOperation eX15 = NormalOperationOrLetter.floatOnly(
-    letter: letterLabelB,
+      letter: letterLabelB,
       floatCalc: (Model m) {
         double x = m.xF;
         m.floatOverflow = false;
         m.resultXF = pow(e, x) as double;
+      },
+      complexCalc: (Model m) {
+        final x = m.xC;
+        final eXr = exp(x.real);
+        m.resultXC =
+            Complex(eXr * dart.cos(x.imaginary), eXr * dart.sin(x.imaginary));
       },
       name: 'eX');
   static final NormalOperation xSquared = NormalOperation.floatOnly(
@@ -707,34 +719,85 @@ class Operations {
         m.floatOverflow = false;
         m.resultXF = x * x;
       },
+      complexCalc: (Model m) {
+        final v = m.xC;
+        m.resultXC = v * v;
+      },
       name: 'x^2');
   static final NormalOperation lnOp = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         double x = m.xF;
+        if (x <= 0) {
+          throw CalculatorError(0);
+        }
         m.floatOverflow = false;
-        m.resultXF = log(x);
+        m.resultXF = _checkResult(() => log(x), 0);
       },
-      name: 'e^x');
+      complexCalc: (Model m) {
+        final x = m.xC;
+        final r = x.r;
+        if (r == 0) {
+          throw CalculatorError(0);
+        }
+        m.resultXC = Complex(_checkResult(() => dart.log(r), 0), x.theta);
+      },
+      name: 'ln');
   static final NormalOperation tenX15 = NormalOperationOrLetter.floatOnly(
-    letter: letterLabelC,
+      letter: letterLabelC,
       floatCalc: (Model m) {
         double x = m.xF;
         m.floatOverflow = false;
         m.resultXF = pow(10, x) as double;
       },
+      complexCalc: (Model m) {
+        final x = m.xC * const Complex(ln10, 0);
+        final eXr = exp(x.real);
+        m.resultXC =
+            Complex(eXr * dart.cos(x.imaginary), eXr * dart.sin(x.imaginary));
+      },
       name: '10^x');
   static final NormalOperation logOp = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         double x = m.xF;
+        if (x <= 0) {
+          throw CalculatorError(0);
+        }
         m.floatOverflow = false;
         m.resultXF = log(x) / ln10;
       },
+      complexCalc: (Model m) {
+        final x = m.xC;
+        final r = x.r;
+        if (r == 0) {
+          throw CalculatorError(0);
+        }
+        m.resultXC = Complex(_checkResult(() => dart.log(r), 0), x.theta) /
+            const Complex(ln10, 0);
+      },
       name: 'log');
   static final NormalOperation yX15 = NormalOperationOrLetter.floatOnly(
-    letter: letterLabelD,
+      letter: letterLabelD,
       floatCalc: (Model m) {
         m.floatOverflow = false;
-        m.popSetResultXF = pow(m.xF, m.yF) as double;
+        m.popSetResultXF = pow(m.yF, m.xF) as double;
+      },
+      complexCalc: (Model m) {
+        // y^x = e^(x ln y)
+        final x = m.xC;
+        final y = m.yC;
+        final yR = y.r;
+        if (yR == 0) {
+          if (x == Complex.zero) {
+            throw CalculatorError(0);
+          }
+          m.popSetResultXC = Complex.zero;
+        } else {
+          final lnY = Complex(_checkResult(() => dart.log(yR), 0), y.theta);
+          final xLnY = x * lnY;
+          final resultR = _checkResult(() => exp(xLnY.real), 0);
+          m.popSetResultXC = Complex(resultR * dart.cos(xLnY.imaginary),
+              resultR * dart.sin(xLnY.imaginary));
+        }
       },
       name: 'yX');
   static final NormalOperation percent = NormalOperation.floatOnly(
@@ -950,7 +1013,7 @@ class Operations {
         throw "@@ TODO";
       },
       name: 'xBar');
-  static final NormalOperation yHatR= NormalOperation.floatOnly(
+  static final NormalOperation yHatR = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         throw "@@ TODO";
       },
@@ -975,7 +1038,7 @@ class Operations {
         throw "@@ TODO";
       },
       name: 'E-');
-  static final NormalOperation pYX= NormalOperation.floatOnly(
+  static final NormalOperation pYX = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         throw "@@ TODO";
       },
@@ -1004,6 +1067,18 @@ class Operations {
     Operations.mem,
     Operations.status
   ];
+
+  static double _checkResult(double Function() f, int errNo) {
+    try {
+      final v = f();
+      if (v != double.nan) {
+        return v;
+      }
+    } catch (ex) {
+      debugPrint('Converting $ex to CalculatorException($errNo)');
+    }
+    throw CalculatorError(errNo);
+  }
 }
 
 // Taken from https://en.wikipedia.org/wiki/Methods_of_computing_square_roots

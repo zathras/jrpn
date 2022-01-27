@@ -112,6 +112,7 @@ abstract class LimitedState extends ControllerState {
   void handleShift(ShiftKey k);
   void handleDecimalPoint();
   void handleClearPrefix();
+  void handleShowImaginary();
   void handleBackspace();
   void handlePR();
   void handleShowStatus();
@@ -257,6 +258,16 @@ class Resting extends ActiveState {
       model.display.displayX(flash: false, disableWindow: true);
       changeState(ShowState(this, disableWindow: true));
     }
+  }
+
+  @override
+  void handleShowImaginary() {
+    assert(model.isComplexMode);
+    final tmp = model.x;
+    model.x = model.xImaginary;
+    model.display.displayX();
+    model.x = tmp;
+    changeState(ShowState(this));
   }
 
   @override
@@ -643,6 +654,10 @@ class DigitEntry extends ActiveState {
   }
 
   @override
+  void handleShowImaginary() =>
+      changeState(Resting(controller)).handleShowImaginary();
+
+  @override
   void handleShowStatus() =>
       changeState(Resting(controller)).handleShowStatus();
 
@@ -979,6 +994,11 @@ class ProgramEntry extends LimitedState {
   }
 
   @override
+  void handleShowImaginary()  {
+    // Do nothing more; this just clears the f shift status.
+  }
+
+  @override
   void handleDecimalPoint() {
     // This can happen if we come from ArgInputState.
     _addOperation(Operations.dot, 0);
@@ -1177,21 +1197,7 @@ class OnOffKeyPressed extends DoNothing {
           model.display.update(blink: true);
           await controller.newSelfTests(inCalculator: true).runAll();
           changeState(Resting(controller));
-          final d = LcdContents(
-              hideComplement: false,
-              windowEnabled: false,
-              mainText: '-8,8,8,8,8,8,8,8,8,8,',
-              cFlag: true,
-              euroComma: false,
-              rightJustify: false,
-              bits: 64,
-              sign: SignMode.unsigned,
-              wordSize: 64,
-              gFlag: true,
-              prgmFlag: true,
-              shift: ShiftKey.g,
-              extraShift: ShiftKey.f);
-          model.display.show(d);
+          model.display.show(model.selfTestContents());
           changeState(MessageShowing(Resting(controller)));
         } on CalculatorError catch (e) {
           changeState(Resting(controller));
@@ -1484,7 +1490,7 @@ class _ArgOperationSelector
   @override
   void Function(Model, int)? selectFloat(OperationArg arg) => arg.floatCalc;
   @override
-  void Function(Model, int)? selectComplex(OperationArg arg) => throw "@@ TODO";
+  void Function(Model, int)? selectComplex(OperationArg arg) => arg.complexCalc;
 }
 
 class _OperationSelector
@@ -1496,5 +1502,5 @@ class _OperationSelector
   @override
   void Function(Model)? selectFloat(Operation arg) => arg.floatCalc;
   @override
-  void Function(Model)? selectComplex(Operation arg) => throw "@@ TODO";
+  void Function(Model)? selectComplex(Operation arg) => arg.complexCalc;
 }

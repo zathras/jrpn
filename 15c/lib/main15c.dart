@@ -132,8 +132,8 @@ class Model15 extends Model<Operation> {
   String get modelName => '15C';
 
   @override
-  ProgramInstruction<Operation> newProgramInstruction(Operation operation,
-      int argValue) {
+  ProgramInstruction<Operation> newProgramInstruction(
+      Operation operation, int argValue) {
     if (_letterLabels.contains(operation)) {
       assert(argValue == 0);
       argValue = operation.numericValue!;
@@ -167,6 +167,7 @@ class Model15 extends Model<Operation> {
   @override
   set isComplexMode(bool v) {
     super.setFlag(8, v);
+    super.isComplexMode = v;
   }
 
   @override
@@ -176,6 +177,23 @@ class Model15 extends Model<Operation> {
 
   @override
   int get registerNumberBase => 10;
+
+  @override
+  LcdContents selfTestContents() => LcdContents(
+      hideComplement: false,
+      windowEnabled: false,
+      mainText: '-8,8,8,8,8,8,8,8,8,8,',
+      cFlag: false,
+      complexFlag: true,
+      euroComma: false,
+      rightJustify: false,
+      bits: 64,
+      sign: SignMode.unsigned,
+      wordSize: 64,
+      gFlag: true,
+      prgmFlag: true,
+      shift: ShiftKey.g,
+      extraShift: ShiftKey.f);
 }
 
 class ProgramInstruction15 extends ProgramInstruction<Operation> {
@@ -191,11 +209,6 @@ class ProgramInstruction15 extends ProgramInstruction<Operation> {
         } else {
           as = '1${argValue - 9}'; // A-F are keys R/C 11..16
         }
-        /*  @@ TODO Maybe?  } else if (argIsParenI) {
-              as = '31';
-            } else if (argIsI) {
-              as = '32';
-        */
       } else {
         as = ' .${(argValue - 16).toRadixString(10)}';
       }

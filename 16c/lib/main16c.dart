@@ -125,6 +125,23 @@ class Model16 extends Model<Operation> {
 
   @override
   int get registerNumberBase => 16;
+
+  @override
+  LcdContents selfTestContents() => LcdContents(
+      hideComplement: false,
+      windowEnabled: false,
+      mainText: '-8,8,8,8,8,8,8,8,8,8,',
+      cFlag: true,
+      complexFlag: false,
+      euroComma: false,
+      rightJustify: false,
+      bits: 64,
+      sign: SignMode.unsigned,
+      wordSize: 64,
+      gFlag: true,
+      prgmFlag: true,
+      shift: ShiftKey.g,
+      extraShift: ShiftKey.f);
 }
 
 class ProgramInstruction16 extends ProgramInstruction<Operation> {

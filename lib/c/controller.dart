@@ -475,7 +475,7 @@ class NormalOperation extends Operation {
   final void Function(Model m)? intCalc;
 
   @override
-  final void Function(Model m)? complexCalc = null;
+  final void Function(Model m)? complexCalc;
 
 
   final void Function(ActiveState)? _pressed;
@@ -492,6 +492,7 @@ class NormalOperation extends Operation {
         _stackLift = stackLift ?? StackLift.enable,
         floatCalc = calc,
         intCalc = calc,
+        complexCalc = calc,
         super(name: name);
 
   NormalOperation.intOnly(
@@ -502,12 +503,14 @@ class NormalOperation extends Operation {
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
         floatCalc = null,
-        super(name: name);
+complexCalc = null,
+super(name: name);
 
   NormalOperation.floatOnly(
       {void Function(ActiveState)? pressed,
       StackLift? stackLift,
       required void Function(Model) this.floatCalc,
+      this.complexCalc,
       required String name})
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
@@ -517,8 +520,9 @@ class NormalOperation extends Operation {
   NormalOperation.differentFloatAndInt(
       {void Function(ActiveState)? pressed,
       StackLift? stackLift,
-      required void Function(Model) this.floatCalc,
       required void Function(Model) this.intCalc,
+      required void Function(Model) this.floatCalc,
+      this.complexCalc,
       required String name})
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
@@ -561,6 +565,7 @@ class NormalOperationOrLetter extends NormalOperation {
       {void Function(ActiveState)? pressed,
       StackLift? stackLift,
       required void Function(Model) floatCalc,
+      void Function(Model)? complexCalc,
       required String name,
       required LetterLabel letter})
       : numericValue = letter.numericValue,
@@ -568,6 +573,7 @@ class NormalOperationOrLetter extends NormalOperation {
             pressed: pressed,
             stackLift: stackLift,
             floatCalc: floatCalc,
+            complexCalc: complexCalc,
             name: name);
 
   NormalOperationOrLetter(NormalOperation op, LetterLabel letter)
@@ -576,6 +582,7 @@ class NormalOperationOrLetter extends NormalOperation {
             pressed: op._pressed,
             stackLift: op._stackLift,
             floatCalc: op.floatCalc!,
+            complexCalc: op.complexCalc,
             name: op.name);
 }
 
@@ -677,19 +684,21 @@ class OperationArg {
   final int maxArg;
   final void Function(Model, int)? floatCalc;
   final void Function(Model, int)? intCalc;
+  final void Function(Model, int)? complexCalc;
   final void Function(ActiveState)? pressed;
   late final NormalArgOperation op;
 
   OperationArg(this.maxArg,
-      {required this.floatCalc, required this.intCalc, this.pressed});
+      {required this.floatCalc, required this.intCalc, this.complexCalc, this.pressed});
 
   OperationArg.both(this.maxArg,
       {required void Function(Model, int) calc, this.pressed})
       : floatCalc = calc,
-        intCalc = calc;
+        intCalc = calc,
+        complexCalc = calc;
 
   OperationArg.intOnly(this.maxArg, {required this.intCalc, this.pressed})
-      : floatCalc = null;
+      : floatCalc = null, complexCalc = null;
 
   void onArgComplete(LimitedState state, int argValue) =>
       state.onArgComplete(this, argValue);

@@ -645,6 +645,16 @@ class SelfTests16 extends SelfTests {
       await _testFloatConvertAndBack(m, -dv);
     }
   }
+  @override
+  Future<void> testNumbers() async {
+    await super.testNumbers();
+    await expect(Operations.letterA.numericValue, 0xa);
+    await expect(Operations.letterB.numericValue, 0xb);
+    await expect(Operations.letterC.numericValue, 0xc);
+    await expect(Operations.letterD.numericValue, 0xd);
+    await expect(Operations.letterE.numericValue, 0xe);
+    await expect(Operations.letterF.numericValue, 0xf);
+  }
 
   @override
   Future<void> runAll() async {
