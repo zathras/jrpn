@@ -100,6 +100,10 @@ class SelfTests15 extends SelfTests {
       await _testOneArgFloat(
           m, Operations.tenX15, 3.7, 5011.872336, Operations.logOp);
       await _testTwoArgFloat(m, Operations.yX15, 1.234, 5.678, 8.524660835);
+      await _testOneArgFloat(
+          m, Operations.reciprocal15, 0.01, 100, Operations.reciprocal15);
+      await _testTwoArgFloat(
+          m, Operations.deltaPercent, 5.678, 1.234, 360.1296596);
     });
   }
 
@@ -199,6 +203,13 @@ class SelfTests15 extends SelfTests {
           const Complex(5.6, 7.8),
           const Complex(1.2, 3.4),
           const Complex(-0.03277613870, -0.08229096286));
+
+      await _testOneArgComplex(
+          m,
+          Operations.reciprocal15,
+          const Complex(0.15, 0.25),
+          const Complex(1.764705882, -2.941176471),
+          Operations.reciprocal15);
     });
   }
 

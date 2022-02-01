@@ -196,7 +196,8 @@ abstract class RealController extends Controller {
   @override
   final KeyboardController keyboard = KeyboardController();
 
-  RealController(Model<Operation> model, List<NumberEntry> numbers, Map<NormalOperation, ProgramInstruction> shortcuts)
+  RealController(Model<Operation> model, List<NumberEntry> numbers,
+      Map<NormalOperation, ProgramInstruction> shortcuts)
       : super(model) {
     Operations.numberOfFlags = model.numberOfFlags;
     model.memory.initializeSystem(OperationMap<Operation>(
@@ -477,7 +478,6 @@ class NormalOperation extends Operation {
   @override
   final void Function(Model m)? complexCalc;
 
-
   final void Function(ActiveState)? _pressed;
 
   @override
@@ -503,18 +503,19 @@ class NormalOperation extends Operation {
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
         floatCalc = null,
-complexCalc = null,
-super(name: name);
+        complexCalc = null,
+        super(name: name);
 
   NormalOperation.floatOnly(
       {void Function(ActiveState)? pressed,
       StackLift? stackLift,
       required void Function(Model) this.floatCalc,
-      this.complexCalc,
+      void Function(Model)? complexCalc,
       required String name})
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
         intCalc = null,
+        complexCalc = complexCalc ?? floatCalc,
         super(name: name);
 
   NormalOperation.differentFloatAndInt(
@@ -522,10 +523,11 @@ super(name: name);
       StackLift? stackLift,
       required void Function(Model) this.intCalc,
       required void Function(Model) this.floatCalc,
-      this.complexCalc,
+      void Function(Model)? complexCalc,
       required String name})
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
+        complexCalc = complexCalc ?? floatCalc,
         super(name: name);
 
   @override
@@ -598,9 +600,7 @@ class NormalArgOperation extends Operation {
   final StackLift _stackLift;
 
   NormalArgOperation(
-      {StackLift? stackLift,
-      required this.arg,
-      required String name})
+      {StackLift? stackLift, required this.arg, required String name})
       : _stackLift = stackLift ?? StackLift.enable,
         super(name: name) {
     arg.op = this;
@@ -689,7 +689,11 @@ class OperationArg {
   late final NormalArgOperation op;
 
   OperationArg(this.maxArg,
-      {required this.floatCalc, required this.intCalc, this.complexCalc, this.pressed});
+      {required this.floatCalc,
+      required this.intCalc,
+      Function(Model, int)? complexCalc,
+      this.pressed})
+      : complexCalc = complexCalc ?? floatCalc;
 
   OperationArg.both(this.maxArg,
       {required void Function(Model, int) calc, this.pressed})
@@ -698,7 +702,8 @@ class OperationArg {
         complexCalc = calc;
 
   OperationArg.intOnly(this.maxArg, {required this.intCalc, this.pressed})
-      : floatCalc = null, complexCalc = null;
+      : floatCalc = null,
+        complexCalc = null;
 
   void onArgComplete(LimitedState state, int argValue) =>
       state.onArgComplete(this, argValue);

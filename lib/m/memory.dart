@@ -844,7 +844,7 @@ class OperationMap<OT extends ProgramOperation> {
       k._opCode = v.op._opCode + v.argValue;
       k._programDisplay = v.op._programDisplay;
     });
-    assert(_nextOpCode <= 256);
+    assert(_nextOpCode <= 256, _nextOpCode);
   }
 }
 

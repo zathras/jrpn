@@ -67,8 +67,8 @@ class LcdContents {
   /// For self test
   final SignMode sign;
   final int bits;
-  final bool cFlag;   // 16C's carry flag
-  final bool complexFlag;  // 16C's complex flag, not in same place as cFlag
+  final bool cFlag; // 16C's carry flag
+  final bool complexFlag; // 16C's complex flag, not in same place as cFlag
   final bool gFlag;
   final bool prgmFlag;
   final bool rightJustify;
@@ -76,6 +76,7 @@ class LcdContents {
   final bool euroComma;
   final bool hideComplement;
   final int? wordSize;
+  final TrigMode trigMode;
 
   Timer? _myTimer;
 
@@ -93,6 +94,7 @@ class LcdContents {
       required this.euroComma,
       required this.hideComplement,
       required this.wordSize,
+      required this.trigMode,
       this.extraShift})
       : blank = false;
 
@@ -111,6 +113,7 @@ class LcdContents {
         euroComma = false,
         hideComplement = false,
         wordSize = null,
+        trigMode = TrigMode.deg,
         _myTimer = timer,
         extraShift = null;
 
@@ -128,6 +131,7 @@ class LcdContents {
         euroComma = false,
         hideComplement = false,
         wordSize = null,
+        trigMode = TrigMode.deg,
         _myTimer = null,
         extraShift = null;
 
@@ -412,10 +416,10 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   int _wordSize;
   BigInt _wordMask = BigInt.from(0xffff);
   BigInt _signMask = BigInt.from(0x8000);
+  TrigMode trigMode = TrigMode.deg;
   DisplayMode _displayMode;
   IntegerSignMode _integerSignMode = SignMode.twosComplement;
   bool isRunningProgram = false;
-
   Model(this._displayMode, this._wordSize, int numFlags)
       : _flags = List<bool>.filled(numFlags, false, growable: false);
 
@@ -501,10 +505,15 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       v = Value.fMinValue;
     }
     _stack[0] = v;
+    _imaginaryStack?[0] = Value.zero;
     _needsSave = true;
     display.window = 0;
   }
 
+  ///
+  /// Sets the imaginary part of X.  This is *only* to be used after
+  /// the real part is already set.
+  ///
   set xImaginary(Value v) {
     if (identical(v, Value.fInfinity)) {
       floatOverflow = true;
@@ -578,6 +587,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Complex get yC => _getComplex(1);
   set y(Value v) {
     _stack[1] = v;
+    _imaginaryStack?[1] = Value.zero;
     _needsSave = true;
   }
 
@@ -589,6 +599,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Complex get zC => _getComplex(2);
 
   void setYZT(Value v) {
+    assert(!isComplexMode);
+    // This is only used converting between int and float
     _stack[3] = _stack[2] = _stack[1] = v;
     _needsSave = true;
   }
@@ -600,6 +612,9 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Complex get lastXC => Complex(_lastX.asDouble, _lastXImaginary!.asDouble);
   set lastX(Value v) {
     _lastX = v;
+    if (isComplexMode) {
+      _lastXImaginary = Value.zero;
+    }
     _needsSave = true;
   }
 
@@ -818,6 +833,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         bits: wordSize,
         cFlag: cFlag,
         complexFlag: isComplexMode,
+        trigMode: trigMode,
         gFlag: gFlag,
         prgmFlag: prgmFlag,
         rightJustify: displayMode.rightJustify,
@@ -828,10 +844,14 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   ///
-  /// Negate the value in x, according to the current sign mode.
+  /// Negate the value in x like the CHS key does.  The behavior varies
+  /// according to the current sign mode.  In complex mode, it leaves the
+  /// imaginary part alone.
   ///
-  void negateX() {
-    x = signMode.negate(x, this);
+  void chsX() {
+    _stack[0] = signMode.negate(x, this);
+    _needsSave = true;
+    display.window = 0;
   }
 
   ///
@@ -880,6 +900,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     r['version'] = _jsonVersion;
     r['modelName'] = modelName;
     r['settings'] = settings.toJson(comments: comments);
+    r['trigMode'] = trigMode.toJson();
     r['displayMode'] = _displayMode.toJson();
     r['integerSignMode'] = _integerSignMode.toJson();
     r['wordSize'] = _wordSize;
@@ -915,32 +936,33 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
     _comments = json['comments'];
     settings.decodeJson(json['settings'] as Map<String, dynamic>);
-    displayMode = DisplayMode.fromJson(json['displayMode']!);
+    trigMode = TrigMode.fromJson(json['trigMode']);
     integerSignMode =
         IntegerSignMode.fromJson(json['integerSignMode'] as String);
+    final List<dynamic>? ims = json['imaginaryStack'] as List<dynamic>?;
+    displayMode = DisplayMode.fromJson(json['displayMode']!, ims != null);
+    // displayMode must be set before stack, since setting
+    // display mode alters stack
     wordSize = json['wordSize'] as int;
     int i = 0;
     for (final v in json['stack'] as List<dynamic>) {
       _stack[i++] = Value.fromJson(v as String);
     }
     _lastX = Value.fromJson(json['lastX'] as String);
-    {
-      final List<dynamic>? ims = json['imaginaryStack'] as List<dynamic>?;
-      if (ims == null) {
-        _imaginaryStack = null;
-      } else {
-        _imaginaryStack = List<Value>.filled(4, Value.zero, growable: false);
-        i = 0;
-        for (final v in ims) {
-          _imaginaryStack![i] = Value.fromJson(v as String);
-        }
+    if (ims == null) {
+      _imaginaryStack = null;
+    } else {
+      _imaginaryStack = List<Value>.filled(4, Value.zero, growable: false);
+      i = 0;
+      for (final v in ims) {
+        _imaginaryStack![i] = Value.fromJson(v as String);
       }
-      final imx = json['lastXImaginary'] as String?;
-      if (imx == null) {
-        _lastXImaginary = null;
-      } else {
-        _lastXImaginary = Value.fromJson(imx);
-      }
+    }
+    final imx = json['lastXImaginary'] as String?;
+    if (imx == null) {
+      _lastXImaginary = null;
+    } else {
+      _lastXImaginary = Value.fromJson(imx);
     }
     i = 0;
     for (final v in json['flags'] as List<dynamic>) {
@@ -1338,6 +1360,29 @@ class DisplayModel {
       currentWithWindow = newNumber;
       update(flash: flash, disableWindow: disableWindow);
     }
+  }
+}
+
+class TrigMode {
+  final double scaleFactor;
+  final String? label;
+
+  const TrigMode._p(this.scaleFactor, this.label);
+
+  static const deg = TrigMode._p(pi / 180, null);
+  static const rad = TrigMode._p(1, 'RAD');
+  static const grad = TrigMode._p(pi / 200, 'GRAD');
+
+  String? toJson() => label;
+
+  static TrigMode fromJson(dynamic json) {
+    for (final m in const {deg, rad, grad}) {
+      if (json == m.label) {
+        return m;
+      }
+    }
+    assert(false);
+    return deg;
   }
 }
 

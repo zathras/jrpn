@@ -31,14 +31,13 @@ import 'tests15c.dart';
 
 void main() async => genericMain(Jrpn(Controller15(Model15())));
 
-/// TODO:  @@ Overflow is flashing display not G
 class Model15 extends Model<Operation> {
-  Model15() : super(DisplayMode.float(4), 56, 10);
+  Model15() : super(DisplayMode.fix(4, false), 56, 10);
 
   @override
   reset() {
     super.reset();
-    displayMode = DisplayMode.float(4);
+    displayMode = DisplayMode.fix(4, false);
   }
 
   @override
@@ -90,8 +89,8 @@ class Model15 extends Model<Operation> {
       MKey(Operations.onOff, Operations.onOff, Operations.onOff),
       MKey(Operations.fShift, Operations.fShift, Operations.fShift),
       MKey(Operations.gShift, Operations.gShift, Operations.gShift),
-      MKey(Operations.sto, Operations.fracOp, Operations.intOp),
-      MKey(Operations.rcl, Operations.userOp, Operations.mem),
+      MKey(Operations.sto15, Operations.fracOp, Operations.intOp),
+      MKey(Operations.rcl15, Operations.userOp, Operations.mem),
       null,
       MKey(Operations.n0, Operations.xFactorial, Operations.xBar),
       MKey(Operations.dot, Operations.yHatR, Operations.sOp),
@@ -176,6 +175,12 @@ class Model15 extends Model<Operation> {
   void resetErrorBlink() => setFlag(9, false);
 
   @override
+  void decodeJson(Map<String, dynamic> json, {required bool needsSave}) {
+    super.decodeJson(json, needsSave: needsSave);
+    isComplexMode = getFlag(8);
+  }
+
+  @override
   int get registerNumberBase => 10;
 
   @override
@@ -193,6 +198,7 @@ class Model15 extends Model<Operation> {
       gFlag: true,
       prgmFlag: true,
       shift: ShiftKey.g,
+      trigMode: TrigMode.grad,
       extraShift: ShiftKey.f);
 }
 
@@ -380,9 +386,9 @@ class ButtonLayout15 extends ButtonLayout {
       Operations.gShift, Operations.gShift, Operations.gShift, 'G\u0007',
       acceleratorLabel: 'G');
   CalculatorButton get sto => CalculatorButton(factory, 'STO', 'FRAC', 'INT',
-      Operations.sto, Operations.fracOp, Operations.intOp, 'S<');
+      Operations.sto15, Operations.fracOp, Operations.intOp, 'S<');
   CalculatorButton get rcl => CalculatorButton(factory, 'RCL', 'USER', 'MEM',
-      Operations.rcl, Operations.userOp, Operations.mem, 'R>');
+      Operations.rcl15, Operations.userOp, Operations.mem, 'R>');
   CalculatorButton get n0 => CalculatorButton(factory, '0', 'x!', 'x\u0305',
       Operations.n0, Operations.xFactorial, Operations.xBar, '0');
   CalculatorButton get dot => CalculatorOnSpecialButton(

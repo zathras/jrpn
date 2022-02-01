@@ -141,6 +141,7 @@ class Model16 extends Model<Operation> {
       gFlag: true,
       prgmFlag: true,
       shift: ShiftKey.g,
+      trigMode: TrigMode.deg,
       extraShift: ShiftKey.f);
 }
 

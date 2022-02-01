@@ -186,7 +186,7 @@ class Value {
         throw CalculatorError(6);
       }
     }
-    return mantissa.toDouble() * pow(10.0, (_exponent - 9).toDouble());
+    return mantissa.toDouble() * pow(10.0, (exponent - 9).toDouble());
   }
 
   String get floatPrefix {
@@ -199,7 +199,10 @@ class Value {
     return sb.toString();
   }
 
-  int get _exponent {
+  ///
+  /// Get the exponent part of this value interpreted as a float.
+  /// Not valid for infinity or -infinity.
+  int get exponent {
     int lower12 = _lower12;
     int r = 10 * ((lower12 >> 4) & 0xf) + (lower12 & 0xf);
     if (lower12 & 0xf00 == 0x900) {
@@ -207,8 +210,11 @@ class Value {
     } else if ((lower12 & 0x0f00) != 0x000) {
       throw CalculatorError(6); // Invalid float format
     }
-    assert(r > -100 && r < 100);
-    return r;
+    if (r > -100 && r < 100) {
+      return r;
+    } else {
+      throw CalculatorError(6); // Invalid float format
+    }
   }
 
   Value negateAsFloat() {
@@ -243,4 +249,14 @@ class Value {
   }
 
   String toJson() => internal.toRadixString(16);
+
+  ///
+  /// Give one digit of the mantissa, where 0 is the MSD, and 9 is the LSD.
+  /// -1 gives the carry digit (9 is negative, 0 is positive).
+  int mantissaDigit(int digit) {
+    assert (digit >= -1 && digit <= 9);
+    final r = ((internal >> 4 * (12 - digit)) & _maskF).toInt();
+    assert (r <= 9 && r >= 0);
+    return r;
+  }
 }

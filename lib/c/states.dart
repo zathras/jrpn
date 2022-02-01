@@ -193,7 +193,12 @@ class Resting extends ActiveState {
         key.pressed(this);
       }
     } else {
-      key.pressed(this);
+      try {
+        key.pressed(this);
+      } on CalculatorError catch (e) {
+        controller.showCalculatorError(e);
+        return;
+      }
       final f = getCalculation(key);
       if (f != null) {
         _calculate(f);
@@ -237,7 +242,7 @@ class Resting extends ActiveState {
     if (!model.isFloatMode) {
       model.lastX = model.x;
     }
-    model.negateX();
+    model.chsX();
     model.display.displayX();
   }
 
@@ -262,7 +267,9 @@ class Resting extends ActiveState {
 
   @override
   void handleShowImaginary() {
-    assert(model.isComplexMode);
+    if (!model.isComplexMode) {
+      throw CalculatorError(3);
+    }
     final tmp = model.x;
     model.x = model.xImaginary;
     model.display.displayX();
@@ -611,7 +618,7 @@ class DigitEntry extends ActiveState {
       bool done = _tryNewValue(_entered, '-', ex, _negativeExponent);
       if (!done) {
         // Happens for hex, oct, bin, and unsigned dec
-        model.negateX(); // In unsigned mode this does what the 16C does
+        model.chsX(); // In unsigned mode this does what the 16C does
         model.display.displayX(flash: false);
         _entered = '';
       }
@@ -994,7 +1001,7 @@ class ProgramEntry extends LimitedState {
   }
 
   @override
-  void handleShowImaginary()  {
+  void handleShowImaginary() {
     // Do nothing more; this just clears the f shift status.
   }
 
@@ -1311,15 +1318,14 @@ class Running extends ControllerState {
           }
           for (int i = 0; i < 4; i++) {
             out.write('  ');
-            final Value v = model.getStackByIndex(i);
-            if (model.isFloatMode) {
-              try {
-                out.write(v.asDouble.toString());
-              } on CalculatorError catch (_) {
-                out.write('0x');
-                out.write(v.internal.toRadixString(16));
-              }
+            if (model.isComplexMode) {
+              final v = model.getStackByIndexC(i);
+              out.write(v);
+            } else if (model.isFloatMode) {
+              final Value v = model.getStackByIndex(i);
+              out.write(v);
             } else {
+              final Value v = model.getStackByIndex(i);
               out.write(v.internal.toRadixString(16));
             }
           }

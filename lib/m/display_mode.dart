@@ -52,13 +52,24 @@ abstract class DisplayMode {
   static final IntegerDisplayMode decimal = _DecimalMode();
 
   /// digits after the decimal point.  If digits is 10, always
-  /// display in scientific notation.
-  static DisplayMode float(int digits) => _FloatMode(digits);
+  /// display in scientific notation, as per the 16C manual, page 56.
+  static DisplayMode float(int fractionDigits) => (fractionDigits == 10)
+      ? _FloatMode(const _Sci16FloatFormatter())
+      : _FloatMode(_Fix16FloatFormatter(fractionDigits));
+  static DisplayMode fix(int fractionDigits, bool complex) => complex
+      ? _ComplexMode(_FixFloatFormatter(fractionDigits))
+      : _FloatMode(_FixFloatFormatter(fractionDigits));
+  static DisplayMode sci(int fractionDigits, bool complex) => complex
+      ? _ComplexMode(_SciFloatFormatter(fractionDigits))
+      : _FloatMode(_SciFloatFormatter(fractionDigits));
+  static DisplayMode eng(int fractionDigits, bool complex) => complex
+      ? _ComplexMode(_EngFloatFormatter(fractionDigits))
+      : _FloatMode(_EngFloatFormatter(fractionDigits));
 
   static final List<DisplayMode> _intValues = [hex, oct, bin, decimal];
   String get _jsonName;
 
-  /// Put calculator in floating-point mode, displaying digits
+  /// Put calculator in floating-point mode, displaying fractionDigits
   int get radix;
   int get commaDistance;
 
@@ -95,7 +106,7 @@ abstract class DisplayMode {
 
   String toJson() => _jsonName;
 
-  static DisplayMode fromJson(dynamic val) {
+  static DisplayMode fromJson(dynamic val, bool isComplex) {
     for (final v in _intValues) {
       if (v._jsonName == val) {
         return v;
@@ -103,6 +114,12 @@ abstract class DisplayMode {
     }
     if ((val as String).startsWith('f')) {
       return float(int.parse(val.substring(1)));
+    } else if (val.startsWith('x')) {
+      return fix(int.parse(val.substring(1)), isComplex);
+    } else if (val.startsWith('s')) {
+      return sci(int.parse(val.substring(1)), isComplex);
+    } else if (val.startsWith('e')) {
+      return eng(int.parse(val.substring(1)), isComplex);
     }
     throw ArgumentError('Bad DisplayMode:  $val');
   }
@@ -326,14 +343,14 @@ class _DecimalMode extends IntegerDisplayMode {
 }
 
 class _FloatMode extends DisplayMode {
-  final int digits;
+  final _FloatFormatter _formatter;
 
-  _FloatMode(this.digits) : super._protected();
+  _FloatMode(this._formatter) : super._protected();
 
   @override
   void setComplexMode(Model m, bool v) {
     if (v) {
-      m.displayMode = _ComplexMode(digits);
+      m.displayMode = _ComplexMode(_formatter);
     }
   }
 
@@ -365,96 +382,6 @@ class _FloatMode extends DisplayMode {
   @override
   SignMode signMode(IntegerSignMode integerSignMode) => SignMode.float;
 
-  /// Format a float according to a VERY strict format.  The result
-  /// has to fit in an 11  digit display, with one digit reserved for
-  /// the mantissa sign.  If in scientific mode, that leaves seven
-  /// digits for the mantissa.
-  ///
-  /// LcdDisplay understands formatting, like commas and decimal points.
-  /// These formatting characters don't take up space.  Also, the 'E"
-  /// must be upper-case, but is rendered on the display as a space
-  /// (or a '-' for a negative exponent) - we always provided a two-digit
-  /// exponent with a sign, like "E+07'.
-  @override
-  String format(Value v, Model m) => _format(v, m);
-
-  String _format(Value v, Model m) {
-    assert(m.signMode == SignMode.float);
-    final double n = v.asDouble;
-    String s;
-    int nonspaceChars = 0;
-    if (n == double.infinity) {
-      s = '9.999999E+99';
-      nonspaceChars++; // The E
-    } else if (n == double.negativeInfinity) {
-      s = '-9.999999E+99';
-      nonspaceChars++; // The E
-    } else {
-      if (digits == 10) {
-        s = n.toStringAsExponential(7);
-      } else {
-        s = n.abs().toStringAsFixed(digits);
-        if (digits == 0) {
-          s = '$s.';
-        }
-        if (s.length > 11) {
-          int d = digits + 11 - s.length;
-          if (d < 0) {
-            s = n.abs().toStringAsExponential(7);
-          } else {
-            s = n.abs().toStringAsFixed(d);
-            if (d == 0) {
-              s = '$s.';
-            }
-          }
-        }
-        if (n < 0.0) {
-          s = '-$s';
-        }
-        if (v != Value.zero && s == 0.0.toStringAsFixed(digits)) {
-          s = n.toStringAsExponential();
-        }
-      }
-      if (s.contains('e')) {
-        // Round to 7 decimal digits of mantissa.  So, for example,
-        // 9.999999999e30 becomes 1.000000e31
-        final exs = n.toStringAsExponential(6);
-        int i = exs.indexOf('e');
-        s = '${exs.substring(0, i)}E'; // cf. Digit.digits['E']
-        nonspaceChars++; // The E
-        i++;
-        final String sign = exs.substring(i, i + 1);
-        assert(sign == '-' || sign == '+', 'exponent sign not found in $exs');
-        i++;
-        s = s + sign;
-        if (i == exs.length - 1) {
-          s = '${s}0';
-        }
-        s = s + exs.substring(i);
-      }
-      if (s == '1.000000E+100') {
-        // really 9.999999999e+99 or thereabouts
-        s = '9.999999E+99';
-      } else if (s == '-1.000000E+100') {
-        s = '-9.999999E+99';
-      }
-    }
-    if (s.contains('.')) {
-      nonspaceChars++;
-    }
-    if (s.startsWith('-')) {
-      nonspaceChars++;
-      // It doesn't really take up space since a digit is reserved
-    }
-    try {
-      s = s + '            '.substring(s.length + 2 - nonspaceChars);
-      // ignore: avoid_catches_without_on_clauses
-    } catch (e) {
-      assert(false, 'float right-justify failure $e'); // Yes, I'm a coward
-    }
-    return addCommas(s);
-  }
-
   @override
   bool get isFloatMode => true;
 
@@ -479,28 +406,216 @@ class _FloatMode extends DisplayMode {
     m.lastX = Value.zero;
   }
 
+  /// Format a float according to a VERY strict format.  The result
+  /// has to fit in an 11  digit display, with one digit reserved for
+  /// the mantissa sign.  If in scientific mode, that leaves seven
+  /// digits for the mantissa.
+  ///
+  /// LcdDisplay understands formatting, like commas and decimal points.
+  /// These formatting characters don't take up space.  Also, the 'E"
+  /// must be upper-case, but is rendered on the display as a space
+  /// (or a '-' for a negative exponent) - we always provide a two-digit
+  /// exponent with a sign, like "E+07'.
   @override
-  int get hashCode => _jsonName.hashCode & digits.hashCode;
+  String format(Value v, Model m) => addCommas(_formatter.format(v));
+
+  @override
+  int get hashCode => Object.hash(_jsonName, _formatter);
 
   @override
   bool operator ==(Object? other) =>
-      (other is _FloatMode) ? (digits == other.digits) : false;
+      (other is _FloatMode) ? _jsonName == other._jsonName : false;
 
   @override
-  String get _jsonName => 'f$digits';
+  String get _jsonName => _formatter._jsonName;
 }
 
 class _ComplexMode extends _FloatMode {
-  _ComplexMode(int digits) : super(digits);
+  _ComplexMode(_FloatFormatter formatter) : super(formatter);
 
   @override
   void setComplexMode(Model m, bool v) {
     if (v) {
-      m.displayMode = _FloatMode(digits);
+      m.displayMode = _FloatMode(_formatter);
     }
   }
 
   @override
   R select<R, A>(DisplayModeSelector<R, A> selector, A arg) =>
       selector.selectComplex(arg);
+}
+
+@immutable
+abstract class _FloatFormatter {
+  const _FloatFormatter();
+
+  String get _jsonName;
+
+  static final int _ascii0 = '0'.codeUnitAt(0);
+
+  ///
+  /// Format the unsigned part of the mantissa to the given number of digits.
+  /// Result will be either digits or digits+1 characters long.
+  ///
+  @protected
+  String formatMantissaU(Value v, int digits) {
+    assert(digits >= 0 && digits <= 10);
+    final charCodes = List.filled(10, 0);
+    int i = charCodes.length;
+    if (digits < 10) {
+      bool carry = v.mantissaDigit(digits) >= 5;
+      while (carry && digits > 0) {
+        final d = v.mantissaDigit(--digits) + 1;
+        if (d == 10) {
+          charCodes[--i] = _ascii0;
+        } else {
+          charCodes[--i] = _ascii0 + d;
+          carry = false;
+        }
+      }
+      if (carry) {
+        charCodes[--i] = _ascii0 + 1;
+      }
+    }
+    while (digits > 0) {
+      charCodes[--i] = _ascii0 + v.mantissaDigit(--digits);
+    }
+    return (String.fromCharCodes(charCodes, i));
+  }
+
+  ///
+  /// Format in scientific format, as modified by the
+  /// (potentially overridden) constrainExponent function.
+  ///
+  @protected
+  String formatScientific(Value v, int digits) {
+    int exp = v.exponent;
+    String m = formatMantissaU(v, digits);
+    String minus = v.mantissaDigit(-1) == 9 ? '-' : '';
+    if (m.length > digits) {
+      exp++;
+      if (exp == 100) {
+        if (digits == 7) {
+          return '${minus}9.999999E+99';
+        } else {
+          return formatScientific(v, 7);
+        }
+      }
+      m = formatMantissaU(v, digits - 1);
+    }
+    int shownExp = constrainExponent(exp);
+    final int dpOffset = exp - shownExp;
+    if (digits < dpOffset + 1) {
+      m = m + '00'.substring(0, dpOffset + 1 - digits);
+      digits = dpOffset + 1;
+    }
+
+    final sp = '       '.substring(digits);
+    final eSign = shownExp >= 0 ? '+' : '-';
+    shownExp = shownExp.abs();
+    return '$minus${m.substring(0, 1+dpOffset)}.${m.substring(dpOffset+1)}'
+        '${sp}E$eSign${shownExp ~/ 10}${shownExp % 10}';
+  }
+
+  @protected int constrainExponent(int exp) => exp;
+
+  @protected
+  String? formatFixed(Value v, int fractionDigits) {
+    int exp = v.exponent;
+    // First, try assuming no carry
+    int mantissaDigits = min(10, exp + fractionDigits + 1);
+    if (mantissaDigits < 0) {
+      return null;
+    }
+    String mantissa = formatMantissaU(v, mantissaDigits);
+    if (mantissa.length > mantissaDigits) {
+      // If we got a carry,
+      // it's like our exponent is one higher.
+      exp++;
+    } else if (mantissa.isEmpty) {
+      return null;
+    }
+    fractionDigits = mantissa.length - exp - 1;
+    if (fractionDigits < 0 || fractionDigits > 9) {
+      return null;
+    }
+    int i = mantissa.length - fractionDigits;
+    if (i < 0) {
+      return null;
+    } else if (i == 0) {
+      mantissa = '0' + mantissa;
+      i = 1;
+    }
+    String minus = v.mantissaDigit(-1) == 9 ? '-' : '';
+    final sp = '         '.substring(mantissa.length - 1);
+    return '$minus${mantissa.substring(0, i)}.${mantissa.substring(i)}$sp';
+  }
+
+  String format(Value v);
+}
+
+@immutable
+class _SciFloatFormatter extends _FloatFormatter {
+  final int fractionDigits;
+  const _SciFloatFormatter(this.fractionDigits);
+
+  @override
+  String get _jsonName => 's$fractionDigits';
+
+  @override
+  String format(Value v) => formatScientific(v, fractionDigits + 1);
+}
+
+@immutable
+class _FixFloatFormatter extends _FloatFormatter {
+  final int fractionDigits;
+  const _FixFloatFormatter(this.fractionDigits);
+
+  @override
+  String get _jsonName => 'x$fractionDigits';
+
+  @override
+  String format(Value v) =>
+      formatFixed(v, fractionDigits) ??
+      formatScientific(v, min(7, fractionDigits + 1));
+}
+
+///
+/// The float format for the 16C, which is mostly like the 15C's fixed format,
+/// but not quite.  This does not handle Float-. mode (which is the 16C's
+/// idiom for 7 digit scientific notation).
+///
+@immutable
+class _Fix16FloatFormatter extends _FixFloatFormatter {
+  const _Fix16FloatFormatter(int fractionDigits) : super(fractionDigits);
+
+  @override
+  String get _jsonName => 'f$fractionDigits';
+
+  @override
+  String format(Value v) =>
+      formatFixed(v, fractionDigits) ?? formatScientific(v, 7);
+}
+
+///
+/// The scientific notation float format for the 16C, which is what you get
+/// from "FLOAT-."
+///
+@immutable
+class _Sci16FloatFormatter extends _SciFloatFormatter {
+  const _Sci16FloatFormatter() : super(7);
+
+  @override
+  String get _jsonName => 'f10';
+}
+
+@immutable
+class _EngFloatFormatter extends _SciFloatFormatter {
+  _EngFloatFormatter(int fractionDigits) : super(fractionDigits);
+
+  @override
+  String get _jsonName => 'e$fractionDigits';
+
+  @override
+  @protected int constrainExponent(int exp) => (((exp + 9999) ~/ 3) * 3) - 9999;
 }

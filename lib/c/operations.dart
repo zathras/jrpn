@@ -413,6 +413,7 @@ class Operations {
       },
       name: 'WSIZE');
 
+  /// The 16C's float key
   static final NormalArgOperation floatKey = NormalArgOperation(
       stackLift: StackLift.neutral, // But see also FloatKeyArg.onArgComplete()
       arg: FloatKeyArg(10, calc: (Model m, int arg) {
@@ -504,6 +505,9 @@ class Operations {
       floatCalc: (Model m) {
         m.resultXF = m.xF.abs();
       },
+      complexCalc: (Model m) {
+        m.resultXF = m.xC.r;    // Sets complex part to zero
+      },
       intCalc: (Model m) => m.resultXI = m.xI.abs(),
       name: 'ABS');
 
@@ -555,7 +559,15 @@ class Operations {
           throw CalculatorError(0);
         } else {
           m.floatOverflow = false;
-          m.resultXF = 1.0 / m.xF;
+          m.resultXF = 1.0 / x;
+        }
+      },
+      complexCalc: (Model m) {
+        final x = m.xC;
+        if (x == Complex.zero) {
+          throw CalculatorError(0);
+        } else {
+          m.resultXC = const Complex(1, 0) / x;
         }
       },
       name: '1/x');
@@ -818,34 +830,40 @@ class Operations {
         throw "@@ TODO";
       },
       name: 'MATRIX');
-  static final NormalOperation fix = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
+  static final NormalArgOperation fix = NormalArgOperation(
+      stackLift: StackLift.neutral,
+      arg: OperationArg.both(9, calc:
+          (Model m, int digits) {
+        m.displayMode = DisplayMode.fix(digits, m.isComplexMode);
+      }),
       name: 'FIX');
-  static final NormalOperation sci = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
+  static final NormalArgOperation sci = NormalArgOperation(
+      stackLift: StackLift.neutral,
+      arg: OperationArg.both(6, calc:
+          (Model m, int digits) {
+        m.displayMode = DisplayMode.sci(min(9, digits), m.isComplexMode);
+      }),
       name: 'SCI');
-  static final NormalOperation eng = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'ENG');
+  static final NormalArgOperation eng = NormalArgOperation(
+      stackLift: StackLift.neutral,
+      arg: OperationArg.both(9, calc:
+      (Model m, int digits) {
+        m.displayMode = DisplayMode.eng(min(6, digits), m.isComplexMode);
+      }),
+      name: 'SCI');
   static final NormalOperation deg = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.trigMode = TrigMode.deg;
       },
       name: 'DEG');
   static final NormalOperation rad = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "TODO";
+        m.trigMode = TrigMode.rad;
       },
       name: 'RAD');
   static final NormalOperation grd = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.trigMode = TrigMode.grad;
       },
       name: 'GRD');
   static final NormalOperation solve = NormalOperation.floatOnly(
@@ -1048,6 +1066,17 @@ class Operations {
         throw "@@ TODO";
       },
       name: 'Cy,x');
+
+  static final NormalArgOperation sto15 = NormalArgOperation(
+      arg: OperationArg.both(21, // 0-9, .0-.9. I, (i)
+          calc: (Model m, int arg) => m.memory.registers[arg] = m.x),
+      name: 'STO');
+
+  static final NormalArgOperation rcl15 = NormalArgOperation(
+      arg: OperationArg.both(21,
+          pressed: (ActiveState s) => s.liftStackIfEnabled(),
+          calc: (Model m, int arg) => m.x = m.memory.registers[arg]),
+      name: 'RCL');
 
   // ================================
   // Useful collections of operations

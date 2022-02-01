@@ -109,6 +109,8 @@ class _DisplayPainter extends CustomPainter {
 
   static const double heightTweak = LcdDisplay.heightTweak;
 
+  static double _gradWidth = -1;
+
   @override
   void paint(Canvas canvas, Size size) {
     final _lcdFrame = Paint()
@@ -211,6 +213,25 @@ class _DisplayPainter extends CustomPainter {
           textDirection: TextDirection.ltr);
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.65, size.height * annY));
+    }
+    final trig = contents.trigMode;
+    if (trig.label != null) {
+      if (_gradWidth == -1) {
+        final TextSpan span = TextSpan(style: aStyle, text: 'GRAD');
+        final TextPainter tp = TextPainter(
+            text: span,
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.ltr);
+        tp.layout();
+        _gradWidth = tp.width;
+      }
+      final TextSpan span = TextSpan(style: aStyle, text: trig.label);
+      final TextPainter tp = TextPainter(
+          text: span,
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr);
+      tp.layout();
+      tp.paint(canvas, Offset(_gradWidth - tp.width + size.width * 0.52, size.height * annY));
     }
     if (contents.complexFlag) {
       final TextSpan span = TextSpan(style: aStyle, text: 'C');
