@@ -435,6 +435,9 @@ class Controller16 extends RealController {
   ];
 
   @override
+  Operation get gotoLineNumberKey => Operations.dot;
+
+  @override
   SelfTests newSelfTests({bool inCalculator = true}) =>
       SelfTests16(inCalculator: inCalculator);
 

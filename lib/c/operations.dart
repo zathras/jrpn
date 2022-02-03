@@ -688,6 +688,11 @@ class Operations {
   static final letterLabelD = LetterLabel('D', 13);
   static final letterLabelE = LetterLabel('E', 14);
 
+  static final NormalArgOperation lbl15 = NormalArgOperation(
+      arg: OperationArg.both(25, calc: (_, __) {}), name: 'LBL');
+  // @@@@ TODO
+
+
   ///
   /// The HP15'c I operation, for entry of imaginary numbers.
   ///
@@ -839,9 +844,9 @@ class Operations {
       name: 'FIX');
   static final NormalArgOperation sci = NormalArgOperation(
       stackLift: StackLift.neutral,
-      arg: OperationArg.both(6, calc:
+      arg: OperationArg.both(9, calc:
           (Model m, int digits) {
-        m.displayMode = DisplayMode.sci(min(9, digits), m.isComplexMode);
+        m.displayMode = DisplayMode.sci(min(digits, 6), m.isComplexMode);
       }),
       name: 'SCI');
   static final NormalArgOperation eng = NormalArgOperation(

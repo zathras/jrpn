@@ -62,7 +62,7 @@ class Model15 extends Model<Operation> {
       MKey(Operations.div, Operations.solve, Operations.xLEy),
     ],
     [
-      MKey(Operations.sst, Operations.lbl, Operations.bst),
+      MKey(Operations.sst, Operations.lbl15, Operations.bst),
       MKey(Operations.gto, Operations.hyp, Operations.hypInverse),
       MKey(Operations.sin, Operations.dim, Operations.sinInverse),
       MKey(Operations.cos, Operations.parenI15, Operations.cosInverse),
@@ -272,7 +272,7 @@ class ButtonLayout15 extends ButtonLayout {
       'x\u2264y', Operations.div, Operations.solve, Operations.xLEy, '/');
 
   CalculatorButton get sst => CalculatorButton(factory, 'SST', 'LBL', 'BST',
-      Operations.sst, Operations.lbl, Operations.bst, 'U');
+      Operations.sst, Operations.lbl15, Operations.bst, 'U');
   CalculatorButton get gto => CalculatorButton(
       factory,
       'GTO',
@@ -503,6 +503,9 @@ class Controller15 extends RealController {
     Operations.n8,
     Operations.n9
   ];
+
+  @override
+  Operation get gotoLineNumberKey => Operations.chs;
 
   @override
   SelfTests newSelfTests({bool inCalculator = true}) =>

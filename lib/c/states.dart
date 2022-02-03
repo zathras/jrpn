@@ -1060,6 +1060,8 @@ class ProgramEntry extends LimitedState {
 /// label.  In the spirit of Beckett, we do hope one arrives before
 /// too long.
 ///
+/// On the 15C, CHS is used instead of dot.
+///
 class WaitingForGotoDot extends ControllerState {
   final LimitedState last;
 
@@ -1069,7 +1071,7 @@ class WaitingForGotoDot extends ControllerState {
 
   @override
   void buttonDown(Operation key) {
-    if (key == Operations.dot) {
+    if (key == controller.gotoLineNumberKey) {
       changeState(WaitingForGotoDotLines(controller, last));
     } else {
       changeState(ArgInputState(controller, Operations.gto.arg, last))

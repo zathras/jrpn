@@ -160,6 +160,11 @@ abstract class Controller {
   }
 
   SelfTests newSelfTests({bool inCalculator = true});
+
+  ///
+  /// The key used to GTO an absolute line number ("." on the 16C,
+  /// CHS on the 15C).
+  Operation get gotoLineNumberKey;
 }
 
 ///
@@ -331,6 +336,9 @@ class RunningController extends Controller {
   @override
   SelfTests newSelfTests({bool inCalculator = true}) =>
       real.newSelfTests(inCalculator: inCalculator);
+
+  @override
+  Operation get gotoLineNumberKey => real.gotoLineNumberKey;
 }
 
 ///

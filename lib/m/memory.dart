@@ -38,8 +38,8 @@ class Memory<OT extends ProgramOperation> {
   /// Called by our controller, which necessarily happens after the Model
   /// exists.
   void initializeSystem(OperationMap<OT> layout) {
-    program = ProgramMemory<OT>(
-        this, _storage, layout._operationTable, _model.returnStackSize);
+    program = ProgramMemory<OT>(this, _storage, layout._nextOpCode,
+        layout._operationTable, _model.returnStackSize);
 
     // We rely on our Controller to give us an OperationMap with the
     // layout information that tells us the row/column positions of the various
@@ -274,13 +274,22 @@ class Registers {
 /// storage as needed.  We also keep the return stack for GSB instructions
 /// here, and the current program line.
 ///
+/// ProgramMemory takes care of the 15C's two-byte program instructions
+/// (cf. 15C manual page 218).  For example, if line 3 is F-ENG-2, the next
+/// line will be line 4, despite the fact that F-ENG-2 takes up two bytes.
+///
 class ProgramMemory<OT extends ProgramOperation> {
   final Memory<OT> _memory;
+
+  ///  The op code that means the next byte is the extended op code
+  final int _extendedOpCode;
 
   /// Indexed by opCode
   final List<OT> _operationTable;
 
   int _lines = 0;
+  // Number of lines with extended op codes
+  int _extendedLines = 0;
 
   final List<int> _returnStack;
   int _returnStackPos = -1;
@@ -288,16 +297,26 @@ class ProgramMemory<OT extends ProgramOperation> {
   /// Current line (editing and/or execution)
   int _currentLine = 0;
 
-  /// This is a testing hook.  In normal operation, it's always null.
+  /// opcodeAt(line) caches a line # and a corresponding address, since calculating
+  /// the address would be O(n), given multibyte instructions.
+  int _cachedLine = 1;
+
+  /// Line 1 is stored starting at address 0
+  int _cachedAddress = 0;
+
+  /// This is a testing hook; tests can override this to tweak behaviors
+  /// and detect events.
   ProgramListener programListener = ProgramListener();
 
-  ProgramMemory(this._memory, this._registerStorage, this._operationTable,
-      int returnStackSize)
+  ProgramMemory(this._memory, this._registerStorage, this._extendedOpCode,
+      this._operationTable, int returnStackSize)
       : _returnStack = List.filled(returnStackSize, 0);
 
   final ByteData _registerStorage;
 
-  int get programBytes => ((_lines + 6) ~/ 7) * 7;
+  int get programBytes => ((_lines + _extendedLines + 6) ~/ 7) * 7;
+
+  int get _maxAddress => (_lines + _extendedLines) * 2 - 1;
 
   /// Number of lines in the program
   int get lines => _lines;
@@ -305,7 +324,7 @@ class ProgramMemory<OT extends ProgramOperation> {
   int get currentLine => _currentLine;
 
   int get bytesToNextAllocation =>
-      (_registerStorage.lengthInBytes ~/ 2 - _lines) % 7;
+      (_registerStorage.lengthInBytes ~/ 2 - _lines - _extendedLines) % 7;
 
   set currentLine(int v) {
     if (v < 0 || v > lines) {
@@ -316,18 +335,27 @@ class ProgramMemory<OT extends ProgramOperation> {
 
   /// Insert a new instruction, and increment currentLine to refer to it.
   void insert(final ProgramInstruction<OT> instruction) {
-    if (lines >= _registerStorage.lengthInBytes ~/ 2) {
+    final needed = instruction.isExtended ? 2 : 1;
+    if (_lines + _extendedLines + needed >
+        _registerStorage.lengthInBytes ~/ 2) {
       throw CalculatorError(4);
     }
     assert(_currentLine >= 0 && _currentLine <= _lines);
     assert(instruction.argValue >= 0 &&
         instruction.argValue <= instruction.op.maxArg);
-    int addr = _currentLine * 2; // stored as nybbles
-    for (int a = _lines * 2 - 1; a >= addr; a--) {
-      _registerStorage.setUint8(a + 2, _registerStorage.getUint8(a));
+    _setCachedAddress(_currentLine+1);
+    int addr = _cachedAddress; // stored as nybbles
+    for (int a = _maxAddress; a >= addr; a--) {
+      _registerStorage.setUint8(a + 2 * needed, _registerStorage.getUint8(a));
     }
-    final int opCode = instruction.op._opCode + instruction.argValue;
-    assert(opCode >= 0 && opCode <= 0xff);
+    int opCode = instruction.opCode;
+    if (opCode >= _extendedOpCode) {
+      _registerStorage.setUint8(addr++, _extendedOpCode >> 4);
+      _registerStorage.setUint8(addr++, _extendedOpCode & 0xf);
+      opCode -= _extendedOpCode;
+      _extendedLines++;
+    }
+    assert(opCode >= 0 && opCode <= 255);
     _registerStorage.setUint8(addr++, opCode >> 4);
     _registerStorage.setUint8(addr++, opCode & 0xf);
     _lines++;
@@ -338,12 +366,25 @@ class ProgramMemory<OT extends ProgramOperation> {
 
   void deleteCurrent() {
     assert(_lines > 0 && _currentLine > 0);
+    final op = opcodeAt(_currentLine); // Sets _cachedAddress
+    final extended = op >= _extendedOpCode;
+    int addr = _cachedAddress;
     _lines--;
     _currentLine--;
-    int addr = _currentLine * 2; // The nybble after the new current instruction
-    while (addr < _lines * 2) {
-      _registerStorage.setUint8(addr, _registerStorage.getUint8(addr + 2));
+    final int delta;
+    if (extended) {
+      _extendedLines--;
+      delta = 4;
+    } else {
+      delta = 2;
+    }
+    while (addr <= _maxAddress) {
+      _registerStorage.setUint8(addr, _registerStorage.getUint8(addr + delta));
       addr++;
+    }
+    if (extended) {
+      _registerStorage.setUint8(addr++, 0);
+      _registerStorage.setUint8(addr++, 0);
     }
     _registerStorage.setUint8(addr++, 0);
     _registerStorage.setUint8(addr, 0);
@@ -356,21 +397,47 @@ class ProgramMemory<OT extends ProgramOperation> {
     final int opCode = opcodeAt(line);
     final OT op = _operationTable[opCode];
     // throws an exception on an illegal opCode, which is what we want.
-    final int arg = opCode - op._opCode;
+    final int arg = opCode >= _extendedOpCode
+        ? opCode - op._extendedOpCode + op.numOpCodes
+        : opCode - op._opCode;
     return _memory._model.newProgramInstruction(op, arg);
-    // We're not storing the instructions as nybbles and creating instructions
-    // as-needed to save memory.  It's the easiest way of implementing it,
-    // given that we want to store the program in a form that is faithful
-    // to the original 16C.  The extra time we spend converting back and
+    // We're storing the instructions as nybbles and creating instructions
+    // as-needed, not to save memory.  Rather, it's the easiest way of
+    // implementing it, given that we want to store the program in a form
+    // that is faithful to the original 16C, that preserves the memory
+    // management constraints.  The extra time we spend converting back and
     // forth is, of course, irrelevant.
+  }
+
+  void _setCachedAddress(final int line) {
+    if (line < _cachedLine) {
+      _cachedLine = 1;
+      _cachedAddress = 0;
+    }
+    while (_cachedLine < line) {
+      _cachedLine++;
+      if (_byteAt(_cachedAddress) < _extendedOpCode) {
+        _cachedAddress += 2;
+      } else {
+        _cachedAddress += 4;
+      }
+    }
   }
 
   int opcodeAt(final int line) {
     assert(line > 0 && line <= _lines);
-    final int a = (line - 1) * 2;
-    return (_registerStorage.getUint8(a) << 4) +
-        _registerStorage.getUint8(a + 1);
+    _setCachedAddress(line);
+    final b = _byteAt(_cachedAddress);
+    if (b < _extendedOpCode) {
+      return b;
+    } else {
+      assert(b == _extendedOpCode);
+      return _extendedOpCode + _byteAt(_cachedAddress + 2);
+    }
   }
+
+  int _byteAt(int a) =>
+      (_registerStorage.getUint8(a) << 4) + _registerStorage.getUint8(a + 1);
 
   ProgramInstruction<OT> getCurrent() => this[currentLine];
 
@@ -382,6 +449,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     }
     _lines = 0;
     _currentLine = 0;
+    _extendedLines = 0;
     resetReturnStack();
   }
 
@@ -400,10 +468,14 @@ class ProgramMemory<OT extends ProgramOperation> {
       throw ArgumentError('$n:  Illegal number of lines');
     }
     _lines = n;
+    _extendedLines = 0;
     // Check for illegal instructions
     try {
       for (_currentLine = 1; _currentLine <= _lines; _currentLine++) {
-        getCurrent();
+        final instr = getCurrent();
+        if (instr.isExtended) {
+          _extendedLines++;
+        }
       }
       _currentLine = 0;
     } catch (e) {
@@ -589,10 +661,14 @@ class ProgramMemory<OT extends ProgramOperation> {
 abstract class ProgramOperation {
   late final String _programDisplay;
   late final int _opCode;
+  late final int _extendedOpCode;
 
   /// 0 if this operation doesn't take an argument
   int get maxArg;
   String get name;
+
+  int get numExtendedOpCodes => 0;
+  int get numOpCodes => 1 + maxArg - numExtendedOpCodes;
 
   static const _invalidOpCodeStart = -1;
   // Invalid op codes are negative, but still distinct.  That allows them to
@@ -633,7 +709,13 @@ abstract class ProgramInstruction<OT extends ProgramOperation> {
 
   ProgramInstruction(this.op, this.argValue);
 
+  bool get isExtended => argValue > op.maxArg - op.numExtendedOpCodes;
+
   final _noWidth = RegExp('[,.]');
+
+  int get opCode => isExtended
+      ? op._extendedOpCode + argValue - op.numOpCodes
+      : op._opCode + argValue;
 
   @protected
   String rightJustify(String s, int len) {
@@ -714,6 +796,8 @@ class OperationMap<OT extends ProgramOperation> {
   final List<List<MKey<OT>?>> keys;
   final List<OT> numbers;
   final List<OT> special;
+
+  /// Key entry shortcuts, like how on the 16C, I is RCL-I and (i) is RCL-(i)
   final Map<OT, ProgramInstruction> shortcuts;
 
   /// Maps from opCode to ProgramOperation.  Each operation occurs in the
@@ -721,8 +805,11 @@ class OperationMap<OT extends ProgramOperation> {
   late final List<OT> _operationTable;
   // (i) means "RCL (i)", and I means "RCL I".
   int _nextOpCode = 0;
+  int _nextExtendedOpCode = 0;
 
-  final List<OT> inNumericOrder = List.empty(growable: true);
+  final List<OT> _inNumericOrder = List.empty(growable: true);
+  // The extended (two-byte) opcodes, which are stored as 0xff followed by this
+  final List<OT> _inNumericOrderExtended = List.empty(growable: true);
 
   final OT lbl; // The label instruction, for GTO and GSB implementation
 
@@ -754,24 +841,44 @@ class OperationMap<OT extends ProgramOperation> {
   }
 
   void _assignOpCode(OT o) {
-    o._opCode = _nextOpCode;
-    _nextOpCode += 1 + o.maxArg;
-    inNumericOrder.add(o);
+    final int numOpCodes = o.numOpCodes;
+    if (numOpCodes == 0) {
+      o._opCode = -1;
+    } else {
+      o._opCode = _nextOpCode;
+      _nextOpCode += numOpCodes;
+      _inNumericOrder.add(o);
+    }
+    if (o.numExtendedOpCodes == 0) {
+      o._extendedOpCode = -1;
+    } else {
+      o._extendedOpCode = _nextExtendedOpCode;
+      _nextExtendedOpCode += o.numExtendedOpCodes;
+      _inNumericOrderExtended.add(o);
+    }
   }
 
   void _initializeOperationTable() {
     _operationTable = List.empty(growable: true);
-    for (final OT o in inNumericOrder) {
+    for (final OT o in _inNumericOrder) {
       assert(o.maxArg >= 0);
-      for (int i = 0; i <= o.maxArg; i++) {
+      for (int i = 0; i < o.numOpCodes; i++) {
         _operationTable.add(o);
       }
     }
-    assert(_operationTable.length == _nextOpCode);
+    for (final OT o in _inNumericOrderExtended) {
+      assert(o.maxArg >= 0);
+      for (int i = 0; i < o.numExtendedOpCodes; i++) {
+        _operationTable.add(o);
+      }
+    }
+    assert(_operationTable.length == _nextOpCode + _nextExtendedOpCode);
+    _inNumericOrder.length = 0;
+    _inNumericOrderExtended.length = 0;
   }
 
   void _initializeProgramDisplay() {
-    assert(inNumericOrder.isEmpty);
+    assert(_inNumericOrder.isEmpty);
     final visited = <OT>{};
     for (int i = 0; i < special.length; i++) {
       final o = special[i];
@@ -783,7 +890,7 @@ class OperationMap<OT extends ProgramOperation> {
     for (final k in shortcuts.keys) {
       assert(!visited.contains(k));
       visited.add(k);
-      // We will visit k, at the end, when the thing to which it's a
+      // We will visit k, at the end, when the thing to which its
       // shortcut has been initialized.
     }
     for (int i = 0; i < numbers.length; i++) {
@@ -839,12 +946,13 @@ class OperationMap<OT extends ProgramOperation> {
         }
       }
     }
-    shortcuts.forEach((k, v) {
+    shortcuts.forEach((ProgramOperation k, ProgramInstruction v) {
       assert(v.argValue >= 0 && v.argValue <= v.op.maxArg);
       k._opCode = v.op._opCode + v.argValue;
       k._programDisplay = v.op._programDisplay;
     });
-    assert(_nextOpCode <= 256, _nextOpCode);
+    assert(_nextOpCode <= 255 && _nextExtendedOpCode <= 256,
+        '$_nextOpCode $_nextExtendedOpCode');
   }
 }
 

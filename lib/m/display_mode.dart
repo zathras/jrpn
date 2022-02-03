@@ -577,13 +577,14 @@ class _FixFloatFormatter extends _FloatFormatter {
   @override
   String format(Value v) =>
       formatFixed(v, fractionDigits) ??
-      formatScientific(v, min(7, fractionDigits + 1));
+      formatScientific(v, min(6, fractionDigits + 1));
 }
 
 ///
 /// The float format for the 16C, which is mostly like the 15C's fixed format,
-/// but not quite.  This does not handle Float-. mode (which is the 16C's
-/// idiom for 7 digit scientific notation).
+/// except that it always goes to 7 digit scientific on overflow.
+/// This does not handle Float-. mode (which is the 16C's
+/// idiom for always being in 7 digit scientific notation).
 ///
 @immutable
 class _Fix16FloatFormatter extends _FixFloatFormatter {
@@ -599,11 +600,11 @@ class _Fix16FloatFormatter extends _FixFloatFormatter {
 
 ///
 /// The scientific notation float format for the 16C, which is what you get
-/// from "FLOAT-."
+/// from "FLOAT-."  It's stored in JSON as 'f10' for backwards compatibility.
 ///
 @immutable
 class _Sci16FloatFormatter extends _SciFloatFormatter {
-  const _Sci16FloatFormatter() : super(7);
+  const _Sci16FloatFormatter() : super(6);
 
   @override
   String get _jsonName => 'f10';
@@ -611,7 +612,7 @@ class _Sci16FloatFormatter extends _SciFloatFormatter {
 
 @immutable
 class _EngFloatFormatter extends _SciFloatFormatter {
-  _EngFloatFormatter(int fractionDigits) : super(fractionDigits);
+  const _EngFloatFormatter(int fractionDigits) : super(fractionDigits);
 
   @override
   String get _jsonName => 'e$fractionDigits';

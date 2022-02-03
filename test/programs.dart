@@ -30,13 +30,24 @@ import 'package:jrpn16c/main16c.dart';
 
 class ProgramEvent {
   final int? errorNumber;
+  final String? name;
 
-  ProgramEvent({this.errorNumber});
+  ProgramEvent({this.errorNumber, this.name});
 
-  static final done = ProgramEvent();
-  static final runStop = ProgramEvent();
-  static final pause = ProgramEvent();
-  static final stop = ProgramEvent();
+  static final done = ProgramEvent(name: 'done');
+  static final runStop = ProgramEvent(name: 'run/stop');
+  static final pause = ProgramEvent(name: 'pause');
+  static final stop = ProgramEvent(name: 'stop');
+
+  @override
+  String toString() {
+    if (name != null) {
+      return('ProgramEvent("$name")');
+    } else if (errorNumber != null) {
+      return('ProgramEvent($errorNumber)');
+    }
+    return super.toString();
+  }
 }
 
 class TestCalculator implements ProgramListener {
