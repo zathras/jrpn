@@ -301,7 +301,7 @@ class RunningController extends Controller {
     assert(state == fromState);
     int? v = argValue;
     assert(v != null);
-    if (v != null && v <= arg.maxArg) {
+    if (v != null && v <= arg.desc.maxArg) {
       arg.onArgComplete(fromState, v);
     }
   }
@@ -353,6 +353,7 @@ abstract class Operation extends ProgramOperation {
 
   /// A description of an argument, if there is one.  For example, the STO
   /// operation has an argument to indicate which register to store to.
+  @override
   OperationArg? get arg;
 
   /// The calculation performed when the calculator is in floating-point mode.
@@ -367,7 +368,7 @@ abstract class Operation extends ProgramOperation {
   StackLift get _stackLift;
 
   @override
-  int get maxArg => arg?.maxArg ?? 0;
+  int get maxArg => arg?.desc.maxArg ?? 0;
 
   @override
   String toString() => 'Operation($name)';
@@ -688,28 +689,34 @@ class BranchingArgOperation extends NormalArgOperation {
 /// [BranchingArgOperation].  This includes the calculation that is to be
 /// performed when the argument value is available.
 ///
-class OperationArg {
-  final int maxArg;
+class OperationArg extends ProgramOperationArg {
   final void Function(Model, int)? floatCalc;
   final void Function(Model, int)? intCalc;
   final void Function(Model, int)? complexCalc;
   final void Function(ActiveState)? pressed;
   late final NormalArgOperation op;
+  @override
+  final ArgDescription desc;
 
-  OperationArg(this.maxArg,
-      {required this.floatCalc,
+  OperationArg({required this.floatCalc,
       required this.intCalc,
       Function(Model, int)? complexCalc,
-      this.pressed})
+      this.pressed,
+      required this.desc})
       : complexCalc = complexCalc ?? floatCalc;
 
-  OperationArg.both(this.maxArg,
-      {required void Function(Model, int) calc, this.pressed})
+  OperationArg.both(
+      {required void Function(Model, int) calc,
+      this.pressed,
+      required this.desc})
       : floatCalc = calc,
         intCalc = calc,
         complexCalc = calc;
 
-  OperationArg.intOnly(this.maxArg, {required this.intCalc, this.pressed})
+  OperationArg.intOnly(
+      {required this.intCalc,
+      this.pressed,
+      required this.desc})
       : floatCalc = null,
         complexCalc = null;
 
@@ -726,8 +733,9 @@ class OperationArg {
 /// be executed.
 ///
 class GosubOperationArg extends OperationArg {
-  GosubOperationArg.both(int maxArg, {required void Function(Model, int) calc})
-      : super.both(maxArg, calc: calc);
+  GosubOperationArg.both(
+      {required void Function(Model, int) calc, required ArgDescription desc})
+      : super.both(calc: calc, desc: desc);
 
   @override
   ControllerState makeInputState(Controller c, LimitedState fromState) =>
@@ -735,13 +743,13 @@ class GosubOperationArg extends OperationArg {
 }
 
 ///
-/// The description of an argument for the float mode key.  It's special
+/// The argument for the float mode key.  It's special
 /// because stack lift is enabled when going from int mode to float mode,
 /// but it's stack neutral if staying in float mode.
 ///
 class FloatKeyArg extends OperationArg {
-  FloatKeyArg(int maxArg, {required void Function(Model, int) calc})
-      : super(maxArg, floatCalc: calc, intCalc: calc);
+  FloatKeyArg({required ArgDescription desc, required void Function(Model, int) calc})
+      : super(floatCalc: calc, intCalc: calc, desc: desc);
 
   @override
   void onArgComplete(LimitedState state, int argValue) {

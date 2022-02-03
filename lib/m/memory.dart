@@ -159,12 +159,6 @@ class Registers {
   static final BigInt _maxI = BigInt.parse('fffffffffffffffff', radix: 16);
   // 16^17-1, that is, 2^68-1
 
-  /// Index of the index register
-  static int indexRegister = 33;
-
-  /// Index to address via (i)
-  static int indirectIndex = 32; // It comes earlier on the keyboard
-
   Model get _model => _memory._model;
 
   int get _nybblesPerRegister => (_model.wordSize + 3) ~/ 4;
@@ -176,26 +170,17 @@ class Registers {
   static final BigInt _oneKmask = BigInt.from(0x3ff);
 
   Value operator [](int i) {
-    assert(i >= 0 && i <= indexRegister);
-    final Value result;
-    if (i == indexRegister) {
-      result = Value.fromInternal(_indexValue.internal & _model.wordMask);
-    } else {
-      if (i == indirectIndex) {
-        i = _regIasIndex;
-      }
-      if (i < 0 || i >= length) {
-        throw CalculatorError(3);
-      }
-      final int npr = _nybblesPerRegister;
-      int addr = _memory._storage.lengthInBytes - 1 - (i + 1) * npr;
-      // Address of most significant nybble - 1
-      BigInt value = BigInt.zero;
-      for (int i = 0; i < npr; i++) {
-        value = (value << 4) | BigInt.from(_memory._storage.getUint8(++addr));
-      }
-      result = Value.fromInternal(value);
+    if (i < 0 || i >= length) {
+      throw CalculatorError(3);
     }
+    final int npr = _nybblesPerRegister;
+    int addr = _memory._storage.lengthInBytes - 1 - (i + 1) * npr;
+    // Address of most significant nybble - 1
+    BigInt value = BigInt.zero;
+    for (int i = 0; i < npr; i++) {
+      value = (value << 4) | BigInt.from(_memory._storage.getUint8(++addr));
+    }
+    final result = Value.fromInternal(value);
     if (_model.isFloatMode) {
       result.asDouble; // Throw exception if not valid float
     }
@@ -205,13 +190,6 @@ class Registers {
   static final BigInt _low4 = BigInt.from(0xf);
 
   void operator []=(int i, Value v) {
-    assert(i >= 0 && i <= indexRegister);
-    if (i == indexRegister) {
-      _indexValue = helper68.signExtendFrom(v);
-      return;
-    } else if (i == indirectIndex) {
-      i = _regIasIndex;
-    }
     if (i < 0 || i >= length) {
       throw CalculatorError(3);
     }
@@ -224,6 +202,39 @@ class Registers {
       value >>= 4;
     }
     _model._needsSave = true;
+  }
+
+  Value get index {
+    final result = Value.fromInternal(_indexValue.internal & _model.wordMask);
+    if (_model.isFloatMode) {
+      result.asDouble; // Throw exception if not valid float
+    }
+    return result;
+  }
+
+  set index(Value v) => _indexValue = helper68.signExtendFrom(v);
+
+  Value get indirectIndex => this[_regIasIndex];
+  set indirectIndex(Value v) => this[_regIasIndex] = v;
+
+  Value getValue(int i, ProgramOperationArg arg) {
+    if (i == arg.desc.indexRegisterNumber) {
+      return index;
+    } else if (i == arg.desc.indirectIndexNumber) {
+      return indirectIndex;
+    } else {
+      return this[i];
+    }
+  }
+
+  void setValue(int i, ProgramOperationArg arg, Value v) {
+    if (i == arg.desc.indexRegisterNumber) {
+      index = v;
+    } else if (i == arg.desc.indirectIndexNumber) {
+      indirectIndex = v;
+    } else {
+      this[i] = v;
+    }
   }
 
   /// Calculate the value of the I register for use as an index.  If that
@@ -343,7 +354,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     assert(_currentLine >= 0 && _currentLine <= _lines);
     assert(instruction.argValue >= 0 &&
         instruction.argValue <= instruction.op.maxArg);
-    _setCachedAddress(_currentLine+1);
+    _setCachedAddress(_currentLine + 1);
     int addr = _cachedAddress; // stored as nybbles
     for (int a = _maxAddress; a >= addr; a--) {
       _registerStorage.setUint8(a + 2 * needed, _registerStorage.getUint8(a));
@@ -560,12 +571,12 @@ class ProgramMemory<OT extends ProgramOperation> {
     }
   }
 
-  void gosub(int label) {
+  void gosub(int label, ArgDescription arg) {
     if (_returnStackPos >= _returnStack.length) {
       throw CalculatorError(5);
     }
     final returnTo = currentLine;
-    goto(label);
+    goto(label, arg);
     if (returnStackUnderflow) {
       // Keyboard entry of GSB to start program
       _returnStackPos++;
@@ -576,10 +587,15 @@ class ProgramMemory<OT extends ProgramOperation> {
 
   static final BigInt _fifteen = BigInt.from(15);
 
-  void goto(int label) {
-    if (label > 15) {
+  void goto(int label, ArgDescription arg) {
+    Value? v;
+    if (label == arg.indexRegisterNumber) {
+      v = _memory.registers.index;
+    } else if (label == arg.indirectIndexNumber) {
+      v = _memory.registers.indirectIndex;
+    }
+    if (v != null) {
       // I or (i)
-      Value v = _memory.registers[label + 16];
       if (_memory._model.isFloatMode) {
         double fv = v.asDouble;
         if (fv < 0 || fv >= 16) {
@@ -588,7 +604,7 @@ class ProgramMemory<OT extends ProgramOperation> {
         label = fv.floor();
         if (label > 16 || label < 0) {
           // This should be impossible, but I'm not 100% certain of double
-          // semantic, e.g. on JavaScript.
+          // semantics, e.g. on JavaScript.
           throw CalculatorError(4);
         }
       } else {
@@ -663,6 +679,8 @@ abstract class ProgramOperation {
   late final int _opCode;
   late final int _extendedOpCode;
 
+  ProgramOperationArg? get arg;
+
   /// 0 if this operation doesn't take an argument
   int get maxArg;
   String get name;
@@ -682,6 +700,75 @@ abstract class ProgramOperation {
 
   @override
   String toString() => 'ProgramOperation($programDisplay)';
+}
+
+abstract class ProgramOperationArg {
+  ArgDescription get desc;
+}
+
+///
+/// Some metadata about an argument to a program operation.
+///
+@immutable
+abstract class ArgDescription {
+  int get indirectIndexNumber;
+  int get indexRegisterNumber;
+  int get maxArg;
+}
+
+///
+/// A description suitable for most of the args on the 16C
+///
+@immutable
+class ArgDescription16C implements ArgDescription {
+  @override
+  final int maxArg;
+
+  const ArgDescription16C({required this.maxArg});
+
+  @override
+  int get indirectIndexNumber => 32;
+  @override
+  int get indexRegisterNumber => 33;  // It's to the right on the keyboard
+}
+
+@immutable
+class ArgDescriptionGto16C implements ArgDescription {
+  const ArgDescriptionGto16C();
+
+  @override
+  int get maxArg => 17;
+  @override
+  int get indirectIndexNumber => 16;
+  @override
+  int get indexRegisterNumber => 17;  // It's to the right on the keyboard
+}
+
+@immutable
+class ArgDescription15C implements ArgDescription {
+  @override
+  final int maxArg;
+
+  const ArgDescription15C({required this.maxArg});
+  //// @@ TODO - these values are certainly wrong.
+
+  @override
+  int get indirectIndexNumber => 32;
+  @override
+  int get indexRegisterNumber => 33;  // It's to the right on the keyboard
+}
+
+@immutable
+class ArgDescriptionGto15C implements ArgDescription {
+  const ArgDescriptionGto15C();
+  //// @@ TODO - these values are certainly wrong.
+
+  @override
+  int get maxArg => 17;
+  @override
+  int get indirectIndexNumber => 16;
+  @override
+  int get indexRegisterNumber => 17;  // It's to the right on the keyboard
 }
 
 ///
@@ -777,12 +864,10 @@ abstract class ProgramInstruction<OT extends ProgramOperation> {
   bool get _hasI => op.maxArg > 10;
 
   /// (i)
-  bool get argIsParenI =>
-      _hasI && op.maxArg - argValue == 33 - Registers.indirectIndex;
+  bool get argIsParenI => _hasI && argValue == op.arg?.desc.indirectIndexNumber;
 
   /// I
-  bool get argIsI =>
-      _hasI && op.maxArg - argValue == 33 - Registers.indexRegister;
+  bool get argIsI => _hasI && argValue == op.arg?.desc.indexRegisterNumber;
 
   @override
   String toString() => 'ProgramInstruction($programListing)';

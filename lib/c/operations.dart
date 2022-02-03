@@ -99,15 +99,19 @@ class Operations {
       name: '/');
 
   static final NormalArgOperation gsb = NormalArgOperation(
-      arg: GosubOperationArg.both(17, // 0-f, I, (i)
+      arg: GosubOperationArg.both(
+          desc: const ArgDescriptionGto16C(),
           // calc is only used when running a program - see
           // GosubArgInputState.
-          calc: (Model m, int label) => m.memory.program.gosub(label)),
+          calc: (Model m, int label) =>
+              m.memory.program.gosub(label, const ArgDescriptionGto16C())),
       name: 'GSB');
 
   static final NormalArgOperation gto = NormalArgOperation(
-      arg: OperationArg.both(17,
-          calc: (Model m, int label) => m.memory.program.goto(label)),
+      arg: OperationArg.both(
+          desc: const ArgDescriptionGto16C(),
+          calc: (Model m, int label) =>
+              m.memory.program.goto(label, const ArgDescriptionGto16C())),
       name: 'GTO');
 
   static final NormalOperation hex = NormalOperation(
@@ -192,14 +196,18 @@ class Operations {
       pressed: (LimitedState c) => c.handleShift(ShiftKey.g), name: 'g');
 
   static final NormalArgOperation sto = NormalArgOperation(
-      arg: OperationArg.both(33, // 0-f, .0-.f. I, (i)
-          calc: (Model m, int arg) => m.memory.registers[arg] = m.x),
+      arg: OperationArg.both(
+          desc: const ArgDescription16C(maxArg: 33),
+          calc: (Model m, int arg) =>
+              m.memory.registers.setValue(arg, sto.arg, m.x)),
       name: 'STO');
 
   static final NormalArgOperation rcl = NormalArgOperation(
-      arg: OperationArg.both(33,
+      arg: OperationArg.both(
+          desc: const ArgDescription16C(maxArg: 33),
           pressed: (ActiveState s) => s.liftStackIfEnabled(),
-          calc: (Model m, int arg) => m.x = m.memory.registers[arg]),
+          calc: (Model m, int arg) =>
+              m.x = m.memory.registers.getValue(arg, rcl.arg)),
       name: 'RCL');
 
   static final n0 = NumberEntry('0', 0);
@@ -281,16 +289,16 @@ class Operations {
   static final NormalOperation xSwapParenI = NormalOperation(
       calc: (Model m) {
         Value tmp = m.x;
-        m.resultX = m.memory.registers[Registers.indirectIndex];
-        m.memory.registers[Registers.indirectIndex] = tmp;
+        m.resultX = m.memory.registers.indirectIndex;
+        m.memory.registers.indirectIndex = tmp;
       },
       name: 'x<=>(i)');
 
   static final NormalOperation xSwapI = NormalOperation(
       calc: (Model m) {
         Value tmp = m.x;
-        m.resultX = m.memory.registers[Registers.indexRegister];
-        m.memory.registers[Registers.indexRegister] = tmp;
+        m.resultX = m.memory.registers.index;
+        m.memory.registers.index = tmp;
       },
       name: 'x<=>I');
 
@@ -351,7 +359,7 @@ class Operations {
   static final NormalOperation parenI = NormalOperation(
       pressed: (ActiveState s) => s.liftStackIfEnabled(),
       calc: (Model m) {
-        m.x = m.memory.registers[Registers.indirectIndex];
+        m.x = m.memory.registers.indirectIndex;
         m.display.displayX();
       },
       name: '(i)');
@@ -362,7 +370,7 @@ class Operations {
   static final NormalOperation I = NormalOperation(
       pressed: (ActiveState s) => s.liftStackIfEnabled(),
       calc: (Model m) {
-        m.x = m.memory.registers[Registers.indexRegister];
+        m.x = m.memory.registers.index;
         m.display.displayX();
       },
       name: 'I');
@@ -380,7 +388,8 @@ class Operations {
       name: 'CLEAR PREFIX');
 
   static final NormalArgOperation window = NormalArgOperation(
-      arg: OperationArg.intOnly(7,
+      arg: OperationArg.intOnly(
+          desc: const ArgDescription16C(maxArg: 7),
           intCalc: (Model m, int arg) => m.display.window = arg * 8),
       stackLift: StackLift.neutral,
       name: 'WINDOW');
@@ -416,10 +425,12 @@ class Operations {
   /// The 16C's float key
   static final NormalArgOperation floatKey = NormalArgOperation(
       stackLift: StackLift.neutral, // But see also FloatKeyArg.onArgComplete()
-      arg: FloatKeyArg(10, calc: (Model m, int arg) {
-        m.floatOverflow = false;
-        m.displayMode = DisplayMode.float(arg);
-      }),
+      arg: FloatKeyArg(
+          desc: const ArgDescription16C(maxArg: 10),
+          calc: (Model m, int arg) {
+            m.floatOverflow = false;
+            m.displayMode = DisplayMode.float(arg);
+          }),
       name: 'FLOAT');
 
   static final LimitedOperation mem = LimitedOperation(
@@ -506,7 +517,7 @@ class Operations {
         m.resultXF = m.xF.abs();
       },
       complexCalc: (Model m) {
-        m.resultXF = m.xC.r;    // Sets complex part to zero
+        m.resultXF = m.xC.r; // Sets complex part to zero
       },
       intCalc: (Model m) => m.resultXI = m.xI.abs(),
       name: 'ABS');
@@ -521,7 +532,9 @@ class Operations {
       calc: (Model m) => m.memory.program.popReturnStack(), name: 'RTN');
 
   static final NormalArgOperation lbl = NormalArgOperation(
-      arg: OperationArg.both(15, calc: (_, __) {}), name: 'LBL');
+      arg: OperationArg.both(
+          desc: const ArgDescription16C(maxArg: 15), calc: (_, __) {}),
+      name: 'LBL');
 
   static final BranchingOperation dsz = BranchingOperation(
       name: 'DSZ',
@@ -572,19 +585,25 @@ class Operations {
       },
       name: '1/x');
 
+  static final _flagArgDesc = ArgDescription16C(maxArg: numberOfFlags-1);
+
   static final NormalArgOperation sf = NormalArgOperation(
-      arg: OperationArg.both(numberOfFlags - 1, calc: (Model m, int arg) {
-        m.setFlag(arg, true);
-      }),
+      arg: OperationArg.both(
+          desc: _flagArgDesc,
+          calc: (Model m, int arg) {
+            m.setFlag(arg, true);
+          }),
       name: 'SF');
 
   static final NormalArgOperation cf = NormalArgOperation(
-      arg: OperationArg.both(numberOfFlags - 1,
+      arg: OperationArg.both(
+          desc: _flagArgDesc,
           calc: (Model m, int arg) => m.setFlag(arg, false)),
       name: 'CF');
 
   static final BranchingArgOperation fQuestion = BranchingArgOperation(
-      arg: OperationArg.both(numberOfFlags - 1,
+      arg: OperationArg.both(
+          desc: _flagArgDesc,
           calc: (Model m, int arg) => m.program.doNextIf(m.getFlag(arg))),
       name: 'F?');
 
@@ -689,9 +708,10 @@ class Operations {
   static final letterLabelE = LetterLabel('E', 14);
 
   static final NormalArgOperation lbl15 = NormalArgOperation(
-      arg: OperationArg.both(25, calc: (_, __) {}), name: 'LBL');
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 25), calc: (_, __) {}),
+      name: 'LBL');
   // @@@@ TODO
-
 
   ///
   /// The HP15'c I operation, for entry of imaginary numbers.
@@ -837,24 +857,27 @@ class Operations {
       name: 'MATRIX');
   static final NormalArgOperation fix = NormalArgOperation(
       stackLift: StackLift.neutral,
-      arg: OperationArg.both(9, calc:
-          (Model m, int digits) {
-        m.displayMode = DisplayMode.fix(digits, m.isComplexMode);
-      }),
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 9),
+          calc: (Model m, int digits) {
+            m.displayMode = DisplayMode.fix(digits, m.isComplexMode);
+          }),
       name: 'FIX');
   static final NormalArgOperation sci = NormalArgOperation(
       stackLift: StackLift.neutral,
-      arg: OperationArg.both(9, calc:
-          (Model m, int digits) {
-        m.displayMode = DisplayMode.sci(min(digits, 6), m.isComplexMode);
-      }),
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 9),
+          calc: (Model m, int digits) {
+            m.displayMode = DisplayMode.sci(min(digits, 6), m.isComplexMode);
+          }),
       name: 'SCI');
   static final NormalArgOperation eng = NormalArgOperation(
       stackLift: StackLift.neutral,
-      arg: OperationArg.both(9, calc:
-      (Model m, int digits) {
-        m.displayMode = DisplayMode.eng(min(6, digits), m.isComplexMode);
-      }),
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 9),
+          calc: (Model m, int digits) {
+            m.displayMode = DisplayMode.eng(min(6, digits), m.isComplexMode);
+          }),
       name: 'SCI');
   static final NormalOperation deg = NormalOperation.floatOnly(
       floatCalc: (Model m) {
@@ -1073,14 +1096,18 @@ class Operations {
       name: 'Cy,x');
 
   static final NormalArgOperation sto15 = NormalArgOperation(
-      arg: OperationArg.both(21, // 0-9, .0-.9. I, (i)
-          calc: (Model m, int arg) => m.memory.registers[arg] = m.x),
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 21),
+          calc: (Model m, int arg) =>
+              m.memory.registers.setValue(arg, sto15.arg, m.x)),
       name: 'STO');
 
   static final NormalArgOperation rcl15 = NormalArgOperation(
-      arg: OperationArg.both(21,
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 21),
           pressed: (ActiveState s) => s.liftStackIfEnabled(),
-          calc: (Model m, int arg) => m.x = m.memory.registers[arg]),
+          calc: (Model m, int arg) =>
+              m.x = m.memory.registers.getValue(arg, rcl15.arg)),
       name: 'RCL');
 
   // ================================

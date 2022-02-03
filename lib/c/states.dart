@@ -404,13 +404,15 @@ class Resting extends ActiveState {
     // case here.
     program.resetReturnStack();
     try {
-      program.gosub(operation.numericValue);
+      program.gosub(operation.numericValue, const ArgDescriptionGto15C());
     } on CalculatorError catch (e) {
       controller.showCalculatorError(e);
       return;
     }
     program.displayCurrent();
-    final arg = GosubOperationArg.both(26, calc: (_, __) {});
+    final arg = GosubOperationArg.both(
+        desc: const ArgDescriptionGto15C(),
+        calc: (_, __) {});
     arg.op = Operations.gsb;
     final s = GosubArgInputState(controller, arg, this);
     s.isDone = true;
@@ -730,15 +732,15 @@ class ArgInputState extends ControllerState {
 
   ArgInputState(Controller con, this.arg, this.lastState) : super(con);
 
-  bool get decimalAllowed => arg.maxArg > 17;
+  bool get decimalAllowed => arg.desc.maxArg > 17;
   // GTO and GSB take index registers, but not .
 
   @override
   void buttonDown(Operation key) {
     if (Operations.argIops.contains(key)) {
-      _gotNumber(Registers.indexRegister);
+      _gotNumber(arg.desc.indexRegisterNumber);
     } else if (Operations.argParenIops.contains(key)) {
-      _gotNumber(Registers.indirectIndex);
+      _gotNumber(arg.desc.indirectIndexNumber);
     } else if (key == Operations.dot) {
       if (_decimalPressed || !decimalAllowed) {
         changeState(lastState);
@@ -760,12 +762,8 @@ class ArgInputState extends ControllerState {
   void _gotNumber(int argV) {
     if (_decimalPressed) {
       argV += 16;
-    } else if (!decimalAllowed &&
-        (argV == Registers.indirectIndex || argV == Registers.indexRegister)) {
-      // GTO and GSB for I and (i)
-      argV -= 16;
     }
-    if (argV > arg.maxArg) {
+    if (argV > arg.desc.maxArg) {
       changeState(lastState);
       // But we eat the number key.  At least, that's how my 15C works
       // on g-CF-9
@@ -776,7 +774,7 @@ class ArgInputState extends ControllerState {
 
   void done(int argValue) {
     changeState(lastState);
-    if (argValue <= arg.maxArg) {
+    if (argValue <= arg.desc.maxArg) {
       arg.onArgComplete(lastState, argValue);
     }
   }
@@ -835,7 +833,7 @@ class GosubArgInputState extends ArgInputState {
   void handleGosubEntryDone(int label) {
     // We know that we're coming from a keyboard-entered GSB, since arguments
     // are being input.
-    if (label <= arg.maxArg) {
+    if (label <= arg.desc.maxArg) {
       final p = arg.pressed;
       if (p != null) {
         p(lastState as ActiveState);
@@ -844,7 +842,7 @@ class GosubArgInputState extends ArgInputState {
       final program = model.memory.program;
       program.resetReturnStack(); // Since we're starting new program
       try {
-        program.gosub(label);
+        program.gosub(label, arg.desc);
       } on CalculatorError catch (e) {
         changeState(lastState);
         controller.showCalculatorError(e);

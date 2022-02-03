@@ -409,9 +409,9 @@ class Controller16 extends RealController {
   /// Map from operation that is a short cut to what it's a shortcut for, with
   /// the key as an argument
   static final Map<NormalOperation, ProgramInstruction> _shortcuts = {
-    Operations.I: ProgramInstruction16(Operations.rcl, Registers.indexRegister),
+    Operations.I: ProgramInstruction16(Operations.rcl, Operations.rcl.arg.desc.indexRegisterNumber),
     Operations.parenI:
-        ProgramInstruction16(Operations.rcl, Registers.indirectIndex)
+        ProgramInstruction16(Operations.rcl, Operations.rcl.arg.desc.indirectIndexNumber)
   };
 
   /// The numbers.  This must be in order.
