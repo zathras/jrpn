@@ -58,36 +58,36 @@ void enter(Controller c, Operation key) {
 
 Future<void> noScrollReset() async {
   // p. 100
-  final ops = [
+  final ops = <Operation>[
     Operations.minus,
     Operations.plus,
     Operations.mult,
     Operations.div,
-    Operations.rmd,
-    Operations.dblx,
-    Operations.dblDiv,
-    Operations.dblr,
-    Operations.xor,
-    Operations.not,
-    Operations.or,
-    Operations.and,
+    Operations16.rmd,
+    Operations16.dblx,
+    Operations16.dblDiv,
+    Operations16.dblr,
+    Operations16.xor,
+    Operations16.not,
+    Operations16.or,
+    Operations16.and,
     Operations.abs,
     Operations.sqrtOp,
-    Operations.wSize,
-    Operations.lj,
-    Operations.asr,
-    Operations.rl,
-    Operations.rr,
-    Operations.rlcn,
-    Operations.rrcn,
-    Operations.maskl,
-    Operations.maskr,
-    Operations.sb,
-    Operations.cb,
-    Operations.bQuestion,
-    Operations.rlcn,
-    Operations.rrn,
-    Operations.poundB,
+    Operations16.wSize,
+    Operations16.lj,
+    Operations16.asr,
+    Operations16.rl,
+    Operations16.rr,
+    Operations16.rlcn,
+    Operations16.rrcn,
+    Operations16.maskl,
+    Operations16.maskr,
+    Operations16.sb,
+    Operations16.cb,
+    Operations16.bQuestion,
+    Operations16.rlcn,
+    Operations16.rrn,
+    Operations16.poundB,
     Operations.chs
   ];
   final fops = [
@@ -119,7 +119,7 @@ Future<void> noScrollReset() async {
     final m = Model16();
     final c = Controller16(m);
 
-    enter(c, Operations.floatKey);
+    enter(c, Operations16.floatKey);
     enter(c, Operations.n2);
     enter(c, Operations.n3);
     enter(c, Operations.enter);
@@ -136,36 +136,36 @@ Future<void> noScrollReset() async {
 
 Future<void> lastX() async {
   // p. 100
-  final ops = [
+  final ops = <Operation>[
     Operations.minus,
     Operations.plus,
     Operations.mult,
     Operations.div,
-    Operations.rmd,
-    Operations.dblx,
-    Operations.dblDiv,
-    Operations.dblr,
-    Operations.xor,
-    Operations.not,
-    Operations.or,
-    Operations.and,
+    Operations16.rmd,
+    Operations16.dblx,
+    Operations16.dblDiv,
+    Operations16.dblr,
+    Operations16.xor,
+    Operations16.not,
+    Operations16.or,
+    Operations16.and,
     Operations.abs,
     Operations.sqrtOp,
-    Operations.wSize,
-    Operations.lj,
-    Operations.asr,
-    Operations.rl,
-    Operations.rr,
-    Operations.rlcn,
-    Operations.rrcn,
-    Operations.maskl,
-    Operations.maskr,
-    Operations.sb,
-    Operations.cb,
-    Operations.bQuestion,
-    Operations.rlcn,
-    Operations.rrn,
-    Operations.poundB,
+    Operations16.wSize,
+    Operations16.lj,
+    Operations16.asr,
+    Operations16.rl,
+    Operations16.rr,
+    Operations16.rlcn,
+    Operations16.rrcn,
+    Operations16.maskl,
+    Operations16.maskr,
+    Operations16.sb,
+    Operations16.cb,
+    Operations16.bQuestion,
+    Operations16.rlcn,
+    Operations16.rrn,
+    Operations16.poundB,
     Operations.chs
   ];
   final fops = [
@@ -213,7 +213,7 @@ Future<void> lastX() async {
         enter(c, Operations.pr);
       }
 
-      enter(c, Operations.floatKey);
+      enter(c, Operations16.floatKey);
       enter(c, Operations.n2);
       enter(c, Operations.n3);
       enter(c, Operations.enter);
@@ -246,15 +246,15 @@ Future<void> programWithError() async {
   var out = StreamIterator<ProgramEvent>(tc.output.stream);
 
   enter(c, Operations.pr);
-  enter(c, Operations.lbl);
-  enter(c, Operations.letterA);
-  enter(c, Operations.floatKey);
+  enter(c, Operations16.lbl);
+  enter(c, Operations16.letterA);
+  enter(c, Operations16.floatKey);
   enter(c, Operations.n2);
   enter(c, Operations.n0);
   enter(c, Operations.reciprocal);
   enter(c, Operations.pr);
   enter(c, Operations.gsb);
-  enter(c, Operations.letterA);
+  enter(c, Operations16.letterA);
   await out.moveNext();
   expect(out.current.errorNumber, 0);
   expect(m.display.current, '   error 0  ');
@@ -262,23 +262,23 @@ Future<void> programWithError() async {
   enter(c, Operations.clearPrefix); // Clear error display
   enter(c, Operations.pr); // Program mode
   enter(c, Operations.clearPrgm);
-  enter(c, Operations.lbl);
-  enter(c, Operations.letterA);
+  enter(c, Operations16.lbl);
+  enter(c, Operations16.letterA);
   enter(c, Operations.n1);
   enter(c, Operations.plus);
   enter(c, Operations.gsb);
-  enter(c, Operations.letterA);
+  enter(c, Operations16.letterA);
   enter(c, Operations.pr);
   enter(c, Operations.n0);
   enter(c, Operations.enter);
   enter(c, Operations.enter);
   enter(c, Operations.enter);
   enter(c, Operations.gsb);
-  enter(c, Operations.letterA);
+  enter(c, Operations16.letterA);
   expect(await out.moveNext(), true);
   expect(out.current.errorNumber, 5);
   expect(m.display.current, '   error 5  ');
-  enter(c, Operations.letterA);
+  enter(c, Operations16.letterA);
   expect(m.display.current.trim(), '5.00');
 }
 
@@ -287,39 +287,39 @@ Future<void> testRegistersAndWordSize() async {
   final m = Model16();
   final c = Controller16(m);
 
-  enter(c, Operations.hex);
+  enter(c, Operations16.hex);
   enter(c, Operations.n1);
   enter(c, Operations.n0);
-  enter(c, Operations.wSize);
+  enter(c, Operations16.wSize);
   enter(c, Operations.clearReg);
   enter(c, Operations.n1);
   enter(c, Operations.n2);
   enter(c, Operations.n3);
   enter(c, Operations.n4);
-  enter(c, Operations.sto);
+  enter(c, Operations16.sto);
   enter(c, Operations.n0);
   enter(c, Operations.n5);
   enter(c, Operations.n6);
   enter(c, Operations.n7);
   enter(c, Operations.n8);
-  enter(c, Operations.sto);
+  enter(c, Operations16.sto);
   enter(c, Operations.n1);
   enter(c, Operations.n2);
   enter(c, Operations.n0);
-  enter(c, Operations.wSize);
-  enter(c, Operations.rcl);
+  enter(c, Operations16.wSize);
+  enter(c, Operations16.rcl);
   enter(c, Operations.n0);
   expect(m.xI, BigInt.parse('56781234', radix: 16));
-  enter(c, Operations.rcl);
+  enter(c, Operations16.rcl);
   enter(c, Operations.n1);
   expect(m.xI, BigInt.parse('0', radix: 16));
   enter(c, Operations.n1);
   enter(c, Operations.n0);
-  enter(c, Operations.wSize);
-  enter(c, Operations.rcl);
+  enter(c, Operations16.wSize);
+  enter(c, Operations16.rcl);
   enter(c, Operations.n0);
   expect(m.xI, BigInt.parse('1234', radix: 16));
-  enter(c, Operations.rcl);
+  enter(c, Operations16.rcl);
   enter(c, Operations.n1);
   expect(m.xI, BigInt.parse('5678', radix: 16));
 
@@ -328,22 +328,22 @@ Future<void> testRegistersAndWordSize() async {
   enter(c, Operations.enter);
   enter(c, Operations.enter);
   enter(c, Operations.enter);
-  enter(c, Operations.dec);
+  enter(c, Operations16.dec);
   enter(c, Operations.n0);
-  enter(c, Operations.wSize);
+  enter(c, Operations16.wSize);
   enter(c, Operations.n3);
   enter(c, Operations.n2);
   enter(c, Operations.n6);
-  enter(c, Operations.sto);
-  enter(c, Operations.I);
+  enter(c, Operations16.sto);
+  enter(c, Operations16.I);
   enter(c, Operations.n4);
-  enter(c, Operations.wSize);
+  enter(c, Operations16.wSize);
   enter(c, Operations.n3);
-  enter(c, Operations.sto);
-  enter(c, Operations.parenI);
+  enter(c, Operations16.sto);
+  enter(c, Operations16.parenI);
   enter(c, Operations.bsp);
-  enter(c, Operations.rcl);
-  enter(c, Operations.parenI);
+  enter(c, Operations16.rcl);
+  enter(c, Operations16.parenI);
   expect(m.xI, BigInt.parse('3'));
   expect(m.yI, BigInt.parse('6')); // 326 & 15
   expect(m.z, Value.zero); // 326 & 15
@@ -362,18 +362,18 @@ Future<void> testStackLift() async {
     }
     enter(c, Operations.n4);
     enter(c, Operations.n2);
-    enter(c, Operations.floatKey);
+    enter(c, Operations16.floatKey);
     enter(c, Operations.n0);
     enter(c, Operations.eex);
     enter(c, Operations.n8);
-    enter(c, Operations.sto);
+    enter(c, Operations16.sto);
     enter(c, Operations.n0);
     if (program) {
       enter(c, Operations.clx);
     } else {
       enter(c, Operations.bsp);
     }
-    enter(c, Operations.rcl);
+    enter(c, Operations16.rcl);
     enter(c, Operations.n0);
     enter(c, Operations.n2);
     enter(c, Operations.mult);

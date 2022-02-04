@@ -737,9 +737,9 @@ class ArgInputState extends ControllerState {
 
   @override
   void buttonDown(Operation key) {
-    if (Operations.argIops.contains(key)) {
+    if (controller.argIops.contains(key)) {
       _gotNumber(arg.desc.indexRegisterNumber);
-    } else if (Operations.argParenIops.contains(key)) {
+    } else if (controller.argParenIops.contains(key)) {
       _gotNumber(arg.desc.indirectIndexNumber);
     } else if (key == Operations.dot) {
       if (_decimalPressed || !decimalAllowed) {

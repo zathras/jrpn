@@ -36,13 +36,11 @@ this program; if not, see https://www.gnu.org/licenses/ .
 library controller.operations;
 
 import 'dart:math';
-import 'dart:math' as dart;
 
 import '../m/complex.dart';
 import '../m/model.dart';
 import 'controller.dart';
 import 'states.dart';
-import 'package:flutter/foundation.dart';
 
 // See the library comments, above!  (Android Studio  hides them by default.)
 
@@ -56,18 +54,13 @@ import 'package:flutter/foundation.dart';
 /// of the different [Operation] types.
 ///
 class Operations {
+
   /// Initialized by model.  Harmlessley re-initialized when units tests
   /// are run.
   static late int numberOfFlags;
 
   // Unshifted keys:
 
-  static final letterA = NumberEntry('A', 10);
-  static final letterB = NumberEntry('B', 11);
-  static final letterC = NumberEntry('C', 12);
-  static final letterD = NumberEntry('D', 13);
-  static final letterE = NumberEntry('E', 14);
-  static final letterF = NumberEntry('F', 15);
   static final n7 = NumberEntry('7', 7);
   static final n8 = NumberEntry('8', 8);
   static final n9 = NumberEntry('9', 9);
@@ -113,26 +106,6 @@ class Operations {
           calc: (Model m, int label) =>
               m.memory.program.goto(label, const ArgDescriptionGto16C())),
       name: 'GTO');
-
-  static final NormalOperation hex = NormalOperation(
-      calc: (Model m) => m.displayMode = DisplayMode.hex,
-      stackLift: StackLift.neutral,
-      name: 'HEX');
-
-  static final NormalOperation dec = NormalOperation(
-      calc: (Model m) => m.displayMode = DisplayMode.decimal,
-      stackLift: StackLift.neutral,
-      name: 'DEC');
-
-  static final NormalOperation oct = NormalOperation(
-      calc: (Model m) => m.displayMode = DisplayMode.oct,
-      stackLift: StackLift.neutral,
-      name: 'OCT');
-
-  static final NormalOperation bin = NormalOperation(
-      calc: (Model m) => m.displayMode = DisplayMode.bin,
-      stackLift: StackLift.neutral,
-      name: 'BIN');
 
   static final n4 = NumberEntry('4', 4);
   static final n5 = NumberEntry('5', 5);
@@ -195,21 +168,6 @@ class Operations {
   static final LimitedOperation gShift = LimitedOperation(
       pressed: (LimitedState c) => c.handleShift(ShiftKey.g), name: 'g');
 
-  static final NormalArgOperation sto = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: const ArgDescription16C(maxArg: 33),
-          calc: (Model m, int arg) =>
-              m.memory.registers.setValue(arg, sto.arg, m.x)),
-      name: 'STO');
-
-  static final NormalArgOperation rcl = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: const ArgDescription16C(maxArg: 33),
-          pressed: (ActiveState s) => s.liftStackIfEnabled(),
-          calc: (Model m, int arg) =>
-              m.x = m.memory.registers.getValue(arg, rcl.arg)),
-      name: 'RCL');
-
   static final n0 = NumberEntry('0', 0);
 
   static final LimitedOperation dot = LimitedOperation(
@@ -225,66 +183,6 @@ class Operations {
       },
       intCalc: (Model m) => m.integerSignMode.intAdd(m),
       name: '+');
-
-  // f (gold) shifted:
-
-  static final NormalOperation sl = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        m.cFlag = m.x.internal & m.signMask != BigInt.zero;
-        m.resultX = Value.fromInternal((m.x.internal << 1) & m.wordMask);
-      },
-      name: 'SL');
-
-  static final NormalOperation sr = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        m.cFlag = m.x.internal & BigInt.one != BigInt.zero;
-        m.resultX = Value.fromInternal(m.x.internal >> 1);
-      },
-      name: 'SR');
-
-  static final NormalOperation rl = NormalOperation.intOnly(
-      intCalc: (Model m) => m.resultX = _rotateLeft(BigInt.one, m.x, m),
-      name: 'RL');
-
-  static final NormalOperation rr = NormalOperation.intOnly(
-      intCalc: (Model m) => m.resultX = _rotateRight(BigInt.one, m.x, m),
-      name: 'RR');
-
-  static final NormalOperation rln = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = _rotateLeft(m.xI.abs(), m.y, m),
-      name: 'RLn');
-
-  static final NormalOperation rrn = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = _rotateRight(m.xI.abs(), m.y, m),
-      name: 'RRn');
-
-  static final NormalOperation maskl = NormalOperation.intOnly(
-      intCalc: (Model m) => m.resultX = Value.fromInternal(
-          m.wordMask ^ _maskr(m.wordSize - _numberOfBits(m.xI.abs(), m))),
-      name: 'MASKL');
-
-  static final NormalOperation maskr = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.resultX = Value.fromInternal(_maskr(_numberOfBits(m.xI.abs(), m))),
-      name: 'MASKR');
-
-  static final NormalOperation rmd = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        try {
-          BigInt xi = m.xI;
-          BigInt yi = m.yI;
-          m.popSetResultXI = yi.remainder(xi);
-          // ignore: avoid_catches_without_on_clauses
-        } catch (e) {
-          throw CalculatorError(0);
-        }
-      },
-      name: 'RMD');
-
-  static final NormalOperation xor = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.popSetResultX = Value.fromInternal(m.x.internal ^ m.y.internal),
-      name: 'XOR');
 
   static final NormalOperation xSwapParenI = NormalOperation(
       calc: (Model m) {
@@ -302,79 +200,6 @@ class Operations {
       },
       name: 'x<=>I');
 
-  static final NormalOperation showHex = NormalOperation(
-      calc: null,
-      pressed: (ActiveState cs) => cs.handleShow(DisplayMode.hex),
-      stackLift: StackLift.neutral,
-      name: 'SHOW HEX');
-
-  static final NormalOperation showDec = NormalOperation(
-      calc: null,
-      pressed: (ActiveState cs) => cs.handleShow(DisplayMode.decimal),
-      stackLift: StackLift.neutral,
-      name: 'SHOW DEC');
-
-  static final NormalOperation showOct = NormalOperation(
-      calc: null,
-      pressed: (ActiveState cs) => cs.handleShow(DisplayMode.oct),
-      stackLift: StackLift.neutral,
-      name: 'SHOW OCT');
-
-  static final NormalOperation showBin = NormalOperation(
-      calc: null,
-      pressed: (ActiveState cs) => cs.handleShow(DisplayMode.bin),
-      stackLift: StackLift.neutral,
-      name: 'SHOW BIN');
-
-  static final NormalOperation sb = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = Value.fromInternal(
-          m.y.internal | (BigInt.one << _bitNumber(m.xI.abs(), m))),
-      name: 'SB');
-
-  static final NormalOperation cb = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = Value.fromInternal(m.y.internal &
-          ((BigInt.one << _bitNumber(m.xI.abs(), m)) ^ m.wordMask)),
-      name: 'CB');
-
-  static final NormalOperation bQuestion = NormalOperation(
-      name: 'B?',
-      calc: (Model m) {
-        m.lastX = m.x;
-        bool r = (m.y.internal & (BigInt.one << _bitNumber(m.xI.abs(), m))) !=
-            BigInt.zero;
-        if (m.isRunningProgram) {
-          m.program.doNextIf(r);
-        }
-        m.popStack(); // Even when not running a program
-      });
-
-  static final NormalOperation and = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.popSetResultX = Value.fromInternal(m.x.internal & m.y.internal),
-      name: 'AND');
-
-  ///
-  /// The HP 16's (i) operation, related to the index register
-  ///
-  static final NormalOperation parenI = NormalOperation(
-      pressed: (ActiveState s) => s.liftStackIfEnabled(),
-      calc: (Model m) {
-        m.x = m.memory.registers.indirectIndex;
-        m.display.displayX();
-      },
-      name: '(i)');
-
-  ///
-  /// The HP 16's I operation, related to the index register
-  ///
-  static final NormalOperation I = NormalOperation(
-      pressed: (ActiveState s) => s.liftStackIfEnabled(),
-      calc: (Model m) {
-        m.x = m.memory.registers.index;
-        m.display.displayX();
-      },
-      name: 'I');
-
   static final LimitedOperation clearPrgm = LimitedOperation(
       pressed: (LimitedState s) => s.handleClearProgram(), name: 'CLEAR PRGM');
 
@@ -387,52 +212,6 @@ class Operations {
       pressed: (LimitedState cs) => cs.handleClearPrefix(),
       name: 'CLEAR PREFIX');
 
-  static final NormalArgOperation window = NormalArgOperation(
-      arg: OperationArg.intOnly(
-          desc: const ArgDescription16C(maxArg: 7),
-          intCalc: (Model m, int arg) => m.display.window = arg * 8),
-      stackLift: StackLift.neutral,
-      name: 'WINDOW');
-
-  static final NormalOperation onesCompl = NormalOperation.intOnly(
-      intCalc: (Model m) => m.integerSignMode = SignMode.onesComplement,
-      stackLift: StackLift.neutral,
-      name: "1's");
-
-  static final NormalOperation twosCompl = NormalOperation.intOnly(
-      intCalc: (Model m) => m.integerSignMode = SignMode.twosComplement,
-      stackLift: StackLift.neutral,
-      name: "2's");
-
-  static final NormalOperation unsign = NormalOperation.intOnly(
-      intCalc: (Model m) => m.integerSignMode = SignMode.unsigned,
-      stackLift: StackLift.neutral,
-      name: 'UNSGN');
-
-  static final NormalOperation not = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.resultX = Value.fromInternal(m.x.internal ^ m.wordMask),
-      name: 'NOT');
-
-  static final NormalOperation wSize = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        m.lastX = m.x;
-        m.wordSize = m.xI.toInt().abs();
-        m.popStack();
-      },
-      name: 'WSIZE');
-
-  /// The 16C's float key
-  static final NormalArgOperation floatKey = NormalArgOperation(
-      stackLift: StackLift.neutral, // But see also FloatKeyArg.onArgComplete()
-      arg: FloatKeyArg(
-          desc: const ArgDescription16C(maxArg: 10),
-          calc: (Model m, int arg) {
-            m.floatOverflow = false;
-            m.displayMode = DisplayMode.float(arg);
-          }),
-      name: 'FLOAT');
-
   static final LimitedOperation mem = LimitedOperation(
       name: 'MEM', pressed: (LimitedState s) => s.handleShowMem());
 
@@ -441,76 +220,6 @@ class Operations {
 
   static final NormalOperation eex = NormalOperation(
       pressed: (ActiveState c) => c.handleEEX(), calc: null, name: 'EEX');
-
-  static final NormalOperation or = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.popSetResultX = Value.fromInternal(m.x.internal | m.y.internal),
-      name: 'OR');
-
-  // g (blue) shifted:
-
-  static final NormalOperation lj = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        int shifts = 0;
-        m.lastX = m.x;
-        BigInt val = m.x.internal;
-        if (val != BigInt.zero) {
-          while (val & m.signMask == BigInt.zero) {
-            shifts++;
-            val <<= 1;
-          }
-        }
-        m.pushStack();
-        m.y = Value.fromInternal(val);
-        m.xI = BigInt.from(shifts);
-      },
-      name: 'LJ');
-
-  static final NormalOperation asr = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        m.lastX = m.x;
-        BigInt x = m.x.internal;
-        BigInt newSignBit;
-        if (m.integerSignMode == SignMode.unsigned) {
-          newSignBit = BigInt.zero;
-        } else {
-          newSignBit = x & m.signMask;
-        }
-        m.cFlag = x & BigInt.one != BigInt.zero;
-        m.resultX = Value.fromInternal((x >> 1) | newSignBit);
-      },
-      name: 'ASR');
-
-  static final NormalOperation rlc = NormalOperation.intOnly(
-      intCalc: (Model m) => m.resultX = _rotateLeftCarry(BigInt.one, m.x, m),
-      name: 'RLC');
-
-  static final NormalOperation rrc = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.resultX = _rotateLeftCarry(BigInt.from(m.wordSize), m.x, m),
-      name: 'RRC');
-
-  static final NormalOperation rlcn = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = _rotateLeftCarry(m.xI, m.y, m),
-      name: 'RLCn');
-
-  static final NormalOperation rrcn = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = _rotateRightCarry(m.xI, m.y, m),
-      name: 'RRCn');
-
-  static final NormalOperation poundB = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        int count = 0;
-        BigInt v = m.x.internal;
-        while (v > BigInt.zero) {
-          if ((v & BigInt.one) != BigInt.zero) {
-            count++;
-          }
-          v = v >> 1;
-        }
-        m.resultX = Value.fromInternal(BigInt.from(count));
-      },
-      name: '#B');
 
   static final NormalOperation abs = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
@@ -522,33 +231,8 @@ class Operations {
       intCalc: (Model m) => m.resultXI = m.xI.abs(),
       name: 'ABS');
 
-  static final NormalOperation dblr =
-      NormalOperation.intOnly(intCalc: _doubleIntRemainder, name: 'DBLR');
-
-  static final NormalOperation dblDiv =
-      NormalOperation.intOnly(intCalc: _doubleIntDivide, name: 'DBL/');
-
   static final NormalOperation rtn = NormalOperation(
       calc: (Model m) => m.memory.program.popReturnStack(), name: 'RTN');
-
-  static final NormalArgOperation lbl = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: const ArgDescription16C(maxArg: 15), calc: (_, __) {}),
-      name: 'LBL');
-
-  static final BranchingOperation dsz = BranchingOperation(
-      name: 'DSZ',
-      calc: (Model m) {
-        Value v = m.memory.registers.incrementI(-1);
-        m.program.doNextIf(!m.isZero(v));
-      });
-
-  static final BranchingOperation isz = BranchingOperation(
-      name: 'ISZ',
-      calc: (Model m) {
-        Value v = m.memory.registers.incrementI(1);
-        m.program.doNextIf(!m.isZero(v));
-      });
 
   static final NormalOperation sqrtOp = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
@@ -607,9 +291,6 @@ class Operations {
           calc: (Model m, int arg) => m.program.doNextIf(m.getFlag(arg))),
       name: 'F?');
 
-  static final NormalOperation dblx =
-      NormalOperation.intOnly(intCalc: _doubleIntMultiply, name: 'DBLx');
-
   static final LimitedOperation pr =
       LimitedOperation(pressed: (LimitedState s) => s.handlePR(), name: 'P/R');
 
@@ -646,26 +327,6 @@ class Operations {
       name: 'x>0',
       calc: (Model m) => m.program.doNextIf(m.compare(m.x, Value.zero) > 0));
 
-  /// Shown as blue "<" on the keyboard - it shifts the number left,
-  /// which means the window shifts right.
-  static final NormalOperation windowRight = NormalOperation.intOnly(
-      stackLift: StackLift.neutral,
-      intCalc: (Model m) {
-        if (m.display.window > 0) {
-          m.display.window = m.display.window - 1;
-        }
-      },
-      name: '<');
-
-  static final NormalOperation windowLeft = NormalOperation.intOnly(
-      stackLift: StackLift.neutral,
-      intCalc: (Model m) {
-        try {
-          m.display.window = m.display.window + 1;
-        } on CalculatorError catch (_) {}
-      },
-      name: '>');
-
   static final NormalOperation lstx = NormalOperation(
       pressed: (ActiveState s) => s.liftStackIfEnabled(),
       calc: (Model m) {
@@ -688,428 +349,6 @@ class Operations {
   static final BranchingOperation xEQ0 = BranchingOperation(
       name: 'x==0', calc: (Model m) => m.program.doNextIf(m.isZero(m.x)));
 
-  /// Abbreviated key sequences for I used as an argument - cf. manual p. 68
-  static final Set<Operation> argIops = {Operations.sst, Operations.I};
-
-  /// Abbreviated key sequences for (i) used as an argument - cf. manual p. 68
-  static final Set<Operation> argParenIops = {Operations.rs, Operations.parenI};
-
-  // ================================
-  // Operations added for the HP-15C.
-  // ================================
-  //
-  // Note that, as a general rule, we just make the model be the union of 15C
-  // and 16C.  The extra operations just aren't accessible via the UI.
-
-  static final letterLabelA = LetterLabel('A', 10);
-  static final letterLabelB = LetterLabel('B', 11);
-  static final letterLabelC = LetterLabel('C', 12);
-  static final letterLabelD = LetterLabel('D', 13);
-  static final letterLabelE = LetterLabel('E', 14);
-
-  static final NormalArgOperation lbl15 = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 25), calc: (_, __) {}),
-      name: 'LBL');
-  // @@@@ TODO
-
-  ///
-  /// The HP15'c I operation, for entry of imaginary numbers.
-  ///
-  // ignore: non_constant_identifier_names
-  static final NormalOperation I15 = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        m.isComplexMode = true;
-        I15.complexCalc!(m);
-      },
-      complexCalc: (Model m) {
-        final im = m.x;
-        m.popStack();
-        m.xImaginary = im;
-      },
-      name: 'I');
-
-  ///
-  /// The HP 15's (i) operation, to see the imaginary part.
-  ///
-  static final NormalOperation parenI15 = LimitedOperation(
-      pressed: (LimitedState cs) => cs.handleShowImaginary(), name: '(i)');
-
-  static final sqrtOp15 = NormalOperationOrLetter(sqrtOp, letterLabelA);
-  static final NormalOperation eX15 = NormalOperationOrLetter.floatOnly(
-      letter: letterLabelB,
-      floatCalc: (Model m) {
-        double x = m.xF;
-        m.floatOverflow = false;
-        m.resultXF = pow(e, x) as double;
-      },
-      complexCalc: (Model m) {
-        final x = m.xC;
-        final eXr = exp(x.real);
-        m.resultXC =
-            Complex(eXr * dart.cos(x.imaginary), eXr * dart.sin(x.imaginary));
-      },
-      name: 'eX');
-  static final NormalOperation xSquared = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        double x = m.xF;
-        m.floatOverflow = false;
-        m.resultXF = x * x;
-      },
-      complexCalc: (Model m) {
-        final v = m.xC;
-        m.resultXC = v * v;
-      },
-      name: 'x^2');
-  static final NormalOperation lnOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        double x = m.xF;
-        if (x <= 0) {
-          throw CalculatorError(0);
-        }
-        m.floatOverflow = false;
-        m.resultXF = _checkResult(() => log(x), 0);
-      },
-      complexCalc: (Model m) {
-        final x = m.xC;
-        final r = x.r;
-        if (r == 0) {
-          throw CalculatorError(0);
-        }
-        m.resultXC = Complex(_checkResult(() => dart.log(r), 0), x.theta);
-      },
-      name: 'ln');
-  static final NormalOperation tenX15 = NormalOperationOrLetter.floatOnly(
-      letter: letterLabelC,
-      floatCalc: (Model m) {
-        double x = m.xF;
-        m.floatOverflow = false;
-        m.resultXF = pow(10, x) as double;
-      },
-      complexCalc: (Model m) {
-        final x = m.xC * const Complex(ln10, 0);
-        final eXr = exp(x.real);
-        m.resultXC =
-            Complex(eXr * dart.cos(x.imaginary), eXr * dart.sin(x.imaginary));
-      },
-      name: '10^x');
-  static final NormalOperation logOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        double x = m.xF;
-        if (x <= 0) {
-          throw CalculatorError(0);
-        }
-        m.floatOverflow = false;
-        m.resultXF = log(x) / ln10;
-      },
-      complexCalc: (Model m) {
-        final x = m.xC;
-        final r = x.r;
-        if (r == 0) {
-          throw CalculatorError(0);
-        }
-        m.resultXC = Complex(_checkResult(() => dart.log(r), 0), x.theta) /
-            const Complex(ln10, 0);
-      },
-      name: 'log');
-  static final NormalOperation yX15 = NormalOperationOrLetter.floatOnly(
-      letter: letterLabelD,
-      floatCalc: (Model m) {
-        m.floatOverflow = false;
-        m.popSetResultXF = pow(m.yF, m.xF) as double;
-      },
-      complexCalc: (Model m) {
-        // y^x = e^(x ln y)
-        final x = m.xC;
-        final y = m.yC;
-        final yR = y.r;
-        if (yR == 0) {
-          if (x == Complex.zero) {
-            throw CalculatorError(0);
-          }
-          m.popSetResultXC = Complex.zero;
-        } else {
-          final lnY = Complex(_checkResult(() => dart.log(yR), 0), y.theta);
-          final xLnY = x * lnY;
-          final resultR = _checkResult(() => exp(xLnY.real), 0);
-          m.popSetResultXC = Complex(resultR * dart.cos(xLnY.imaginary),
-              resultR * dart.sin(xLnY.imaginary));
-        }
-      },
-      name: 'yX');
-  static final NormalOperation percent = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        m.floatOverflow = false;
-        m.resultXF = m.xF * 0.01 * m.yF;
-      },
-      name: '%');
-  static final reciprocal15 = NormalOperationOrLetter(reciprocal, letterLabelE);
-  static final NormalOperation deltaPercent = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        m.floatOverflow = false;
-        m.resultXF = ((m.xF - m.yF) / m.yF) * 100.0;
-      },
-      name: 'delta%');
-  static final NormalOperation matrix = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'MATRIX');
-  static final NormalArgOperation fix = NormalArgOperation(
-      stackLift: StackLift.neutral,
-      arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 9),
-          calc: (Model m, int digits) {
-            m.displayMode = DisplayMode.fix(digits, m.isComplexMode);
-          }),
-      name: 'FIX');
-  static final NormalArgOperation sci = NormalArgOperation(
-      stackLift: StackLift.neutral,
-      arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 9),
-          calc: (Model m, int digits) {
-            m.displayMode = DisplayMode.sci(min(digits, 6), m.isComplexMode);
-          }),
-      name: 'SCI');
-  static final NormalArgOperation eng = NormalArgOperation(
-      stackLift: StackLift.neutral,
-      arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 9),
-          calc: (Model m, int digits) {
-            m.displayMode = DisplayMode.eng(min(6, digits), m.isComplexMode);
-          }),
-      name: 'SCI');
-  static final NormalOperation deg = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        m.trigMode = TrigMode.deg;
-      },
-      name: 'DEG');
-  static final NormalOperation rad = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        m.trigMode = TrigMode.rad;
-      },
-      name: 'RAD');
-  static final NormalOperation grd = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        m.trigMode = TrigMode.grad;
-      },
-      name: 'GRD');
-  static final NormalOperation solve = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'SOLVE');
-  static final NormalOperation hyp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'HYP');
-  static final NormalOperation hypInverse = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'HYP-1');
-  static final NormalOperation sin = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'SIN');
-  static final NormalOperation sinInverse = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'SIN-1');
-  static final NormalOperation cos = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'COS');
-  static final NormalOperation cosInverse = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'COS-1');
-  static final NormalOperation tan = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'TAN');
-  static final NormalOperation tanInverse = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'TAN-1');
-  static final NormalOperation dim = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'DIM');
-  static final NormalOperation resultOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'RESULT');
-  static final NormalOperation piOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'PI');
-  static final NormalOperation xExchange = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'x<->');
-  static final NormalOperation dse = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'DSE');
-  static final NormalOperation isg = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'ISG');
-  static final NormalOperation integrate = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'integrate');
-  static final NormalOperation clearSigma = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'CLEAR-E');
-  static final NormalOperation rnd = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'RND');
-  static final NormalOperation ranNum = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'RAN #');
-  static final NormalOperation toR = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: '->R');
-  static final NormalOperation toP = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: '->P');
-  static final NormalOperation toHMS = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: '->H.MS');
-  static final NormalOperation toH = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: '->H');
-  static final NormalOperation toRad = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: '->RAD');
-  static final NormalOperation toDeg = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: '->DEG');
-  static final NormalOperation reImSwap = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'Re<=>Im');
-  static final NormalOperation testOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'TEST');
-  static final NormalOperation fracOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'FRAC');
-  static final NormalOperation intOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'INT');
-  static final NormalOperation userOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'USER');
-  static final NormalOperation memOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'MEM');
-  static final NormalOperation xFactorial = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'x!');
-  static final NormalOperation xBar = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'xBar');
-  static final NormalOperation yHatR = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'yHat,r');
-  static final NormalOperation sOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 's');
-  static final NormalOperation linearRegression = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'L.R.');
-  static final NormalOperation sigmaPlus = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'E+');
-  static final NormalOperation sigmaMinus = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'E-');
-  static final NormalOperation pYX = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'Py,x');
-  static final NormalOperation cYX = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'Cy,x');
-
-  static final NormalArgOperation sto15 = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 21),
-          calc: (Model m, int arg) =>
-              m.memory.registers.setValue(arg, sto15.arg, m.x)),
-      name: 'STO');
-
-  static final NormalArgOperation rcl15 = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 21),
-          pressed: (ActiveState s) => s.liftStackIfEnabled(),
-          calc: (Model m, int arg) =>
-              m.x = m.memory.registers.getValue(arg, rcl15.arg)),
-      name: 'RCL');
-
   // ================================
   // Useful collections of operations
   // ================================
@@ -1128,18 +367,6 @@ class Operations {
     Operations.mem,
     Operations.status
   ];
-
-  static double _checkResult(double Function() f, int errNo) {
-    try {
-      final v = f();
-      if (v != double.nan) {
-        return v;
-      }
-    } catch (ex) {
-      debugPrint('Converting $ex to CalculatorException($errNo)');
-    }
-    throw CalculatorError(errNo);
-  }
 }
 
 // Taken from https://en.wikipedia.org/wiki/Methods_of_computing_square_roots
@@ -1187,129 +414,3 @@ void _storeMultDiv(BigInt r, Model m) {
     }
   }
 }
-
-void _doubleIntMultiply(Model m) {
-  BigInt r = m.xI * m.yI; // Signed BigInt, up to 128 bits
-  Value big = m.integerSignMode.fromBigInt(r, m.doubleWordStatus);
-  m.lastX = m.x;
-  m.x = Value.fromInternal(big.internal >> m.wordSize);
-  m.y = Value.fromInternal(big.internal & m.wordMask);
-  m.gFlag = false; // It can't overflow
-  m.cFlag = false;
-}
-
-void _doubleIntDivide(Model m) {
-  final Value last = m.x;
-  final BigInt big = (m.y.internal << m.wordSize) | m.z.internal;
-  final BigInt dividend =
-      m.integerSignMode.toBigInt(Value.fromInternal(big), m.doubleWordStatus);
-  final BigInt divisor = m.xI;
-  final BigInt result = dividend ~/ divisor;
-  if (result < m.minInt || result > m.maxInt) {
-    throw CalculatorError(0);
-  }
-  m.popStack();
-  m.popSetResultXI = result;
-  m.lastX = last;
-  m.cFlag = dividend.remainder(divisor) != BigInt.zero;
-  m.gFlag = false;
-}
-
-final BigInt _maxU64 = (BigInt.one << 64) - BigInt.one;
-
-void _doubleIntRemainder(Model m) {
-  final Value last = m.x;
-  final BigInt big = (m.y.internal << m.wordSize) | m.z.internal;
-  final BigInt dividend =
-      m.integerSignMode.toBigInt(Value.fromInternal(big), m.doubleWordStatus);
-  final BigInt divisor = m.xI;
-  final BigInt quotient = dividend ~/ divisor;
-  if (quotient.abs() > _maxU64) {
-    // Page 54 of the manual says "if it exceeds 64 bits."  I assume they're
-    // doing that part unsigned, since it's internal.
-    throw CalculatorError(0);
-  }
-  m.popStack();
-  m.popSetResultXI = dividend.remainder(divisor);
-  m.lastX = last;
-  m.gFlag = false;
-  m.cFlag = false;
-}
-
-Value _rotateLeft(BigInt nBI, Value arg, Model m) {
-  final int n = _rotateCount(nBI, m.wordSize);
-  if (n == 0) {
-    return arg; // NOP.  n = wordSize isn't NOP, it changes carry.
-  }
-  BigInt r = _rotateLeftBI(arg.internal, n, m.wordSize);
-  m.cFlag = (r & BigInt.one) != BigInt.zero;
-  return Value.fromInternal(r);
-}
-
-Value _rotateRight(BigInt nBI, Value arg, Model m) {
-  final int n = _rotateCount(nBI, m.wordSize);
-  if (n == 0) {
-    return arg; // NOP.  n = wordSize isn't NOP, it changes carry.
-  }
-  BigInt r = _rotateLeftBI(arg.internal, m.wordSize - n, m.wordSize);
-  m.cFlag = (r & m.signMask) != BigInt.zero;
-  return Value.fromInternal(r);
-}
-
-Value _rotateLeftCarry(BigInt n, Value arg, Model m) =>
-    _rotateLeftCarryI(_rotateCount(n, m.wordSize), arg, m);
-
-Value _rotateRightCarry(BigInt n, Value arg, Model m) =>
-    _rotateLeftCarryI(m.wordSize + 1 - _rotateCount(n, m.wordSize), arg, m);
-
-Value _rotateLeftCarryI(final int n, Value argV, Model m) {
-  m.lastX = m.x;
-  if (n == 0) {
-    return argV; // NOP
-  }
-  final carryMask = BigInt.one << m.wordSize;
-  // I'm using the fact that BigInt goes up to 65 bits here.
-  final BigInt arg = m.cFlag ? (argV.internal | carryMask) : argV.internal;
-  final r = _rotateLeftBI(arg, n, m.wordSize + 1);
-  if (r & carryMask == BigInt.zero) {
-    m.cFlag = false;
-    return Value.fromInternal(r);
-  } else {
-    m.cFlag = true;
-    return Value.fromInternal(r & m.wordMask);
-  }
-}
-
-int _rotateCount(BigInt v, int wordSize) {
-  v = v.abs();
-  if (v > BigInt.from(wordSize)) {
-    throw CalculatorError(2);
-  }
-  return v.toInt();
-}
-
-BigInt _rotateLeftBI(BigInt arg, int n, int wordSize) {
-  assert(n > 0 && n <= wordSize);
-  final bottomMask = ((BigInt.one << (wordSize - n)) - BigInt.one);
-  // That would be really efficient in C.  One can hope the Dart runtime
-  // does a reasonable job of optimizing it, and besides, it doesn't matter.
-  return (arg >> (wordSize - n)) | ((arg & bottomMask) << n);
-}
-
-int _bitNumber(BigInt n, NumStatus m) {
-  final int r = n.toInt(); // clamps to maxint
-  if (r >= m.wordSize) {
-    throw CalculatorError(2);
-  }
-  return r;
-}
-
-int _numberOfBits(BigInt n, NumStatus m) {
-  final int r = n.toInt(); // clamps to maxint
-  if (r > m.wordSize) {
-    throw CalculatorError(2);
-  }
-  return r;
-}
-
-BigInt _maskr(int n) => (BigInt.one << n) - BigInt.one;

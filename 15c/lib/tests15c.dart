@@ -18,7 +18,6 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
-import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/m/complex.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/c/controller.dart';
@@ -91,19 +90,19 @@ class SelfTests15 extends SelfTests {
     await test('15c float mode functions', () async {
       final m = newModel();
       await _testOneArgFloat(
-          m, Operations.lnOp, 2.37, 0.8628899551, Operations.eX15);
-      await _testOneArgFloat(m, Operations.sqrtOp15, 7.37, 2.714774392);
-      await _testOneArgFloat(m, Operations.xSquared, 2.714774392, 7.369999999);
+          m, Operations15.lnOp, 2.37, 0.8628899551, Operations15.eX15);
+      await _testOneArgFloat(m, Operations15.sqrtOp15, 7.37, 2.714774392);
+      await _testOneArgFloat(m, Operations15.xSquared, 2.714774392, 7.369999999);
       // On the real 15C, the xSquared result is that, too.
       await _testOneArgFloat(
-          m, Operations.xSquared, 4, 16, Operations.sqrtOp15);
+          m, Operations15.xSquared, 4, 16, Operations15.sqrtOp15);
       await _testOneArgFloat(
-          m, Operations.tenX15, 3.7, 5011.872336, Operations.logOp);
-      await _testTwoArgFloat(m, Operations.yX15, 1.234, 5.678, 8.524660835);
+          m, Operations15.tenX15, 3.7, 5011.872336, Operations15.logOp);
+      await _testTwoArgFloat(m, Operations15.yX15, 1.234, 5.678, 8.524660835);
       await _testOneArgFloat(
-          m, Operations.reciprocal15, 0.01, 100, Operations.reciprocal15);
+          m, Operations15.reciprocal15, 0.01, 100, Operations15.reciprocal15);
       await _testTwoArgFloat(
-          m, Operations.deltaPercent, 5.678, 1.234, 360.1296596);
+          m, Operations15.deltaPercent, 5.678, 1.234, 360.1296596);
     });
   }
 
@@ -112,79 +111,79 @@ class SelfTests15 extends SelfTests {
       final m = newModel();
       m.isComplexMode = true;
 
-      await _testOneArgComplex(m, Operations.lnOp, const Complex(1.234, 5.678),
+      await _testOneArgComplex(m, Operations15.lnOp, const Complex(1.234, 5.678),
           const Complex(1.759674471, 1.356794138));
       await _testOneArgComplex(
           m,
-          Operations.eX15,
+          Operations15.eX15,
           const Complex(1.759674471, 1.356794138),
           const Complex(1.234000001, 5.678));
-      await _testOneArgComplex(m, Operations.lnOp, const Complex(1.234, -5.678),
+      await _testOneArgComplex(m, Operations15.lnOp, const Complex(1.234, -5.678),
           const Complex(1.759674471, -1.356794138));
       await _testOneArgComplex(
           m,
-          Operations.eX15,
+          Operations15.eX15,
           const Complex(1.759674471, -1.356794138),
           const Complex(1.234000001, -5.678));
-      await _testOneArgComplex(m, Operations.lnOp, const Complex(-1.234, 5.678),
+      await _testOneArgComplex(m, Operations15.lnOp, const Complex(-1.234, 5.678),
           const Complex(1.759674471, 1.784798515));
       await _testOneArgComplex(
           m,
-          Operations.eX15,
+          Operations15.eX15,
           const Complex(1.759674471, 1.784798515),
           const Complex(-1.233999998, 5.678000001));
       await _testOneArgComplex(
           m,
-          Operations.lnOp,
+          Operations15.lnOp,
           const Complex(-1.234, -5.678),
           const Complex(1.759674471, -1.784798515));
       await _testOneArgComplex(
           m,
-          Operations.eX15,
+          Operations15.eX15,
           const Complex(1.759674471, -1.784798515),
           const Complex(-1.233999998, -5.678000001));
 
-      await _testOneArgComplex(m, Operations.sqrtOp15,
+      await _testOneArgComplex(m, Operations15.sqrtOp15,
           const Complex(1.234, 5.678), const Complex(1.876771907, 1.512703802));
       await _testOneArgComplex(
           m,
-          Operations.xSquared,
+          Operations15.xSquared,
           const Complex(1.876771907, 1.512703802),
           const Complex(1.233999998, 5.677999998));
       await _testOneArgComplex(
           m,
-          Operations.sqrtOp15,
+          Operations15.sqrtOp15,
           const Complex(1.234, -5.678),
           const Complex(1.876771907, -1.512703802));
       await _testOneArgComplex(
           m,
-          Operations.xSquared,
+          Operations15.xSquared,
           const Complex(1.876771907, -1.512703802),
           const Complex(1.233999998, -5.677999998));
       await _testOneArgComplex(
           m,
-          Operations.sqrtOp15,
+          Operations15.sqrtOp15,
           const Complex(-1.234, 5.678),
           const Complex(1.512703802, 1.876771907));
       await _testOneArgComplex(
           m,
-          Operations.xSquared,
+          Operations15.xSquared,
           const Complex(1.512703802, 1.876771907),
           const Complex(-1.233999998, 5.677999998));
       await _testOneArgComplex(
           m,
-          Operations.sqrtOp15,
+          Operations15.sqrtOp15,
           const Complex(-1.234, -5.678),
           const Complex(1.512703802, -1.876771907));
       await _testOneArgComplex(
           m,
-          Operations.xSquared,
+          Operations15.xSquared,
           const Complex(1.512703802, -1.876771907),
           const Complex(-1.233999998, -5.677999998));
 
       await _testOneArgComplex(
           m,
-          Operations.tenX15,
+          Operations15.tenX15,
           const Complex(-1.234, -5.678),
           const Complex(0.05098501197, -0.02836565620));
       // Note:  The above produces Complex(0.05098501197, -0.02836565619)
@@ -193,23 +192,23 @@ class SelfTests15 extends SelfTests {
       //        digits.  See misc/test_float/TestFloat.java.
       await _testOneArgComplex(
           m,
-          Operations.logOp,
+          Operations15.logOp,
           const Complex(0.05098501197, -0.02836565620),
           const Complex(-1.234, -0.2204945847));
 
       await _testTwoArgComplex(
           m,
-          Operations.yX15,
+          Operations15.yX15,
           const Complex(5.6, 7.8),
           const Complex(1.2, 3.4),
           const Complex(-0.03277613870, -0.08229096286));
 
       await _testOneArgComplex(
           m,
-          Operations.reciprocal15,
+          Operations15.reciprocal15,
           const Complex(0.15, 0.25),
           const Complex(1.764705882, -2.941176471),
-          Operations.reciprocal15);
+          Operations15.reciprocal15);
     });
   }
 

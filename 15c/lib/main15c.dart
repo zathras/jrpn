@@ -18,10 +18,15 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
+import 'dart:math';
+import 'dart:math' as dart;
+
 import 'package:flutter/material.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/c/operations.dart';
+import 'package:jrpn/c/states.dart';
 import 'package:jrpn/generic_main.dart';
+import 'package:jrpn/m/complex.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/v/buttons.dart';
 import 'package:jrpn/v/main_screen.dart';
@@ -49,63 +54,63 @@ class Model15 extends Model<Operation> {
   // calculator's state obsolete.
   static final List<List<MKey<Operation>?>> _logicalKeys = [
     [
-      MKey(Operations.sqrtOp15, Operations.letterLabelA, Operations.xSquared),
-      MKey(Operations.eX15, Operations.letterLabelB, Operations.lnOp),
-      MKey(Operations.tenX15, Operations.letterLabelC, Operations.logOp),
-      MKey(Operations.yX15, Operations.letterLabelD, Operations.percent),
-      MKey(Operations.reciprocal15, Operations.letterLabelE,
-          Operations.deltaPercent),
-      MKey(Operations.chs, Operations.matrix, Operations.abs),
-      MKey(Operations.n7, Operations.fix, Operations.deg),
-      MKey(Operations.n8, Operations.sci, Operations.rad),
-      MKey(Operations.n9, Operations.eng, Operations.grd),
-      MKey(Operations.div, Operations.solve, Operations.xLEy),
+      MKey(Operations15.sqrtOp15, Operations15.letterLabelA, Operations15.xSquared),
+      MKey(Operations15.eX15, Operations15.letterLabelB, Operations15.lnOp),
+      MKey(Operations15.tenX15, Operations15.letterLabelC, Operations15.logOp),
+      MKey(Operations15.yX15, Operations15.letterLabelD, Operations15.percent),
+      MKey(Operations15.reciprocal15, Operations15.letterLabelE,
+          Operations15.deltaPercent),
+      MKey(Operations.chs, Operations15.matrix, Operations.abs),
+      MKey(Operations.n7, Operations15.fix, Operations15.deg),
+      MKey(Operations.n8, Operations15.sci, Operations15.rad),
+      MKey(Operations.n9, Operations15.eng, Operations15.grd),
+      MKey(Operations.div, Operations15.solve, Operations.xLEy),
     ],
     [
-      MKey(Operations.sst, Operations.lbl15, Operations.bst),
-      MKey(Operations.gto, Operations.hyp, Operations.hypInverse),
-      MKey(Operations.sin, Operations.dim, Operations.sinInverse),
-      MKey(Operations.cos, Operations.parenI15, Operations.cosInverse),
-      MKey(Operations.tan, Operations.I15, Operations.tanInverse),
-      MKey(Operations.eex, Operations.resultOp, Operations.piOp),
-      MKey(Operations.n4, Operations.xExchange, Operations.sf),
-      MKey(Operations.n5, Operations.dse, Operations.cf),
-      MKey(Operations.n6, Operations.isg, Operations.fQuestion),
-      MKey(Operations.mult, Operations.integrate, Operations.xEQ0),
+      MKey(Operations.sst, Operations15.lbl15, Operations.bst),
+      MKey(Operations.gto, Operations15.hyp, Operations15.hypInverse),
+      MKey(Operations15.sin, Operations15.dim, Operations15.sinInverse),
+      MKey(Operations15.cos, Operations15.parenI15, Operations15.cosInverse),
+      MKey(Operations15.tan, Operations15.I15, Operations15.tanInverse),
+      MKey(Operations.eex, Operations15.resultOp, Operations15.piOp),
+      MKey(Operations.n4, Operations15.xExchange, Operations.sf),
+      MKey(Operations.n5, Operations15.dse, Operations.cf),
+      MKey(Operations.n6, Operations15.isg, Operations.fQuestion),
+      MKey(Operations.mult, Operations15.integrate, Operations.xEQ0),
     ],
     [
       MKey(Operations.rs, Operations.pse, Operations.pr),
-      MKey(Operations.gsb, Operations.clearSigma, Operations.rtn),
+      MKey(Operations.gsb, Operations15.clearSigma, Operations.rtn),
       MKey(Operations.rDown, Operations.clearPrgm, Operations.rUp),
-      MKey(Operations.xy, Operations.clearReg, Operations.rnd),
+      MKey(Operations.xy, Operations.clearReg, Operations15.rnd),
       MKey(Operations.bsp, Operations.clearPrefix, Operations.clx),
-      MKey(Operations.enter, Operations.ranNum, Operations.lstx),
-      MKey(Operations.n1, Operations.toR, Operations.toP),
-      MKey(Operations.n2, Operations.toHMS, Operations.toH),
-      MKey(Operations.n3, Operations.toRad, Operations.toDeg),
-      MKey(Operations.minus, Operations.reImSwap, Operations.testOp),
+      MKey(Operations.enter, Operations15.ranNum, Operations.lstx),
+      MKey(Operations.n1, Operations15.toR, Operations15.toP),
+      MKey(Operations.n2, Operations15.toHMS, Operations15.toH),
+      MKey(Operations.n3, Operations15.toRad, Operations15.toDeg),
+      MKey(Operations.minus, Operations15.reImSwap, Operations15.testOp),
     ],
     [
       MKey(Operations.onOff, Operations.onOff, Operations.onOff),
       MKey(Operations.fShift, Operations.fShift, Operations.fShift),
       MKey(Operations.gShift, Operations.gShift, Operations.gShift),
-      MKey(Operations.sto15, Operations.fracOp, Operations.intOp),
-      MKey(Operations.rcl15, Operations.userOp, Operations.mem),
+      MKey(Operations15.sto15, Operations15.fracOp, Operations15.intOp),
+      MKey(Operations15.rcl15, Operations15.userOp, Operations.mem),
       null,
-      MKey(Operations.n0, Operations.xFactorial, Operations.xBar),
-      MKey(Operations.dot, Operations.yHatR, Operations.sOp),
-      MKey(Operations.sigmaPlus, Operations.linearRegression,
-          Operations.sigmaMinus),
-      MKey(Operations.plus, Operations.pYX, Operations.cYX),
+      MKey(Operations.n0, Operations15.xFactorial, Operations15.xBar),
+      MKey(Operations.dot, Operations15.yHatR, Operations15.sOp),
+      MKey(Operations15.sigmaPlus, Operations15.linearRegression,
+          Operations15.sigmaMinus),
+      MKey(Operations.plus, Operations15.pYX, Operations15.cYX),
     ]
   ];
 
   static final Set<LetterLabel> _letterLabels = {
-    Operations.letterLabelA,
-    Operations.letterLabelB,
-    Operations.letterLabelC,
-    Operations.letterLabelD,
-    Operations.letterLabelE
+    Operations15.letterLabelA,
+    Operations15.letterLabelB,
+    Operations15.letterLabelC,
+    Operations15.letterLabelD,
+    Operations15.letterLabelE
   };
 
   @override
@@ -202,6 +207,431 @@ class Model15 extends Model<Operation> {
       extraShift: ShiftKey.f);
 }
 
+class Operations15 extends Operations {
+
+  static final letterLabelA = LetterLabel('A', 10);
+  static final letterLabelB = LetterLabel('B', 11);
+  static final letterLabelC = LetterLabel('C', 12);
+  static final letterLabelD = LetterLabel('D', 13);
+  static final letterLabelE = LetterLabel('E', 14);
+
+  static final NormalArgOperation lbl15 = NormalArgOperation(
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 24), calc: (_, __) {}),
+      name: 'LBL');
+  // @@@@ TODO
+
+  ///
+  /// The HP15'c I operation, for entry of imaginary numbers.
+  ///
+  // ignore: non_constant_identifier_names
+  static final NormalOperation I15 = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        m.isComplexMode = true;
+        I15.complexCalc!(m);
+      },
+      complexCalc: (Model m) {
+        final im = m.x;
+        m.popStack();
+        m.xImaginary = im;
+      },
+      name: 'I');
+
+  ///
+  /// The HP 15's (i) operation, to see the imaginary part.
+  ///
+  static final NormalOperation parenI15 = LimitedOperation(
+      pressed: (LimitedState cs) => cs.handleShowImaginary(), name: '(i)');
+
+  static final sqrtOp15 = NormalOperationOrLetter(Operations.sqrtOp, letterLabelA);
+  static final NormalOperation eX15 = NormalOperationOrLetter.floatOnly(
+      letter: letterLabelB,
+      floatCalc: (Model m) {
+        double x = m.xF;
+        m.floatOverflow = false;
+        m.resultXF = pow(e, x) as double;
+      },
+      complexCalc: (Model m) {
+        final x = m.xC;
+        final eXr = exp(x.real);
+        m.resultXC =
+            Complex(eXr * dart.cos(x.imaginary), eXr * dart.sin(x.imaginary));
+      },
+      name: 'eX');
+  static final NormalOperation xSquared = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        double x = m.xF;
+        m.floatOverflow = false;
+        m.resultXF = x * x;
+      },
+      complexCalc: (Model m) {
+        final v = m.xC;
+        m.resultXC = v * v;
+      },
+      name: 'x^2');
+  static final NormalOperation lnOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        double x = m.xF;
+        if (x <= 0) {
+          throw CalculatorError(0);
+        }
+        m.floatOverflow = false;
+        m.resultXF = _checkResult(() => log(x), 0);
+      },
+      complexCalc: (Model m) {
+        final x = m.xC;
+        final r = x.r;
+        if (r == 0) {
+          throw CalculatorError(0);
+        }
+        m.resultXC = Complex(_checkResult(() => dart.log(r), 0), x.theta);
+      },
+      name: 'ln');
+  static final NormalOperation tenX15 = NormalOperationOrLetter.floatOnly(
+      letter: letterLabelC,
+      floatCalc: (Model m) {
+        double x = m.xF;
+        m.floatOverflow = false;
+        m.resultXF = pow(10, x) as double;
+      },
+      complexCalc: (Model m) {
+        final x = m.xC * const Complex(ln10, 0);
+        final eXr = exp(x.real);
+        m.resultXC =
+            Complex(eXr * dart.cos(x.imaginary), eXr * dart.sin(x.imaginary));
+      },
+      name: '10^x');
+  static final NormalOperation logOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        double x = m.xF;
+        if (x <= 0) {
+          throw CalculatorError(0);
+        }
+        m.floatOverflow = false;
+        m.resultXF = log(x) / ln10;
+      },
+      complexCalc: (Model m) {
+        final x = m.xC;
+        final r = x.r;
+        if (r == 0) {
+          throw CalculatorError(0);
+        }
+        m.resultXC = Complex(_checkResult(() => dart.log(r), 0), x.theta) /
+            const Complex(ln10, 0);
+      },
+      name: 'log');
+  static final NormalOperation yX15 = NormalOperationOrLetter.floatOnly(
+      letter: letterLabelD,
+      floatCalc: (Model m) {
+        m.floatOverflow = false;
+        m.popSetResultXF = pow(m.yF, m.xF) as double;
+      },
+      complexCalc: (Model m) {
+        // y^x = e^(x ln y)
+        final x = m.xC;
+        final y = m.yC;
+        final yR = y.r;
+        if (yR == 0) {
+          if (x == Complex.zero) {
+            throw CalculatorError(0);
+          }
+          m.popSetResultXC = Complex.zero;
+        } else {
+          final lnY = Complex(_checkResult(() => dart.log(yR), 0), y.theta);
+          final xLnY = x * lnY;
+          final resultR = _checkResult(() => exp(xLnY.real), 0);
+          m.popSetResultXC = Complex(resultR * dart.cos(xLnY.imaginary),
+              resultR * dart.sin(xLnY.imaginary));
+        }
+      },
+      name: 'yX');
+  static final NormalOperation percent = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        m.floatOverflow = false;
+        m.resultXF = m.xF * 0.01 * m.yF;
+      },
+      name: '%');
+  static final reciprocal15 = NormalOperationOrLetter(Operations.reciprocal, letterLabelE);
+  static final NormalOperation deltaPercent = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        m.floatOverflow = false;
+        m.resultXF = ((m.xF - m.yF) / m.yF) * 100.0;
+      },
+      name: 'delta%');
+  static final NormalOperation matrix = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'MATRIX');
+  static final NormalArgOperation fix = NormalArgOperation(
+      stackLift: StackLift.neutral,
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 9),
+          calc: (Model m, int digits) {
+            m.displayMode = DisplayMode.fix(digits, m.isComplexMode);
+          }),
+      name: 'FIX');
+  static final NormalArgOperation sci = NormalArgOperation(
+      stackLift: StackLift.neutral,
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 9),
+          calc: (Model m, int digits) {
+            m.displayMode = DisplayMode.sci(min(digits, 6), m.isComplexMode);
+          }),
+      name: 'SCI');
+  static final NormalArgOperation eng = NormalArgOperation(
+      stackLift: StackLift.neutral,
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 9),
+          calc: (Model m, int digits) {
+            m.displayMode = DisplayMode.eng(min(6, digits), m.isComplexMode);
+          }),
+      name: 'SCI');
+  static final NormalOperation deg = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        m.trigMode = TrigMode.deg;
+      },
+      name: 'DEG');
+  static final NormalOperation rad = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        m.trigMode = TrigMode.rad;
+      },
+      name: 'RAD');
+  static final NormalOperation grd = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        m.trigMode = TrigMode.grad;
+      },
+      name: 'GRD');
+  static final NormalOperation solve = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'SOLVE');
+  static final NormalOperation hyp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'HYP');
+  static final NormalOperation hypInverse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'HYP-1');
+  static final NormalOperation sin = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'SIN');
+  static final NormalOperation sinInverse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'SIN-1');
+  static final NormalOperation cos = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'COS');
+  static final NormalOperation cosInverse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'COS-1');
+  static final NormalOperation tan = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'TAN');
+  static final NormalOperation tanInverse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'TAN-1');
+  static final NormalOperation dim = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'DIM');
+  static final NormalOperation resultOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'RESULT');
+  static final NormalOperation piOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'PI');
+  static final NormalOperation xExchange = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'x<->');
+  static final NormalOperation dse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'DSE');
+  static final NormalOperation isg = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'ISG');
+  static final NormalOperation integrate = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'integrate');
+  static final NormalOperation clearSigma = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'CLEAR-E');
+  static final NormalOperation rnd = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'RND');
+  static final NormalOperation ranNum = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'RAN #');
+  static final NormalOperation toR = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->R');
+  static final NormalOperation toP = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->P');
+  static final NormalOperation toHMS = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->H.MS');
+  static final NormalOperation toH = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->H');
+  static final NormalOperation toRad = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->RAD');
+  static final NormalOperation toDeg = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: '->DEG');
+  static final NormalOperation reImSwap = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'Re<=>Im');
+  static final NormalOperation testOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'TEST');
+  static final NormalOperation fracOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'FRAC');
+  static final NormalOperation intOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'INT');
+  static final NormalOperation userOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'USER');
+  static final NormalOperation memOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'MEM');
+  static final NormalOperation xFactorial = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'x!');
+  static final NormalOperation xBar = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'xBar');
+  static final NormalOperation yHatR = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'yHat,r');
+  static final NormalOperation sOp = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 's');
+  static final NormalOperation linearRegression = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'L.R.');
+  static final NormalOperation sigmaPlus = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'E+');
+  static final NormalOperation sigmaMinus = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'E-');
+  static final NormalOperation pYX = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'Py,x');
+  static final NormalOperation cYX = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'Cy,x');
+
+  static final NormalArgOperation sto15 = NormalArgOperation(
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 21),
+          calc: (Model m, int arg) =>
+              m.memory.registers.setValue(arg, sto15.arg, m.x)),
+      name: 'STO');
+
+  static final NormalArgOperation rcl15 = NormalArgOperation(
+      arg: OperationArg.both(
+          desc: const ArgDescription15C(maxArg: 21),
+          pressed: (ActiveState s) => s.liftStackIfEnabled(),
+          calc: (Model m, int arg) =>
+          m.x = m.memory.registers.getValue(arg, rcl15.arg)),
+      name: 'RCL');
+
+
+  static double _checkResult(double Function() f, int errNo) {
+    try {
+      final v = f();
+      if (v != double.nan) {
+        return v;
+      }
+    } catch (ex) {
+      debugPrint('Converting $ex to CalculatorException($errNo)');
+    }
+    throw CalculatorError(errNo);
+  }
+}
+
 class ProgramInstruction15 extends ProgramInstruction<Operation> {
   ProgramInstruction15(Operation op, int argValue) : super(op, argValue);
 
@@ -241,89 +671,89 @@ class ButtonLayout15 extends ButtonLayout {
       '\u221Ax',
       'A',
       'x^2',
-      Operations.sqrtOp15,
-      Operations.letterLabelA,
-      Operations.xSquared,
+      Operations15.sqrtOp15,
+      Operations15.letterLabelA,
+      Operations15.xSquared,
       'A');
   CalculatorButton get eX => CalculatorButton(factory, 'e^x', 'B', 'LN',
-      Operations.eX15, Operations.letterLabelB, Operations.lnOp, 'B');
+      Operations15.eX15, Operations15.letterLabelB, Operations15.lnOp, 'B');
   CalculatorButton get tenX => CalculatorButton(factory, '10^x', 'C', 'LOG',
-      Operations.tenX15, Operations.letterLabelC, Operations.logOp, 'C');
+      Operations15.tenX15, Operations15.letterLabelC, Operations15.logOp, 'C');
   CalculatorButton get yX => CalculatorButton(factory, 'y^x', 'D', '%',
-      Operations.yX15, Operations.letterLabelD, Operations.percent, 'D');
+      Operations15.yX15, Operations15.letterLabelD, Operations15.percent, 'D');
   CalculatorButton get reciprocal => CalculatorButton(
       factory,
       '1/x',
       'E',
       '\u0394%',
-      Operations.reciprocal15,
-      Operations.letterLabelE,
-      Operations.deltaPercent,
+      Operations15.reciprocal15,
+      Operations15.letterLabelE,
+      Operations15.deltaPercent,
       'E');
   CalculatorButton get chs => CalculatorButton(factory, 'CHS', 'MATRIX', 'ABS',
-      Operations.chs, Operations.matrix, Operations.abs, 'F');
+      Operations.chs, Operations15.matrix, Operations.abs, 'F');
   CalculatorButton get n7 => CalculatorButton(factory, '7', 'FIX', 'DEG',
-      Operations.n7, Operations.fix, Operations.deg, '7');
+      Operations.n7, Operations15.fix, Operations15.deg, '7');
   CalculatorButton get n8 => CalculatorButton(factory, '8', 'SCI', 'RAD',
-      Operations.n8, Operations.sci, Operations.rad, '8');
+      Operations.n8, Operations15.sci, Operations15.rad, '8');
   CalculatorButton get n9 => CalculatorButton(factory, '9', 'ENG', 'GRD',
-      Operations.n9, Operations.eng, Operations.grd, '9');
+      Operations.n9, Operations15.eng, Operations15.grd, '9');
   CalculatorButton get div => CalculatorButton(factory, '\u00F7', 'SOLVE',
-      'x\u2264y', Operations.div, Operations.solve, Operations.xLEy, '/');
+      'x\u2264y', Operations.div, Operations15.solve, Operations.xLEy, '/');
 
   CalculatorButton get sst => CalculatorButton(factory, 'SST', 'LBL', 'BST',
-      Operations.sst, Operations.lbl15, Operations.bst, 'U');
+      Operations.sst, Operations15.lbl15, Operations.bst, 'U');
   CalculatorButton get gto => CalculatorButton(
       factory,
       'GTO',
       'HYP',
       'HYP^\u2009\u22121',
       Operations.gto,
-      Operations.hyp,
-      Operations.hypInverse,
+      Operations15.hyp,
+      Operations15.hypInverse,
       'T');
   CalculatorButton get sin => CalculatorButton(
       factory,
       'SIN',
       'DIM',
       'SIN^\u2009\u22121',
-      Operations.sin,
-      Operations.dim,
-      Operations.sinInverse,
+      Operations15.sin,
+      Operations15.dim,
+      Operations15.sinInverse,
       'I');
   CalculatorButton get cos => CalculatorButton(
       factory,
       'COS',
       '(i)',
       'COS^\u2009\u22121',
-      Operations.cos,
-      Operations.parenI15,
-      Operations.cosInverse,
+      Operations15.cos,
+      Operations15.parenI15,
+      Operations15.cosInverse,
       'Z');
   CalculatorButton get tan => CalculatorButton(
       factory,
       'TAN',
       'I',
       'TAN^\u2009\u22121',
-      Operations.tan,
-      Operations.I15,
-      Operations.tanInverse,
+      Operations15.tan,
+      Operations15.I15,
+      Operations15.tanInverse,
       'K');
   CalculatorButton get eex => CalculatorButton(factory, 'EEX', 'RESULT',
-      '\u03c0', Operations.eex, Operations.resultOp, Operations.piOp, 'L');
+      '\u03c0', Operations.eex, Operations15.resultOp, Operations15.piOp, 'L');
   CalculatorButton get n4 => CalculatorButton(factory, '4', 'x\u2b0c', 'SF',
-      Operations.n4, Operations.xExchange, Operations.sf, '4');
+      Operations.n4, Operations15.xExchange, Operations.sf, '4');
   CalculatorButton get n5 => CalculatorButton(factory, '5', 'DSE', 'CF',
-      Operations.n5, Operations.dse, Operations.cf, '5');
+      Operations.n5, Operations15.dse, Operations.cf, '5');
   CalculatorButton get n6 => CalculatorButton(factory, '6', 'ISG', 'F?',
-      Operations.n6, Operations.isg, Operations.fQuestion, '6');
+      Operations.n6, Operations15.isg, Operations.fQuestion, '6');
   CalculatorButton get mult => CalculatorOnSpecialButton(
       factory,
       '\u00D7',
       '\u222b^\u200ax^y',
       'x=0',
       Operations.mult,
-      Operations.integrate,
+      Operations15.integrate,
       Operations.xEQ0,
       'X*',
       'TST',
@@ -332,11 +762,11 @@ class ButtonLayout15 extends ButtonLayout {
   CalculatorButton get rs => CalculatorButton(factory, 'R/S', 'PSE', 'P/R',
       Operations.rs, Operations.pse, Operations.pr, '[');
   CalculatorButton get gsb => CalculatorButton(factory, 'GSB', '\u03a3', 'RTN',
-      Operations.gsb, Operations.clearSigma, Operations.rtn, ']');
+      Operations.gsb, Operations15.clearSigma, Operations.rtn, ']');
   CalculatorButton get rdown => CalculatorButton(factory, 'R\u2193', 'PRGM',
       'R\u2191', Operations.rDown, Operations.clearPrgm, Operations.rUp, 'V');
   CalculatorButton get xy => CalculatorButton(factory, 'x\u2b0cy', 'REG', 'RND',
-      Operations.xy, Operations.clearReg, Operations.rnd, 'Y');
+      Operations.xy, Operations.clearReg, Operations15.rnd, 'Y');
   CalculatorButton get bsp => CalculatorButton(
       factory,
       '\u2b05',
@@ -354,25 +784,25 @@ class ButtonLayout15 extends ButtonLayout {
       'RAN #',
       'LSTx',
       Operations.enter,
-      Operations.ranNum,
+      Operations15.ranNum,
       Operations.lstx,
       '\n\r',
       extraHeight: factory.height * _totalButtonHeight / _buttonHeight,
       acceleratorLabel: ' \u23ce');
   CalculatorButton get n1 => CalculatorButton(factory, '1', '\u279cR',
-      '\u279cP', Operations.n1, Operations.toR, Operations.toP, '1');
+      '\u279cP', Operations.n1, Operations15.toR, Operations15.toP, '1');
   CalculatorButton get n2 => CalculatorButton(factory, '2', '\u279cH.MS',
-      '\u279cH', Operations.n2, Operations.toHMS, Operations.toH, '2');
+      '\u279cH', Operations.n2, Operations15.toHMS, Operations15.toH, '2');
   CalculatorButton get n3 => CalculatorButton(factory, '3', '\u279cRAD',
-      '\u279cDEG', Operations.n3, Operations.toRad, Operations.toDeg, '3');
+      '\u279cDEG', Operations.n3, Operations15.toRad, Operations15.toDeg, '3');
   CalculatorButton get minus => CalculatorOnSpecialButton(
       factory,
       '\u2212',
       'Re\u2b0cIm',
       'TEST',
       Operations.minus,
-      Operations.reImSwap,
-      Operations.testOp,
+      Operations15.reImSwap,
+      Operations15.testOp,
       '-',
       'CLR',
       acceleratorLabel: '\u2212');
@@ -386,19 +816,19 @@ class ButtonLayout15 extends ButtonLayout {
       Operations.gShift, Operations.gShift, Operations.gShift, 'G\u0007',
       acceleratorLabel: 'G');
   CalculatorButton get sto => CalculatorButton(factory, 'STO', 'FRAC', 'INT',
-      Operations.sto15, Operations.fracOp, Operations.intOp, 'S<');
+      Operations15.sto15, Operations15.fracOp, Operations15.intOp, 'S<');
   CalculatorButton get rcl => CalculatorButton(factory, 'RCL', 'USER', 'MEM',
-      Operations.rcl15, Operations.userOp, Operations.mem, 'R>');
+      Operations15.rcl15, Operations15.userOp, Operations.mem, 'R>');
   CalculatorButton get n0 => CalculatorButton(factory, '0', 'x!', 'x\u0305',
-      Operations.n0, Operations.xFactorial, Operations.xBar, '0');
+      Operations.n0, Operations15.xFactorial, Operations15.xBar, '0');
   CalculatorButton get dot => CalculatorOnSpecialButton(
       factory,
       '\u2219',
       'y\u0302,r',
       'x\u22600',
       Operations.dot,
-      Operations.yHatR,
-      Operations.sOp,
+      Operations15.yHatR,
+      Operations15.sOp,
       '.',
       '\u2219/\u201a',
       acceleratorLabel: '\u2219');
@@ -407,12 +837,12 @@ class ButtonLayout15 extends ButtonLayout {
       '\u03a3+',
       'L.R.',
       '\u03a3-',
-      Operations.sigmaPlus,
-      Operations.linearRegression,
-      Operations.sigmaMinus,
+      Operations15.sigmaPlus,
+      Operations15.linearRegression,
+      Operations15.sigmaMinus,
       'H');
   CalculatorButton get plus => CalculatorButton(factory, '+', 'P\u200ay,x',
-      'C\u2009y,x', Operations.plus, Operations.pYX, Operations.cYX, '+=');
+      'C\u2009y,x', Operations.plus, Operations15.pYX, Operations15.cYX, '+=');
 
   @override
   List<List<CalculatorButton?>> get landscapeLayout => [
@@ -488,7 +918,7 @@ class PortraitButtonFactory15 extends PortraitButtonFactory {
 }
 
 class Controller15 extends RealController {
-  Controller15(Model<Operation> model) : super(model, _numbers, const {});
+  Controller15(Model<Operation> model) : super(model, _numbers, const {}, Operations15.lbl15);
 
   /// The numbers.  This must be in order.
   static final List<NumberEntry> _numbers = [
@@ -528,4 +958,14 @@ class Controller15 extends RealController {
   PortraitButtonFactory getPortraitButtonFactory(
           BuildContext context, ScreenPositioner screen) =>
       PortraitButtonFactory15(context, screen, this);
+
+  @override
+  Set<Operation> get argIops => _argIops;
+  static final Set<Operation> _argIops = {Operations.sst, Operations15.I15};
+
+  /// Abbreviated key sequences for (i) used as an argument
+  /// cf. 16C manual p. 68
+  @override
+  Set<Operation> get argParenIops => _argParenIops;
+  static final Set<Operation> _argParenIops = {Operations.rs, Operations15.parenI15};
 }

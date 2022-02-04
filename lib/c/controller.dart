@@ -165,6 +165,14 @@ abstract class Controller {
   /// The key used to GTO an absolute line number ("." on the 16C,
   /// CHS on the 15C).
   Operation get gotoLineNumberKey;
+
+  /// Abbreviated key sequences for I used as an argument
+  /// cf. 16C manual p. 68
+  Set<Operation> get argIops;
+
+  /// Abbreviated key sequences for (i) used as an argument
+  /// cf. 16C manual p. 68
+  Set<Operation> get argParenIops;
 }
 
 ///
@@ -202,7 +210,8 @@ abstract class RealController extends Controller {
   final KeyboardController keyboard = KeyboardController();
 
   RealController(Model<Operation> model, List<NumberEntry> numbers,
-      Map<NormalOperation, ProgramInstruction> shortcuts)
+      Map<NormalOperation, ProgramInstruction> shortcuts,
+      Operation lblOperation)
       : super(model) {
     Operations.numberOfFlags = model.numberOfFlags;
     model.memory.initializeSystem(OperationMap<Operation>(
@@ -210,7 +219,7 @@ abstract class RealController extends Controller {
         numbers: numbers,
         special: Operations.special,
         shortcuts: shortcuts,
-        lbl: Operations.lbl));
+        lbl: lblOperation));
     state = Resting(this);
     keyboard.controller = this;
   }
@@ -339,6 +348,12 @@ class RunningController extends Controller {
 
   @override
   Operation get gotoLineNumberKey => real.gotoLineNumberKey;
+
+  @override
+  Set<Operation> get argIops => real.argIops;
+
+  @override
+  Set<Operation> get argParenIops => real.argParenIops;
 }
 
 ///
@@ -456,7 +471,7 @@ class NumberEntry extends Operation {
 }
 
 ///
-/// One of the 15C's letter keys, from 0 to f.
+/// One of the 15C's letter keys, from A to E.
 ///
 class LetterLabel extends NumberEntry {
   LetterLabel(String name, int value) : super(name, value);

@@ -738,6 +738,12 @@ class ArgDescriptionGto16C implements ArgDescription {
 
   @override
   int get maxArg => 17;
+  // This actually allows GSB (i) and GTO (i), which AFAIK aren't implemented
+  // on a real 16c (cf. manual page 88).  Oops!  However, maxArg can't be
+  // changed to 16 without chaning the opcode assignments, which would break
+  // backwards compatibility.  Having this weird extension to the 16C's
+  // semantics is harmless, I guess, and disabling this extension would be
+  // needlessly antisocial, given that the app has been out there for a while.
   @override
   int get indirectIndexNumber => 16;
   @override
@@ -764,11 +770,15 @@ class ArgDescriptionGto15C implements ArgDescription {
   //// @@ TODO - these values are certainly wrong.
 
   @override
-  int get maxArg => 17;
+  int get maxArg => 25;
+  // That's 0 to 9, .0 to .9, A-E, and I
   @override
-  int get indirectIndexNumber => 16;
+  int get indirectIndexNumber => 0xdeadbeef;
+  // The 15C doesn't allow GTO (i) or GSB (i).  Note also that the handling
+  // of negative values of I is different on the 15c.
+  // see 15C manual, bottom of page 108
   @override
-  int get indexRegisterNumber => 17;  // It's to the right on the keyboard
+  int get indexRegisterNumber => 25;
 }
 
 ///

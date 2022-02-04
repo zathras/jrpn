@@ -194,7 +194,7 @@ class SelfTests16 extends SelfTests {
       await expect(m.xI, BigInt.from(0x7));
       m.pushStack();
       m.xI = BigInt.from(4);
-      Operations.rmd.intCalc!(m);
+      Operations16.rmd.intCalc!(m);
       await expect(m.xI, BigInt.from(0x3));
     });
     await test('logical operations', () async {
@@ -203,110 +203,110 @@ class SelfTests16 extends SelfTests {
       await expect(m.wordSize, 16); // default
       m.displayMode = DisplayMode.bin;
       m.x = m.tryParseValue('11111111')!;
-      Operations.not.intCalc!(m);
+      Operations16.not.intCalc!(m);
       await expect(m.x, m.tryParseValue('1111111100000000'));
 
       // and
       m.y = m.tryParseValue('10101')!;
       m.x = m.tryParseValue('10011')!;
-      Operations.and.intCalc!(m);
+      Operations16.and.intCalc!(m);
       await expect(m.x, m.tryParseValue('10001'));
 
       // or
       m.y = m.tryParseValue('10101')!;
       m.x = m.tryParseValue('10011')!;
-      Operations.or.intCalc!(m);
+      Operations16.or.intCalc!(m);
       await expect(m.x, m.tryParseValue('10111'));
 
       // xor
       m.y = m.tryParseValue('1010101')!;
       m.x = m.tryParseValue('1011101')!;
-      Operations.xor.intCalc!(m);
+      Operations16.xor.intCalc!(m);
       await expect(m.x, m.tryParseValue('1000'));
 
       // sl (shift left)
       m.wordSize = 8;
       m.x = m.tryParseValue('10011100')!;
-      Operations.sl.intCalc!(m);
+      Operations16.sl.intCalc!(m);
       await expect(m.x, m.tryParseValue('00111000'));
       await expect(m.cFlag, true);
-      Operations.sl.intCalc!(m);
+      Operations16.sl.intCalc!(m);
       await expect(m.x, m.tryParseValue('01110000'));
       await expect(m.cFlag, false);
 
       // sr (shift right)
-      Operations.sr.intCalc!(m);
+      Operations16.sr.intCalc!(m);
       await expect(m.x, m.tryParseValue('00111000'));
       await expect(m.cFlag, false);
-      Operations.sr.intCalc!(m);
+      Operations16.sr.intCalc!(m);
       await expect(m.cFlag, false);
-      Operations.sr.intCalc!(m);
+      Operations16.sr.intCalc!(m);
       await expect(m.cFlag, false);
-      Operations.sr.intCalc!(m);
+      Operations16.sr.intCalc!(m);
       await expect(m.cFlag, false);
-      Operations.sr.intCalc!(m);
+      Operations16.sr.intCalc!(m);
       await expect(m.x, m.tryParseValue('00000011'));
       await expect(m.cFlag, true);
 
       // lj (left justify)
       m.xI = BigInt.from(0);
-      Operations.lj.intCalc!(m);
+      Operations16.lj.intCalc!(m);
       await expect(m.x, m.tryParseValue('0'));
       await expect(m.y, m.tryParseValue('0'));
       m.x = m.tryParseValue('1111')!;
-      Operations.lj.intCalc!(m);
+      Operations16.lj.intCalc!(m);
       await expect(m.x, m.tryParseValue('100'));
       await expect(m.y, m.tryParseValue('11110000'));
 
       // asr
       m.integerSignMode = SignMode.unsigned;
       m.x = m.tryParseValue('10011100')!;
-      Operations.asr.intCalc!(m);
+      Operations16.asr.intCalc!(m);
       await expect(m.x, m.tryParseValue('01001110'));
       m.integerSignMode = SignMode.twosComplement;
       m.x = m.tryParseValue('10011100')!;
-      Operations.asr.intCalc!(m);
+      Operations16.asr.intCalc!(m);
       await expect(m.x, m.tryParseValue('11001110'));
 
       // rl
       m.x = m.tryParseValue('10011100')!;
       m.cFlag = false;
-      Operations.rl.intCalc!(m);
+      Operations16.rl.intCalc!(m);
       await expect(m.cFlag, true);
       await expect(m.x, m.tryParseValue('00111001'));
-      Operations.rl.intCalc!(m);
+      Operations16.rl.intCalc!(m);
       await expect(m.cFlag, false);
       await expect(m.x, m.tryParseValue('01110010'));
 
       // rr
-      Operations.rr.intCalc!(m);
+      Operations16.rr.intCalc!(m);
       await expect(m.cFlag, false);
       await expect(m.x, m.tryParseValue('00111001'));
-      Operations.rr.intCalc!(m);
+      Operations16.rr.intCalc!(m);
       await expect(m.cFlag, true);
       await expect(m.x, m.tryParseValue('10011100'));
-      Operations.rr.intCalc!(m);
+      Operations16.rr.intCalc!(m);
       await expect(m.cFlag, false);
       await expect(m.x, m.tryParseValue('01001110'));
 
       // rlc
       m.x = m.tryParseValue('10011100')!;
       m.cFlag = false;
-      Operations.rlc.intCalc!(m);
+      Operations16.rlc.intCalc!(m);
       await expect(m.cFlag, true);
       await expect(m.x, m.tryParseValue('00111000'));
-      Operations.rlc.intCalc!(m);
+      Operations16.rlc.intCalc!(m);
       await expect(m.cFlag, false);
       await expect(m.x, m.tryParseValue('01110001'));
 
       // rrc
-      Operations.rrc.intCalc!(m);
+      Operations16.rrc.intCalc!(m);
       await expect(m.x, m.tryParseValue('00111000'));
       m.cFlag = true;
-      Operations.rrc.intCalc!(m);
+      Operations16.rrc.intCalc!(m);
       await expect(m.x, m.tryParseValue('10011100'));
       await expect(m.cFlag, false);
-      Operations.rrc.intCalc!(m);
+      Operations16.rrc.intCalc!(m);
       await expect(m.x, m.tryParseValue('01001110'));
       await expect(m.cFlag, false);
 
@@ -315,7 +315,7 @@ class SelfTests16 extends SelfTests {
       m.pushStack();
       m.xI = BigInt.one;
       m.cFlag = false;
-      Operations.rln.intCalc!(m);
+      Operations16.rln.intCalc!(m);
       await expect(m.cFlag, true);
       await expect(m.x, m.tryParseValue('00111001'));
 
@@ -323,7 +323,7 @@ class SelfTests16 extends SelfTests {
       m.pushStack();
       m.xI = BigInt.two;
       m.cFlag = true;
-      Operations.rln.intCalc!(m);
+      Operations16.rln.intCalc!(m);
       await expect(m.cFlag, false);
       await expect(m.x, m.tryParseValue('01110010'));
 
@@ -331,21 +331,21 @@ class SelfTests16 extends SelfTests {
       m.x = m.tryParseValue('01110010')!;
       m.pushStack();
       m.xI = BigInt.one;
-      Operations.rrn.intCalc!(m);
+      Operations16.rrn.intCalc!(m);
       await expect(m.cFlag, false);
       await expect(m.x, m.tryParseValue('00111001'));
 
       m.x = m.tryParseValue('01110010')!;
       m.pushStack();
       m.xI = BigInt.two;
-      Operations.rrn.intCalc!(m);
+      Operations16.rrn.intCalc!(m);
       await expect(m.cFlag, true);
       await expect(m.x, m.tryParseValue('10011100'));
 
       m.x = m.tryParseValue('01110010')!;
       m.pushStack();
       m.xI = BigInt.from(3);
-      Operations.rrn.intCalc!(m);
+      Operations16.rrn.intCalc!(m);
       await expect(m.cFlag, false);
       await expect(m.x, m.tryParseValue('01001110'));
 
@@ -354,7 +354,7 @@ class SelfTests16 extends SelfTests {
       m.cFlag = false;
       m.pushStack();
       m.xI = BigInt.one;
-      Operations.rlcn.intCalc!(m);
+      Operations16.rlcn.intCalc!(m);
       await expect(m.cFlag, true);
       await expect(m.x, m.tryParseValue('00111000'));
 
@@ -362,7 +362,7 @@ class SelfTests16 extends SelfTests {
       m.cFlag = false;
       m.pushStack();
       m.xI = BigInt.two;
-      Operations.rlcn.intCalc!(m);
+      Operations16.rlcn.intCalc!(m);
       await expect(m.cFlag, false);
       await expect(m.x, m.tryParseValue('01110001'));
 
@@ -371,7 +371,7 @@ class SelfTests16 extends SelfTests {
       m.cFlag = false;
       m.pushStack();
       m.xI = BigInt.one;
-      Operations.rrcn.intCalc!(m);
+      Operations16.rrcn.intCalc!(m);
       await expect(m.x, m.tryParseValue('00111000'));
       await expect(m.cFlag, true);
 
@@ -379,7 +379,7 @@ class SelfTests16 extends SelfTests {
       m.cFlag = false;
       m.pushStack();
       m.xI = BigInt.two;
-      Operations.rrcn.intCalc!(m);
+      Operations16.rrcn.intCalc!(m);
       await expect(m.x, m.tryParseValue('10011100'));
       await expect(m.cFlag, false);
 
@@ -387,61 +387,61 @@ class SelfTests16 extends SelfTests {
       m.cFlag = false;
       m.pushStack();
       m.xI = BigInt.from(3);
-      Operations.rrcn.intCalc!(m);
+      Operations16.rrcn.intCalc!(m);
       await expect(m.x, m.tryParseValue('01001110'));
       await expect(m.cFlag, false);
 
       // cb
       m.y = m.tryParseValue('11111111')!;
       m.x = m.tryParseValue('00000011')!;
-      Operations.cb.intCalc!(m);
+      Operations16.cb.intCalc!(m);
       await expect(m.x, m.tryParseValue('11110111'));
 
       // sb
       m.y = m.tryParseValue('01110000')!;
       m.x = m.tryParseValue('00000000')!;
-      Operations.sb.intCalc!(m);
+      Operations16.sb.intCalc!(m);
       await expect(m.x, m.tryParseValue('01110001'));
 
       m.pushStack();
       m.xI = BigInt.from(7);
-      Operations.sb.intCalc!(m);
+      Operations16.sb.intCalc!(m);
       await expect(m.x, m.tryParseValue('11110001'));
 
       // maskr
       m.xI = BigInt.from(4);
-      Operations.maskr.intCalc!(m);
+      Operations16.maskr.intCalc!(m);
       await expect(m.x, m.tryParseValue('00001111'));
       m.xI = BigInt.from(0);
-      Operations.maskr.intCalc!(m);
+      Operations16.maskr.intCalc!(m);
       await expect(m.x, m.tryParseValue('00000000'));
       m.xI = BigInt.from(8);
-      Operations.maskr.intCalc!(m);
+      Operations16.maskr.intCalc!(m);
       await expect(m.x, m.tryParseValue('11111111'));
 
       // maskl
       m.xI = BigInt.from(3);
-      Operations.maskl.intCalc!(m);
+      Operations16.maskl.intCalc!(m);
       await expect(m.x, m.tryParseValue('11100000'));
       m.xI = BigInt.from(0);
-      Operations.maskl.intCalc!(m);
+      Operations16.maskl.intCalc!(m);
       await expect(m.x, m.tryParseValue('00000000'));
       m.xI = BigInt.from(7);
-      Operations.maskl.intCalc!(m);
+      Operations16.maskl.intCalc!(m);
       await expect(m.x, m.tryParseValue('11111110'));
       m.xI = BigInt.from(8);
-      Operations.maskl.intCalc!(m);
+      Operations16.maskl.intCalc!(m);
       await expect(m.x, m.tryParseValue('11111111'));
 
       // #b
       m.x = m.tryParseValue('01011101')!;
-      Operations.poundB.intCalc!(m);
+      Operations16.poundB.intCalc!(m);
       await expect(m.xI, BigInt.from(5));
       m.x = m.tryParseValue('00000000')!;
-      Operations.poundB.intCalc!(m);
+      Operations16.poundB.intCalc!(m);
       await expect(m.xI, BigInt.from(0));
       m.x = m.tryParseValue('11111111')!;
-      Operations.poundB.intCalc!(m);
+      Operations16.poundB.intCalc!(m);
       await expect(m.xI, BigInt.from(8));
     });
     await test('double operations', () async {
@@ -453,7 +453,7 @@ class SelfTests16 extends SelfTests {
       // double multiply:  7*6 = 42
       m.y = m.tryParseValue('00111')!;
       m.x = m.tryParseValue('00110')!;
-      Operations.dblx.intCalc!(m);
+      Operations16.dblx.intCalc!(m);
       await expect(m.x, m.tryParseValue('00001'));
       await expect(m.y, m.tryParseValue('01010'));
 
@@ -463,7 +463,7 @@ class SelfTests16 extends SelfTests {
       m.x = m.tryParseValue('11101')!; // Y, YZ is -88
       m.pushStack();
       m.x = m.tryParseValue('01011')!; // X, 11
-      Operations.dblDiv.intCalc!(m);
+      Operations16.dblDiv.intCalc!(m);
       await expect(m.x, m.tryParseValue('11000'));
 
       // double remainder: -87 remainder 11 = -10
@@ -472,7 +472,7 @@ class SelfTests16 extends SelfTests {
       m.x = m.tryParseValue('11101')!; // Y, YZ is -87
       m.pushStack();
       m.x = m.tryParseValue('01011')!; // X, 11
-      Operations.dblr.intCalc!(m);
+      Operations16.dblr.intCalc!(m);
       await expect(m.xI, BigInt.from(-10));
 
       // double multiply:  Unsigned f723eb313f123827 * a20175becabcde06
@@ -482,7 +482,7 @@ class SelfTests16 extends SelfTests {
       m.gFlag = true;
       m.xI = BigInt.parse('f723eb313f123827', radix: 16);
       m.yI = BigInt.parse('a20175becabcde06', radix: 16);
-      Operations.dblx.intCalc!(m);
+      Operations16.dblx.intCalc!(m);
       await expect(m.xI, BigInt.parse('9c6623a4aff98347', radix: 16));
       await expect(m.yI, BigInt.parse('8e11697b49c322ea', radix: 16));
       await expect(m.gFlag, false);
@@ -490,7 +490,7 @@ class SelfTests16 extends SelfTests {
       // double divide with above numbers
       m.pushStack();
       m.xI = BigInt.parse('a20175becabcde06', radix: 16);
-      Operations.dblDiv.intCalc!(m);
+      Operations16.dblDiv.intCalc!(m);
       await expect(m.xI, BigInt.parse('f723eb313f123827', radix: 16));
 
       // double remainder with big numbers
@@ -499,7 +499,7 @@ class SelfTests16 extends SelfTests {
       m.xI = BigInt.parse('9c6623a4aff98347', radix: 16);
       m.pushStack();
       m.xI = BigInt.parse('f723eb313f123827', radix: 16);
-      Operations.dblr.intCalc!(m);
+      Operations16.dblr.intCalc!(m);
       await expect(m.xI, BigInt.from(2));
     });
     await test('Unsigned add and subtract', _testUnsigned);
@@ -648,12 +648,12 @@ class SelfTests16 extends SelfTests {
   @override
   Future<void> testNumbers() async {
     await super.testNumbers();
-    await expect(Operations.letterA.numericValue, 0xa);
-    await expect(Operations.letterB.numericValue, 0xb);
-    await expect(Operations.letterC.numericValue, 0xc);
-    await expect(Operations.letterD.numericValue, 0xd);
-    await expect(Operations.letterE.numericValue, 0xe);
-    await expect(Operations.letterF.numericValue, 0xf);
+    await expect(Operations16.letterA.numericValue, 0xa);
+    await expect(Operations16.letterB.numericValue, 0xb);
+    await expect(Operations16.letterC.numericValue, 0xc);
+    await expect(Operations16.letterD.numericValue, 0xd);
+    await expect(Operations16.letterE.numericValue, 0xe);
+    await expect(Operations16.letterF.numericValue, 0xf);
   }
 
   @override
