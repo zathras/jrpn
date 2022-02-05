@@ -732,15 +732,25 @@ class ArgInputState extends ControllerState {
 
   ArgInputState(Controller con, this.arg, this.lastState) : super(con);
 
-  bool get decimalAllowed => arg.desc.maxArg > 17;
+  bool get decimalAllowed => arg.desc.maxArg >= controller.argBase + 2;
   // GTO and GSB take index registers, but not .
 
   @override
   void buttonDown(Operation key) {
     if (controller.argIops.contains(key)) {
-      _gotNumber(arg.desc.indexRegisterNumber);
+      if (_decimalPressed) {
+        changeState(lastState);
+        lastState.buttonDown(key);
+      } else {
+        _gotNumber(arg.desc.indexRegisterNumber);
+      }
     } else if (controller.argParenIops.contains(key)) {
-      _gotNumber(arg.desc.indirectIndexNumber);
+      if (_decimalPressed) {
+        changeState(lastState);
+        lastState.buttonDown(key);
+      } else {
+        _gotNumber(arg.desc.indirectIndexNumber);
+      }
     } else if (key == Operations.dot) {
       if (_decimalPressed || !decimalAllowed) {
         changeState(lastState);
@@ -751,7 +761,7 @@ class ArgInputState extends ControllerState {
     } else {
       int? argV = key.numericValue;
       if (argV != null) {
-        _gotNumber(argV);
+        _gotNumber(argV + arg.desc.r0ArgumentValue);
       } else {
         changeState(lastState); // bail
         lastState.buttonDown(key);
@@ -761,7 +771,7 @@ class ArgInputState extends ControllerState {
 
   void _gotNumber(int argV) {
     if (_decimalPressed) {
-      argV += 16;
+      argV += controller.argBase;
     }
     if (argV > arg.desc.maxArg) {
       changeState(lastState);
@@ -891,20 +901,6 @@ class ProgramEntry extends LimitedState {
 
   ProgramEntry(Controller con) : super(con);
 
-  static final Set<LimitedOperation> _ourPressed = {
-    Operations.fShift,
-    Operations.gShift,
-    Operations.pr,
-    Operations.bsp,
-    Operations.clearPrgm,
-    Operations.clearPrefix,
-    Operations.sst,
-    Operations.bst,
-    Operations.mem,
-    Operations.status,
-    Operations.onOff
-  };
-
   ProgramMemory get program => model.memory.program;
 
   @override
@@ -923,7 +919,7 @@ class ProgramEntry extends LimitedState {
     } else if (arg != null) {
       // which includes gsb and lbl
       controller.runWithArg(arg, this);
-    } else if (_ourPressed.contains(key)) {
+    } else if (controller.nonProgrammableKeys.contains(key)) {
       assert(key is LimitedOperation);
       // It has to be, because it's in _ourKeys.  The static typing
       // system doesn't guarantee that for us, because we're using the

@@ -54,7 +54,8 @@ class Model15 extends Model<Operation> {
   // calculator's state obsolete.
   static final List<List<MKey<Operation>?>> _logicalKeys = [
     [
-      MKey(Operations15.sqrtOp15, Operations15.letterLabelA, Operations15.xSquared),
+      MKey(Operations15.sqrtOp15, Operations15.letterLabelA,
+          Operations15.xSquared),
       MKey(Operations15.eX15, Operations15.letterLabelB, Operations15.lnOp),
       MKey(Operations15.tenX15, Operations15.letterLabelC, Operations15.logOp),
       MKey(Operations15.yX15, Operations15.letterLabelD, Operations15.percent),
@@ -69,9 +70,21 @@ class Model15 extends Model<Operation> {
     [
       MKey(Operations.sst, Operations15.lbl15, Operations.bst),
       MKey(Operations.gto, Operations15.hyp, Operations15.hypInverse),
-      MKey(Operations15.sin, Operations15.dim, Operations15.sinInverse),
-      MKey(Operations15.cos, Operations15.parenI15, Operations15.cosInverse),
-      MKey(Operations15.tan, Operations15.I15, Operations15.tanInverse),
+      MKey(Operations15.sin, Operations15.dim, Operations15.sinInverse,
+          extensionOps: [
+            MKeyExtensionOp(Operations15.sinh, '42,22,'),
+            MKeyExtensionOp(Operations15.sinhInverse, '43,22,')
+          ]),
+      MKey(Operations15.cos, Operations15.parenI15, Operations15.cosInverse,
+          extensionOps: [
+            MKeyExtensionOp(Operations15.cosh, '42,22,'),
+            MKeyExtensionOp(Operations15.coshInverse, '43,22,')
+          ]),
+      MKey(Operations15.tan, Operations15.I15, Operations15.tanInverse,
+          extensionOps: [
+            MKeyExtensionOp(Operations15.tanh, '42,22,'),
+            MKeyExtensionOp(Operations15.tanhInverse, '43,22,')
+          ]),
       MKey(Operations.eex, Operations15.resultOp, Operations15.piOp),
       MKey(Operations.n4, Operations15.xExchange, Operations.sf),
       MKey(Operations.n5, Operations15.dse, Operations.cf),
@@ -208,18 +221,17 @@ class Model15 extends Model<Operation> {
 }
 
 class Operations15 extends Operations {
-
-  static final letterLabelA = LetterLabel('A', 10);
-  static final letterLabelB = LetterLabel('B', 11);
-  static final letterLabelC = LetterLabel('C', 12);
-  static final letterLabelD = LetterLabel('D', 13);
-  static final letterLabelE = LetterLabel('E', 14);
+  static final letterLabelA = LetterLabel('A', 20);
+  static final letterLabelB = LetterLabel('B', 21);
+  static final letterLabelC = LetterLabel('C', 22);
+  static final letterLabelD = LetterLabel('D', 23);
+  static final letterLabelE = LetterLabel('E', 24);
 
   static final NormalArgOperation lbl15 = NormalArgOperation(
       arg: OperationArg.both(
           desc: const ArgDescription15C(maxArg: 24), calc: (_, __) {}),
       name: 'LBL');
-  // @@@@ TODO
+  // @@@@ I am here
 
   ///
   /// The HP15'c I operation, for entry of imaginary numbers.
@@ -243,7 +255,8 @@ class Operations15 extends Operations {
   static final NormalOperation parenI15 = LimitedOperation(
       pressed: (LimitedState cs) => cs.handleShowImaginary(), name: '(i)');
 
-  static final sqrtOp15 = NormalOperationOrLetter(Operations.sqrtOp, letterLabelA);
+  static final sqrtOp15 =
+      NormalOperationOrLetter(Operations.sqrtOp, letterLabelA);
   static final NormalOperation eX15 = NormalOperationOrLetter.floatOnly(
       letter: letterLabelB,
       floatCalc: (Model m) {
@@ -351,7 +364,8 @@ class Operations15 extends Operations {
         m.resultXF = m.xF * 0.01 * m.yF;
       },
       name: '%');
-  static final reciprocal15 = NormalOperationOrLetter(Operations.reciprocal, letterLabelE);
+  static final reciprocal15 =
+      NormalOperationOrLetter(Operations.reciprocal, letterLabelE);
   static final NormalOperation deltaPercent = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         m.floatOverflow = false;
@@ -365,25 +379,39 @@ class Operations15 extends Operations {
       name: 'MATRIX');
   static final NormalArgOperation fix = NormalArgOperation(
       stackLift: StackLift.neutral,
+      numExtendedOpCodes: 11,
       arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 9),
-          calc: (Model m, int digits) {
+          desc: const ArgDescription15CJustI(maxArg: 10),
+          calc: (Model m, int arg) {
+            final digits = _precisionDigits(arg, m);
             m.displayMode = DisplayMode.fix(digits, m.isComplexMode);
           }),
       name: 'FIX');
+  static int _precisionDigits(int arg, Model m) {
+    if (arg == 0) {
+      int i = m.memory.registers.index.asDouble.toInt();
+      return max(0, min(i, 9));
+    } else {
+      return arg - 1;
+    }
+  }
   static final NormalArgOperation sci = NormalArgOperation(
       stackLift: StackLift.neutral,
+      numExtendedOpCodes: 11,
       arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 9),
-          calc: (Model m, int digits) {
+          desc: const ArgDescription15CJustI(maxArg: 10),
+          calc: (Model m, int arg) {
+            final digits = _precisionDigits(arg, m);
             m.displayMode = DisplayMode.sci(min(digits, 6), m.isComplexMode);
           }),
       name: 'SCI');
   static final NormalArgOperation eng = NormalArgOperation(
       stackLift: StackLift.neutral,
+      numExtendedOpCodes: 11,
       arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 9),
-          calc: (Model m, int digits) {
+          desc: const ArgDescription15CJustI(maxArg: 10),
+          calc: (Model m, int arg) {
+            final digits = _precisionDigits(arg, m);
             m.displayMode = DisplayMode.eng(min(6, digits), m.isComplexMode);
           }),
       name: 'SCI');
@@ -407,16 +435,14 @@ class Operations15 extends Operations {
         throw "@@ TODO";
       },
       name: 'SOLVE');
-  static final NormalOperation hyp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
+  static final LimitedOperation hyp = LimitedOperation(
+    pressed: (LimitedState c) => c.handleShift(ShiftKey.none),
+      // Controller15 handles the rest
       name: 'HYP');
-  static final NormalOperation hypInverse = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'HYP-1');
+  static final LimitedOperation hypInverse =
+      LimitedOperation(
+          pressed: (LimitedState c) => c.handleShift(ShiftKey.none),
+          name: 'HYP-1');
   static final NormalOperation sin = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         throw "@@ TODO";
@@ -447,6 +473,36 @@ class Operations15 extends Operations {
         throw "@@ TODO";
       },
       name: 'TAN-1');
+  static final NormalOperation sinh = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO sinh";
+      },
+      name: 'SINH');
+  static final NormalOperation sinhInverse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'SINH-1');
+  static final NormalOperation cosh = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'COSH');
+  static final NormalOperation coshInverse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'COSH-1');
+  static final NormalOperation tanh = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'TANH');
+  static final NormalOperation tanhInverse = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        throw "@@ TODO";
+      },
+      name: 'TANH-1');
   static final NormalOperation dim = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         throw "@@ TODO";
@@ -547,8 +603,8 @@ class Operations15 extends Operations {
         throw "@@ TODO";
       },
       name: 'INT');
-  static final NormalOperation userOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
+  static final LimitedOperation userOp = LimitedOperation(
+      pressed: (LimitedState s) {
         throw "@@ TODO";
       },
       name: 'USER');
@@ -615,9 +671,8 @@ class Operations15 extends Operations {
           desc: const ArgDescription15C(maxArg: 21),
           pressed: (ActiveState s) => s.liftStackIfEnabled(),
           calc: (Model m, int arg) =>
-          m.x = m.memory.registers.getValue(arg, rcl15.arg)),
+              m.x = m.memory.registers.getValue(arg, rcl15.arg)),
       name: 'RCL');
-
 
   static double _checkResult(double Function() f, int errNo) {
     try {
@@ -637,21 +692,51 @@ class ProgramInstruction15 extends ProgramInstruction<Operation> {
 
   @override
   String get programDisplay {
-    if (op.maxArg > 0) {
-      final String as;
-      if (argValue < 16) {
-        if (argValue < 10) {
-          as = ' ${argValue.toRadixString(10)}';
-        } else {
-          as = '1${argValue - 9}'; // A-F are keys R/C 11..16
-        }
-      } else {
-        as = ' .${(argValue - 16).toRadixString(10)}';
-      }
-      return rightJustify('${op.programDisplay}$as', 6);
-    } else {
+    if (op.maxArg == 0) {
       return rightJustify(op.programDisplay, 6);
     }
+    final String as;
+    if (argIsParenI) {
+      as = '24';
+    } else if (argIsI) {
+      as = '25';
+    } else {
+      final av = argValue - op.arg!.desc.r0ArgumentValue;
+      assert(av >= 0 && av < 25);
+      if (av < 10) {
+        as = ' ${av.toRadixString(10)}';
+      } else if (av < 20) {
+        as = ' .${(av- 10).toRadixString(10)}';
+      } else {
+        // A..F
+        as = '1${av - 19}';
+      }
+    }
+    return rightJustify('${op.programDisplay}$as', 6);
+  }
+
+  @override
+  String get programListing {
+    final String as;
+    if (op.maxArg > 0) {
+      if (argIsParenI) {
+        as = ' (i)';
+      } else if (argIsI) {
+        as = ' I';
+      } else {
+        final av = argValue - op.arg!.desc.r0ArgumentValue;
+        assert(av >= 0 && av < 25);
+        if (av < 20) {
+          as = ' ${argValue.toRadixString(10)}';
+        } else {
+          final cc = 'A'.codeUnitAt(0) + av - 20;
+          as = ' ${String.fromCharCode(cc)}';
+        }
+      }
+    } else {
+      as = '';
+    }
+    return '${op.name}$as';
   }
 }
 
@@ -712,7 +797,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.hyp,
       Operations15.hypInverse,
       'T');
-  CalculatorButton get sin => CalculatorButton(
+  CalculatorButton get sin => CalculatorButtonHyperbolic(
       factory,
       'SIN',
       'DIM',
@@ -720,8 +805,10 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.sin,
       Operations15.dim,
       Operations15.sinInverse,
+      Operations15.sinh,
+      Operations15.sinhInverse,
       'I');
-  CalculatorButton get cos => CalculatorButton(
+  CalculatorButton get cos => CalculatorButtonHyperbolic(
       factory,
       'COS',
       '(i)',
@@ -729,8 +816,10 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.cos,
       Operations15.parenI15,
       Operations15.cosInverse,
+      Operations15.cosh,
+      Operations15.coshInverse,
       'Z');
-  CalculatorButton get tan => CalculatorButton(
+  CalculatorButton get tan => CalculatorButtonHyperbolic(
       factory,
       'TAN',
       'I',
@@ -738,6 +827,8 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.tan,
       Operations15.I15,
       Operations15.tanInverse,
+      Operations15.tanh,
+      Operations15.tanhInverse,
       'K');
   CalculatorButton get eex => CalculatorButton(factory, 'EEX', 'RESULT',
       '\u03c0', Operations.eex, Operations15.resultOp, Operations15.piOp, 'L');
@@ -864,6 +955,30 @@ class ButtonLayout15 extends ButtonLayout {
       ];
 }
 
+///
+/// Calculator button for the hyperbolic functions
+///
+class CalculatorButtonHyperbolic extends CalculatorButton {
+  final Operation hyperOp;
+  final Operation inverseHyperOp;
+
+  CalculatorButtonHyperbolic(
+      ButtonFactory bFactory,
+      String uText,
+      String fText,
+      String gText,
+      Operation uKey,
+      Operation fKey,
+      Operation gKey,
+      this.hyperOp,
+      this.inverseHyperOp,
+      String acceleratorKey,
+      {String? acceleratorLabel,
+      Key? key})
+      : super(bFactory, uText, fText, gText, uKey, fKey, gKey, acceleratorKey,
+            acceleratorLabel: acceleratorLabel, key: key);
+}
+
 class LandscapeButtonFactory15 extends LandscapeButtonFactory {
   LandscapeButtonFactory15(
       BuildContext context, ScreenPositioner screen, RealController controller)
@@ -918,7 +1033,21 @@ class PortraitButtonFactory15 extends PortraitButtonFactory {
 }
 
 class Controller15 extends RealController {
-  Controller15(Model<Operation> model) : super(model, _numbers, const {}, Operations15.lbl15);
+  Controller15(Model<Operation> model)
+      : super(model, _numbers, const {}, Operations15.lbl15);
+
+  @override
+  void buttonWidgetDown(CalculatorButton b) {
+    if (b is! CalculatorButtonHyperbolic) {
+      super.buttonWidgetDown(b);
+    } else if (lastKey == Operations15.hyp) {
+      buttonDown(b.hyperOp);
+    } else if (lastKey == Operations15.hypInverse) {
+      buttonDown(b.inverseHyperOp);
+    } else {
+      super.buttonWidgetDown(b);
+    }
+  }
 
   /// The numbers.  This must be in order.
   static final List<NumberEntry> _numbers = [
@@ -961,11 +1090,28 @@ class Controller15 extends RealController {
 
   @override
   Set<Operation> get argIops => _argIops;
-  static final Set<Operation> _argIops = {Operations.sst, Operations15.I15};
+  static final Set<Operation> _argIops = {Operations15.tan, Operations15.I15};
 
   /// Abbreviated key sequences for (i) used as an argument
   /// cf. 16C manual p. 68
   @override
   Set<Operation> get argParenIops => _argParenIops;
-  static final Set<Operation> _argParenIops = {Operations.rs, Operations15.parenI15};
+  static final Set<Operation> _argParenIops = {
+    Operations15.cos,
+    Operations15.parenI15
+  };
+
+  @override
+  int get argBase => 10;
+
+  @override
+  Set<LimitedOperation> get nonProgrammableKeys => nonProgrammableKeysStatic;
+
+  static final Set<LimitedOperation> nonProgrammableKeysStatic = {
+    ...RealController.nonProgrammableKeysStatic,
+    Operations15.hyp,
+    Operations15.hypInverse,
+    Operations15.userOp
+  };
+
 }

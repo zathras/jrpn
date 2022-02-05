@@ -61,12 +61,16 @@ part 'tests.dart';
 abstract class Controller {
   final Model<Operation> model;
   late ControllerState _state;
-  Operation? _lastKey;
+  @protected
+  Operation? lastKey;
 
   Controller(this.model);
 
   KeyboardController get keyboard;
   ControllerState get state => _state;
+
+  Set<LimitedOperation> get nonProgrammableKeys;
+
   set state(ControllerState s) {
     _state = s;
     s.onChangedTo();
@@ -79,11 +83,15 @@ abstract class Controller {
   bool get _stackLiftEnabled;
   set _stackLiftEnabled(bool v);
 
+  void buttonWidgetDown(CalculatorButton b) =>
+      buttonDown(model.shift.select(b));
+
   ///
   /// Handle an operation due to a press on the keyboard.
   ///
+  @mustCallSuper
   void buttonDown(Operation key) {
-    _lastKey = key;
+    lastKey = key;
     if (model.shift != ShiftKey.none) {
       model.shift = ShiftKey.none;
       // key.pressed(this) might set the shift key again.
@@ -96,7 +104,7 @@ abstract class Controller {
   /// for some keys, like SST, show-hex and clear-prefix.
   ///
   void buttonUp() {
-    Operation? k = _lastKey;
+    Operation? k = lastKey;
     if (k != null) {
       state.buttonUp(k);
     }
@@ -173,6 +181,9 @@ abstract class Controller {
   /// Abbreviated key sequences for (i) used as an argument
   /// cf. 16C manual p. 68
   Set<Operation> get argParenIops;
+
+  /// The numeric base for arguments, like register numbers.
+  int get argBase;
 }
 
 ///
@@ -209,7 +220,9 @@ abstract class RealController extends Controller {
   @override
   final KeyboardController keyboard = KeyboardController();
 
-  RealController(Model<Operation> model, List<NumberEntry> numbers,
+  RealController(
+      Model<Operation> model,
+      List<NumberEntry> numbers,
       Map<NormalOperation, ProgramInstruction> shortcuts,
       Operation lblOperation)
       : super(model) {
@@ -256,6 +269,23 @@ abstract class RealController extends Controller {
 
   @override
   T? _branchingOperationCalc<T>(T? calc) => null;
+
+  @override
+  Set<LimitedOperation> get nonProgrammableKeys => nonProgrammableKeysStatic;
+
+  static final Set<LimitedOperation> nonProgrammableKeysStatic = {
+    Operations.fShift,
+    Operations.gShift,
+    Operations.pr,
+    Operations.bsp,
+    Operations.clearPrgm,
+    Operations.clearPrefix,
+    Operations.sst,
+    Operations.bst,
+    Operations.mem,
+    Operations.status,
+    Operations.onOff
+  };
 
   ButtonLayout getButtonLayout(
       ButtonFactory factory, double totalHeight, double totalButtonHeight);
@@ -354,6 +384,12 @@ class RunningController extends Controller {
 
   @override
   Set<Operation> get argParenIops => real.argParenIops;
+
+  @override
+  int get argBase => real.argBase;
+
+  @override
+  Set<LimitedOperation> get nonProgrammableKeys => real.nonProgrammableKeys;
 }
 
 ///
@@ -449,9 +485,10 @@ class LimitedOperation extends Operation implements NormalOperation {
 /// One of the number keys, from 0 to f.
 ///
 class NumberEntry extends Operation {
-  final int value;
+  @override
+  final int numericValue;
 
-  NumberEntry(String name, this.value) : super(name: name);
+  NumberEntry(String name, this.numericValue) : super(name: name);
 
   @override
   OperationArg? get arg => null;
@@ -463,7 +500,8 @@ class NumberEntry extends Operation {
   void Function(Model m)? get complexCalc => null;
 
   @override
-  void pressed(LimitedState arg) => (arg as ActiveState).handleNumberKey(value);
+  void pressed(LimitedState arg) =>
+      (arg as ActiveState).handleNumberKey(numericValue);
   // See the downcast note in NormalOperation
 
   @override
@@ -483,9 +521,6 @@ class LetterLabel extends NumberEntry {
 
   @override
   StackLift get _stackLift => StackLift.neutral;
-
-  @override
-  int get numericValue => value;
 }
 
 ///
@@ -621,10 +656,14 @@ class NormalArgOperation extends Operation {
   final OperationArg arg;
 
   @override
+  final int numExtendedOpCodes;
+
+  @override
   final StackLift _stackLift;
 
   NormalArgOperation(
-      {StackLift? stackLift, required this.arg, required String name})
+      {StackLift? stackLift, required this.arg, required String name,
+      this.numExtendedOpCodes = 0})
       : _stackLift = stackLift ?? StackLift.enable,
         super(name: name) {
     arg.op = this;
@@ -713,7 +752,8 @@ class OperationArg extends ProgramOperationArg {
   @override
   final ArgDescription desc;
 
-  OperationArg({required this.floatCalc,
+  OperationArg(
+      {required this.floatCalc,
       required this.intCalc,
       Function(Model, int)? complexCalc,
       this.pressed,
@@ -729,9 +769,7 @@ class OperationArg extends ProgramOperationArg {
         complexCalc = calc;
 
   OperationArg.intOnly(
-      {required this.intCalc,
-      this.pressed,
-      required this.desc})
+      {required this.intCalc, this.pressed, required this.desc})
       : floatCalc = null,
         complexCalc = null;
 
@@ -763,7 +801,8 @@ class GosubOperationArg extends OperationArg {
 /// but it's stack neutral if staying in float mode.
 ///
 class FloatKeyArg extends OperationArg {
-  FloatKeyArg({required ArgDescription desc, required void Function(Model, int) calc})
+  FloatKeyArg(
+      {required ArgDescription desc, required void Function(Model, int) calc})
       : super(floatCalc: calc, intCalc: calc, desc: desc);
 
   @override

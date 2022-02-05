@@ -414,14 +414,16 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   bool _needsSave = false;
   ShiftKey _shift = ShiftKey.none;
   int _wordSize;
-  BigInt _wordMask = BigInt.from(0xffff);
-  BigInt _signMask = BigInt.from(0x8000);
+  BigInt _wordMask;
+  BigInt _signMask;
   TrigMode trigMode = TrigMode.deg;
   DisplayMode _displayMode;
   IntegerSignMode _integerSignMode = SignMode.twosComplement;
   bool isRunningProgram = false;
   Model(this._displayMode, this._wordSize, int numFlags)
-      : _flags = List<bool>.filled(numFlags, false, growable: false);
+      : _flags = List<bool>.filled(numFlags, false, growable: false),
+        _wordMask = (BigInt.one << _wordSize) - BigInt.one,
+        _signMask = BigInt.one << (_wordSize - 1);
 
   /// The list of "logical" keys.  This has nothing to do with the UI;
   /// The order of the operations in this list determines the

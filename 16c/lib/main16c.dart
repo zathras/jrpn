@@ -515,6 +515,27 @@ class ProgramInstruction16 extends ProgramInstruction<Operation> {
       return rightJustify(op.programDisplay, 6);
     }
   }
+
+  @override
+  String get programListing {
+    final String as;
+    if (op.maxArg > 0) {
+      if (argIsParenI) {
+        as = ' (i)';
+      } else if (argIsI) {
+        as = ' I';
+      } else if (argValue == 10 && op.maxArg == 10) {
+        as = ' .';
+        // See above, under programDisplay.  "f FLOAT ." is better than
+        // "f FLOAT a," under similar reasoning.
+      } else {
+        as = ' ${argValue.toRadixString(16)}';
+      }
+    } else {
+      as = '';
+    }
+    return '${op.name}$as';
+  }
 }
 
 ///
@@ -810,6 +831,9 @@ class Controller16 extends RealController {
   @override
   Set<Operation> get argParenIops => _argParenIops;
   static final Set<Operation> _argParenIops = {Operations.rs, Operations16.parenI};
+
+  @override
+  int get argBase => 16;
 }
 
 void _doubleIntMultiply(Model m) {

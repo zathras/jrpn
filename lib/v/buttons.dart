@@ -970,10 +970,7 @@ class CalculatorButtonState extends State<CalculatorButton> {
           // a button with the mouse:
           factory.controller.keyboard.releasePressedButton();
 
-          // yes, I could have use a simple three-way switch statement here,
-          // but I like the State pattern.
-          final Operation key = factory.controller.model.shift.select(widget);
-          factory.controller.buttonDown(key);
+          factory.controller.buttonWidgetDown(widget);
         },
         onTapUp: (TapUpDetails details) {
           setState(() {
@@ -995,8 +992,7 @@ class CalculatorButtonState extends State<CalculatorButton> {
       _pressed = true;
       _pressedFromKeyboard = true;
     });
-    final Operation key = factory.controller.model.shift.select(widget);
-    factory.controller.buttonDown(key);
+    factory.controller.buttonWidgetDown(widget);
   }
 
   /// When the button is released with an accelerator key
