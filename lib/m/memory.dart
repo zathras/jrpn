@@ -424,9 +424,9 @@ class ProgramMemory<OT extends ProgramOperation> {
     while (_cachedLine < line) {
       _cachedLine++;
       if (_byteAt(_cachedAddress) == 0xff) {
-        _cachedAddress += 2;
-      } else {
         _cachedAddress += 4;
+      } else {
+        _cachedAddress += 2;
       }
     }
   }

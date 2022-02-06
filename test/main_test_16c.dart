@@ -32,10 +32,9 @@ import 'programs.dart';
 
 
 Future<void> main() async {
-  testWidgets('Self tests', (WidgetTester tester) async {
+  testWidgets('16C Buttons', (WidgetTester tester) async {
     await tester.pumpWidget(Jrpn(Controller16(Model16())));
   });
-
   test('p79 program', p79Program);
   test('p93 checksum program', p93Checksum);
   test('stack lift', testStackLift);
@@ -46,7 +45,7 @@ Future<void> main() async {
   appendixA();
   test('Towers of Hanoi', towersOfHanoi);
   // Do this last, because it leaves a timer pending:
-  test('Built-in self tests', () async {
+  test('Built-in self tests 16C', () async {
     await SelfTests16(inCalculator: false).runAll();
   });
 }

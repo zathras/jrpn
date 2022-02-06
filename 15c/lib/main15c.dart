@@ -324,22 +324,6 @@ class Operations15 extends Operations {
       },
       complexCalc: (Model m) {
         m.popSetResultXC = m.yC.pow(m.xC);
-        // y^x = e^(x ln y)
-        final x = m.xC;
-        final y = m.yC;
-        final yR = y.r;
-        if (yR == 0) {
-          if (x == Complex.zero) {
-            throw CalculatorError(0);
-          }
-          m.popSetResultXC = Complex.zero;
-        } else {
-          final lnY = Complex(_checkResult(() => dart.log(yR), 0), y.theta);
-          final xLnY = x * lnY;
-          final resultR = _checkResult(() => exp(xLnY.real), 0);
-          m.popSetResultXC = Complex(resultR * dart.cos(xLnY.imaginary),
-              resultR * dart.sin(xLnY.imaginary));
-        }
       },
       name: 'yX');
   static final NormalOperation percent = NormalOperation.floatOnly(

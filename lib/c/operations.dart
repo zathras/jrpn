@@ -189,12 +189,9 @@ class Operations {
       floatCalc: (Model m) {
         m.floatOverflow = false;
         m.popSetResultXF = m.yF + m.xF;
-        print("@@ FLOAT?!?");
       },
       complexCalc: (Model m) {
-        print("@@ ${m.xC} + ${m.yC}");
         m.popSetResultXC = m.xC + m.yC;
-        print("@@ result ${m.xC}");
       },
       intCalc: (Model m) => m.integerSignMode.intAdd(m),
       name: '+');
