@@ -270,10 +270,10 @@ class Resting extends ActiveState {
     if (!model.isComplexMode) {
       throw CalculatorError(3);
     }
-    final tmp = model.x;
+    final tmp = model.xC;
     model.x = model.xImaginary;
     model.display.displayX();
-    model.x = tmp;
+    model.xC = tmp;
     changeState(ShowState(this));
   }
 

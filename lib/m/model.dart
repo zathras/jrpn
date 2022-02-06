@@ -557,7 +557,6 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// Pop the stack and set X from a Dart double, setting lastX
   // ignore: avoid_setters_without_getters
   set popSetResultXC(Complex v) {
-    _lastXImaginary = _imaginaryStack![0];
     _popStackSetLastX();
     _setComplex(0, v);
     _needsSave = true;

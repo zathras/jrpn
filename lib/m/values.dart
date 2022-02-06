@@ -161,6 +161,9 @@ class Value {
     } else if (negativeExponent) {
       exponent = ((0x999 + 1) - exponent); // 1000's complement in BCD
     }
+    if (mantissa == _mantissaSign) { // -0.0
+      mantissa = BigInt.zero;
+    }
     return Value._fromMantissaAndExponent(mantissa, exponent);
   }
 
@@ -180,7 +183,7 @@ class Value {
     }
     final int sign = (upper52 >> 40).toInt();
     if (sign != 0) {
-      if (sign == 0x9 && mantissa != 0) {
+      if (sign == 0x9) {
         mantissa = -mantissa;
       } else {
         throw CalculatorError(6);

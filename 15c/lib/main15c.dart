@@ -265,10 +265,7 @@ class Operations15 extends Operations {
         m.resultXF = pow(e, x) as double;
       },
       complexCalc: (Model m) {
-        final x = m.xC;
-        final eXr = exp(x.real);
-        m.resultXC =
-            Complex(eXr * dart.cos(x.imaginary), eXr * dart.sin(x.imaginary));
+        m.resultXC = m.xC.exp();
       },
       name: 'eX');
   static final NormalOperation xSquared = NormalOperation.floatOnly(
@@ -292,12 +289,7 @@ class Operations15 extends Operations {
         m.resultXF = _checkResult(() => log(x), 0);
       },
       complexCalc: (Model m) {
-        final x = m.xC;
-        final r = x.r;
-        if (r == 0) {
-          throw CalculatorError(0);
-        }
-        m.resultXC = Complex(_checkResult(() => dart.log(r), 0), x.theta);
+        m.resultXC = _checkResultC(m.xC.ln, 0);
       },
       name: 'ln');
   static final NormalOperation tenX15 = NormalOperationOrLetter.floatOnly(
@@ -308,10 +300,7 @@ class Operations15 extends Operations {
         m.resultXF = pow(10, x) as double;
       },
       complexCalc: (Model m) {
-        final x = m.xC * const Complex(ln10, 0);
-        final eXr = exp(x.real);
-        m.resultXC =
-            Complex(eXr * dart.cos(x.imaginary), eXr * dart.sin(x.imaginary));
+        m.resultXC = (m.xC * const Complex(ln10, 0)).exp();
       },
       name: '10^x');
   static final NormalOperation logOp = NormalOperation.floatOnly(
@@ -324,13 +313,7 @@ class Operations15 extends Operations {
         m.resultXF = log(x) / ln10;
       },
       complexCalc: (Model m) {
-        final x = m.xC;
-        final r = x.r;
-        if (r == 0) {
-          throw CalculatorError(0);
-        }
-        m.resultXC = Complex(_checkResult(() => dart.log(r), 0), x.theta) /
-            const Complex(ln10, 0);
+        m.resultXC = _checkResultC(m.xC.ln, 0) / const Complex(ln10, 0);
       },
       name: 'log');
   static final NormalOperation yX15 = NormalOperationOrLetter.floatOnly(
@@ -340,6 +323,7 @@ class Operations15 extends Operations {
         m.popSetResultXF = pow(m.yF, m.xF) as double;
       },
       complexCalc: (Model m) {
+        m.popSetResultXC = m.yC.pow(m.xC);
         // y^x = e^(x ln y)
         final x = m.xC;
         final y = m.yC;
@@ -445,62 +429,110 @@ class Operations15 extends Operations {
           name: 'HYP-1');
   static final NormalOperation sin = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = dart.sin(m.xF * m.trigMode.scaleFactor);
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.sin();
       },
       name: 'SIN');
   static final NormalOperation sinInverse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = dart.asin(m.xF) / m.trigMode.scaleFactor;
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.asin();
       },
       name: 'SIN-1');
   static final NormalOperation cos = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = dart.cos(m.xF * m.trigMode.scaleFactor);
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.cos();
       },
       name: 'COS');
   static final NormalOperation cosInverse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = dart.acos(m.xF) / m.trigMode.scaleFactor;
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.acos();
       },
       name: 'COS-1');
   static final NormalOperation tan = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = dart.tan(m.xF * m.trigMode.scaleFactor);
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.tan();
       },
       name: 'TAN');
   static final NormalOperation tanInverse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = dart.atan(m.xF) / m.trigMode.scaleFactor;
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.atan();
       },
       name: 'TAN-1');
   static final NormalOperation sinh = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO sinh";
+        m.xF = Real.sinh(m.xF);
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.sinh();
       },
       name: 'SINH');
   static final NormalOperation sinhInverse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = Real.asinh(m.xF);
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.asinh();
       },
       name: 'SINH-1');
   static final NormalOperation cosh = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = Real.cosh(m.xF);
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.cosh();
       },
       name: 'COSH');
   static final NormalOperation coshInverse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = Real.acosh(m.xF);
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.acosh();
       },
       name: 'COSH-1');
   static final NormalOperation tanh = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = Real.tanh(m.xF);
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.tanh();
       },
       name: 'TANH');
   static final NormalOperation tanhInverse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = Real.atanh(m.xF);
+      },
+      complexCalc: (Model m) {
+        // Always in radians - see 15C manual p. 131, "For the trigonometric..."
+        m.resultXC = m.xC.atanh();
       },
       name: 'TANH-1');
   static final NormalOperation dim = NormalOperation.floatOnly(
@@ -678,6 +710,18 @@ class Operations15 extends Operations {
     try {
       final v = f();
       if (v != double.nan) {
+        return v;
+      }
+    } catch (ex) {
+      debugPrint('Converting $ex to CalculatorException($errNo)');
+    }
+    throw CalculatorError(errNo);
+  }
+
+  static Complex _checkResultC(Complex Function() f, int errNo) {
+    try {
+      final v = f();
+      if (v.real != double.nan && v.imaginary != double.nan) {
         return v;
       }
     } catch (ex) {

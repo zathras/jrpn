@@ -435,7 +435,7 @@ class _ComplexMode extends _FloatMode {
 
   @override
   void setComplexMode(Model m, bool v) {
-    if (v) {
+    if (!v) {
       m.displayMode = _FloatMode(_formatter);
     }
   }

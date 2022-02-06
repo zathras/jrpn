@@ -75,6 +75,9 @@ class Operations {
           throw CalculatorError(0);
         }
       },
+      complexCalc: (Model m) {
+        m.popSetResultXC = m.xC / m.yC;
+      },
       intCalc: (Model m) {
         try {
           final BigInt yi = m.yI;
@@ -116,6 +119,9 @@ class Operations {
         m.floatOverflow = false;
         m.popSetResultXF = m.xF * m.yF;
       },
+      complexCalc: (Model m) {
+        m.popSetResultXC = m.xC * m.yC;
+      },
       intCalc: (Model m) => _storeMultDiv(m.xI * m.yI, m),
       name: '*');
 
@@ -151,6 +157,9 @@ class Operations {
         m.floatOverflow = false;
         m.popSetResultXF = m.yF - m.xF;
       },
+      complexCalc: (Model m) {
+        m.popSetResultXC = m.xC - m.yC;
+      },
       intCalc: (Model m) => m.integerSignMode.intSubtract(m),
       name: '-');
 
@@ -180,6 +189,12 @@ class Operations {
       floatCalc: (Model m) {
         m.floatOverflow = false;
         m.popSetResultXF = m.yF + m.xF;
+        print("@@ FLOAT?!?");
+      },
+      complexCalc: (Model m) {
+        print("@@ ${m.xC} + ${m.yC}");
+        m.popSetResultXC = m.xC + m.yC;
+        print("@@ result ${m.xC}");
       },
       intCalc: (Model m) => m.integerSignMode.intAdd(m),
       name: '+');
