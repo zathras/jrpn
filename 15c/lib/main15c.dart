@@ -1099,7 +1099,7 @@ class Controller15 extends RealController {
       SelfTests15(inCalculator: inCalculator);
 
   @override
-  ButtonLayout getButtonLayout(ButtonFactory factory, double totalHeight,
+  ButtonLayout15 getButtonLayout(ButtonFactory factory, double totalHeight,
           double totalButtonHeight) =>
       ButtonLayout15(factory, totalHeight, totalButtonHeight);
 
@@ -1141,5 +1141,4 @@ class Controller15 extends RealController {
     Operations15.hypInverse,
     Operations15.userOp
   };
-
 }

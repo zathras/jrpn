@@ -120,7 +120,11 @@ class Complex {
 
   Complex asinh() => (this + (this * this + const Complex(1, 0)).sqrt()).ln();
 
-  Complex acosh() => const Complex(0, 1) * acos();
+  Complex acosh() =>
+      const Complex(2, 0) *
+      (((this + const Complex(1, 0)) / const Complex(2, 0)).sqrt() +
+              (((this - const Complex(1, 0)) / const Complex(2, 0))).sqrt())
+          .ln();
 
   Complex atanh() =>
       const Complex(0.5, 0) *

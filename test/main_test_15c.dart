@@ -19,12 +19,15 @@ this program; if not, see https://www.gnu.org/licenses/ .
 */
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:jrpn/c/operations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/m/model.dart';
 
 import 'package:jrpn/generic_main.dart';
+import 'package:jrpn/v/buttons.dart';
+import 'package:jrpn/v/main_screen.dart';
 import 'package:jrpn15c/main15c.dart';
 import 'package:jrpn15c/tests15c.dart';
 import 'hyperbolic.dart';
@@ -33,10 +36,29 @@ import 'programs.dart';
 
 
 Future<void> main() async {
+
+  // Note that passing Jrpn into testWidgets actually tests very little, because
+  // the deferred initialization doesn't happen.  I think it stalls on a plugin
+  // waiting for the system, maybe related to receiving links.
+
   testWidgets('15C Buttons', (WidgetTester tester) async {
     final controller = Controller15(Model15());
-    await tester.pumpWidget(Jrpn(controller));
-    testHyperbolicInput(controller);
+    final ScreenPositioner positioner = ScreenPositioner(12.7, 8);
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+
+          final factory = LandscapeButtonFactory15(context, positioner, controller);
+          final layout = ButtonLayout15(factory, 10, 0.1);
+
+          TrigInputTests(controller, layout).run();
+
+          return Container();   // placeholder
+        }
+      )
+    );
+    // Avoid pending timers error:
+    await tester.pumpAndSettle(Duration(milliseconds: 100));
   });
 
   test('Built-in self tests 15C', () async {
