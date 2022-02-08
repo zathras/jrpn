@@ -21,18 +21,38 @@ part of 'model.dart';
 
 /// Controls the policy around memory allocation
 @immutable
-abstract class MemoryPolicy {
+class MemoryPolicy {
+  final Memory _memory;
 
-  const MemoryPolicy();
+  const MemoryPolicy(this._memory);
 
-  void checkRegisterAccess(int num);
+  /// Throws a CalculatorError(3) if the given register does not exist.
+  void checkRegisterAccess(int i) {
+    if (i < 0 || i >= _numRegisters) {
+      throw CalculatorError(3);
+    }
+  }
 
-  /// Throws CalculatorError(4) if there's no room to add a program
-  /// instruction.
-  void checkAddProgramInstruction();
+  int get _numRegisters =>
+      (_memory.totalNybbles - _memory.programNybbles) ~/
+      _memory.registers.nybblesPerRegister;
 
+  String showMemory() {
+    int b = _memory.program.bytesToNextAllocation;
+    String r = _numRegisters.toString().padLeft(3, '0');
+    return 'p-$b r-$r ';
+  }
+
+  /// Throws CalculatorError(4) if there's no room to add seven bytes
+  /// of program memory.
+  void checkExtendProgramMemory() {
+    if (_memory.programNybbles + 14 > _memory.totalNybbles) {
+      throw CalculatorError(4);
+    }
+  }
 }
-/// The calculator's 406 nybble internal memory that holds registers and
+
+/// The calculator's internal memory that holds registers and
 /// programs.
 class Memory<OT extends ProgramOperation> {
   final ByteData _storage;
@@ -48,11 +68,16 @@ class Memory<OT extends ProgramOperation> {
   late final registers = Registers(this);
 
   final Model<OT> _model;
+  late final policy = MemoryPolicy(this);
 
   Memory(this._model, {required int memoryNybbles})
       : _storage = ByteData(memoryNybbles);
 
-  int get _programNybbles => program.programBytes * 2;
+  /// Total number of nybbles of storage
+  int get totalNybbles => _storage.lengthInBytes;
+
+  /// Amount of memory taken up by program
+  int get programNybbles => program.programBytes * 2;
 
   /// Called by our controller, which necessarily happens after the Model
   /// exists.
@@ -180,20 +205,14 @@ class Registers {
 
   Model get _model => _memory._model;
 
-  int get _nybblesPerRegister => (_model.wordSize + 3) ~/ 4;
-
-  int get length =>
-      (_memory._storage.lengthInBytes - _memory._programNybbles) ~/
-      _nybblesPerRegister;
+  int get nybblesPerRegister => (_model.wordSize + 3) ~/ 4;
 
   static final BigInt _oneKmask = BigInt.from(0x3ff);
 
   Value operator [](int i) {
-    if (i < 0 || i >= length) {
-      throw CalculatorError(3);
-    }
-    final int npr = _nybblesPerRegister;
-    int addr = _memory._storage.lengthInBytes - 1 - (i + 1) * npr;
+    _memory.policy.checkRegisterAccess(i);
+    final int npr = nybblesPerRegister;
+    int addr = _memory.totalNybbles - 1 - (i + 1) * npr;
     // Address of most significant nybble - 1
     BigInt value = BigInt.zero;
     for (int i = 0; i < npr; i++) {
@@ -209,12 +228,10 @@ class Registers {
   static final BigInt _low4 = BigInt.from(0xf);
 
   void operator []=(int i, Value v) {
-    if (i < 0 || i >= length) {
-      throw CalculatorError(3);
-    }
-    final int npr = _nybblesPerRegister;
+    _memory.policy.checkRegisterAccess(i);
+    final int npr = nybblesPerRegister;
     BigInt value = v.internal;
-    int addr = _memory._storage.lengthInBytes - 1 - i * npr;
+    int addr = _memory.totalNybbles - 1 - i * npr;
     // Address of least significant nybble
     for (int i = 0; i < npr; i++) {
       _memory._storage.setUint8(addr--, (value & _low4).toInt());
@@ -284,8 +301,8 @@ class Registers {
 
   void clear() {
     resetI();
-    final maxMem = _memory._storage.lengthInBytes;
-    for (int addr = _memory._programNybbles; addr < maxMem; addr++) {
+    final maxMem = _memory.totalNybbles;
+    for (int addr = _memory.programNybbles; addr < maxMem; addr++) {
       _memory._storage.setUint8(addr, 0);
     }
   }
@@ -341,7 +358,10 @@ class ProgramMemory<OT extends ProgramOperation> {
 
   final ByteData _registerStorage;
 
-  int get programBytes => ((_lines + _extendedLines + 6) ~/ 7) * 7;
+  /// 7-byte chunks occupied
+  int get _chunksOccupied => (_lines + _extendedLines + 6) ~/ 7;
+
+  int get programBytes => _chunksOccupied * 7;
 
   int get _maxAddress => (_lines + _extendedLines) * 2 - 1;
 
@@ -363,9 +383,8 @@ class ProgramMemory<OT extends ProgramOperation> {
   /// Insert a new instruction, and increment currentLine to refer to it.
   void insert(final ProgramInstruction<OT> instruction) {
     final needed = instruction.isExtended ? 2 : 1;
-    if (_lines + _extendedLines + needed >
-        _registerStorage.lengthInBytes ~/ 2) {
-      throw CalculatorError(4);
+    if (bytesToNextAllocation > needed) {
+      _memory.policy.checkExtendProgramMemory();
     }
     assert(_currentLine >= 0 && _currentLine <= _lines);
     assert(instruction.argValue >= 0 &&

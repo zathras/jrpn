@@ -1476,9 +1476,7 @@ void _handleShowStatusImpl(Model model) {
 }
 
 void _handleShowMemImpl(Model model) {
-  int b = model.memory.program.bytesToNextAllocation;
-  String r = model.memory.registers.length.toString().padLeft(3, '0');
-  model.display.current = 'p-$b r-$r ';
+  model.display.current = model.memory.policy.showMemory();
   model.display.update();
 }
 

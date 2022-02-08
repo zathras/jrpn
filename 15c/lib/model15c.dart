@@ -21,17 +21,24 @@ this program; if not, see https://www.gnu.org/licenses/ .
 import 'package:jrpn/m/model.dart';
 
 class Model15<OT extends ProgramOperation> extends Model<OT> {
+
+  final ProgramInstruction<OT> Function(OT, int) _newProgramInstructionF;
+  final List<List<MKey<OT>?>> Function() _getLogicalKeys;
+
+  Model15(this._getLogicalKeys,
+      this._newProgramInstructionF)
+      : super(DisplayMode.fix(4, false), 56, 10);
+
+  // It's a little hacky, but we need to defer initialization of
+  // logicalKeys until after the controller initializes
+  // Operations.numberOfFlags.  This seems the
+  // least bad option.
   @override
-  final List<List<MKey<OT>?>> logicalKeys;
-
-  final ProgramInstruction<OT> Function(OT, int) newProgramInstructionF;
-
-  Model15(this.logicalKeys, this.newProgramInstructionF, int numFlags)
-      : super(DisplayMode.fix(4, false), 56, numFlags);
+  late final List<List<MKey<OT>?>> logicalKeys = _getLogicalKeys();
 
   @override
   ProgramInstruction<OT> newProgramInstruction(OT operation, int argValue) =>
-      newProgramInstructionF(operation, argValue);
+      _newProgramInstructionF(operation, argValue);
 
   @override
   reset() {

@@ -38,9 +38,7 @@ import 'model15c.dart';
 void main() async => genericMain(Jrpn(Controller15(createModel15())));
 
 Model15<Operation> createModel15() {
-  Operations.numberOfFlags = 10;
-  return Model15<Operation>(
-      _logicalKeys, _newProgramInstruction, Operations.numberOfFlags);
+  return Model15<Operation>(() => _logicalKeys, _newProgramInstruction);
 }
 
 class Operations15 extends Operations {
