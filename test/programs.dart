@@ -42,9 +42,9 @@ class ProgramEvent {
   @override
   String toString() {
     if (name != null) {
-      return('ProgramEvent("$name")');
+      return ('ProgramEvent("$name")');
     } else if (errorNumber != null) {
-      return('ProgramEvent($errorNumber)');
+      return ('ProgramEvent($errorNumber)');
     }
     return super.toString();
   }

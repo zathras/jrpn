@@ -231,7 +231,10 @@ class _DisplayPainter extends CustomPainter {
           textAlign: TextAlign.center,
           textDirection: TextDirection.ltr);
       tp.layout();
-      tp.paint(canvas, Offset(_gradWidth - tp.width + size.width * 0.52, size.height * annY));
+      tp.paint(
+          canvas,
+          Offset(
+              _gradWidth - tp.width + size.width * 0.52, size.height * annY));
     }
     if (contents.complexFlag) {
       final TextSpan span = TextSpan(style: aStyle, text: 'C');

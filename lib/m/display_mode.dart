@@ -513,11 +513,12 @@ abstract class _FloatFormatter {
     final sp = '       '.substring(digits);
     final eSign = shownExp >= 0 ? '+' : '-';
     shownExp = shownExp.abs();
-    return '$minus${m.substring(0, 1+dpOffset)}.${m.substring(dpOffset+1)}'
+    return '$minus${m.substring(0, 1 + dpOffset)}.${m.substring(dpOffset + 1)}'
         '${sp}E$eSign${shownExp ~/ 10}${shownExp % 10}';
   }
 
-  @protected int constrainExponent(int exp) => exp;
+  @protected
+  int constrainExponent(int exp) => exp;
 
   @protected
   String? formatFixed(Value v, int fractionDigits) {
@@ -618,5 +619,6 @@ class _EngFloatFormatter extends _SciFloatFormatter {
   String get _jsonName => 'e$fractionDigits';
 
   @override
-  @protected int constrainExponent(int exp) => (((exp + 9999) ~/ 3) * 3) - 9999;
+  @protected
+  int constrainExponent(int exp) => (((exp + 9999) ~/ 3) * 3) - 9999;
 }

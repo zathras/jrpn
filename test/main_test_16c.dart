@@ -29,8 +29,6 @@ import 'package:jrpn16c/main16c.dart';
 import 'package:jrpn16c/tests16c.dart';
 import 'programs.dart';
 
-
-
 Future<void> main() async {
   testWidgets('16C Buttons', (WidgetTester tester) async {
     await tester.pumpWidget(Jrpn(Controller16(Model16())));

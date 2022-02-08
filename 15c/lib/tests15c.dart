@@ -23,12 +23,13 @@ import 'package:jrpn/m/model.dart';
 import 'package:jrpn/c/controller.dart';
 
 import 'main15c.dart';
+import 'model15c.dart';
 
 class SelfTests15 extends SelfTests {
   SelfTests15({bool inCalculator = true}) : super(inCalculator: inCalculator);
 
   @override
-  Model15 newModel() => Model15();
+  Model15<Operation> newModel() => createModel15();
 
   @override
   Controller newController(Model<Operation> model) => Controller15(model);
@@ -92,7 +93,8 @@ class SelfTests15 extends SelfTests {
       await _testOneArgFloat(
           m, Operations15.lnOp, 2.37, 0.8628899551, Operations15.eX15);
       await _testOneArgFloat(m, Operations15.sqrtOp15, 7.37, 2.714774392);
-      await _testOneArgFloat(m, Operations15.xSquared, 2.714774392, 7.369999999);
+      await _testOneArgFloat(
+          m, Operations15.xSquared, 2.714774392, 7.369999999);
       // On the real 15C, the xSquared result is that, too.
       await _testOneArgFloat(
           m, Operations15.xSquared, 4, 16, Operations15.sqrtOp15);
@@ -111,21 +113,27 @@ class SelfTests15 extends SelfTests {
       final m = newModel();
       m.isComplexMode = true;
 
-      await _testOneArgComplex(m, Operations15.lnOp, const Complex(1.234, 5.678),
-          const Complex(1.759674471, 1.356794138));
+      await _testOneArgComplex(m, Operations15.lnOp,
+          const Complex(1.234, 5.678), const Complex(1.759674471, 1.356794138));
       await _testOneArgComplex(
           m,
           Operations15.eX15,
           const Complex(1.759674471, 1.356794138),
           const Complex(1.234000001, 5.678));
-      await _testOneArgComplex(m, Operations15.lnOp, const Complex(1.234, -5.678),
+      await _testOneArgComplex(
+          m,
+          Operations15.lnOp,
+          const Complex(1.234, -5.678),
           const Complex(1.759674471, -1.356794138));
       await _testOneArgComplex(
           m,
           Operations15.eX15,
           const Complex(1.759674471, -1.356794138),
           const Complex(1.234000001, -5.678));
-      await _testOneArgComplex(m, Operations15.lnOp, const Complex(-1.234, 5.678),
+      await _testOneArgComplex(
+          m,
+          Operations15.lnOp,
+          const Complex(-1.234, 5.678),
           const Complex(1.759674471, 1.784798515));
       await _testOneArgComplex(
           m,

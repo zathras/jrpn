@@ -51,18 +51,18 @@ class BackPanel15 extends BackPanel {
 
   @override
   Widget buildBackPanelPortrait(
-      BuildContext context, final ScreenPositioner screen) =>
+          BuildContext context, final ScreenPositioner screen) =>
       Stack(fit: StackFit.expand, children: [
         Container(color: MainScreen.keyboardBaseColor),
         screen.box(Rect.fromLTWH(screen.width - 0.8, 0.0, 0.8, 0.8),
             const Icon(Icons.arrow_back, color: Colors.white)),
-        screen.box(const Rect.fromLTWH(1.175, 1.5, 5.65, 6.5),
-            const Text('@@ TODO')),
+        screen.box(
+            const Rect.fromLTWH(1.175, 1.5, 5.65, 6.5), const Text('@@ TODO')),
       ]);
 
   @override
   Widget buildBackPanelLandscape(
-      BuildContext context, final ScreenPositioner screen) =>
+          BuildContext context, final ScreenPositioner screen) =>
       Stack(fit: StackFit.expand, children: [
         Container(color: MainScreen.keyboardBaseColor),
         screen.box(const Rect.fromLTWH(11.8, 0.0, 0.8, 0.8),

@@ -33,191 +33,14 @@ import 'package:jrpn/v/main_screen.dart';
 
 import 'back_panel15c.dart';
 import 'tests15c.dart';
+import 'model15c.dart';
 
-void main() async => genericMain(Jrpn(Controller15(Model15())));
+void main() async => genericMain(Jrpn(Controller15(createModel15())));
 
-class Model15 extends Model<Operation> {
-  Model15() : super(DisplayMode.fix(4, false), 56, 10);
-
-  @override
-  reset() {
-    super.reset();
-    displayMode = DisplayMode.fix(4, false);
-  }
-
-  @override
-  List<List<MKey<Operation>?>> get logicalKeys => _logicalKeys;
-
-  //
-  // See Model.logicalKeys.  This table determines the operation opcodes.
-  // Changing the order here would render old JSON files of the
-  // calculator's state obsolete.
-  static final List<List<MKey<Operation>?>> _logicalKeys = [
-    [
-      MKey(Operations15.sqrtOp15, Operations15.letterLabelA,
-          Operations15.xSquared),
-      MKey(Operations15.eX15, Operations15.letterLabelB, Operations15.lnOp),
-      MKey(Operations15.tenX15, Operations15.letterLabelC, Operations15.logOp),
-      MKey(Operations15.yX15, Operations15.letterLabelD, Operations15.percent),
-      MKey(Operations15.reciprocal15, Operations15.letterLabelE,
-          Operations15.deltaPercent),
-      MKey(Operations.chs, Operations15.matrix, Operations.abs),
-      MKey(Operations.n7, Operations15.fix, Operations15.deg),
-      MKey(Operations.n8, Operations15.sci, Operations15.rad),
-      MKey(Operations.n9, Operations15.eng, Operations15.grd),
-      MKey(Operations.div, Operations15.solve, Operations.xLEy),
-    ],
-    [
-      MKey(Operations.sst, Operations15.lbl15, Operations.bst),
-      MKey(Operations.gto, Operations15.hyp, Operations15.hypInverse),
-      MKey(Operations15.sin, Operations15.dim, Operations15.sinInverse,
-          extensionOps: [
-            MKeyExtensionOp(Operations15.sinh, '42,22,'),
-            MKeyExtensionOp(Operations15.sinhInverse, '43,22,')
-          ]),
-      MKey(Operations15.cos, Operations15.parenI15, Operations15.cosInverse,
-          extensionOps: [
-            MKeyExtensionOp(Operations15.cosh, '42,22,'),
-            MKeyExtensionOp(Operations15.coshInverse, '43,22,')
-          ]),
-      MKey(Operations15.tan, Operations15.I15, Operations15.tanInverse,
-          extensionOps: [
-            MKeyExtensionOp(Operations15.tanh, '42,22,'),
-            MKeyExtensionOp(Operations15.tanhInverse, '43,22,')
-          ]),
-      MKey(Operations.eex, Operations15.resultOp, Operations15.piOp),
-      MKey(Operations.n4, Operations15.xExchange, Operations.sf),
-      MKey(Operations.n5, Operations15.dse, Operations.cf),
-      MKey(Operations.n6, Operations15.isg, Operations.fQuestion),
-      MKey(Operations.mult, Operations15.integrate, Operations.xEQ0),
-    ],
-    [
-      MKey(Operations.rs, Operations.pse, Operations.pr),
-      MKey(Operations.gsb, Operations15.clearSigma, Operations.rtn),
-      MKey(Operations.rDown, Operations.clearPrgm, Operations.rUp),
-      MKey(Operations.xy, Operations.clearReg, Operations15.rnd),
-      MKey(Operations.bsp, Operations.clearPrefix, Operations.clx),
-      MKey(Operations.enter, Operations15.ranNum, Operations.lstx),
-      MKey(Operations.n1, Operations15.toR, Operations15.toP),
-      MKey(Operations.n2, Operations15.toHMS, Operations15.toH),
-      MKey(Operations.n3, Operations15.toRad, Operations15.toDeg),
-      MKey(Operations.minus, Operations15.reImSwap, Operations15.testOp),
-    ],
-    [
-      MKey(Operations.onOff, Operations.onOff, Operations.onOff),
-      MKey(Operations.fShift, Operations.fShift, Operations.fShift),
-      MKey(Operations.gShift, Operations.gShift, Operations.gShift),
-      MKey(Operations15.sto15, Operations15.fracOp, Operations15.intOp),
-      MKey(Operations15.rcl15, Operations15.userOp, Operations.mem),
-      null,
-      MKey(Operations.n0, Operations15.xFactorial, Operations15.xBar),
-      MKey(Operations.dot, Operations15.yHatR, Operations15.sOp),
-      MKey(Operations15.sigmaPlus, Operations15.linearRegression,
-          Operations15.sigmaMinus),
-      MKey(Operations.plus, Operations15.pYX, Operations15.cYX),
-    ]
-  ];
-
-  static final Set<LetterLabel> _letterLabels = {
-    Operations15.letterLabelA,
-    Operations15.letterLabelB,
-    Operations15.letterLabelC,
-    Operations15.letterLabelD,
-    Operations15.letterLabelE
-  };
-
-  @override
-  bool get displayLeadingZeros => false;
-
-  @override
-  bool get cFlag => false;
-
-  @override
-  set cFlag(bool v) {
-    assert(false);
-  }
-
-  @override
-  bool get gFlag => false;
-
-  @override
-  set gFlag(bool v) {
-    assert(false);
-  }
-
-  @override
-  String get modelName => '15C';
-
-  @override
-  ProgramInstruction<Operation> newProgramInstruction(
-      Operation operation, int argValue) {
-    if (_letterLabels.contains(operation)) {
-      assert(argValue == 0);
-      argValue = operation.numericValue!;
-      operation = Operations.gsb;
-    }
-    return ProgramInstruction15(operation, argValue);
-  }
-
-  @override
-  int get returnStackSize => 7;
-
-  @override
-  bool get floatOverflow => getFlag(9);
-
-  @override
-  set floatOverflow(bool v) {
-    if (v) {
-      setFlag(9, v);
-    }
-  }
-
-  @override
-  void setFlag(int i, bool v) {
-    if (i == 8) {
-      isComplexMode = v;
-    } else {
-      super.setFlag(i, v);
-    }
-  }
-
-  @override
-  set isComplexMode(bool v) {
-    super.setFlag(8, v);
-    super.isComplexMode = v;
-  }
-
-  @override
-  bool get errorBlink => floatOverflow;
-  @override
-  void resetErrorBlink() => setFlag(9, false);
-
-  @override
-  void decodeJson(Map<String, dynamic> json, {required bool needsSave}) {
-    super.decodeJson(json, needsSave: needsSave);
-    isComplexMode = getFlag(8);
-  }
-
-  @override
-  int get registerNumberBase => 10;
-
-  @override
-  LcdContents selfTestContents() => LcdContents(
-      hideComplement: false,
-      windowEnabled: false,
-      mainText: '-8,8,8,8,8,8,8,8,8,8,',
-      cFlag: false,
-      complexFlag: true,
-      euroComma: false,
-      rightJustify: false,
-      bits: 64,
-      sign: SignMode.unsigned,
-      wordSize: 64,
-      gFlag: true,
-      prgmFlag: true,
-      shift: ShiftKey.g,
-      trigMode: TrigMode.grad,
-      extraShift: ShiftKey.f);
+Model15<Operation> createModel15() {
+  Operations.numberOfFlags = 10;
+  return Model15<Operation>(
+      _logicalKeys, _newProgramInstruction, Operations.numberOfFlags);
 }
 
 class Operations15 extends Operations {
@@ -363,6 +186,7 @@ class Operations15 extends Operations {
       return arg - 1;
     }
   }
+
   static final NormalArgOperation sci = NormalArgOperation(
       stackLift: StackLift.neutral,
       numExtendedOpCodes: 11,
@@ -404,13 +228,11 @@ class Operations15 extends Operations {
       },
       name: 'SOLVE');
   static final LimitedOperation hyp = LimitedOperation(
-    pressed: (LimitedState c) => c.handleShift(ShiftKey.none),
+      pressed: (LimitedState c) => c.handleShift(ShiftKey.none),
       // Controller15 handles the rest
       name: 'HYP');
-  static final LimitedOperation hypInverse =
-      LimitedOperation(
-          pressed: (LimitedState c) => c.handleShift(ShiftKey.none),
-          name: 'HYP-1');
+  static final LimitedOperation hypInverse = LimitedOperation(
+      pressed: (LimitedState c) => c.handleShift(ShiftKey.none), name: 'HYP-1');
   static final NormalOperation sin = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         m.xF = dart.sin(m.xF * m.trigMode.scaleFactor);
@@ -712,59 +534,6 @@ class Operations15 extends Operations {
       debugPrint('Converting $ex to CalculatorException($errNo)');
     }
     throw CalculatorError(errNo);
-  }
-}
-
-class ProgramInstruction15 extends ProgramInstruction<Operation> {
-  ProgramInstruction15(Operation op, int argValue) : super(op, argValue);
-
-  @override
-  String get programDisplay {
-    if (op.maxArg == 0) {
-      return rightJustify(op.programDisplay, 6);
-    }
-    final String as;
-    if (argIsParenI) {
-      as = '24';
-    } else if (argIsI) {
-      as = '25';
-    } else {
-      final av = argValue - op.arg!.desc.r0ArgumentValue;
-      assert(av >= 0 && av < 25);
-      if (av < 10) {
-        as = ' ${av.toRadixString(10)}';
-      } else if (av < 20) {
-        as = ' .${(av- 10).toRadixString(10)}';
-      } else {
-        // A..F
-        as = '1${av - 19}';
-      }
-    }
-    return rightJustify('${op.programDisplay}$as', 6);
-  }
-
-  @override
-  String get programListing {
-    final String as;
-    if (op.maxArg > 0) {
-      if (argIsParenI) {
-        as = ' (i)';
-      } else if (argIsI) {
-        as = ' I';
-      } else {
-        final av = argValue - op.arg!.desc.r0ArgumentValue;
-        assert(av >= 0 && av < 25);
-        if (av < 20) {
-          as = ' ${argValue.toRadixString(10)}';
-        } else {
-          final cc = 'A'.codeUnitAt(0) + av - 20;
-          as = ' ${String.fromCharCode(cc)}';
-        }
-      }
-    } else {
-      as = '';
-    }
-    return '${op.name}$as';
   }
 }
 
@@ -1141,4 +910,92 @@ class Controller15 extends RealController {
     Operations15.hypInverse,
     Operations15.userOp
   };
+}
+
+//
+// See Model.logicalKeys.  This table determines the operation opcodes.
+// Changing the order here would render old JSON files of the
+// calculator's state obsolete.
+final List<List<MKey<Operation>?>> _logicalKeys = [
+  [
+    MKey(Operations15.sqrtOp15, Operations15.letterLabelA,
+        Operations15.xSquared),
+    MKey(Operations15.eX15, Operations15.letterLabelB, Operations15.lnOp),
+    MKey(Operations15.tenX15, Operations15.letterLabelC, Operations15.logOp),
+    MKey(Operations15.yX15, Operations15.letterLabelD, Operations15.percent),
+    MKey(Operations15.reciprocal15, Operations15.letterLabelE,
+        Operations15.deltaPercent),
+    MKey(Operations.chs, Operations15.matrix, Operations.abs),
+    MKey(Operations.n7, Operations15.fix, Operations15.deg),
+    MKey(Operations.n8, Operations15.sci, Operations15.rad),
+    MKey(Operations.n9, Operations15.eng, Operations15.grd),
+    MKey(Operations.div, Operations15.solve, Operations.xLEy),
+  ],
+  [
+    MKey(Operations.sst, Operations15.lbl15, Operations.bst),
+    MKey(Operations.gto, Operations15.hyp, Operations15.hypInverse),
+    MKey(Operations15.sin, Operations15.dim, Operations15.sinInverse,
+        extensionOps: [
+          MKeyExtensionOp(Operations15.sinh, '42,22,'),
+          MKeyExtensionOp(Operations15.sinhInverse, '43,22,')
+        ]),
+    MKey(Operations15.cos, Operations15.parenI15, Operations15.cosInverse,
+        extensionOps: [
+          MKeyExtensionOp(Operations15.cosh, '42,22,'),
+          MKeyExtensionOp(Operations15.coshInverse, '43,22,')
+        ]),
+    MKey(Operations15.tan, Operations15.I15, Operations15.tanInverse,
+        extensionOps: [
+          MKeyExtensionOp(Operations15.tanh, '42,22,'),
+          MKeyExtensionOp(Operations15.tanhInverse, '43,22,')
+        ]),
+    MKey(Operations.eex, Operations15.resultOp, Operations15.piOp),
+    MKey(Operations.n4, Operations15.xExchange, Operations.sf),
+    MKey(Operations.n5, Operations15.dse, Operations.cf),
+    MKey(Operations.n6, Operations15.isg, Operations.fQuestion),
+    MKey(Operations.mult, Operations15.integrate, Operations.xEQ0),
+  ],
+  [
+    MKey(Operations.rs, Operations.pse, Operations.pr),
+    MKey(Operations.gsb, Operations15.clearSigma, Operations.rtn),
+    MKey(Operations.rDown, Operations.clearPrgm, Operations.rUp),
+    MKey(Operations.xy, Operations.clearReg, Operations15.rnd),
+    MKey(Operations.bsp, Operations.clearPrefix, Operations.clx),
+    MKey(Operations.enter, Operations15.ranNum, Operations.lstx),
+    MKey(Operations.n1, Operations15.toR, Operations15.toP),
+    MKey(Operations.n2, Operations15.toHMS, Operations15.toH),
+    MKey(Operations.n3, Operations15.toRad, Operations15.toDeg),
+    MKey(Operations.minus, Operations15.reImSwap, Operations15.testOp),
+  ],
+  [
+    MKey(Operations.onOff, Operations.onOff, Operations.onOff),
+    MKey(Operations.fShift, Operations.fShift, Operations.fShift),
+    MKey(Operations.gShift, Operations.gShift, Operations.gShift),
+    MKey(Operations15.sto15, Operations15.fracOp, Operations15.intOp),
+    MKey(Operations15.rcl15, Operations15.userOp, Operations.mem),
+    null,
+    MKey(Operations.n0, Operations15.xFactorial, Operations15.xBar),
+    MKey(Operations.dot, Operations15.yHatR, Operations15.sOp),
+    MKey(Operations15.sigmaPlus, Operations15.linearRegression,
+        Operations15.sigmaMinus),
+    MKey(Operations.plus, Operations15.pYX, Operations15.cYX),
+  ]
+];
+
+final Set<LetterLabel> _letterLabels = {
+  Operations15.letterLabelA,
+  Operations15.letterLabelB,
+  Operations15.letterLabelC,
+  Operations15.letterLabelD,
+  Operations15.letterLabelE
+};
+
+ProgramInstruction<Operation> _newProgramInstruction(
+    Operation operation, int argValue) {
+  if (_letterLabels.contains(operation)) {
+    assert(argValue == 0);
+    argValue = operation.numericValue!;
+    operation = Operations.gsb;
+  }
+  return ProgramInstruction15(operation, argValue);
 }

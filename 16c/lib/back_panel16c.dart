@@ -40,23 +40,20 @@ class BackPanel15 extends BackPanel {
             color: MainScreen.deadZoneColor,
             child: AspectRatio(
                 aspectRatio: screen.width / screen.height,
-                child: buildBackPanelPortrait(context, screen)
-        )));
+                child: buildBackPanelPortrait(context, screen))));
   }
 
   @override
   Widget buildBackPanelPortrait(
-      BuildContext context, final ScreenPositioner screen) =>
+          BuildContext context, final ScreenPositioner screen) =>
       Stack(fit: StackFit.expand, children: [
         Container(color: MainScreen.keyboardBaseColor),
         screen.box(Rect.fromLTWH(screen.width - 0.8, 0.0, 0.8, 0.8),
             const Icon(Icons.arrow_back, color: Colors.white)),
-        screen.box(const Rect.fromLTWH(1.175, 1.5, 5.65, 6.5),
-            operationTable(5.65)),
-        screen.box(const Rect.fromLTWH(0.45, 8.5, 4.97, 4),
-            errorTable(4.97)),
         screen.box(
-            const Rect.fromLTWH(6.0, 8.5, 1.57, 3), flagTable(1.57)),
+            const Rect.fromLTWH(1.175, 1.5, 5.65, 6.5), operationTable(5.65)),
+        screen.box(const Rect.fromLTWH(0.45, 8.5, 4.97, 4), errorTable(4.97)),
+        screen.box(const Rect.fromLTWH(6.0, 8.5, 1.57, 3), flagTable(1.57)),
       ]);
 
   @override

@@ -1,13 +1,7 @@
-import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
-import 'package:jrpn/c/operations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/m/complex.dart';
 import 'package:jrpn/m/model.dart';
 
-import 'package:jrpn/generic_main.dart';
 import 'package:jrpn/v/buttons.dart';
 import 'package:jrpn15c/main15c.dart';
 
@@ -55,13 +49,13 @@ class TrigInputTests {
         expect(controller.model.x, Value.fromDouble(expected));
         if (complex) {
           expect(controller.model.xImaginary, Value.zero,
-              reason: '${units.gText} ${complex}');
+              reason: '${units.gText} $complex');
         }
         controller.buttonWidgetDown(layout.gShift);
         controller.buttonWidgetDown(layout.gto); // HYP-1
         controller.buttonWidgetDown(f);
         expect(controller.model.x, Value.fromDouble(inverse ?? 1.2),
-            reason: '${units.gText} ${complex}');
+            reason: '${units.gText} $complex');
         if (complex) {
           expect(controller.model.xImaginary, Value.zero);
         }
@@ -164,8 +158,10 @@ class TrigInputTests {
         const Complex(-1.750538530, -0.3857294182),
         const Complex(1.2, -2.883185307));
     _testComplexFunction(
-        false, layout.tan, const Complex(0.001507101876, 1.001642797),
-    const Complex(1.200000002, 3.399999998));
+        false,
+        layout.tan,
+        const Complex(0.001507101876, 1.001642797),
+        const Complex(1.200000002, 3.399999998));
     _testComplexFunction(
         true,
         layout.tan,

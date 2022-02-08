@@ -119,13 +119,10 @@ abstract class SelfTests {
     await test('FloatValue from double to double', () async {
       await expect(fd(Value.fromDouble(42.0).asDouble), fd(42.0));
       await expect(fd(Value.fromDouble(-42.0).asDouble), fd(-42.0));
-      await expect(
-          Value.fromDouble(-42).negateAsFloat(), Value.fromDouble(42));
+      await expect(Value.fromDouble(-42).negateAsFloat(), Value.fromDouble(42));
       await expect(fd(Value.fromDouble(12.3456e78).asDouble), fd(12.3456e78));
-      await expect(
-          fd(Value.fromDouble(-12.3456e78).asDouble), fd(-12.3456e78));
-      await expect(
-          fd(Value.fromDouble(12.3456e-78).asDouble), fd(12.3456e-78));
+      await expect(fd(Value.fromDouble(-12.3456e78).asDouble), fd(-12.3456e78));
+      await expect(fd(Value.fromDouble(12.3456e-78).asDouble), fd(12.3456e-78));
       await expect(
           fd(Value.fromDouble(-12.3456e-78).asDouble), fd(-12.3456e-78));
       await expect(
@@ -143,8 +140,7 @@ abstract class SelfTests {
     });
     await test('Float rounding to infinity', () async {
       await expect(Value.fromDouble(9.9999999996e99), Value.fInfinity);
-      await expect(
-          Value.fromDouble(-9.9999999996e99), Value.fNegativeInfinity);
+      await expect(Value.fromDouble(-9.9999999996e99), Value.fNegativeInfinity);
       await expect(Value.fromDouble(9.9999999996e99), Value.fInfinity);
       await expect(Value.fromDouble(-9.9999999996e99), Value.fNegativeInfinity);
     });

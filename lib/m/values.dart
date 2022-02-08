@@ -161,7 +161,8 @@ class Value {
     } else if (negativeExponent) {
       exponent = ((0x999 + 1) - exponent); // 1000's complement in BCD
     }
-    if (mantissa == _mantissaSign) { // -0.0
+    if (mantissa == _mantissaSign) {
+      // -0.0
       mantissa = BigInt.zero;
     }
     return Value._fromMantissaAndExponent(mantissa, exponent);
@@ -257,9 +258,9 @@ class Value {
   /// Give one digit of the mantissa, where 0 is the MSD, and 9 is the LSD.
   /// -1 gives the carry digit (9 is negative, 0 is positive).
   int mantissaDigit(int digit) {
-    assert (digit >= -1 && digit <= 9);
+    assert(digit >= -1 && digit <= 9);
     final r = ((internal >> 4 * (12 - digit)) & _maskF).toInt();
-    assert (r <= 9 && r >= 0);
+    assert(r <= 9 && r >= 0);
     return r;
   }
 }

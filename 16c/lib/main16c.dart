@@ -37,6 +37,10 @@ class Model16 extends Model<Operation> {
   Model16() : super(DisplayMode.hex, 16, 6);
 
   @override
+  late final Memory<Operation> memory =
+      Memory<Operation>(this, memoryNybbles: 406);
+
+  @override
   List<List<MKey<Operation>?>> get logicalKeys => _logicalKeys;
 
   //
@@ -147,14 +151,12 @@ class Model16 extends Model<Operation> {
 }
 
 class Operations16 extends Operations {
-
   static final letterA = NumberEntry('A', 10);
   static final letterB = NumberEntry('B', 11);
   static final letterC = NumberEntry('C', 12);
   static final letterD = NumberEntry('D', 13);
   static final letterE = NumberEntry('E', 14);
   static final letterF = NumberEntry('F', 15);
-
 
   static final NormalOperation hex = NormalOperation(
       calc: (Model m) => m.displayMode = DisplayMode.hex,
@@ -188,7 +190,7 @@ class Operations16 extends Operations {
           desc: const ArgDescription16C(maxArg: 33),
           pressed: (ActiveState s) => s.liftStackIfEnabled(),
           calc: (Model m, int arg) =>
-          m.x = m.memory.registers.getValue(arg, rcl.arg)),
+              m.x = m.memory.registers.getValue(arg, rcl.arg)),
       name: 'RCL');
 
   static final NormalOperation sl = NormalOperation.intOnly(
@@ -228,7 +230,7 @@ class Operations16 extends Operations {
 
   static final NormalOperation maskr = NormalOperation.intOnly(
       intCalc: (Model m) =>
-      m.resultX = Value.fromInternal(_maskr(_numberOfBits(m.xI.abs(), m))),
+          m.resultX = Value.fromInternal(_maskr(_numberOfBits(m.xI.abs(), m))),
       name: 'MASKR');
 
   static final NormalOperation rmd = NormalOperation.intOnly(
@@ -246,7 +248,7 @@ class Operations16 extends Operations {
 
   static final NormalOperation xor = NormalOperation.intOnly(
       intCalc: (Model m) =>
-      m.popSetResultX = Value.fromInternal(m.x.internal ^ m.y.internal),
+          m.popSetResultX = Value.fromInternal(m.x.internal ^ m.y.internal),
       name: 'XOR');
 
   static final NormalOperation showHex = NormalOperation(
@@ -280,7 +282,7 @@ class Operations16 extends Operations {
 
   static final NormalOperation cb = NormalOperation.intOnly(
       intCalc: (Model m) => m.popSetResultX = Value.fromInternal(m.y.internal &
-      ((BigInt.one << _bitNumber(m.xI.abs(), m)) ^ m.wordMask)),
+          ((BigInt.one << _bitNumber(m.xI.abs(), m)) ^ m.wordMask)),
       name: 'CB');
 
   static final NormalOperation bQuestion = NormalOperation(
@@ -297,7 +299,7 @@ class Operations16 extends Operations {
 
   static final NormalOperation and = NormalOperation.intOnly(
       intCalc: (Model m) =>
-      m.popSetResultX = Value.fromInternal(m.x.internal & m.y.internal),
+          m.popSetResultX = Value.fromInternal(m.x.internal & m.y.internal),
       name: 'AND');
 
   ///
@@ -346,7 +348,7 @@ class Operations16 extends Operations {
 
   static final NormalOperation not = NormalOperation.intOnly(
       intCalc: (Model m) =>
-      m.resultX = Value.fromInternal(m.x.internal ^ m.wordMask),
+          m.resultX = Value.fromInternal(m.x.internal ^ m.wordMask),
       name: 'NOT');
 
   static final NormalOperation wSize = NormalOperation.intOnly(
@@ -370,7 +372,7 @@ class Operations16 extends Operations {
 
   static final NormalOperation or = NormalOperation.intOnly(
       intCalc: (Model m) =>
-      m.popSetResultX = Value.fromInternal(m.x.internal | m.y.internal),
+          m.popSetResultX = Value.fromInternal(m.x.internal | m.y.internal),
       name: 'OR');
 
   static final NormalOperation lj = NormalOperation.intOnly(
@@ -411,7 +413,7 @@ class Operations16 extends Operations {
 
   static final NormalOperation rrc = NormalOperation.intOnly(
       intCalc: (Model m) =>
-      m.resultX = _rotateLeftCarry(BigInt.from(m.wordSize), m.x, m),
+          m.resultX = _rotateLeftCarry(BigInt.from(m.wordSize), m.x, m),
       name: 'RRC');
 
   static final NormalOperation rlcn = NormalOperation.intOnly(
@@ -437,10 +439,10 @@ class Operations16 extends Operations {
       name: '#B');
 
   static final NormalOperation dblr =
-  NormalOperation.intOnly(intCalc: _doubleIntRemainder, name: 'DBLR');
+      NormalOperation.intOnly(intCalc: _doubleIntRemainder, name: 'DBLR');
 
   static final NormalOperation dblDiv =
-  NormalOperation.intOnly(intCalc: _doubleIntDivide, name: 'DBL/');
+      NormalOperation.intOnly(intCalc: _doubleIntDivide, name: 'DBL/');
 
   static final NormalArgOperation lbl = NormalArgOperation(
       arg: OperationArg.both(
@@ -462,7 +464,7 @@ class Operations16 extends Operations {
       });
 
   static final NormalOperation dblx =
-  NormalOperation.intOnly(intCalc: _doubleIntMultiply, name: 'DBLx');
+      NormalOperation.intOnly(intCalc: _doubleIntMultiply, name: 'DBLx');
 
   /// Shown as blue "<" on the keyboard - it shifts the number left,
   /// which means the window shifts right.
@@ -578,8 +580,15 @@ class ButtonLayout16 extends ButtonLayout {
       Operations16.hex, Operations16.showHex, Operations16.dsz, 'I');
   CalculatorButton get dec => CalculatorButton(factory, 'DEC', '', 'ISZ',
       Operations16.dec, Operations16.showDec, Operations16.isz, 'Z');
-  CalculatorButton get oct => CalculatorBlueSqrtButton(factory, 'OCT', '',
-      '\u221Ax', Operations16.oct, Operations16.showOct, Operations.sqrtOp, 'K');
+  CalculatorButton get oct => CalculatorBlueSqrtButton(
+      factory,
+      'OCT',
+      '',
+      '\u221Ax',
+      Operations16.oct,
+      Operations16.showOct,
+      Operations.sqrtOp,
+      'K');
   CalculatorButton get bin => CalculatorButton(factory, 'BIN', '', '1/x',
       Operations16.bin, Operations16.showBin, Operations.reciprocal, 'L');
   CalculatorButton get n4 => CalculatorButton(factory, '4', 'SB', 'SF',
@@ -765,14 +774,16 @@ class PortraitButtonFactory16 extends PortraitButtonFactory {
 }
 
 class Controller16 extends RealController {
-  Controller16(Model<Operation> model) : super(model, _numbers, _shortcuts, Operations16.lbl);
+  Controller16(Model<Operation> model)
+      : super(model, _numbers, _shortcuts, Operations16.lbl);
 
   /// Map from operation that is a short cut to what it's a shortcut for, with
   /// the key as an argument
   static final Map<NormalOperation, ProgramInstruction> _shortcuts = {
-    Operations16.I: ProgramInstruction16(Operations16.rcl, Operations16.rcl.arg.desc.indexRegisterNumber),
-    Operations16.parenI:
-        ProgramInstruction16(Operations16.rcl, Operations16.rcl.arg.desc.indirectIndexNumber)
+    Operations16.I: ProgramInstruction16(
+        Operations16.rcl, Operations16.rcl.arg.desc.indexRegisterNumber),
+    Operations16.parenI: ProgramInstruction16(
+        Operations16.rcl, Operations16.rcl.arg.desc.indirectIndexNumber)
   };
 
   /// The numbers.  This must be in order.
@@ -830,7 +841,10 @@ class Controller16 extends RealController {
   /// cf. 16C manual p. 68
   @override
   Set<Operation> get argParenIops => _argParenIops;
-  static final Set<Operation> _argParenIops = {Operations.rs, Operations16.parenI};
+  static final Set<Operation> _argParenIops = {
+    Operations.rs,
+    Operations16.parenI
+  };
 
   @override
   int get argBase => 16;
@@ -850,7 +864,7 @@ void _doubleIntDivide(Model m) {
   final Value last = m.x;
   final BigInt big = (m.y.internal << m.wordSize) | m.z.internal;
   final BigInt dividend =
-  m.integerSignMode.toBigInt(Value.fromInternal(big), m.doubleWordStatus);
+      m.integerSignMode.toBigInt(Value.fromInternal(big), m.doubleWordStatus);
   final BigInt divisor = m.xI;
   final BigInt result = dividend ~/ divisor;
   if (result < m.minInt || result > m.maxInt) {
@@ -869,7 +883,7 @@ void _doubleIntRemainder(Model m) {
   final Value last = m.x;
   final BigInt big = (m.y.internal << m.wordSize) | m.z.internal;
   final BigInt dividend =
-  m.integerSignMode.toBigInt(Value.fromInternal(big), m.doubleWordStatus);
+      m.integerSignMode.toBigInt(Value.fromInternal(big), m.doubleWordStatus);
   final BigInt divisor = m.xI;
   final BigInt quotient = dividend ~/ divisor;
   if (quotient.abs() > _maxU64) {

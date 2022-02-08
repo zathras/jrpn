@@ -411,8 +411,7 @@ class Resting extends ActiveState {
     }
     program.displayCurrent();
     final arg = GosubOperationArg.both(
-        desc: const ArgDescriptionGto15C(),
-        calc: (_, __) {});
+        desc: const ArgDescriptionGto15C(), calc: (_, __) {});
     arg.op = Operations.gsb;
     final s = GosubArgInputState(controller, arg, this);
     s.isDone = true;

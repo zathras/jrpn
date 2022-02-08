@@ -177,7 +177,8 @@ abstract class LandscapeButtonFactory extends ButtonFactory {
           required double tw,
           required double bh,
           required double bw}) =>
-      Rect.fromLTWH(pos.left + 5 * tw, pos.top + 2 * th + shiftDownTweak, bw, bh + th);
+      Rect.fromLTWH(
+          pos.left + 5 * tw, pos.top + 2 * th + shiftDownTweak, bw, bh + th);
 
   @override
   List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons) =>

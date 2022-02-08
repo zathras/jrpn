@@ -19,27 +19,46 @@ this program; if not, see https://www.gnu.org/licenses/ .
 */
 part of 'model.dart';
 
+/// Controls the policy around memory allocation
+@immutable
+abstract class MemoryPolicy {
+
+  const MemoryPolicy();
+
+  void checkRegisterAccess(int num);
+
+  /// Throws CalculatorError(4) if there's no room to add a program
+  /// instruction.
+  void checkAddProgramInstruction();
+
+}
 /// The calculator's 406 nybble internal memory that holds registers and
 /// programs.
 class Memory<OT extends ProgramOperation> {
-  final ByteData _storage = ByteData(406);
+  final ByteData _storage;
   //  We hold one nybble (4 bits) in each byte of _storage.  The program
-  // isn't stored here, but we do zero out that part of storage when
-  // program lines are added, to simulate the behavior of shared storage.
+  // is also stored here, and we zero out that part of storage when
+  // program lines are added/removed, to simulate the behavior of shared
+  // storage.
+  //
+  // The program is stored starting at the first byte, and register 0 is
+  // stored at the end of _storage, with higher numbered registers at lower
+  // addresses.
   late final ProgramMemory<OT> program;
   late final registers = Registers(this);
 
   final Model<OT> _model;
 
-  Memory(this._model);
+  Memory(this._model, {required int memoryNybbles})
+      : _storage = ByteData(memoryNybbles);
 
   int get _programNybbles => program.programBytes * 2;
 
   /// Called by our controller, which necessarily happens after the Model
   /// exists.
   void initializeSystem(OperationMap<OT> layout) {
-    program = ProgramMemory<OT>(this, _storage,
-        layout._operationTable, _model.returnStackSize);
+    program = ProgramMemory<OT>(
+        this, _storage, layout._operationTable, _model.returnStackSize);
 
     // We rely on our Controller to give us an OperationMap with the
     // layout information that tells us the row/column positions of the various
@@ -316,8 +335,8 @@ class ProgramMemory<OT extends ProgramOperation> {
   /// and detect events.
   ProgramListener programListener = ProgramListener();
 
-  ProgramMemory(this._memory, this._registerStorage,
-      this._operationTable, int returnStackSize)
+  ProgramMemory(this._memory, this._registerStorage, this._operationTable,
+      int returnStackSize)
       : _returnStack = List.filled(returnStackSize, 0);
 
   final ByteData _registerStorage;
@@ -404,7 +423,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     final int opCode = opcodeAt(line);
     final OT op = _operationTable[opCode]!;
     // throws an exception on an illegal opCode, which is what we want.
-    final int arg = opCode & 0x100  != 0
+    final int arg = opCode & 0x100 != 0
         ? (opCode & 0xff) - op._extendedOpCode + op.numOpCodes
         : opCode - op._opCode;
     return _memory._model.newProgramInstruction(op, arg);

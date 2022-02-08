@@ -54,7 +54,6 @@ import 'states.dart';
 /// of the different [Operation] types.
 ///
 class Operations {
-
   /// Initialized by model.  Harmlessley re-initialized when units tests
   /// are run.
   static late int numberOfFlags;
@@ -281,7 +280,7 @@ class Operations {
       },
       name: '1/x');
 
-  static final _flagArgDesc = ArgDescription16C(maxArg: numberOfFlags-1);
+  static final _flagArgDesc = ArgDescription16C(maxArg: numberOfFlags - 1);
 
   static final NormalArgOperation sf = NormalArgOperation(
       arg: OperationArg.both(

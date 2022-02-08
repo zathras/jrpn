@@ -662,7 +662,9 @@ class NormalArgOperation extends Operation {
   final StackLift _stackLift;
 
   NormalArgOperation(
-      {StackLift? stackLift, required this.arg, required String name,
+      {StackLift? stackLift,
+      required this.arg,
+      required String name,
       this.numExtendedOpCodes = 0})
       : _stackLift = stackLift ?? StackLift.enable,
         super(name: name) {

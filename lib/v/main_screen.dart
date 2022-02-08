@@ -127,7 +127,8 @@ class MainScreen extends OrientedScreen {
                   const Rect.fromLTWH(
                       0.63, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak),
                   LcdDisplay(controller.model, _showMenu)),
-              ...controller.getPortraitButtonFactory(context, screen)
+              ...controller
+                  .getPortraitButtonFactory(context, screen)
                   .buildButtons(Rect.fromLTRB(
                       0.7, 2.75, screen.width - 0.7, screen.height - 0.47)),
               MainMenu(this, screen)
@@ -153,8 +154,9 @@ class MainScreen extends OrientedScreen {
                 const Rect.fromLTWH(
                     2.0, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak),
                 LcdDisplay(controller.model, _showMenu)),
-            ...controller.getLandscapeButtonFactory(context, screen).buildButtons(
-                Rect.fromLTRB(
+            ...controller
+                .getLandscapeButtonFactory(context, screen)
+                .buildButtons(Rect.fromLTRB(
                     0.7, 2.75, screen.width - 0.7, screen.height - 0.47)),
             MainMenu(this, screen)
           ],
@@ -479,7 +481,8 @@ class _MainMenuState extends State<MainMenu> {
                 value: () {}, child: _SettingsMenu('Settings', model)),
             // PopupMenuDivider(),
             PopupMenuItem(
-                value: () {}, child: _HelpMenu('Help', widget.main.icon, controller))
+                value: () {},
+                child: _HelpMenu('Help', widget.main.icon, controller))
           ];
         },
       );
@@ -490,7 +493,8 @@ class _HelpMenu extends StatelessWidget {
   final ScalableImage icon;
   final RealController controller;
 
-  const _HelpMenu(this.title, this.icon, this.controller, {Key? key}) : super(key: key);
+  const _HelpMenu(this.title, this.icon, this.controller, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
