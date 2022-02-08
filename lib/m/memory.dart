@@ -20,41 +20,22 @@ this program; if not, see https://www.gnu.org/licenses/ .
 part of 'model.dart';
 
 /// Controls the policy around memory allocation
-@immutable
-class MemoryPolicy {
-  final Memory _memory;
-
-  const MemoryPolicy(this._memory);
+abstract class MemoryPolicy {
 
   /// Throws a CalculatorError(3) if the given register does not exist.
-  void checkRegisterAccess(int i) {
-    if (i < 0 || i >= _numRegisters) {
-      throw CalculatorError(3);
-    }
-  }
+  void checkRegisterAccess(int i);
 
-  int get _numRegisters =>
-      (_memory.totalNybbles - _memory.programNybbles) ~/
-      _memory.registers.nybblesPerRegister;
-
-  String showMemory() {
-    int b = _memory.program.bytesToNextAllocation;
-    String r = _numRegisters.toString().padLeft(3, '0');
-    return 'p-$b r-$r ';
-  }
+  /// Give the string displayed by the MEM key
+  String showMemory();
 
   /// Throws CalculatorError(4) if there's no room to add seven bytes
   /// of program memory.
-  void checkExtendProgramMemory() {
-    if (_memory.programNybbles + 14 > _memory.totalNybbles) {
-      throw CalculatorError(4);
-    }
-  }
+  void checkExtendProgramMemory();
 }
 
 /// The calculator's internal memory that holds registers and
 /// programs.
-class Memory<OT extends ProgramOperation> {
+abstract class Memory<OT extends ProgramOperation> {
   final ByteData _storage;
   //  We hold one nybble (4 bits) in each byte of _storage.  The program
   // is also stored here, and we zero out that part of storage when
@@ -67,10 +48,12 @@ class Memory<OT extends ProgramOperation> {
   late final ProgramMemory<OT> program;
   late final registers = Registers(this);
 
-  final Model<OT> _model;
-  late final policy = MemoryPolicy(this);
+  @protected
+  final Model<OT> model;
 
-  Memory(this._model, {required int memoryNybbles})
+  MemoryPolicy get policy;
+
+  Memory(this.model, {required int memoryNybbles})
       : _storage = ByteData(memoryNybbles);
 
   /// Total number of nybbles of storage
@@ -83,7 +66,7 @@ class Memory<OT extends ProgramOperation> {
   /// exists.
   void initializeSystem(OperationMap<OT> layout) {
     program = ProgramMemory<OT>(
-        this, _storage, layout._operationTable, _model.returnStackSize);
+        this, _storage, layout._operationTable, model.returnStackSize);
 
     // We rely on our Controller to give us an OperationMap with the
     // layout information that tells us the row/column positions of the various
@@ -198,12 +181,12 @@ class Registers {
   /// Value of the index register, I, always stored in 68 bits.
   Value _indexValue = Value.zero;
 
-  Registers(this._memory) : helper68 = _NumStatus68(_memory._model);
+  Registers(this._memory) : helper68 = _NumStatus68(_memory.model);
 
   static final BigInt _maxI = BigInt.parse('fffffffffffffffff', radix: 16);
   // 16^17-1, that is, 2^68-1
 
-  Model get _model => _memory._model;
+  Model get _model => _memory.model;
 
   int get nybblesPerRegister => (_model.wordSize + 3) ~/ 4;
 
@@ -406,7 +389,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     _lines++;
     _currentLine++; // Where we just inserted the instruction
 
-    _memory._model._needsSave = true;
+    _memory.model._needsSave = true;
   }
 
   void deleteCurrent() {
@@ -434,7 +417,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     _registerStorage.setUint8(addr++, 0);
     _registerStorage.setUint8(addr, 0);
 
-    _memory._model._needsSave = true;
+    _memory.model._needsSave = true;
   }
 
   /// line counts from 1
@@ -445,7 +428,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     final int arg = opCode & 0x100 != 0
         ? (opCode & 0xff) - op._extendedOpCode + op.numOpCodes
         : opCode - op._opCode;
-    return _memory._model.newProgramInstruction(op, arg);
+    return _memory.model.newProgramInstruction(op, arg);
     // We're storing the instructions as nybbles and creating instructions
     // as-needed, not to save memory.  Rather, it's the easiest way of
     // implementing it, given that we want to store the program in a form
@@ -570,7 +553,7 @@ class ProgramMemory<OT extends ProgramOperation> {
   }
 
   void displayCurrent({bool flash = false, bool delayed = false}) {
-    final display = _memory._model.display;
+    final display = _memory.model.display;
     final String newText;
     if (currentLine == 0) {
       newText = '000-      ';
@@ -580,9 +563,9 @@ class ProgramMemory<OT extends ProgramOperation> {
       newText = '$ls-$disp';
     }
     if (delayed) {
-      final initial = _memory._model._newLcdContents();
+      final initial = _memory.model._newLcdContents();
       display.current = newText;
-      final delayed = _memory._model._newLcdContents();
+      final delayed = _memory.model._newLcdContents();
       final t = Timer(const Duration(milliseconds: 1400), () {
         display.show(delayed);
       });
@@ -629,7 +612,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     }
     if (v != null) {
       // I or (i)
-      if (_memory._model.isFloatMode) {
+      if (_memory.model.isFloatMode) {
         double fv = v.asDouble;
         if (fv < 0 || fv >= 16) {
           throw CalculatorError(4);

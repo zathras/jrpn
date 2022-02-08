@@ -18,15 +18,15 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
+import 'dart:html';
+
 import 'package:jrpn/m/model.dart';
 
 class Model15<OT extends ProgramOperation> extends Model<OT> {
-
   final ProgramInstruction<OT> Function(OT, int) _newProgramInstructionF;
   final List<List<MKey<OT>?>> Function() _getLogicalKeys;
 
-  Model15(this._getLogicalKeys,
-      this._newProgramInstructionF)
+  Model15(this._getLogicalKeys, this._newProgramInstructionF)
       : super(DisplayMode.fix(4, false), 56, 10);
 
   // It's a little hacky, but we need to defer initialization of
@@ -47,7 +47,9 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   }
 
   @override
-  late final Memory<OT> memory = Memory<OT>(this, memoryNybbles: 469);
+  late final Memory15<OT> memory = Memory15<OT>(this, memoryNybbles: 66 * 14);
+  // cf. 16C manual, page 214.  The index register doesn't count against
+  // our storage, so that's space for 66 total registers, of 14 nybbles each.
 
   @override
   bool get displayLeadingZeros => false;
@@ -95,8 +97,15 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
 
   @override
   set isComplexMode(bool v) {
+    if (v && !isComplexMode) {
+      memory.policy.checkAvailable(5);
+      // Might throw CalculatorError
+    }
     super.setFlag(8, v);
-    super.isComplexMode = v;
+    if (v != isComplexMode) {
+      setupComplex(
+          v ? List<Value>.filled(4, Value.zero, growable: false) : null);
+    }
   }
 
   @override
@@ -130,6 +139,88 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
       shift: ShiftKey.g,
       trigMode: TrigMode.grad,
       extraShift: ShiftKey.f);
+}
+
+class MemoryPolicy15 extends MemoryPolicy {
+  final Memory15 _memory;
+
+  MemoryPolicy15(this._memory);
+
+  @override
+  void checkRegisterAccess(int i) {
+    if (i < 0 || i >= _memory.numRegisters) {
+      throw CalculatorError(3);
+    }
+  }
+
+  @override
+  String showMemory() {
+    String dd = (_memory.numRegisters-1).toString().padLeft(2);
+    String uu = (_memory.availableRegisters).toString().padLeft(2);
+    String pp = (_memory.program.programBytes ~/ 7).toString().padLeft(2);
+    String b = (_memory.program.bytesToNextAllocation).toString();
+    return '$dd $uu $pp-$b';
+  }
+
+  /// Throws CalculatorError(10) if the needed register memory isn't available
+  void checkAvailable(int registers) {
+    if (registers > _memory.availableRegisters) {
+      throw CalculatorError(10);
+    }
+  }
+  @override
+  void checkExtendProgramMemory() {
+    if (_memory.availableRegisters < 1) {
+      throw CalculatorError(4);
+    }
+  }
+}
+
+/// HP 15C's memory.  Like in the HP 16C, registers and programs are
+/// stored by the nybble.  However, matrices, the imaginary stack, and
+/// storage for solve/integrate just deduct from the memory otherwise
+/// available, but don't actually use it.
+///
+/// On the 16C it made more sense to store the registers by the nybble,
+/// since register size changes with the word size, rounded up to the nearest
+/// nybble.  The 16C's memory contents aren't changed when the word size
+/// changes, and while the mapping of the memory interpretation isn't specified,
+/// the fact that a temporary change in word size doesn't lose information in
+/// the registers is.
+///
+/// On the 15C, there's nothing like this behavior; registers are always
+/// 14 nybbles.  We keep the user registers in the common storage, since
+/// we inherit that from our superclass, but the other uses of the
+/// register pool storage use regular dart structures for their underlying
+/// storage.
+class Memory15<OT extends ProgramOperation> extends Memory<OT> {
+  @override
+  late final MemoryPolicy15 policy = MemoryPolicy15(this);
+
+  int _numRegisters = 20;
+
+  Memory15(Model<OT> model, {required int memoryNybbles})
+      : super(model, memoryNybbles: memoryNybbles);
+
+  int get numRegisters => _numRegisters;
+  set numRegisters(int v) {
+    policy.checkAvailable(v - _numRegisters);
+    _numRegisters = v;
+  }
+
+  /// @@ TODO
+  /// Number of uncommitted registers available in the pool.
+  int get availableRegisters {
+    int result = totalNybbles ~/ 14;
+    assert(totalNybbles % 14 == 0);
+    result -= numRegisters;
+    result -= program.programBytes ~/ 7;
+    assert(totalNybbles % 7 == 0);
+    if (model.isComplexMode) {
+      result -= 5;
+    }
+    return result;
+  }
 }
 
 class ProgramInstruction15<OT extends ProgramOperation>

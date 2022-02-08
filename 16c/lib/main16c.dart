@@ -37,8 +37,7 @@ class Model16 extends Model<Operation> {
   Model16() : super(DisplayMode.hex, 16, 6);
 
   @override
-  late final Memory<Operation> memory =
-      Memory<Operation>(this, memoryNybbles: 406);
+  late final Memory<Operation> memory = Memory16(this, memoryNybbles: 406);
 
   @override
   List<List<MKey<Operation>?>> get logicalKeys => _logicalKeys;
@@ -148,6 +147,48 @@ class Model16 extends Model<Operation> {
       shift: ShiftKey.g,
       trigMode: TrigMode.deg,
       extraShift: ShiftKey.f);
+
+  @override
+  set isComplexMode(bool v) {} // Nope!
+}
+
+class MemoryPolicy16 extends MemoryPolicy {
+  final Memory _memory;
+
+  MemoryPolicy16(this._memory);
+
+  @override
+  void checkRegisterAccess(int i) {
+    if (i < 0 || i >= _numRegisters) {
+      throw CalculatorError(3);
+    }
+  }
+
+  int get _numRegisters =>
+      (_memory.totalNybbles - _memory.programNybbles) ~/
+      _memory.registers.nybblesPerRegister;
+
+  @override
+  String showMemory() {
+    int b = _memory.program.bytesToNextAllocation;
+    String r = _numRegisters.toString().padLeft(3, '0');
+    return 'p-$b r-$r ';
+  }
+
+  @override
+  void checkExtendProgramMemory() {
+    if (_memory.programNybbles + 14 > _memory.totalNybbles) {
+      throw CalculatorError(4);
+    }
+  }
+}
+
+class Memory16 extends Memory<Operation> {
+  @override
+  late final policy = MemoryPolicy16(this);
+
+  Memory16(Model<Operation> model, {required int memoryNybbles})
+      : super(model, memoryNybbles: memoryNybbles);
 }
 
 class Operations16 extends Operations {

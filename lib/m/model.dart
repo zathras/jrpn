@@ -460,12 +460,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   bool get isFloatMode => displayMode.isFloatMode;
 
   bool get isComplexMode => _imaginaryStack != null;
-  @mustCallSuper
-  set isComplexMode(bool v) {
-    if (v != isComplexMode) {
-      _setupComplex(v);
-    }
-  }
+  set isComplexMode(bool v);
 
   DoubleWordStatus? _doubleWordStatus; // for double divide, multiply
   Memory<OT> get memory;
@@ -1047,15 +1042,15 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     return true;
   }
 
-  void _setupComplex(bool nowComplex) {
-    assert(nowComplex == !isComplexMode);
-    // @@ TODO:  Reduce available registers
+  @protected
+  void setupComplex(List<Value>? imaginaryStack) {
+    final nowComplex = imaginaryStack != null;
+    assert(isComplexMode != nowComplex);
     displayMode.setComplexMode(this, nowComplex);
+    _imaginaryStack = imaginaryStack;
     if (nowComplex) {
-      _imaginaryStack = List<Value>.filled(4, Value.zero, growable: false);
       _lastXImaginary = Value.zero;
     } else {
-      _imaginaryStack = null;
       _lastXImaginary = null;
     }
   }
