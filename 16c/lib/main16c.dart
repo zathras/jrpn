@@ -129,7 +129,6 @@ class Model16 extends Model<Operation> {
 
   @override
   int get registerNumberBase => 16;
-
   @override
   LcdContents selfTestContents() => LcdContents(
       hideComplement: false,
@@ -149,7 +148,8 @@ class Model16 extends Model<Operation> {
       extraShift: ShiftKey.f);
 
   @override
-  set isComplexMode(bool v) {} // Nope!
+  set isComplexMode(bool v) {}
+  // Nope!
 }
 
 class MemoryPolicy16 extends MemoryPolicy {
@@ -184,11 +184,15 @@ class MemoryPolicy16 extends MemoryPolicy {
 }
 
 class Memory16 extends Memory<Operation> {
+
+  @override
+  final Model<Operation> model;
+
   @override
   late final policy = MemoryPolicy16(this);
 
-  Memory16(Model<Operation> model, {required int memoryNybbles})
-      : super(model, memoryNybbles: memoryNybbles);
+  Memory16(this.model, {required int memoryNybbles})
+      : super(memoryNybbles: memoryNybbles);
 }
 
 class Operations16 extends Operations {

@@ -2,7 +2,6 @@ import 'dart:math';
 import 'dart:math' as dart;
 
 import 'package:meta/meta.dart';
-
 import 'model.dart' show CalculatorError;
 
 ///
@@ -31,6 +30,8 @@ class Complex {
       ? (real == other.real && imaginary == other.imaginary)
       : false;
 
+  Complex operator -() => Complex(-real, -imaginary);
+
   Complex operator +(Complex other) =>
       Complex(real + other.real, imaginary + other.imaginary);
 
@@ -51,11 +52,7 @@ class Complex {
         (imaginary * other.real - real * other.imaginary) / mag);
   }
 
-  Complex sqrt() {
-    final z = r;
-    return Complex(
-        dart.sqrt((real + z) / 2), imaginary.sign * dart.sqrt((z - real) / 2));
-  }
+  Complex sqrt() => Complex(dart.sqrt(r), 0) * (Complex(0, theta / 2)).exp();
 
   ///
   /// Compute e^this
@@ -89,21 +86,24 @@ class Complex {
     }
   }
 
-  Complex sin() => Complex(dart.sin(real) * Real.cosh(imaginary),
-      dart.cos(real) * Real.sinh(imaginary));
-  Complex cos() => Complex(dart.cos(real) * Real.cosh(imaginary),
-      -dart.sin(real) * Real.sinh(imaginary));
+  Complex sin() =>
+      const Complex(0, -0.5) *
+      ((const Complex(0, 1) * this).exp() -
+          (const Complex(0, -1) * this).exp());
+
+  Complex cos() =>
+      const Complex(0.5, 0) *
+      ((const Complex(0, 1) * this).exp() +
+          (const Complex(0, -1) * this).exp());
+
   Complex tan() => sin() / cos();
 
-  Complex sinh() => Complex(Real.sinh(real) * dart.cos(imaginary),
-      Real.cosh(real) * dart.sin(imaginary));
-  Complex cosh() => Complex(Real.cosh(real) * dart.cos(imaginary),
-      Real.sinh(real) * dart.sin(imaginary));
+  Complex sinh() => const Complex(0.5, 0) * (this.exp() - ((-this).exp()));
+
+  Complex cosh() => const Complex(0.5, 0) * (this.exp() + ((-this).exp()));
+
   Complex tanh() => sinh() / cosh();
 
-  // https://www.boost.org/doc/libs/1_34_0/doc/html/boost_math/inverse_complex.html
-  // https://docs.microsoft.com/en-us/dotnet/api/system.numerics.complex.abs?view=net-6.0
-  // https://www.man7.org/linux/man-pages/man3/casinhf.3.html
   Complex asin() =>
       const Complex(0, -1) *
       (const Complex(0, 1) * this + (const Complex(1, 0) - this * this).sqrt())
@@ -115,8 +115,10 @@ class Complex {
           (const Complex(0, 1) * this +
                   (const Complex(1, 0) - this * this).sqrt())
               .ln();
+  // This isn't what's given in the advanced functions book (page 61), but
+  // it matches the calculator's behavior.
 
-  Complex atan() => const Complex(0, -1) * (const Complex(0, 1) * this).atanh();
+  Complex atan() => const Complex(0, 0.5) * ((const Complex(0, 1) + this) / (const Complex(0, 1) - this) ).ln();
 
   Complex asinh() => (this + (this * this + const Complex(1, 0)).sqrt()).ln();
 

@@ -98,6 +98,9 @@ class Value {
   static final BigInt _maskF = BigInt.from(0xf);
   static final BigInt _mantissaSign = BigInt.parse('90000000000', radix: 16);
 
+  static final BigInt _matrixMantissa = BigInt.parse('a111eeeeeee', radix: 16);
+  // Not a valid float.  Also, matrices are painful, and vaguely French.
+
   static Value fromDouble(double num) {
     if (num == double.infinity) {
       return fInfinity;
@@ -168,9 +171,23 @@ class Value {
     return Value._fromMantissaAndExponent(mantissa, exponent);
   }
 
+  static Value fromMatrix(int matrixNumber) =>
+      Value._fromMantissaAndExponent(_matrixMantissa, matrixNumber);
+
   /// Determine if this value is zero.  In 1's complement mode,
   /// -0 isZero, too.
   bool isZero(Model m) => m.isZero(this);
+
+  ///
+  /// If this is a matrix descriptor, give the matrix number, where A is 0.
+  ///
+  int? get asMatrix {
+    if ((internal >> 12) == _matrixMantissa) {
+      return exponent;
+    } else {
+      return null;
+    }
+  }
 
   /// Interpret this value as a floating point, and convert to a double.
   /// There is no corresponding asInt method, because the int interpretation
@@ -188,6 +205,7 @@ class Value {
         mantissa = -mantissa;
       } else {
         throw CalculatorError(6);
+        // @@ TODO:  6?  On 15C, too?
       }
     }
     return mantissa.toDouble() * pow(10.0, (exponent - 9).toDouble());

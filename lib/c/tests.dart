@@ -47,7 +47,8 @@ abstract class SelfTests {
   SelfTests({this.inCalculator = true});
 
   Model<Operation> newModel();
-  Controller newController(Model<Operation> model);
+  /// Create a new controller with its model
+  Controller newController();
 
   @protected
   Future<void> expect(Object? val, Object? expected, {String? reason}) async {
@@ -148,7 +149,6 @@ abstract class SelfTests {
 
   Future<void> testJson() async {
     final Model<Operation> m = newModel();
-    newController(m); // initializes m
     final String s = json.encoder.convert(m.toJson());
     m.decodeJson(json.decoder.convert(s) as Map<String, dynamic>,
         needsSave: false);
@@ -157,7 +157,7 @@ abstract class SelfTests {
   }
 
   Future<void> testNumbers() async {
-    newController(newModel()); // initializes late final values.
+    newController(); // initializes late final values.
     // Only really needed if no prior test has done this.
     await expect(Operations.n0.numericValue, 0x0);
     await expect(Operations.n1.numericValue, 0x1);

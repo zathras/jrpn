@@ -31,10 +31,14 @@ class SelfTests16 extends SelfTests {
   SelfTests16({bool inCalculator = true}) : super(inCalculator: inCalculator);
 
   @override
-  Model<Operation> newModel() => Model16();
+  Model<Operation> newModel() {
+    final r = Model16();
+    Controller16(r);    // Initializes late final fields
+    return r;
+  }
 
   @override
-  Controller newController(Model<Operation> model) => Controller16(model);
+  Controller newController() => Controller16(Model16());
 
   Future<void> testIntValues() async {
     await test('int sign modes', () async {
@@ -594,10 +598,10 @@ class SelfTests16 extends SelfTests {
     final xs = [7, 5, 0xff, 0xfe, 7, 5, 0xff, 0xfe];
     final result = [12, 12, 0xfd, 0xfd, 0xfe, 2, 0xff, 1];
     final gcFlags = [false, false, true, true, true, false, true, false];
-    final model = newModel();
+    final c = newController();
+    final model = c.model;
     model.integerSignMode = SignMode.unsigned;
     model.wordSize = 8;
-    final c = Controller16(model);
     for (int i = 0; i < ys.length; i++) {
       for (bool initial in [false, true]) {
         model.gFlag = initial;

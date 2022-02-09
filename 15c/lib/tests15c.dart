@@ -29,10 +29,14 @@ class SelfTests15 extends SelfTests {
   SelfTests15({bool inCalculator = true}) : super(inCalculator: inCalculator);
 
   @override
-  Model15<Operation> newModel() => createModel15();
+  Model15<Operation> newModel() {
+    final m = createModel15();
+    Controller15(m);  // Initializes late final fields in model
+    return m;
+  }
 
   @override
-  Controller newController(Model<Operation> model) => Controller15(model);
+  Controller newController() => Controller15(createModel15());
 
   Future<void> _testOneArgComplex(
       Model15 m, Operation op, Complex arg, Complex result,

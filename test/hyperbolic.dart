@@ -20,7 +20,7 @@ class TrigInputTests {
       CalculatorButton units, CalculatorButton f, double expected,
       [double? inverse]) {
     controller.buttonWidgetDown(layout.gShift);
-    controller.buttonWidgetDown(units); // DEG
+    controller.buttonWidgetDown(units);
     controller.buttonWidgetDown(layout.n1);
     controller.buttonWidgetDown(layout.n2);
     controller.buttonWidgetDown(f);
@@ -142,6 +142,86 @@ class TrigInputTests {
     }
   }
 
+  void _testInverse(CalculatorButton b, Complex arg, Complex norm, Complex hyp,
+      {int digits = 8}) {
+    final model = controller.model;
+    model.xC = arg;
+    controller.buttonDown(b.uKey);
+    controller.buttonDown(b.gKey);
+    Complex r = model.xC;
+    expect(r.real.toStringAsExponential(digits),
+        norm.real.toStringAsExponential(digits),
+        reason: '${b.uKey} $norm expected, got $r');
+    expect(r.imaginary.toStringAsExponential(digits),
+        norm.imaginary.toStringAsExponential(digits),
+        reason: '${b.uKey} $norm expected, got $r');
+    model.xC = arg;
+    controller.buttonWidgetDown(layout.fShift);
+    controller.buttonWidgetDown(layout.gto);
+    controller.buttonWidgetDown(b);
+    controller.buttonWidgetDown(layout.gShift);
+    controller.buttonWidgetDown(layout.gto);
+    controller.buttonWidgetDown(b);
+    r = model.xC;
+    expect(r.real.toStringAsExponential(digits),
+        hyp.real.toStringAsExponential(digits),
+        reason: '${b.uKey} $hyp expected, got $r');
+    expect(r.imaginary.toStringAsExponential(digits),
+        hyp.imaginary.toStringAsExponential(digits),
+        reason: '${b.uKey} $hyp expected, got $r');
+  }
+
+  /// Check that a function followed by its inverse gives the correct
+  /// behavior, as regards quadrants and reflection.
+  void _testInverses() {
+    final model = controller.model;
+    model.isComplexMode = true;
+    for (final b in [layout.sin, layout.cos, layout.tan]) {
+      for (final re in [-0.1, -1.1, 0.1, 1.1]) {
+        for (final im in [-1.1, -0.1, 0.1, 1.1]) {
+          final arg = Complex(re, im);
+          model.xC = arg;
+          Complex r = arg;
+          if (re < 0 && b.uKey == Operations15.cos) {
+            r = -r;
+          }
+          _testInverse(b, arg, r, r, digits: 7);
+        }
+      }
+    }
+
+    _testInverse(layout.sin, const Complex(2.8, 2.7),
+        const Complex(0.341592654, -2.7), const Complex(-2.8, 0.441592654));
+    _testInverse(layout.sin, const Complex(2.8, -2.7),
+        const Complex(0.341592654, 2.7), const Complex(-2.8, -0.441592654));
+    _testInverse(layout.sin, const Complex(-2.8, 2.7),
+        const Complex(-0.341592654, -2.7), const Complex(2.8, 0.441592654));
+    _testInverse(layout.sin, const Complex(-2.8, -2.7),
+        const Complex(-0.341592654, 2.7), const Complex(2.8, -0.441592654));
+
+    _testInverse(layout.cos, const Complex(2.8, 2.7), const Complex(2.8, 2.7),
+        const Complex(2.8, 2.7));
+    _testInverse(layout.cos, const Complex(2.8, -2.7), const Complex(2.8, -2.7),
+        const Complex(2.8, -2.7));
+    _testInverse(layout.cos, const Complex(-2.8, 2.7), const Complex(2.8, -2.7),
+        const Complex(2.8, -2.7));
+    _testInverse(layout.cos, const Complex(-2.8, -2.7), const Complex(2.8, 2.7),
+        const Complex(2.8, 2.7));
+
+    _testInverse(layout.tan, const Complex(2.8, 2.7),
+        const Complex(-0.341592654, 2.7), const Complex(2.8, -0.441592654),
+        digits: 6);
+    _testInverse(layout.tan, const Complex(2.8, -2.7),
+        const Complex(-0.341592654, -2.7), const Complex(2.8, 0.441592654),
+        digits: 6);
+    _testInverse(layout.tan, const Complex(-2.8, 2.7),
+        const Complex(0.341592654, 2.7), const Complex(-2.8, -0.441592654),
+        digits: 6);
+    _testInverse(layout.tan, const Complex(-2.8, -2.7),
+        const Complex(0.341592654, -2.7), const Complex(-2.8, 0.441592654),
+        digits: 6);
+  }
+
   void _testComplexFunctions() {
     _testComplexFunction(
         false, layout.sin, const Complex(13.97940881, 5.422815472));
@@ -174,6 +254,8 @@ class TrigInputTests {
     expectC(const Complex(0.3758125280, 0.8220979109));
     Operations15.tanhInverse.complexCalc!(controller.model);
     expectC(const Complex(0.22, 0.73));
+
+    _testInverses();
   }
 
   void run() {

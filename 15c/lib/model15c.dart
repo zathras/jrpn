@@ -18,11 +18,19 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
-import 'dart:html';
-
 import 'package:jrpn/m/model.dart';
 
+import 'matrix.dart';
+
 class Model15<OT extends ProgramOperation> extends Model<OT> {
+  final List<Matrix> matrices = [
+    Matrix('A'),
+    Matrix('B'),
+    Matrix('C'),
+    Matrix('D'),
+    Matrix('E')
+  ];
+
   final ProgramInstruction<OT> Function(OT, int) _newProgramInstructionF;
   final List<List<MKey<OT>?>> Function() _getLogicalKeys;
 
@@ -114,6 +122,15 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   void resetErrorBlink() => setFlag(9, false);
 
   @override
+  String formatValue(Value v) {
+    final int? mx = v.asMatrix;
+    if (mx == null) {
+      return super.formatValue(v);
+    } else {
+      return matrices[mx].toString();
+    }
+  }
+  @override
   void decodeJson(Map<String, dynamic> json, {required bool needsSave}) {
     super.decodeJson(json, needsSave: needsSave);
     isComplexMode = getFlag(8);
@@ -155,7 +172,7 @@ class MemoryPolicy15 extends MemoryPolicy {
 
   @override
   String showMemory() {
-    String dd = (_memory.numRegisters-1).toString().padLeft(2);
+    String dd = (_memory.numRegisters - 1).toString().padLeft(2);
     String uu = (_memory.availableRegisters).toString().padLeft(2);
     String pp = (_memory.program.programBytes ~/ 7).toString().padLeft(2);
     String b = (_memory.program.bytesToNextAllocation).toString();
@@ -168,6 +185,7 @@ class MemoryPolicy15 extends MemoryPolicy {
       throw CalculatorError(10);
     }
   }
+
   @override
   void checkExtendProgramMemory() {
     if (_memory.availableRegisters < 1) {
@@ -194,13 +212,17 @@ class MemoryPolicy15 extends MemoryPolicy {
 /// register pool storage use regular dart structures for their underlying
 /// storage.
 class Memory15<OT extends ProgramOperation> extends Memory<OT> {
+
+  @override
+  final Model15<OT> model;
+
   @override
   late final MemoryPolicy15 policy = MemoryPolicy15(this);
 
   int _numRegisters = 20;
 
-  Memory15(Model<OT> model, {required int memoryNybbles})
-      : super(model, memoryNybbles: memoryNybbles);
+  Memory15(this.model, {required int memoryNybbles})
+      : super(memoryNybbles: memoryNybbles);
 
   int get numRegisters => _numRegisters;
   set numRegisters(int v) {
@@ -218,6 +240,9 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
     assert(totalNybbles % 7 == 0);
     if (model.isComplexMode) {
       result -= 5;
+    }
+    for (final m in model.matrices) {
+      result -= m.length;
     }
     return result;
   }

@@ -256,9 +256,11 @@ class Resting extends ActiveState {
   @override
   void handleClearPrefix() {
     if (model.isFloatMode) {
-      model.display.current = model.x.floatPrefix;
-      model.display.update();
-      changeState(ShowState(this));
+      if (model.x.asMatrix == null) {
+        model.display.current = model.x.floatPrefix;
+        model.display.update();
+        changeState(ShowState(this));
+      }
     } else if (model.settings.windowEnabled) {
       model.display.displayX(flash: false, disableWindow: true);
       changeState(ShowState(this, disableWindow: true));

@@ -49,11 +49,11 @@ abstract class Memory<OT extends ProgramOperation> {
   late final registers = Registers(this);
 
   @protected
-  final Model<OT> model;
+  Model<OT> get model;
 
   MemoryPolicy get policy;
 
-  Memory(this.model, {required int memoryNybbles})
+  Memory({required int memoryNybbles})
       : _storage = ByteData(memoryNybbles);
 
   /// Total number of nybbles of storage

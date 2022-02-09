@@ -620,6 +620,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     _needsSave = true;
   }
 
+  String formatValue(Value v) => displayMode.format(v, this);
+
   Value getStackByIndex(int i) => _stack[i];
   Complex getStackByIndexC(int i) => _getComplex(i);
 
@@ -1341,7 +1343,7 @@ class DisplayModel {
   /// value, it reverts to disableWindow being false.
   void displayX(
       {bool flash = true, bool delayed = false, bool disableWindow = false}) {
-    final newNumber = model.displayMode.format(model.x, model);
+    final String newNumber = model.formatValue(model.x);
     if (delayed) {
       final initial = model._newLcdContents(disableWindow: disableWindow);
       currentWithWindow = newNumber;
