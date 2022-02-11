@@ -893,6 +893,9 @@ class Controller16 extends RealController {
 
   @override
   int get argBase => 16;
+
+  @override
+  int getErrorNumber(CalculatorError err) => err.num16;
 }
 
 void _doubleIntMultiply(Model m) {

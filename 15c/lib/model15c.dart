@@ -23,13 +23,17 @@ import 'package:jrpn/m/model.dart';
 import 'matrix.dart';
 
 class Model15<OT extends ProgramOperation> extends Model<OT> {
-  final List<Matrix> matrices = [
-    Matrix('A'),
-    Matrix('B'),
-    Matrix('C'),
-    Matrix('D'),
-    Matrix('E')
+  late final List<Matrix> matrices = [
+    Matrix('a'),
+    Matrix('b'),
+    Matrix('c'),
+    Matrix('d'),
+    Matrix('e')
   ];
+
+  // @@ TODO:  On dimension, set needsSave true
+
+  int resultMatrix = 0; // Index into matrices
 
   final ProgramInstruction<OT> Function(OT, int) _newProgramInstructionF;
   final List<List<MKey<OT>?>> Function() _getLogicalKeys;
@@ -127,13 +131,30 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
     if (mx == null) {
       return super.formatValue(v);
     } else {
-      return matrices[mx].toString();
+      return matrices[mx].lcdString;
     }
   }
+
+  @override
+  Map<String, Object> toJson({bool comments = false}) {
+    final r = super.toJson(comments: comments);
+    r['numRegisters'] = memory.numRegisters;
+    r['resultMatrix'] = resultMatrix;
+    r['matrices'] = List.generate(matrices.length, (i) => matrices[i].toJson(),
+        growable: false);
+    return r;
+  }
+
   @override
   void decodeJson(Map<String, dynamic> json, {required bool needsSave}) {
     super.decodeJson(json, needsSave: needsSave);
+    memory.numRegisters = json['numRegisters'] as int;
+    resultMatrix = json['resultMatrix'] as int;
     isComplexMode = getFlag(8);
+    final ms = json['matrices'] as List;
+    for (int i = 0; i < matrices.length; i++) {
+      matrices[i].decodeJson(ms[i] as Map<String, dynamic>);
+    }
   }
 
   @override
@@ -156,6 +177,10 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
       shift: ShiftKey.g,
       trigMode: TrigMode.grad,
       extraShift: ShiftKey.f);
+
+  void setNeedsSave() {
+    needsSave = true;
+  }
 }
 
 class MemoryPolicy15 extends MemoryPolicy {
@@ -212,7 +237,6 @@ class MemoryPolicy15 extends MemoryPolicy {
 /// register pool storage use regular dart structures for their underlying
 /// storage.
 class Memory15<OT extends ProgramOperation> extends Memory<OT> {
-
   @override
   final Model15<OT> model;
 
@@ -228,6 +252,7 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
   set numRegisters(int v) {
     policy.checkAvailable(v - _numRegisters);
     _numRegisters = v;
+    model.setNeedsSave();
   }
 
   /// @@ TODO

@@ -98,9 +98,9 @@ class Complex {
 
   Complex tan() => sin() / cos();
 
-  Complex sinh() => const Complex(0.5, 0) * (this.exp() - ((-this).exp()));
+  Complex sinh() => const Complex(0.5, 0) * (exp() - ((-this).exp()));
 
-  Complex cosh() => const Complex(0.5, 0) * (this.exp() + ((-this).exp()));
+  Complex cosh() => const Complex(0.5, 0) * (exp() + ((-this).exp()));
 
   Complex tanh() => sinh() / cosh();
 

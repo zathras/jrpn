@@ -162,12 +162,13 @@ class LcdContents {
 /// on the LCD Display
 ///
 class CalculatorError {
-  final int num;
+  final int num16;
+  final int num15;
 
-  CalculatorError(this.num);
+  CalculatorError(int num, {int? num15}) : num16 = num, num15 = num15 ?? num;
 
   @override
-  String toString() => 'CalculatorError($num)';
+  String toString() => 'CalculatorError($num16, $num15)';
 }
 
 enum OrientationSetting { auto, portrait, landscape }
@@ -190,8 +191,8 @@ class Settings {
   bool _systemOverlaysDisabled = false;
 
   Settings(this._model) {
-    menuEnabled.addObserver((_) => _model._needsSave = true);
-    showAccelerators.addObserver((_) => _model._needsSave = true);
+    menuEnabled.addObserver((_) => _model.needsSave = true);
+    showAccelerators.addObserver((_) => _model.needsSave = true);
   }
 
   void _reset() {
@@ -215,7 +216,7 @@ class Settings {
   bool get showWordSize => _showWordSize;
   set showWordSize(bool v) {
     _showWordSize = v;
-    _model._needsSave = true;
+    _model.needsSave = true;
   }
 
   ///
@@ -225,7 +226,7 @@ class Settings {
   bool get windowEnabled => _windowEnabled;
   set windowEnabled(bool v) {
     _windowEnabled = v;
-    _model._needsSave = true;
+    _model.needsSave = true;
   }
 
   ///
@@ -235,7 +236,7 @@ class Settings {
   bool get euroComma => _euroComma;
   set euroComma(bool v) {
     _euroComma = v;
-    _model._needsSave = true;
+    _model.needsSave = true;
   }
 
   ///
@@ -244,7 +245,7 @@ class Settings {
   bool get hideComplement => _hideComplement;
   set hideComplement(bool v) {
     _hideComplement = v;
-    _model._needsSave = true;
+    _model.needsSave = true;
   }
 
   ///
@@ -257,7 +258,7 @@ class Settings {
       msPerInstruction = null;
     }
     _msPerInstruction = msPerInstruction;
-    _model._needsSave = true;
+    _model.needsSave = true;
   }
 
   ///
@@ -284,7 +285,7 @@ class Settings {
     }
     _systemOverlaysDisabled = v;
     _setPlatformOverlays();
-    _model._needsSave = true;
+    _model.needsSave = true;
   }
 
   void _setPlatformOverlays() {
@@ -309,7 +310,7 @@ class Settings {
     }
     _orientation = v;
     _setPlatformOrientation();
-    _model._needsSave = true;
+    _model.needsSave = true;
   }
 
   void _setPlatformOrientation() {
@@ -411,7 +412,8 @@ abstract class NumStatus {
 abstract class Model<OT extends ProgramOperation> implements NumStatus {
   late final display = DisplayModel(this);
   late final settings = Settings(this);
-  bool _needsSave = false;
+  @protected
+  bool needsSave = false;
   ShiftKey _shift = ShiftKey.none;
   int _wordSize;
   BigInt _wordMask;
@@ -450,7 +452,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   /// Not used, but we retain any comments found in the JSON file
   /// so we can write them back out.
-  dynamic _comments;
+  Object? _comments;
 
   @override
   BigInt get maxInt => _integerSignMode.maxValue(this);
@@ -476,7 +478,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   void _setComplex(int i, Complex v) {
     _stack[i] = Value.fromDouble(v.real);
     _imaginaryStack![i] = Value.fromDouble(v.imaginary);
-    _needsSave = true;
+    needsSave = true;
   }
 
   Value get x => _stack[0];
@@ -503,7 +505,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     }
     _stack[0] = v;
     _imaginaryStack?[0] = Value.zero;
-    _needsSave = true;
+    needsSave = true;
     display.window = 0;
   }
 
@@ -536,7 +538,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set popSetResultX(Value v) {
     _popStackSetLastX();
     x = v;
-    _needsSave = true;
+    needsSave = true;
   }
 
   /// Pop the stack and set X from a signed BigInt, setting lastX
@@ -554,7 +556,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set popSetResultXC(Complex v) {
     _popStackSetLastX();
     _setComplex(0, v);
-    _needsSave = true;
+    needsSave = true;
   }
 
   /// Set a result in X, which saves the old X value in lastX
@@ -562,7 +564,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set resultX(Value v) {
     lastX = x;
     x = v;
-    _needsSave = true;
+    needsSave = true;
   }
 
   // ignore: avoid_setters_without_getters
@@ -574,7 +576,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     lastX = x;
     _lastXImaginary = _imaginaryStack![0];
     xC = v;
-    _needsSave = true;
+    needsSave = true;
   }
 
   Value get y => _stack[1];
@@ -584,7 +586,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set y(Value v) {
     _stack[1] = v;
     _imaginaryStack?[1] = Value.zero;
-    _needsSave = true;
+    needsSave = true;
   }
 
   set yI(BigInt v) => y = _integerSignMode.fromBigInt(v, this);
@@ -598,7 +600,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     assert(!isComplexMode);
     // This is only used converting between int and float
     _stack[3] = _stack[2] = _stack[1] = v;
-    _needsSave = true;
+    needsSave = true;
   }
 
   Value _lastX = Value.zero;
@@ -611,13 +613,13 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     if (isComplexMode) {
       _lastXImaginary = Value.zero;
     }
-    _needsSave = true;
+    needsSave = true;
   }
 
   set lastXC(Complex v) {
     _lastX = Value.fromDouble(v.real);
     _lastXImaginary = Value.fromDouble(v.imaginary);
-    _needsSave = true;
+    needsSave = true;
   }
 
   String formatValue(Value v) => displayMode.format(v, this);
@@ -656,7 +658,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       display.window = 0;
     }
     display.displayX(); // If v unchanged, still want the blink.
-    _needsSave = true;
+    needsSave = true;
   }
 
   DisplayMode get displayMode => _displayMode;
@@ -669,7 +671,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     } else {
       display.displayX();
     }
-    _needsSave = true;
+    needsSave = true;
   }
 
   ProgramMemory<OT> get program => memory.program;
@@ -678,7 +680,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set integerSignMode(IntegerSignMode v) {
     _integerSignMode = v;
     display.displayX();
-    _needsSave = true;
+    needsSave = true;
   }
 
   @override
@@ -705,7 +707,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     }
     _flags[i] = v;
     display.update();
-    _needsSave = true;
+    needsSave = true;
   }
 
   bool getFlag(int i) {
@@ -721,7 +723,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     lastX = _stack[0];
     _lastXImaginary = _imaginaryStack?[0];
     popStack();
-    _needsSave = true;
+    needsSave = true;
   }
 
   void popStack() {
@@ -736,7 +738,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     f(_stack);
     f(_imaginaryStack);
     display.window = 0;
-    _needsSave = true;
+    needsSave = true;
   }
 
   void swapXY() {
@@ -751,7 +753,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     f(_stack);
     f(_imaginaryStack);
     display.window = 0;
-    _needsSave = true;
+    needsSave = true;
   }
 
   /// "lift" stack, after which one can write to x
@@ -766,7 +768,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
     f(_stack);
     f(_imaginaryStack);
-    _needsSave = true;
+    needsSave = true;
   }
 
   /// the R<down arrow> key
@@ -784,7 +786,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     f(_stack);
     f(_imaginaryStack);
     display.window = 0;
-    _needsSave = true;
+    needsSave = true;
   }
 
   /// The R<up arrow> key
@@ -802,7 +804,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     f(_stack);
     f(_imaginaryStack);
     display.window = 0;
-    _needsSave = true;
+    needsSave = true;
   }
 
   /// The float overflow flag, which is stored as gFlag on the 16C.  On the 15C,
@@ -848,7 +850,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ///
   void chsX() {
     _stack[0] = signMode.negate(x, this);
-    _needsSave = true;
+    needsSave = true;
     display.window = 0;
   }
 
@@ -875,7 +877,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     memory.reset();
     display.window = 0;
     prgmFlag = false;
-    _needsSave = true;
+    needsSave = true;
   }
 
   ///
@@ -890,22 +892,27 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ///
   /// Convert to a data structure that can be serialized as JSON.
   ///
-  Map<String, dynamic> toJson({bool comments = false}) {
-    final r = <String, dynamic>{};
-    if (comments) {
-      r['comments'] = _comments;
+  Map<String, Object> toJson({bool comments = false}) {
+    final r = <String, Object>{};
+    if (comments && _comments != null) {
+      r['comments'] = _comments!;
     }
     r['version'] = _jsonVersion;
     r['modelName'] = modelName;
     r['settings'] = settings.toJson(comments: comments);
-    r['trigMode'] = trigMode.toJson();
+    final tm = trigMode.toJson();
+    if (tm != null) {
+      r['trigMode'] = tm;
+    }
     r['displayMode'] = _displayMode.toJson();
     r['integerSignMode'] = _integerSignMode.toJson();
     r['wordSize'] = _wordSize;
     r['stack'] = _stack.map((v) => v.toJson()).toList();
     r['lastX'] = _lastX.toJson();
-    r['imaginaryStack'] = _imaginaryStack?.map((v) => v.toJson()).toList();
-    r['lastXImaginary'] = _lastXImaginary?.toJson();
+    if (isComplexMode) {
+      r['imaginaryStack'] = _imaginaryStack!.map((v) => v.toJson()).toList();
+      r['lastXImaginary'] = _lastXImaginary!.toJson();
+    }
     r['flags'] = _flags;
     r['memory'] = memory.toJson(comments: comments);
     final debugLog = _debugLog;
@@ -974,7 +981,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       _debugLog = DebugLog.fromJson(debugLog as Map<String, dynamic>, this);
     }
     display.window = 0;
-    _needsSave = needsSave;
+    this.needsSave = needsSave;
   }
 
   Future<void> readFromPersistentStorage() async {
@@ -995,10 +1002,10 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   Future<void> writeToPersistentStorage() async {
-    if (!_needsSave) {
+    if (!needsSave) {
       return;
     }
-    _needsSave = false;
+    needsSave = false;
     final storage = await SharedPreferences.getInstance();
     String js = json.encode(toJson());
     await storage.setString('init', js);
@@ -1373,7 +1380,7 @@ class TrigMode {
 
   String? toJson() => label;
 
-  static TrigMode fromJson(dynamic json) {
+  static TrigMode fromJson(Object? json) {
     for (final m in const {deg, rad, grad}) {
       if (json == m.label) {
         return m;

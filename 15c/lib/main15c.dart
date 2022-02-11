@@ -161,10 +161,14 @@ class Operations15 extends Operations {
         m.resultXF = ((m.xF - m.yF) / m.yF) * 100.0;
       },
       name: 'delta%');
-  static final NormalOperation matrix = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
+  static final NormalArgOperation matrix = NormalArgOperation(
+      numExtendedOpCodes: 10,
+      arg: OperationArg.both(
+          desc: ArgDescription15CNoI(numericArgs: 10),
+          calc: (Model m, int arg) {
+            m as Model15;
+            throw "@@ TODO";
+          }),
       name: 'MATRIX');
   static final NormalArgOperation fix = NormalArgOperation(
       stackLift: StackLift.neutral,
@@ -339,19 +343,40 @@ class Operations15 extends Operations {
         m.resultXC = m.xC.atanh();
       },
       name: 'TANH-1');
-  static final NormalOperation dim = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
+
+  static final _justLettersMap = {
+    [Operations15.letterLabelA]: 0,
+    [Operations15.letterLabelB]: 1,
+    [Operations15.letterLabelC]: 2,
+    [Operations15.letterLabelD]: 3,
+    [Operations15.letterLabelE]: 4,
+  };
+
+  static final NormalArgOperation dim = NormalArgOperation(
+      arg: OperationArg.both(
+          desc: ArgDescription15CNoI(special: _justLettersMap, synonyms: ArgDescription15C.matrixSynonyms),
+          calc: (Model m, int arg) {
+            int r = m.xF.truncate();
+            int c = m.yF.truncate();
+            if (r < 0 || c < 0) {
+              throw CalculatorError(1);
+            }
+            final mat = (m as Model15).matrices[arg];
+            m.memory.policy.checkAvailable(r * c - mat.length);
+            mat.resize(r, c);
+          }),
       name: 'DIM');
-  static final NormalOperation resultOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
+  static final NormalArgOperation resultOp = NormalArgOperation(
+      arg: OperationArg.both(
+          desc: ArgDescription15CNoI(special: _justLettersMap, synonyms: ArgDescription15C.matrixSynonyms),
+          calc: (Model m, int arg) {
+            (m as Model15).resultMatrix = arg;
+          }),
       name: 'RESULT');
+
   static final NormalOperation piOp = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.xF = dart.pi;
       },
       name: 'PI');
   static final NormalOperation xExchange = NormalOperation.floatOnly(
@@ -362,6 +387,7 @@ class Operations15 extends Operations {
   static final NormalOperation dse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         throw "@@ TODO";
+        // calc: (Model m, int arg) => m.program.doNextIf(m.getFlag(arg))),
       },
       name: 'DSE');
   static final NormalOperation isg = NormalOperation.floatOnly(
@@ -424,10 +450,12 @@ class Operations15 extends Operations {
         throw "@@ TODO";
       },
       name: 'Re<=>Im');
-  static final NormalOperation testOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
+  static final NormalArgOperation testOp = NormalArgOperation(
+      arg: OperationArg.both(
+          desc: ArgDescription15CNoI(numericArgs: 10),
+          calc: (Model m, int arg) {
+            throw "@@ TODO";
+          }),
       name: 'TEST');
   static final NormalOperation fracOp = NormalOperation.floatOnly(
       floatCalc: (Model m) {
@@ -497,17 +525,32 @@ class Operations15 extends Operations {
 
   static final NormalArgOperation sto15 = NormalArgOperation(
       arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 21),
-          calc: (Model m, int arg) =>
-              m.memory.registers.setValue(arg, sto15.arg, m.x)),
+          desc: const ArgDescription15CSto(),
+          calc: (Model m, int arg) {
+            if (arg == ArgDescription15CSto.resultKey) {
+              final matrix = m.x.asMatrix;
+              if (matrix == null) {
+                throw CalculatorError(11);
+              } else {
+                (m as Model15).resultMatrix = matrix;
+              }
+            } else {
+              m.memory.registers.setValue(arg, sto15.arg, m.x);
+            }
+          }),
       name: 'STO');
 
   static final NormalArgOperation rcl15 = NormalArgOperation(
       arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 21),
+          desc: const ArgDescription15CSto(),
           pressed: (ActiveState s) => s.liftStackIfEnabled(),
-          calc: (Model m, int arg) =>
-              m.x = m.memory.registers.getValue(arg, rcl15.arg)),
+          calc: (Model m, int arg) {
+            if (arg == ArgDescription15CSto.resultKey) {
+              m.x = Value.fromMatrix((m as Model15).resultMatrix);
+            } else {
+              m.x = m.memory.registers.getValue(arg, rcl15.arg);
+            }
+          }),
       name: 'RCL');
 
   static double _checkResult(double Function() f, int errNo) {
@@ -900,6 +943,9 @@ class Controller15 extends RealController {
   int get argBase => 10;
 
   @override
+  int getErrorNumber(CalculatorError err) => err.num15;
+
+  @override
   Set<LimitedOperation> get nonProgrammableKeys => nonProgrammableKeysStatic;
 
   static final Set<LimitedOperation> nonProgrammableKeysStatic = {
@@ -996,4 +1042,105 @@ ProgramInstruction<Operation> _newProgramInstruction(
     operation = Operations.gsb;
   }
   return ProgramInstruction15(operation, argValue);
+}
+
+@immutable
+class ArgDescription15C extends ArgDescription {
+  @override
+  final int maxArg;
+  @override
+  int get numericArgs => maxArg - 1;
+
+  const ArgDescription15C({required this.maxArg});
+
+  @override
+  int get indirectIndexNumber => 0;
+  @override
+  int get indexRegisterNumber => 1; // It's to the right on the keyboard
+  @override
+  int get r0ArgumentValue => 2;
+
+  static final matrixSynonyms = {
+    Operations.chs: Operations15.matrix,
+    Operations15.sqrtOp15: Operations15.letterLabelA,
+    Operations15.eX15: Operations15.letterLabelB,
+    Operations15.tenX15: Operations15.letterLabelC,
+    Operations15.yX15: Operations15.letterLabelD,
+    Operations15.reciprocal15: Operations15.letterLabelE
+  };
+}
+
+@immutable
+class ArgDescription15CNoI extends ArgDescription {
+
+  @override
+  final int maxArg;
+
+  @override
+  final int numericArgs;
+
+  @override
+  final Map<List<ProgramOperation>, int> special;
+
+  @override
+  final Map<ProgramOperation, ProgramOperation> synonyms;
+
+  ArgDescription15CNoI({this.numericArgs = 0, this.special = const {}, this.synonyms = const {}})
+      : maxArg = numericArgs - 1 + special.values.toSet().length;
+
+  @override
+  int get indirectIndexNumber => 0xdeadbeef;
+  @override
+  int get indexRegisterNumber => 0xdeadbeef;
+
+  @override
+  int get r0ArgumentValue => 0xdeadbeef;
+}
+
+@immutable
+class ArgDescription15CSto extends ArgDescription15C {
+  static const int resultKey = 2;
+
+  const ArgDescription15CSto() : super(maxArg: 22);
+
+  @override
+  int get r0ArgumentValue => 3;
+
+  @override
+  Map<List<ProgramOperation>, int> get special => _special;
+
+  static final _special = {
+        [Operations.eex]: 2,
+        [Operations15.matrix, Operations15.letterLabelA]: 22,
+        [Operations15.matrix, Operations15.letterLabelB]: 23,
+        [Operations15.matrix, Operations15.letterLabelC]: 24,
+        [Operations15.matrix, Operations15.letterLabelD]: 25,
+        [Operations15.matrix, Operations15.letterLabelE]: 26,
+        [Operations15.letterLabelA]: 27,
+        [Operations15.letterLabelB]: 28,
+        [Operations15.letterLabelC]: 29,
+        [Operations15.letterLabelD]: 30,
+        [Operations15.letterLabelE]: 31
+      };
+
+  @override
+  Map<ProgramOperation, ProgramOperation> get synonyms => ArgDescription15C.matrixSynonyms;
+}
+
+@immutable
+class ArgDescription15CJustI extends ArgDescription {
+  @override
+  final int maxArg;
+
+  @override
+  int get numericArgs => maxArg - 0;
+
+  const ArgDescription15CJustI({required this.maxArg});
+
+  @override
+  int get indirectIndexNumber => 0xdeadbeef;
+  @override
+  int get indexRegisterNumber => 0; // It's to the right on the keyboard
+  @override
+  int get r0ArgumentValue => 1;
 }

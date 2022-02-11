@@ -21,7 +21,6 @@ part of 'model.dart';
 
 /// Controls the policy around memory allocation
 abstract class MemoryPolicy {
-
   /// Throws a CalculatorError(3) if the given register does not exist.
   void checkRegisterAccess(int i);
 
@@ -53,8 +52,7 @@ abstract class Memory<OT extends ProgramOperation> {
 
   MemoryPolicy get policy;
 
-  Memory({required int memoryNybbles})
-      : _storage = ByteData(memoryNybbles);
+  Memory({required int memoryNybbles}) : _storage = ByteData(memoryNybbles);
 
   /// Total number of nybbles of storage
   int get totalNybbles => _storage.lengthInBytes;
@@ -220,7 +218,7 @@ class Registers {
       _memory._storage.setUint8(addr--, (value & _low4).toInt());
       value >>= 4;
     }
-    _model._needsSave = true;
+    _model.needsSave = true;
   }
 
   Value get index {
@@ -389,7 +387,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     _lines++;
     _currentLine++; // Where we just inserted the instruction
 
-    _memory.model._needsSave = true;
+    _memory.model.needsSave = true;
   }
 
   void deleteCurrent() {
@@ -417,7 +415,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     _registerStorage.setUint8(addr++, 0);
     _registerStorage.setUint8(addr, 0);
 
-    _memory.model._needsSave = true;
+    _memory.model.needsSave = true;
   }
 
   /// line counts from 1
@@ -488,7 +486,7 @@ class ProgramMemory<OT extends ProgramOperation> {
       };
 
   /// Must be called after the register storage has been read in, so any
-  /// stray data will be propely zeroed out.
+  /// stray data will be properly zeroed out.
   void decodeJson(Map<String, dynamic> json) {
     int n = (json['lines'] as num).toInt();
     if (n < 0 || n > _registerStorage.lengthInBytes ~/ 2) {
@@ -732,6 +730,9 @@ abstract class ArgDescription {
   int get indirectIndexNumber;
   int get indexRegisterNumber;
   int get maxArg;
+  int get numericArgs; // Numeric args in the range 0..(numericArgs-1)
+  Map<List<ProgramOperation>, int> get special => const {};
+  Map<ProgramOperation, ProgramOperation> get synonyms => const {};
 
   ///
   /// The argument value that corresponds to register 0.  On the 16C this is
@@ -742,12 +743,41 @@ abstract class ArgDescription {
 }
 
 ///
+/// A maximally flexible arg description
+///
+class ArgDescriptionFlex {
+  @override
+  final int indirectIndexNumber;
+  @override
+  final int indexRegisterNumber;
+  @override
+  final int numericArgs;
+  @override
+  final int maxArg;
+  @override
+  final Map<List<ProgramOperation>, int> special;
+  @override
+  final Map<ProgramOperation, ProgramOperation> synonyms;
+
+  ArgDescriptionFlex(
+      {this.indirectIndexNumber = 0xdeadbeef,
+      this.indexRegisterNumber = 0xdeadbeef,
+      this.numericArgs = 0,
+      this.special = const {},
+      this.synonyms = const {}})
+      : maxArg = numericArgs - 1 + special.values.toSet().length;
+}
+
+///
 /// A description suitable for most of the args on the 16C
 ///
 @immutable
 class ArgDescription16C extends ArgDescription {
   @override
   final int maxArg;
+
+  @override
+  int get numericArgs => maxArg > 31 ? maxArg - 1 : maxArg + 1;
 
   const ArgDescription16C({required this.maxArg});
 
@@ -769,40 +799,14 @@ class ArgDescriptionGto16C extends ArgDescription {
   // backwards compatibility.  Having this weird extension to the 16C's
   // semantics is harmless, I guess, and disabling this extension would be
   // needlessly antisocial, given that the app has been out there for a while.
+
+  @override
+  int get numericArgs => maxArg - 1;
+
   @override
   int get indirectIndexNumber => 16;
   @override
   int get indexRegisterNumber => 17; // It's to the right on the keyboard
-}
-
-@immutable
-class ArgDescription15C extends ArgDescription {
-  @override
-  final int maxArg;
-
-  const ArgDescription15C({required this.maxArg});
-
-  @override
-  int get indirectIndexNumber => 0;
-  @override
-  int get indexRegisterNumber => 1; // It's to the right on the keyboard
-  @override
-  int get r0ArgumentValue => 2;
-}
-
-@immutable
-class ArgDescription15CJustI extends ArgDescription {
-  @override
-  final int maxArg;
-
-  const ArgDescription15CJustI({required this.maxArg});
-
-  @override
-  int get indirectIndexNumber => 0xdeadbeef;
-  @override
-  int get indexRegisterNumber => 0; // It's to the right on the keyboard
-  @override
-  int get r0ArgumentValue => 1;
 }
 
 @immutable
@@ -812,6 +816,10 @@ class ArgDescriptionGto15C extends ArgDescription {
   @override
   int get maxArg => 25;
   // That's 0 to 9, .0 to .9, A-E, and I
+
+  @override
+  int get numericArgs => 20;
+
   @override
   int get indirectIndexNumber => 0xdeadbeef;
   // The 15C doesn't allow GTO (i) or GSB (i).  Note also that the handling
@@ -943,6 +951,7 @@ class OperationMap<OT extends ProgramOperation> {
 
   void _assignOpCode(OT o) {
     final int numOpCodes = o.numOpCodes;
+    assert(numOpCodes >= 0);
     if (numOpCodes == o.numExtendedOpCodes) {
       o._opCode = -1;
     } else {

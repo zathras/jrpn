@@ -118,7 +118,10 @@ abstract class Controller {
 
   /// Show an error on the LCD screen.
   void showCalculatorError(CalculatorError e) =>
-      showMessage('  error ${e.num}  ');
+      showMessage('  error ${getErrorNumber(e)}  ');
+
+  int getErrorNumber(CalculatorError err);
+
 
   /// Show a message on the LCD screen.
   void showMessage(String message) {
@@ -390,6 +393,9 @@ class RunningController extends Controller {
 
   @override
   Set<LimitedOperation> get nonProgrammableKeys => real.nonProgrammableKeys;
+
+  @override
+  int getErrorNumber(CalculatorError err) => real.getErrorNumber(err);
 }
 
 ///

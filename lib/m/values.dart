@@ -165,14 +165,14 @@ class Value {
       exponent = ((0x999 + 1) - exponent); // 1000's complement in BCD
     }
     if (mantissa == _mantissaSign) {
-      // -0.0
+      // -0.0, which the real calculator doesn't distinguish from 0.0
       mantissa = BigInt.zero;
     }
     return Value._fromMantissaAndExponent(mantissa, exponent);
   }
 
-  static Value fromMatrix(int matrixNumber) =>
-      Value._fromMantissaAndExponent(_matrixMantissa, matrixNumber);
+  Value.fromMatrix(int matrixNumber)
+      : internal = (_matrixMantissa << 12) | BigInt.from(matrixNumber);
 
   /// Determine if this value is zero.  In 1's complement mode,
   /// -0 isZero, too.
@@ -204,8 +204,7 @@ class Value {
       if (sign == 0x9) {
         mantissa = -mantissa;
       } else {
-        throw CalculatorError(6);
-        // @@ TODO:  6?  On 15C, too?
+        throw CalculatorError(6, num15: 1);
       }
     }
     return mantissa.toDouble() * pow(10.0, (exponent - 9).toDouble());

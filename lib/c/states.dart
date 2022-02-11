@@ -418,14 +418,6 @@ class Resting extends ActiveState {
     final s = GosubArgInputState(controller, arg, this);
     s.isDone = true;
     changeState(s);
-    /* @@ was:
-    final arg = GosubOperationArg.both(17,
-        calc: (Model m, int label) => m.memory.program.gosub(label));
-    arg.op = Operations.gsb;
-    final inState = GosubArgInputState(controller, arg, this);
-    changeState(inState);
-    inState.buttonDown(operation);
-     */
   }
 }
 
@@ -730,56 +722,70 @@ class ArgInputState extends ControllerState {
   final OperationArg arg;
   final LimitedState lastState;
   bool _decimalPressed = false;
+  bool _decimalAllowed;
+  bool _digitsAllowed;
+  Map<List<ProgramOperation>, int> _specialState;
 
-  ArgInputState(Controller con, this.arg, this.lastState) : super(con);
+  ArgInputState(Controller con, this.arg, this.lastState)
+      : _specialState = arg.desc.special,
+        _decimalAllowed = arg.desc.numericArgs >= con.argBase,
+        _digitsAllowed = arg.desc.numericArgs > 0,
+        super(con);
 
-  bool get decimalAllowed => arg.desc.maxArg >= controller.argBase + 2;
   // GTO and GSB take index registers, but not .
 
   @override
   void buttonDown(Operation key) {
+    int? special;
     if (controller.argIops.contains(key)) {
-      if (_decimalPressed) {
-        changeState(lastState);
-        lastState.buttonDown(key);
-      } else {
-        _gotNumber(arg.desc.indexRegisterNumber);
-      }
+      special = arg.desc.indexRegisterNumber;
     } else if (controller.argParenIops.contains(key)) {
-      if (_decimalPressed) {
-        changeState(lastState);
-        lastState.buttonDown(key);
-      } else {
-        _gotNumber(arg.desc.indirectIndexNumber);
+      special = arg.desc.indirectIndexNumber;
+    } else if (!_decimalPressed && _specialState.isNotEmpty) {
+      final ProgramOperation syn = arg.desc.synonyms[key] ?? key;
+      final nextState = <List<ProgramOperation>, int>{};
+      for (final ent in _specialState.entries) {
+        if (ent.key[0] == syn) {
+          final k = ent.key.getRange(1, ent.key.length).toList(growable: false);
+          if (k.isEmpty) {
+            special = ent.value;
+          } else {
+            nextState[k] = ent.value;
+          }
+        }
       }
+      if (special == null) {
+        _specialState = nextState;
+        if (_specialState.isNotEmpty) {
+          _decimalAllowed = _digitsAllowed = false;
+          return;   // Keep looking for more special args
+        }
+      }
+    }
+    if (special != null) {
+      done(special);
     } else if (key == Operations.dot) {
-      if (_decimalPressed || !decimalAllowed) {
+      if (_decimalPressed || !_decimalAllowed) {
         changeState(lastState);
         lastState.handleDecimalPoint();
       } else {
         _decimalPressed = true;
+        _specialState = const {};
       }
-    } else {
+    } else if (_digitsAllowed) {
       int? argV = key.numericValue;
-      if (argV != null) {
-        _gotNumber(argV + arg.desc.r0ArgumentValue);
+      if (argV != null && _decimalPressed) {
+        argV += controller.argBase;
+      }
+      if (argV != null && argV < arg.desc.numericArgs) {
+        done(argV + arg.desc.r0ArgumentValue);
       } else {
         changeState(lastState); // bail
         lastState.buttonDown(key);
       }
-    }
-  }
-
-  void _gotNumber(int argV) {
-    if (_decimalPressed) {
-      argV += controller.argBase;
-    }
-    if (argV > arg.desc.maxArg) {
-      changeState(lastState);
-      // But we eat the number key.  At least, that's how my 15C works
-      // on g-CF-9
     } else {
-      done(argV);
+      changeState(lastState);
+      lastState.buttonDown(key);
     }
   }
 

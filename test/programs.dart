@@ -74,7 +74,7 @@ class TestCalculator implements ProgramListener {
 
   @override
   void onError(CalculatorError err) =>
-      output.add(ProgramEvent(errorNumber: err.num));
+      output.add(ProgramEvent(errorNumber: controller.getErrorNumber(err)));
 
   @override
   void onPause() {
