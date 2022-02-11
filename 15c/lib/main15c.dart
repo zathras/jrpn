@@ -50,14 +50,16 @@ class Operations15 extends Operations {
 
   static final NormalArgOperation lbl15 = NormalArgOperation(
       arg: OperationArg.both(
-          desc: ArgDescription15CNoI(numericArgs: 20, special: {
-            [letterLabelA]: 20,
-            [letterLabelB]: 21,
-            [letterLabelC]: 22,
-            [letterLabelD]: 23,
-            [letterLabelE]: 24,
-          },
-          synonyms: ArgDescription15C.letterSynonyms),
+          desc: ArgDescription15CNoI(
+              numericArgs: 20,
+              special: {
+                [letterLabelA]: 20,
+                [letterLabelB]: 21,
+                [letterLabelC]: 22,
+                [letterLabelD]: 23,
+                [letterLabelE]: 24,
+              },
+              synonyms: ArgDescription15C.letterSynonyms),
           calc: (_, __) {}),
       name: 'LBL');
   // @@@@ I am here
@@ -1103,7 +1105,6 @@ ProgramInstruction<Operation> _newProgramInstruction(
 
 @immutable
 abstract class ArgDescription15C extends ArgDescription {
-
   const ArgDescription15C();
 
   static final letterSynonyms = {

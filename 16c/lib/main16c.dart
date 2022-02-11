@@ -590,8 +590,8 @@ class ArgDescription16C extends ArgDescription {
   @override
   int get numericArgs => maxArg > 31 ? maxArg - 1 : maxArg + 1;
 
-  ArgDescription16C({required this.maxArg}) :
-  special = (maxArg == 33) ? _special33 : const {};
+  ArgDescription16C({required this.maxArg})
+      : special = (maxArg == 33) ? _special33 : const {};
 
   @override
   int get indirectIndexNumber => 32;
@@ -603,7 +603,6 @@ class ArgDescription16C extends ArgDescription {
 
 @immutable
 class ArgDescriptionGto16C extends ArgDescription {
-
   static final Map<List<Operation>, int> _special = {
     [Operations.sst]: 17,
     [Operations16.I]: 17,

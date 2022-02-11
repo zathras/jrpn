@@ -413,8 +413,7 @@ class Resting extends ActiveState {
       return;
     }
     program.displayCurrent();
-    final arg = GosubOperationArg.both(
-        desc: gsb.arg.desc, calc: (_, __) {});
+    final arg = GosubOperationArg.both(desc: gsb.arg.desc, calc: (_, __) {});
     arg.op = gsb;
     final s = GosubArgInputState(controller, arg, this);
     s.isDone = true;

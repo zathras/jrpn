@@ -54,7 +54,6 @@ import 'states.dart';
 /// of the different [Operation] types.
 ///
 class Operations {
-
   // Unshifted keys:
 
   static final n7 = NumberEntry('7', 7);

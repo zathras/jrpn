@@ -848,8 +848,8 @@ class OperationMap<OT extends ProgramOperation> {
       required OT lbl}) {
     final instance = _instance;
     if (instance == null) {
-      final i = _instance = OperationMap<OT>._internal(
-          keys, numbers, special, shortcuts, lbl);
+      final i = _instance =
+          OperationMap<OT>._internal(keys, numbers, special, shortcuts, lbl);
       i._initializeProgramDisplay();
       i._initializeOperationTable();
       return i;

@@ -728,9 +728,10 @@ class BranchingOperation extends NormalOperation {
 /// A [BranchingOperation] that takes an argument, namely B? (bit test)
 ///
 class BranchingArgOperation extends NormalArgOperation {
-  BranchingArgOperation({
-    required OperationArg arg, required String name,
-    int numExtendedOpCodes = 0})
+  BranchingArgOperation(
+      {required OperationArg arg,
+      required String name,
+      int numExtendedOpCodes = 0})
       : super(arg: arg, name: name, numExtendedOpCodes: numExtendedOpCodes);
 
   /// Branching operations only perform a calculation when we are running
