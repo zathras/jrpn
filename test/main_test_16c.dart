@@ -27,6 +27,7 @@ import 'package:jrpn/m/model.dart';
 import 'package:jrpn/generic_main.dart';
 import 'package:jrpn16c/main16c.dart';
 import 'package:jrpn16c/tests16c.dart';
+import 'opcodes.dart';
 import 'programs.dart';
 
 Future<void> main() async {
@@ -40,6 +41,7 @@ Future<void> main() async {
   test('program with error', programWithError);
   test('last x', lastX);
   test('no scroll reset', noScrollReset);
+  test('JSON format / opcodes', opcodeTest16C);
   appendixA();
   test('Towers of Hanoi', towersOfHanoi);
   // Do this last, because it leaves a timer pending:
