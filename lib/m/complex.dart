@@ -118,7 +118,9 @@ class Complex {
   // This isn't what's given in the advanced functions book (page 61), but
   // it matches the calculator's behavior.
 
-  Complex atan() => const Complex(0, 0.5) * ((const Complex(0, 1) + this) / (const Complex(0, 1) - this) ).ln();
+  Complex atan() =>
+      const Complex(0, 0.5) *
+      ((const Complex(0, 1) + this) / (const Complex(0, 1) - this)).ln();
 
   Complex asinh() => (this + (this * this + const Complex(1, 0)).sqrt()).ln();
 

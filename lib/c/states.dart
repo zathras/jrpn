@@ -173,7 +173,7 @@ class Resting extends ActiveState {
       model.shift = ShiftKey.none;
       // key.pressed(this) might set the shift key again.
     }
-    if (key == Operations.gto && controller is RealController) {
+    if (key == controller.gtoOperation && controller is RealController) {
       // This is a little tricky.  GTO has this quirk, where "GTO . nnn"
       // positions the current line.  It still enables stack lift,
       // which is what the normal key.pressed() does.
@@ -405,16 +405,17 @@ class Resting extends ActiveState {
     // be reset when we're not currently running a program, which is the only
     // case here.
     program.resetReturnStack();
+    final gsb = controller.gsbOperation;
     try {
-      program.gosub(operation.numericValue, const ArgDescriptionGto15C());
+      program.gosub(operation.numericValue, gsb.arg.desc);
     } on CalculatorError catch (e) {
       controller.showCalculatorError(e);
       return;
     }
     program.displayCurrent();
     final arg = GosubOperationArg.both(
-        desc: const ArgDescriptionGto15C(), calc: (_, __) {});
-    arg.op = Operations.gsb;
+        desc: gsb.arg.desc, calc: (_, __) {});
+    arg.op = gsb;
     final s = GosubArgInputState(controller, arg, this);
     s.isDone = true;
     changeState(s);
@@ -737,11 +738,7 @@ class ArgInputState extends ControllerState {
   @override
   void buttonDown(Operation key) {
     int? special;
-    if (controller.argIops.contains(key)) {
-      special = arg.desc.indexRegisterNumber;
-    } else if (controller.argParenIops.contains(key)) {
-      special = arg.desc.indirectIndexNumber;
-    } else if (!_decimalPressed && _specialState.isNotEmpty) {
+    if (!_decimalPressed && _specialState.isNotEmpty) {
       final ProgramOperation syn = arg.desc.synonyms[key] ?? key;
       final nextState = <List<ProgramOperation>, int>{};
       for (final ent in _specialState.entries) {
@@ -758,7 +755,7 @@ class ArgInputState extends ControllerState {
         _specialState = nextState;
         if (_specialState.isNotEmpty) {
           _decimalAllowed = _digitsAllowed = false;
-          return;   // Keep looking for more special args
+          return; // Keep looking for more special args
         }
       }
     }
@@ -921,7 +918,7 @@ class ProgramEntry extends LimitedState {
   @override
   void buttonDown(Operation key) {
     final OperationArg? arg = key.arg;
-    if (key == Operations.gto) {
+    if (key == controller.gtoOperation) {
       changeState(WaitingForGotoDot(controller, this));
     } else if (arg != null) {
       // which includes gsb and lbl
@@ -1014,7 +1011,7 @@ class ProgramEntry extends LimitedState {
 
   @override
   void gosubEntryDone(GosubArgInputState from, int label) {
-    _addOperation(Operations.gsb, label);
+    _addOperation(controller.gsbOperation, label);
   }
 
   @override
@@ -1075,7 +1072,7 @@ class WaitingForGotoDot extends ControllerState {
     if (key == controller.gotoLineNumberKey) {
       changeState(WaitingForGotoDotLines(controller, last));
     } else {
-      changeState(ArgInputState(controller, Operations.gto.arg, last))
+      changeState(ArgInputState(controller, controller.gtoOperation.arg, last))
           .buttonDown(key);
       // Not controller.runWithArg().  We need to invoke buttonDown, which can't
       // be done with a RunningController.  In the RunningController case, we

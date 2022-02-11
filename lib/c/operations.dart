@@ -54,9 +54,6 @@ import 'states.dart';
 /// of the different [Operation] types.
 ///
 class Operations {
-  /// Initialized by model.  Harmlessley re-initialized when units tests
-  /// are run.
-  static late int numberOfFlags;
 
   // Unshifted keys:
 
@@ -92,22 +89,6 @@ class Operations {
         }
       },
       name: '/');
-
-  static final NormalArgOperation gsb = NormalArgOperation(
-      arg: GosubOperationArg.both(
-          desc: const ArgDescriptionGto16C(),
-          // calc is only used when running a program - see
-          // GosubArgInputState.
-          calc: (Model m, int label) =>
-              m.memory.program.gosub(label, const ArgDescriptionGto16C())),
-      name: 'GSB');
-
-  static final NormalArgOperation gto = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: const ArgDescriptionGto16C(),
-          calc: (Model m, int label) =>
-              m.memory.program.goto(label, const ArgDescriptionGto16C())),
-      name: 'GTO');
 
   static final n4 = NumberEntry('4', 4);
   static final n5 = NumberEntry('5', 5);
@@ -279,28 +260,6 @@ class Operations {
         }
       },
       name: '1/x');
-
-  static final _flagArgDesc = ArgDescription16C(maxArg: numberOfFlags - 1);
-
-  static final NormalArgOperation sf = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: _flagArgDesc,
-          calc: (Model m, int arg) {
-            m.setFlag(arg, true);
-          }),
-      name: 'SF');
-
-  static final NormalArgOperation cf = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: _flagArgDesc,
-          calc: (Model m, int arg) => m.setFlag(arg, false)),
-      name: 'CF');
-
-  static final BranchingArgOperation fQuestion = BranchingArgOperation(
-      arg: OperationArg.both(
-          desc: _flagArgDesc,
-          calc: (Model m, int arg) => m.program.doNextIf(m.getFlag(arg))),
-      name: 'F?');
 
   static final LimitedOperation pr =
       LimitedOperation(pressed: (LimitedState s) => s.handlePR(), name: 'P/R');

@@ -33,7 +33,7 @@ class SelfTests16 extends SelfTests {
   @override
   Model<Operation> newModel() {
     final r = Model16();
-    Controller16(r);    // Initializes late final fields
+    Controller16(r); // Initializes late final fields
     return r;
   }
 

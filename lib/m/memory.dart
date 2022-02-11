@@ -739,94 +739,7 @@ abstract class ArgDescription {
   /// 0, but (i) and I need to be argument values 0 and 1 for a few operations
   /// on the 15C, so that they will be assigned single-byte opcodes.
   ///
-  int get r0ArgumentValue => 0;
-}
-
-///
-/// A maximally flexible arg description
-///
-class ArgDescriptionFlex {
-  @override
-  final int indirectIndexNumber;
-  @override
-  final int indexRegisterNumber;
-  @override
-  final int numericArgs;
-  @override
-  final int maxArg;
-  @override
-  final Map<List<ProgramOperation>, int> special;
-  @override
-  final Map<ProgramOperation, ProgramOperation> synonyms;
-
-  ArgDescriptionFlex(
-      {this.indirectIndexNumber = 0xdeadbeef,
-      this.indexRegisterNumber = 0xdeadbeef,
-      this.numericArgs = 0,
-      this.special = const {},
-      this.synonyms = const {}})
-      : maxArg = numericArgs - 1 + special.values.toSet().length;
-}
-
-///
-/// A description suitable for most of the args on the 16C
-///
-@immutable
-class ArgDescription16C extends ArgDescription {
-  @override
-  final int maxArg;
-
-  @override
-  int get numericArgs => maxArg > 31 ? maxArg - 1 : maxArg + 1;
-
-  const ArgDescription16C({required this.maxArg});
-
-  @override
-  int get indirectIndexNumber => 32;
-  @override
-  int get indexRegisterNumber => 33; // It's to the right on the keyboard
-}
-
-@immutable
-class ArgDescriptionGto16C extends ArgDescription {
-  const ArgDescriptionGto16C();
-
-  @override
-  int get maxArg => 17;
-  // This actually allows GSB (i) and GTO (i), which AFAIK aren't implemented
-  // on a real 16c (cf. manual page 88).  Oops!  However, maxArg can't be
-  // changed to 16 without chaning the opcode assignments, which would break
-  // backwards compatibility.  Having this weird extension to the 16C's
-  // semantics is harmless, I guess, and disabling this extension would be
-  // needlessly antisocial, given that the app has been out there for a while.
-
-  @override
-  int get numericArgs => maxArg - 1;
-
-  @override
-  int get indirectIndexNumber => 16;
-  @override
-  int get indexRegisterNumber => 17; // It's to the right on the keyboard
-}
-
-@immutable
-class ArgDescriptionGto15C extends ArgDescription {
-  const ArgDescriptionGto15C();
-
-  @override
-  int get maxArg => 25;
-  // That's 0 to 9, .0 to .9, A-E, and I
-
-  @override
-  int get numericArgs => 20;
-
-  @override
-  int get indirectIndexNumber => 0xdeadbeef;
-  // The 15C doesn't allow GTO (i) or GSB (i).  Note also that the handling
-  // of negative values of I is different on the 15c.
-  // see 15C manual, bottom of page 108
-  @override
-  int get indexRegisterNumber => 25;
+  int get r0ArgumentValue;
 }
 
 ///
@@ -935,8 +848,8 @@ class OperationMap<OT extends ProgramOperation> {
       required OT lbl}) {
     final instance = _instance;
     if (instance == null) {
-      final i = _instance =
-          OperationMap<OT>._internal(keys, numbers, special, shortcuts, lbl);
+      final i = _instance = OperationMap<OT>._internal(
+          keys, numbers, special, shortcuts, lbl);
       i._initializeProgramDisplay();
       i._initializeOperationTable();
       return i;

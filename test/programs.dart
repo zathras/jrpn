@@ -140,7 +140,7 @@ void appendixA() {
       p.model.displayMode = DisplayMode.hex;
       p.model.wordSize = 32;
       p.model.x = x;
-      p.enter(Operations.gsb);
+      p.enter(Operations16.gsb);
       p.enter(Operations16.letterB);
       expect(await out.moveNext(), true);
       expect(out.current, ProgramEvent.done);
@@ -155,7 +155,7 @@ void appendixA() {
       final p = TestCalculator()..loadState('appendix_d_ieee_float.jrpn');
       final out = StreamIterator<ProgramEvent>(p.output.stream);
       p.model.x = Value.fromDouble(floatFormat[i]);
-      p.enter(Operations.gsb);
+      p.enter(Operations16.gsb);
       p.enter(Operations16.letterA);
       expect(await out.moveNext(), true);
       expect(out.current, ProgramEvent.done);
@@ -168,7 +168,7 @@ void appendixA() {
 Future<void> p79Program() async {
   final p = TestCalculator()..loadState('p79_example.jrpn');
   final out = StreamIterator<ProgramEvent>(p.output.stream);
-  p.enter(Operations.gsb);
+  p.enter(Operations16.gsb);
   p.enter(Operations.n1);
   expect(await out.moveNext(), true);
   expect(out.current, ProgramEvent.done);
@@ -179,7 +179,7 @@ Future<void> p79Program() async {
 Future<void> p93Checksum() async {
   final p = TestCalculator()..loadState('p93_checksum.jrpn');
   final out = StreamIterator<ProgramEvent>(p.output.stream);
-  p.enter(Operations.gsb);
+  p.enter(Operations16.gsb);
   p.enter(Operations16.letterD);
   expect(await out.moveNext(), true);
   expect(out.current, ProgramEvent.done);
@@ -214,7 +214,7 @@ Future<void> towersOfHanoi() async {
   final p = TestCalculator()..loadState('towers_of_hanoi.jrpn');
   final out = StreamIterator<ProgramEvent>(p.output.stream);
   p.enter(Operations.n7);
-  p.enter(Operations.gsb);
+  p.enter(Operations16.gsb);
   p.enter(Operations16.letterA);
   for (final Move move in hanoi(0x7, 1, 3)) {
     expect(await out.moveNext(), true);

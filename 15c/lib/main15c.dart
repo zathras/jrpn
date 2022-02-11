@@ -50,7 +50,15 @@ class Operations15 extends Operations {
 
   static final NormalArgOperation lbl15 = NormalArgOperation(
       arg: OperationArg.both(
-          desc: const ArgDescription15C(maxArg: 24), calc: (_, __) {}),
+          desc: ArgDescription15CNoI(numericArgs: 20, special: {
+            [letterLabelA]: 20,
+            [letterLabelB]: 21,
+            [letterLabelC]: 22,
+            [letterLabelD]: 23,
+            [letterLabelE]: 24,
+          },
+          synonyms: ArgDescription15C.letterSynonyms),
+          calc: (_, __) {}),
       name: 'LBL');
   // @@@@ I am here
 
@@ -188,6 +196,54 @@ class Operations15 extends Operations {
       return arg - 1;
     }
   }
+
+  static const _flagArgDesc = ArgDescription15CJustI(maxArg: 10);
+
+  static final NormalArgOperation sf = NormalArgOperation(
+      numExtendedOpCodes: 11,
+      arg: OperationArg.both(
+          desc: _flagArgDesc,
+          calc: (Model m, int arg) {
+            arg = _flagArgDesc.mapArg(m, arg, 6);
+            m.setFlag(arg, true);
+          }),
+      name: 'SF');
+
+  static final NormalArgOperation cf = NormalArgOperation(
+      numExtendedOpCodes: 11,
+      arg: OperationArg.both(
+          desc: _flagArgDesc,
+          calc: (Model m, int arg) {
+            arg = _flagArgDesc.mapArg(m, arg, 6);
+            m.setFlag(arg, false);
+          }),
+      name: 'CF');
+
+  static final BranchingArgOperation fQuestion = BranchingArgOperation(
+      numExtendedOpCodes: 11,
+      arg: OperationArg.both(
+          desc: _flagArgDesc,
+          calc: (Model m, int arg) {
+            arg = _flagArgDesc.mapArg(m, arg, 6);
+            m.program.doNextIf(m.getFlag(arg));
+          }),
+      name: 'F?');
+
+  static final NormalArgOperation gsb = NormalArgOperation(
+      arg: GosubOperationArg.both(
+          desc: const ArgDescriptionGto15C(),
+          // calc is only used when running a program - see
+          // GosubArgInputState.
+          calc: (Model m, int label) =>
+              m.memory.program.gosub(label, const ArgDescriptionGto15C())),
+      name: 'GSB');
+
+  static final NormalArgOperation gto = NormalArgOperation(
+      arg: OperationArg.both(
+          desc: const ArgDescriptionGto15C(),
+          calc: (Model m, int label) =>
+              m.memory.program.goto(label, const ArgDescriptionGto15C())),
+      name: 'GTO');
 
   static final NormalArgOperation sci = NormalArgOperation(
       stackLift: StackLift.neutral,
@@ -354,7 +410,9 @@ class Operations15 extends Operations {
 
   static final NormalArgOperation dim = NormalArgOperation(
       arg: OperationArg.both(
-          desc: ArgDescription15CNoI(special: _justLettersMap, synonyms: ArgDescription15C.matrixSynonyms),
+          desc: ArgDescription15CNoI(
+              special: _justLettersMap,
+              synonyms: ArgDescription15C.matrixSynonyms),
           calc: (Model m, int arg) {
             int r = m.xF.truncate();
             int c = m.yF.truncate();
@@ -368,7 +426,9 @@ class Operations15 extends Operations {
       name: 'DIM');
   static final NormalArgOperation resultOp = NormalArgOperation(
       arg: OperationArg.both(
-          desc: ArgDescription15CNoI(special: _justLettersMap, synonyms: ArgDescription15C.matrixSynonyms),
+          desc: ArgDescription15CNoI(
+              special: _justLettersMap,
+              synonyms: ArgDescription15C.matrixSynonyms),
           calc: (Model m, int arg) {
             (m as Model15).resultMatrix = arg;
           }),
@@ -631,7 +691,7 @@ class ButtonLayout15 extends ButtonLayout {
       'GTO',
       'HYP',
       'HYP^\u2009\u22121',
-      Operations.gto,
+      Operations15.gto,
       Operations15.hyp,
       Operations15.hypInverse,
       'T');
@@ -668,14 +728,15 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.tanh,
       Operations15.tanhInverse,
       'K');
+
   CalculatorButton get eex => CalculatorButton(factory, 'EEX', 'RESULT',
       '\u03c0', Operations.eex, Operations15.resultOp, Operations15.piOp, 'L');
   CalculatorButton get n4 => CalculatorButton(factory, '4', 'x\u2b0c', 'SF',
-      Operations.n4, Operations15.xExchange, Operations.sf, '4');
+      Operations.n4, Operations15.xExchange, Operations15.sf, '4');
   CalculatorButton get n5 => CalculatorButton(factory, '5', 'DSE', 'CF',
-      Operations.n5, Operations15.dse, Operations.cf, '5');
+      Operations.n5, Operations15.dse, Operations15.cf, '5');
   CalculatorButton get n6 => CalculatorButton(factory, '6', 'ISG', 'F?',
-      Operations.n6, Operations15.isg, Operations.fQuestion, '6');
+      Operations.n6, Operations15.isg, Operations15.fQuestion, '6');
   CalculatorButton get mult => CalculatorOnSpecialButton(
       factory,
       '\u00D7',
@@ -691,7 +752,7 @@ class ButtonLayout15 extends ButtonLayout {
   CalculatorButton get rs => CalculatorButton(factory, 'R/S', 'PSE', 'P/R',
       Operations.rs, Operations.pse, Operations.pr, '[');
   CalculatorButton get gsb => CalculatorButton(factory, 'GSB', '\u03a3', 'RTN',
-      Operations.gsb, Operations15.clearSigma, Operations.rtn, ']');
+      Operations15.gsb, Operations15.clearSigma, Operations.rtn, ']');
   CalculatorButton get rdown => CalculatorButton(factory, 'R\u2193', 'PRGM',
       'R\u2191', Operations.rDown, Operations.clearPrgm, Operations.rUp, 'V');
   CalculatorButton get xy => CalculatorButton(factory, 'x\u2b0cy', 'REG', 'RND',
@@ -872,7 +933,10 @@ class PortraitButtonFactory15 extends PortraitButtonFactory {
 
 class Controller15 extends RealController {
   Controller15(Model<Operation> model)
-      : super(model, _numbers, const {}, Operations15.lbl15);
+      : super(model,
+            numbers: _numbers,
+            shortcuts: const {},
+            lblOperation: Operations15.lbl15);
 
   @override
   void buttonWidgetDown(CalculatorButton b) {
@@ -927,19 +991,6 @@ class Controller15 extends RealController {
       PortraitButtonFactory15(context, screen, this);
 
   @override
-  Set<Operation> get argIops => _argIops;
-  static final Set<Operation> _argIops = {Operations15.tan, Operations15.I15};
-
-  /// Abbreviated key sequences for (i) used as an argument
-  /// cf. 16C manual p. 68
-  @override
-  Set<Operation> get argParenIops => _argParenIops;
-  static final Set<Operation> _argParenIops = {
-    Operations15.cos,
-    Operations15.parenI15
-  };
-
-  @override
   int get argBase => 10;
 
   @override
@@ -954,6 +1005,12 @@ class Controller15 extends RealController {
     Operations15.hypInverse,
     Operations15.userOp
   };
+
+  @override
+  NormalArgOperation get gsbOperation => Operations15.gsb;
+
+  @override
+  NormalArgOperation get gtoOperation => Operations15.gto;
 }
 
 //
@@ -977,7 +1034,7 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
   ],
   [
     MKey(Operations.sst, Operations15.lbl15, Operations.bst),
-    MKey(Operations.gto, Operations15.hyp, Operations15.hypInverse),
+    MKey(Operations15.gto, Operations15.hyp, Operations15.hypInverse),
     MKey(Operations15.sin, Operations15.dim, Operations15.sinInverse,
         extensionOps: [
           MKeyExtensionOp(Operations15.sinh, '42,22,'),
@@ -994,14 +1051,14 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
           MKeyExtensionOp(Operations15.tanhInverse, '43,22,')
         ]),
     MKey(Operations.eex, Operations15.resultOp, Operations15.piOp),
-    MKey(Operations.n4, Operations15.xExchange, Operations.sf),
-    MKey(Operations.n5, Operations15.dse, Operations.cf),
-    MKey(Operations.n6, Operations15.isg, Operations.fQuestion),
+    MKey(Operations.n4, Operations15.xExchange, Operations15.sf),
+    MKey(Operations.n5, Operations15.dse, Operations15.cf),
+    MKey(Operations.n6, Operations15.isg, Operations15.fQuestion),
     MKey(Operations.mult, Operations15.integrate, Operations.xEQ0),
   ],
   [
     MKey(Operations.rs, Operations.pse, Operations.pr),
-    MKey(Operations.gsb, Operations15.clearSigma, Operations.rtn),
+    MKey(Operations15.gsb, Operations15.clearSigma, Operations.rtn),
     MKey(Operations.rDown, Operations.clearPrgm, Operations.rUp),
     MKey(Operations.xy, Operations.clearReg, Operations15.rnd),
     MKey(Operations.bsp, Operations.clearPrefix, Operations.clx),
@@ -1039,40 +1096,64 @@ ProgramInstruction<Operation> _newProgramInstruction(
   if (_letterLabels.contains(operation)) {
     assert(argValue == 0);
     argValue = operation.numericValue!;
-    operation = Operations.gsb;
+    operation = Operations15.gsb;
   }
   return ProgramInstruction15(operation, argValue);
 }
 
 @immutable
-class ArgDescription15C extends ArgDescription {
-  @override
-  final int maxArg;
-  @override
-  int get numericArgs => maxArg - 1;
+abstract class ArgDescription15C extends ArgDescription {
 
-  const ArgDescription15C({required this.maxArg});
+  const ArgDescription15C();
 
-  @override
-  int get indirectIndexNumber => 0;
-  @override
-  int get indexRegisterNumber => 1; // It's to the right on the keyboard
-  @override
-  int get r0ArgumentValue => 2;
-
-  static final matrixSynonyms = {
-    Operations.chs: Operations15.matrix,
+  static final letterSynonyms = {
     Operations15.sqrtOp15: Operations15.letterLabelA,
     Operations15.eX15: Operations15.letterLabelB,
     Operations15.tenX15: Operations15.letterLabelC,
     Operations15.yX15: Operations15.letterLabelD,
     Operations15.reciprocal15: Operations15.letterLabelE
   };
+
+  static final matrixSynonyms = {
+    Operations.chs: Operations15.matrix,
+    ...letterSynonyms
+  };
+}
+
+@immutable
+class ArgDescriptionGto15C extends ArgDescription {
+  static final Map<List<Operation>, int> _special = {
+    [Operations15.tan]: 17,
+    [Operations15.I15]: 17,
+    [Operations15.cos]: 16,
+    [Operations15.parenI15]: 16
+  };
+
+  const ArgDescriptionGto15C();
+
+  @override
+  Map<List<ProgramOperation>, int> get special => _special;
+
+  @override
+  int get maxArg => 25;
+  // That's 0 to 9, .0 to .9, A-E, and I
+
+  @override
+  int get numericArgs => 20;
+
+  @override
+  int get indirectIndexNumber => 0xdeadbeef;
+  // The 15C doesn't allow GTO (i) or GSB (i).  Note also that the handling
+  // of negative values of I is different on the 15c.
+  // see 15C manual, bottom of page 108
+  @override
+  int get indexRegisterNumber => 25;
+  @override
+  int get r0ArgumentValue => 0;
 }
 
 @immutable
 class ArgDescription15CNoI extends ArgDescription {
-
   @override
   final int maxArg;
 
@@ -1085,7 +1166,8 @@ class ArgDescription15CNoI extends ArgDescription {
   @override
   final Map<ProgramOperation, ProgramOperation> synonyms;
 
-  ArgDescription15CNoI({this.numericArgs = 0, this.special = const {}, this.synonyms = const {}})
+  ArgDescription15CNoI(
+      {this.numericArgs = 0, this.special = const {}, this.synonyms = const {}})
       : maxArg = numericArgs - 1 + special.values.toSet().length;
 
   @override
@@ -1101,7 +1183,17 @@ class ArgDescription15CNoI extends ArgDescription {
 class ArgDescription15CSto extends ArgDescription15C {
   static const int resultKey = 2;
 
-  const ArgDescription15CSto() : super(maxArg: 22);
+  const ArgDescription15CSto();
+
+  @override
+  int get maxArg => 31;
+
+  @override
+  int get numericArgs => 20;
+  @override
+  int get indirectIndexNumber => 0;
+  @override
+  int get indexRegisterNumber => 1; // It's to the right on the keyboard
 
   @override
   int get r0ArgumentValue => 3;
@@ -1110,21 +1202,24 @@ class ArgDescription15CSto extends ArgDescription15C {
   Map<List<ProgramOperation>, int> get special => _special;
 
   static final _special = {
-        [Operations.eex]: 2,
-        [Operations15.matrix, Operations15.letterLabelA]: 22,
-        [Operations15.matrix, Operations15.letterLabelB]: 23,
-        [Operations15.matrix, Operations15.letterLabelC]: 24,
-        [Operations15.matrix, Operations15.letterLabelD]: 25,
-        [Operations15.matrix, Operations15.letterLabelE]: 26,
-        [Operations15.letterLabelA]: 27,
-        [Operations15.letterLabelB]: 28,
-        [Operations15.letterLabelC]: 29,
-        [Operations15.letterLabelD]: 30,
-        [Operations15.letterLabelE]: 31
-      };
+    [Operations15.parenI15]: 0,
+    [Operations15.I15]: 1,
+    [Operations.eex]: 2,
+    [Operations15.matrix, Operations15.letterLabelA]: 22,
+    [Operations15.matrix, Operations15.letterLabelB]: 23,
+    [Operations15.matrix, Operations15.letterLabelC]: 24,
+    [Operations15.matrix, Operations15.letterLabelD]: 25,
+    [Operations15.matrix, Operations15.letterLabelE]: 26,
+    [Operations15.letterLabelA]: 27,
+    [Operations15.letterLabelB]: 28,
+    [Operations15.letterLabelC]: 29,
+    [Operations15.letterLabelD]: 30,
+    [Operations15.letterLabelE]: 31
+  };
 
   @override
-  Map<ProgramOperation, ProgramOperation> get synonyms => ArgDescription15C.matrixSynonyms;
+  Map<ProgramOperation, ProgramOperation> get synonyms =>
+      ArgDescription15C.matrixSynonyms;
 }
 
 @immutable
@@ -1143,4 +1238,53 @@ class ArgDescription15CJustI extends ArgDescription {
   int get indexRegisterNumber => 0; // It's to the right on the keyboard
   @override
   int get r0ArgumentValue => 1;
+
+  static final Map<List<Operation>, int> _special = {
+    [Operations15.tan]: 0,
+    [Operations15.I15]: 0,
+  };
+
+  @override
+  Map<List<ProgramOperation>, int> get special => _special;
+
+  int mapArg(Model m, int v, int errNumber) {
+    if (v == indexRegisterNumber) {
+      final i = m.xF.abs().truncate();
+      if (i >= numericArgs) {
+        throw CalculatorError(errNumber);
+      }
+      return i;
+    } else {
+      return v - r0ArgumentValue;
+    }
+  }
+}
+
+///
+/// A maximally flexible arg description
+///
+class ArgDescriptionFlex extends ArgDescription {
+  @override
+  final int indirectIndexNumber;
+  @override
+  final int indexRegisterNumber;
+  @override
+  final int numericArgs;
+  @override
+  final int maxArg;
+  @override
+  final int r0ArgumentValue;
+  @override
+  final Map<List<ProgramOperation>, int> special;
+  @override
+  final Map<ProgramOperation, ProgramOperation> synonyms;
+
+  ArgDescriptionFlex(
+      {this.indirectIndexNumber = 0xdeadbeef,
+      this.indexRegisterNumber = 0xdeadbeef,
+      this.numericArgs = 0,
+      this.r0ArgumentValue = 0,
+      this.special = const {},
+      this.synonyms = const {}})
+      : maxArg = numericArgs - 1 + special.values.toSet().length;
 }

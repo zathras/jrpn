@@ -344,7 +344,8 @@ class Digit {
       {required bool rightJustify}) {
     final Iterable<Digit> values = message.codeUnits.map(((ch) {
       final d = digits[ch];
-      assert(d != null, 'No LCD character for ${String.fromCharCode(ch)} in $message');
+      assert(d != null,
+          'No LCD character for ${String.fromCharCode(ch)} in $message');
       return d!;
     }));
     int width =

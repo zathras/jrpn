@@ -165,7 +165,9 @@ class CalculatorError {
   final int num16;
   final int num15;
 
-  CalculatorError(int num, {int? num15}) : num16 = num, num15 = num15 ?? num;
+  CalculatorError(int num, {int? num15})
+      : num16 = num,
+        num15 = num15 ?? num;
 
   @override
   String toString() => 'CalculatorError($num16, $num15)';
@@ -698,7 +700,6 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   final List<bool> _flags;
-  int get numberOfFlags => _flags.length;
 
   // ignore: avoid_positional_boolean_parameters
   void setFlag(int i, bool v) {

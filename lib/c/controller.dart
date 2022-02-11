@@ -122,7 +122,6 @@ abstract class Controller {
 
   int getErrorNumber(CalculatorError err);
 
-
   /// Show a message on the LCD screen.
   void showMessage(String message) {
     model.display.current = message;
@@ -177,16 +176,11 @@ abstract class Controller {
   /// CHS on the 15C).
   Operation get gotoLineNumberKey;
 
-  /// Abbreviated key sequences for I used as an argument
-  /// cf. 16C manual p. 68
-  Set<Operation> get argIops;
-
-  /// Abbreviated key sequences for (i) used as an argument
-  /// cf. 16C manual p. 68
-  Set<Operation> get argParenIops;
-
   /// The numeric base for arguments, like register numbers.
   int get argBase;
+
+  NormalArgOperation get gsbOperation;
+  NormalArgOperation get gtoOperation;
 }
 
 ///
@@ -223,13 +217,11 @@ abstract class RealController extends Controller {
   @override
   final KeyboardController keyboard = KeyboardController();
 
-  RealController(
-      Model<Operation> model,
-      List<NumberEntry> numbers,
-      Map<NormalOperation, ProgramInstruction> shortcuts,
-      Operation lblOperation)
+  RealController(Model<Operation> model,
+      {required List<NumberEntry> numbers,
+      required Map<NormalOperation, ProgramInstruction> shortcuts,
+      required Operation lblOperation})
       : super(model) {
-    Operations.numberOfFlags = model.numberOfFlags;
     model.memory.initializeSystem(OperationMap<Operation>(
         keys: model.logicalKeys,
         numbers: numbers,
@@ -383,12 +375,6 @@ class RunningController extends Controller {
   Operation get gotoLineNumberKey => real.gotoLineNumberKey;
 
   @override
-  Set<Operation> get argIops => real.argIops;
-
-  @override
-  Set<Operation> get argParenIops => real.argParenIops;
-
-  @override
   int get argBase => real.argBase;
 
   @override
@@ -396,6 +382,12 @@ class RunningController extends Controller {
 
   @override
   int getErrorNumber(CalculatorError err) => real.getErrorNumber(err);
+
+  @override
+  NormalArgOperation get gsbOperation => real.gsbOperation;
+
+  @override
+  NormalArgOperation get gtoOperation => real.gtoOperation;
 }
 
 ///
@@ -736,8 +728,10 @@ class BranchingOperation extends NormalOperation {
 /// A [BranchingOperation] that takes an argument, namely B? (bit test)
 ///
 class BranchingArgOperation extends NormalArgOperation {
-  BranchingArgOperation({required OperationArg arg, required String name})
-      : super(arg: arg, name: name);
+  BranchingArgOperation({
+    required OperationArg arg, required String name,
+    int numExtendedOpCodes = 0})
+      : super(arg: arg, name: name, numExtendedOpCodes: numExtendedOpCodes);
 
   /// Branching operations only perform a calculation when we are running
   /// a program.

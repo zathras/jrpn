@@ -250,7 +250,7 @@ Future<void> programWithError() async {
   enter(c, Operations.n0);
   enter(c, Operations.reciprocal);
   enter(c, Operations.pr);
-  enter(c, Operations.gsb);
+  enter(c, Operations16.gsb);
   enter(c, Operations16.letterA);
   await out.moveNext();
   expect(out.current.errorNumber, 0);
@@ -263,14 +263,14 @@ Future<void> programWithError() async {
   enter(c, Operations16.letterA);
   enter(c, Operations.n1);
   enter(c, Operations.plus);
-  enter(c, Operations.gsb);
+  enter(c, Operations16.gsb);
   enter(c, Operations16.letterA);
   enter(c, Operations.pr);
   enter(c, Operations.n0);
   enter(c, Operations.enter);
   enter(c, Operations.enter);
   enter(c, Operations.enter);
-  enter(c, Operations.gsb);
+  enter(c, Operations16.gsb);
   enter(c, Operations16.letterA);
   expect(await out.moveNext(), true);
   expect(out.current.errorNumber, 5);

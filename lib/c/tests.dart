@@ -47,6 +47,7 @@ abstract class SelfTests {
   SelfTests({this.inCalculator = true});
 
   Model<Operation> newModel();
+
   /// Create a new controller with its model
   Controller newController();
 

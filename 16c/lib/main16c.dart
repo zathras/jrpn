@@ -60,15 +60,15 @@ class Model16 extends Model<Operation> {
       MKey(Operations.div, Operations16.xor, Operations16.dblDiv),
     ],
     [
-      MKey(Operations.gsb, Operations.xSwapParenI, Operations.rtn),
-      MKey(Operations.gto, Operations.xSwapI, Operations16.lbl),
+      MKey(Operations16.gsb, Operations.xSwapParenI, Operations.rtn),
+      MKey(Operations16.gto, Operations.xSwapI, Operations16.lbl),
       MKey(Operations16.hex, Operations16.showHex, Operations16.dsz),
       MKey(Operations16.dec, Operations16.showDec, Operations16.isz),
       MKey(Operations16.oct, Operations16.showOct, Operations.sqrtOp),
       MKey(Operations16.bin, Operations16.showBin, Operations.reciprocal),
-      MKey(Operations.n4, Operations16.sb, Operations.sf),
-      MKey(Operations.n5, Operations16.cb, Operations.cf),
-      MKey(Operations.n6, Operations16.bQuestion, Operations.fQuestion),
+      MKey(Operations.n4, Operations16.sb, Operations16.sf),
+      MKey(Operations.n5, Operations16.cb, Operations16.cf),
+      MKey(Operations.n6, Operations16.bQuestion, Operations16.fQuestion),
       MKey(Operations.mult, Operations16.and, Operations16.dblx),
     ],
     [
@@ -184,7 +184,6 @@ class MemoryPolicy16 extends MemoryPolicy {
 }
 
 class Memory16 extends Memory<Operation> {
-
   @override
   final Model<Operation> model;
 
@@ -225,14 +224,14 @@ class Operations16 extends Operations {
 
   static final NormalArgOperation sto = NormalArgOperation(
       arg: OperationArg.both(
-          desc: const ArgDescription16C(maxArg: 33),
+          desc: ArgDescription16C(maxArg: 33),
           calc: (Model m, int arg) =>
               m.memory.registers.setValue(arg, sto.arg, m.x)),
       name: 'STO');
 
   static final NormalArgOperation rcl = NormalArgOperation(
       arg: OperationArg.both(
-          desc: const ArgDescription16C(maxArg: 33),
+          desc: ArgDescription16C(maxArg: 33),
           pressed: (ActiveState s) => s.liftStackIfEnabled(),
           calc: (Model m, int arg) =>
               m.x = m.memory.registers.getValue(arg, rcl.arg)),
@@ -371,7 +370,7 @@ class Operations16 extends Operations {
 
   static final NormalArgOperation window = NormalArgOperation(
       arg: OperationArg.intOnly(
-          desc: const ArgDescription16C(maxArg: 7),
+          desc: ArgDescription16C(maxArg: 7),
           intCalc: (Model m, int arg) => m.display.window = arg * 8),
       stackLift: StackLift.neutral,
       name: 'WINDOW');
@@ -408,12 +407,50 @@ class Operations16 extends Operations {
   static final NormalArgOperation floatKey = NormalArgOperation(
       stackLift: StackLift.neutral, // But see also FloatKeyArg.onArgComplete()
       arg: FloatKeyArg(
-          desc: const ArgDescription16C(maxArg: 10),
+          desc: ArgDescription16C(maxArg: 10),
           calc: (Model m, int arg) {
             m.floatOverflow = false;
             m.displayMode = DisplayMode.float(arg);
           }),
       name: 'FLOAT');
+
+  static final _flagArgDesc = ArgDescription16C(maxArg: 5);
+
+  static final NormalArgOperation sf = NormalArgOperation(
+      arg: OperationArg.both(
+          desc: _flagArgDesc,
+          calc: (Model m, int arg) {
+            m.setFlag(arg, true);
+          }),
+      name: 'SF');
+
+  static final NormalArgOperation cf = NormalArgOperation(
+      arg: OperationArg.both(
+          desc: _flagArgDesc,
+          calc: (Model m, int arg) => m.setFlag(arg, false)),
+      name: 'CF');
+
+  static final NormalArgOperation gsb = NormalArgOperation(
+      arg: GosubOperationArg.both(
+          desc: const ArgDescriptionGto16C(),
+          // calc is only used when running a program - see
+          // GosubArgInputState.
+          calc: (Model m, int label) =>
+              m.memory.program.gosub(label, const ArgDescriptionGto16C())),
+      name: 'GSB');
+
+  static final NormalArgOperation gto = NormalArgOperation(
+      arg: OperationArg.both(
+          desc: const ArgDescriptionGto16C(),
+          calc: (Model m, int label) =>
+              m.memory.program.goto(label, const ArgDescriptionGto16C())),
+      name: 'GTO');
+
+  static final BranchingArgOperation fQuestion = BranchingArgOperation(
+      arg: OperationArg.both(
+          desc: _flagArgDesc,
+          calc: (Model m, int arg) => m.program.doNextIf(m.getFlag(arg))),
+      name: 'F?');
 
   static final NormalOperation or = NormalOperation.intOnly(
       intCalc: (Model m) =>
@@ -491,7 +528,7 @@ class Operations16 extends Operations {
 
   static final NormalArgOperation lbl = NormalArgOperation(
       arg: OperationArg.both(
-          desc: const ArgDescription16C(maxArg: 15), calc: (_, __) {}),
+          desc: ArgDescription16C(maxArg: 15), calc: (_, __) {}),
       name: 'LBL');
 
   static final BranchingOperation dsz = BranchingOperation(
@@ -530,6 +567,72 @@ class Operations16 extends Operations {
         } on CalculatorError catch (_) {}
       },
       name: '>');
+}
+
+///
+/// A description suitable for most of the args on the 16C
+///
+@immutable
+class ArgDescription16C extends ArgDescription {
+  static final Map<List<Operation>, int> _special33 = {
+    [Operations.sst]: 33,
+    [Operations16.I]: 33,
+    [Operations.rs]: 32,
+    [Operations16.parenI]: 32
+  };
+
+  @override
+  final int maxArg;
+
+  @override
+  final Map<List<ProgramOperation>, int> special;
+
+  @override
+  int get numericArgs => maxArg > 31 ? maxArg - 1 : maxArg + 1;
+
+  ArgDescription16C({required this.maxArg}) :
+  special = (maxArg == 33) ? _special33 : const {};
+
+  @override
+  int get indirectIndexNumber => 32;
+  @override
+  int get indexRegisterNumber => 33; // It's to the right on the keyboard
+  @override
+  int get r0ArgumentValue => 0;
+}
+
+@immutable
+class ArgDescriptionGto16C extends ArgDescription {
+
+  static final Map<List<Operation>, int> _special = {
+    [Operations.sst]: 17,
+    [Operations16.I]: 17,
+    [Operations.rs]: 16,
+    [Operations16.parenI]: 16
+  };
+
+  const ArgDescriptionGto16C();
+
+  @override
+  Map<List<ProgramOperation>, int> get special => _special;
+  @override
+  int get maxArg => 17;
+  // This actually allows GSB (i) and GTO (i), which AFAIK aren't implemented
+  // on a real 16c (cf. manual page 88).  Oops!  However, maxArg can't be
+  // changed to 16 without chaning the opcode assignments, which would break
+  // backwards compatibility.  Having this weird extension to the 16C's
+  // semantics is harmless, I guess, and disabling this extension would be
+  // needlessly antisocial, given that the app has been out there for a while.
+
+  @override
+  int get numericArgs => maxArg - 1;
+
+  @override
+  int get indirectIndexNumber => 16;
+  @override
+  int get indexRegisterNumber => 17; // It's to the right on the keyboard
+  @override
+  int get r0ArgumentValue => 0;
 }
 
 class ProgramInstruction16 extends ProgramInstruction<Operation> {
@@ -618,9 +721,9 @@ class ButtonLayout16 extends ButtonLayout {
       'DBL\u00F7', Operations.div, Operations16.xor, Operations16.dblDiv, '/');
 
   CalculatorButton get gsb => CalculatorButton(factory, 'GSB', 'x\u2B0C(i)',
-      'RTN', Operations.gsb, Operations.xSwapParenI, Operations.rtn, 'U');
+      'RTN', Operations16.gsb, Operations.xSwapParenI, Operations.rtn, 'U');
   CalculatorButton get gto => CalculatorButton(factory, 'GTO', 'x\u2B0CI',
-      'LBL', Operations.gto, Operations.xSwapI, Operations16.lbl, 'T');
+      'LBL', Operations16.gto, Operations.xSwapI, Operations16.lbl, 'T');
   CalculatorButton get hex => CalculatorButton(factory, 'HEX', '', 'DSZ',
       Operations16.hex, Operations16.showHex, Operations16.dsz, 'I');
   CalculatorButton get dec => CalculatorButton(factory, 'DEC', '', 'ISZ',
@@ -637,11 +740,11 @@ class ButtonLayout16 extends ButtonLayout {
   CalculatorButton get bin => CalculatorButton(factory, 'BIN', '', '1/x',
       Operations16.bin, Operations16.showBin, Operations.reciprocal, 'L');
   CalculatorButton get n4 => CalculatorButton(factory, '4', 'SB', 'SF',
-      Operations.n4, Operations16.sb, Operations.sf, '4');
+      Operations.n4, Operations16.sb, Operations16.sf, '4');
   CalculatorButton get n5 => CalculatorButton(factory, '5', 'CB', 'CF',
-      Operations.n5, Operations16.cb, Operations.cf, '5');
+      Operations.n5, Operations16.cb, Operations16.cf, '5');
   CalculatorButton get n6 => CalculatorButton(factory, '6', 'B?', 'F?',
-      Operations.n6, Operations16.bQuestion, Operations.fQuestion, '6');
+      Operations.n6, Operations16.bQuestion, Operations16.fQuestion, '6');
   CalculatorButton get mult => CalculatorOnSpecialButton(
       factory,
       '\u00D7',
@@ -820,7 +923,10 @@ class PortraitButtonFactory16 extends PortraitButtonFactory {
 
 class Controller16 extends RealController {
   Controller16(Model<Operation> model)
-      : super(model, _numbers, _shortcuts, Operations16.lbl);
+      : super(model,
+            numbers: _numbers,
+            shortcuts: _shortcuts,
+            lblOperation: Operations16.lbl);
 
   /// Map from operation that is a short cut to what it's a shortcut for, with
   /// the key as an argument
@@ -876,26 +982,17 @@ class Controller16 extends RealController {
           BuildContext context, ScreenPositioner screen) =>
       PortraitButtonFactory16(context, screen, this);
 
-  /// Abbreviated key sequences for I used as an argument
-  /// cf. 16C manual p. 68
-  @override
-  Set<Operation> get argIops => _argIops;
-  static final Set<Operation> _argIops = {Operations.sst, Operations16.I};
-
-  /// Abbreviated key sequences for (i) used as an argument
-  /// cf. 16C manual p. 68
-  @override
-  Set<Operation> get argParenIops => _argParenIops;
-  static final Set<Operation> _argParenIops = {
-    Operations.rs,
-    Operations16.parenI
-  };
-
   @override
   int get argBase => 16;
 
   @override
   int getErrorNumber(CalculatorError err) => err.num16;
+
+  @override
+  NormalArgOperation get gsbOperation => Operations16.gsb;
+
+  @override
+  NormalArgOperation get gtoOperation => Operations16.gto;
 }
 
 void _doubleIntMultiply(Model m) {
