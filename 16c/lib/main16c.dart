@@ -574,24 +574,24 @@ class Operations16 extends Operations {
 ///
 @immutable
 class ArgDescription16C extends ArgDescription {
-  static final Map<List<Operation>, int> _special33 = {
-    [Operations.sst]: 33,
-    [Operations16.I]: 33,
-    [Operations.rs]: 32,
-    [Operations16.parenI]: 32
-  };
+  static final _special33 = [
+    ArgKeys([Operations.sst], 33),
+    ArgKeys([Operations16.I], 33),
+    ArgKeys([Operations.rs], 32),
+    ArgKeys([Operations16.parenI], 32)
+  ];
 
   @override
   final int maxArg;
 
   @override
-  final Map<List<ProgramOperation>, int> special;
+  final List<ArgKeys> special;
 
   @override
   int get numericArgs => maxArg > 31 ? maxArg - 1 : maxArg + 1;
 
   ArgDescription16C({required this.maxArg})
-      : special = (maxArg == 33) ? _special33 : const {};
+      : special = (maxArg == 33) ? _special33 : const [];
 
   @override
   int get indirectIndexNumber => 32;
@@ -603,17 +603,17 @@ class ArgDescription16C extends ArgDescription {
 
 @immutable
 class ArgDescriptionGto16C extends ArgDescription {
-  static final Map<List<Operation>, int> _special = {
-    [Operations.sst]: 17,
-    [Operations16.I]: 17,
-    [Operations.rs]: 16,
-    [Operations16.parenI]: 16
-  };
+  static final _special = [
+    ArgKeys([Operations.sst], 17),
+    ArgKeys([Operations16.I], 17),
+    ArgKeys([Operations.rs], 16),
+    ArgKeys([Operations16.parenI], 16)
+  ];
 
   const ArgDescriptionGto16C();
 
   @override
-  Map<List<ProgramOperation>, int> get special => _special;
+  List<ArgKeys> get special => _special;
   @override
   int get maxArg => 17;
   // This actually allows GSB (i) and GTO (i), which AFAIK aren't implemented

@@ -52,13 +52,13 @@ class Operations15 extends Operations {
       arg: OperationArg.both(
           desc: ArgDescription15CNoI(
               numericArgs: 20,
-              special: {
-                [letterLabelA]: 20,
-                [letterLabelB]: 21,
-                [letterLabelC]: 22,
-                [letterLabelD]: 23,
-                [letterLabelE]: 24,
-              },
+              special: [
+                ArgKeys([letterLabelA], 20),
+                ArgKeys([letterLabelB], 21),
+                ArgKeys([letterLabelC], 22),
+                ArgKeys([letterLabelD], 23),
+                ArgKeys([letterLabelE], 24)
+              ],
               synonyms: ArgDescription15C.letterSynonyms),
           calc: (_, __) {}),
       name: 'LBL');
@@ -402,13 +402,13 @@ class Operations15 extends Operations {
       },
       name: 'TANH-1');
 
-  static final _justLettersMap = {
-    [Operations15.letterLabelA]: 0,
-    [Operations15.letterLabelB]: 1,
-    [Operations15.letterLabelC]: 2,
-    [Operations15.letterLabelD]: 3,
-    [Operations15.letterLabelE]: 4,
-  };
+  static final _justLettersMap = [
+    ArgKeys([Operations15.letterLabelA], 0),
+    ArgKeys([Operations15.letterLabelB], 1),
+    ArgKeys([Operations15.letterLabelC], 2),
+    ArgKeys([Operations15.letterLabelD], 3),
+    ArgKeys([Operations15.letterLabelE], 4)
+  ];
 
   static final NormalArgOperation dim = NormalArgOperation(
       arg: OperationArg.both(
@@ -1123,17 +1123,17 @@ abstract class ArgDescription15C extends ArgDescription {
 
 @immutable
 class ArgDescriptionGto15C extends ArgDescription {
-  static final Map<List<Operation>, int> _special = {
-    [Operations15.tan]: 17,
-    [Operations15.I15]: 17,
-    [Operations15.cos]: 16,
-    [Operations15.parenI15]: 16
-  };
+  static final List<ArgKeys> _special = [
+    ArgKeys([Operations15.tan], 17),
+    ArgKeys([Operations15.I15], 17),
+    ArgKeys([Operations15.cos], 16),
+    ArgKeys([Operations15.parenI15], 16)
+  ];
 
   const ArgDescriptionGto15C();
 
   @override
-  Map<List<ProgramOperation>, int> get special => _special;
+  List<ArgKeys> get special => _special;
 
   @override
   int get maxArg => 25;
@@ -1162,14 +1162,14 @@ class ArgDescription15CNoI extends ArgDescription {
   final int numericArgs;
 
   @override
-  final Map<List<ProgramOperation>, int> special;
+  final List<ArgKeys> special;
 
   @override
   final Map<ProgramOperation, ProgramOperation> synonyms;
 
   ArgDescription15CNoI(
-      {this.numericArgs = 0, this.special = const {}, this.synonyms = const {}})
-      : maxArg = numericArgs - 1 + special.values.toSet().length;
+      {this.numericArgs = 0, this.special = const [], this.synonyms = const {}})
+      : maxArg = numericArgs - 1 + ArgKeys.numUniqueValues(special);
 
   @override
   int get indirectIndexNumber => 0xdeadbeef;
@@ -1200,23 +1200,23 @@ class ArgDescription15CSto extends ArgDescription15C {
   int get r0ArgumentValue => 3;
 
   @override
-  Map<List<ProgramOperation>, int> get special => _special;
+  List<ArgKeys> get special => _special;
 
-  static final _special = {
-    [Operations15.parenI15]: 0,
-    [Operations15.I15]: 1,
-    [Operations.eex]: 2,
-    [Operations15.matrix, Operations15.letterLabelA]: 22,
-    [Operations15.matrix, Operations15.letterLabelB]: 23,
-    [Operations15.matrix, Operations15.letterLabelC]: 24,
-    [Operations15.matrix, Operations15.letterLabelD]: 25,
-    [Operations15.matrix, Operations15.letterLabelE]: 26,
-    [Operations15.letterLabelA]: 27,
-    [Operations15.letterLabelB]: 28,
-    [Operations15.letterLabelC]: 29,
-    [Operations15.letterLabelD]: 30,
-    [Operations15.letterLabelE]: 31
-  };
+  static final _special = [
+    ArgKeys([Operations15.parenI15], 0),
+    ArgKeys([Operations15.I15], 1),
+    ArgKeys([Operations.eex], 2),
+    ArgKeys([Operations15.matrix, Operations15.letterLabelA], 22),
+    ArgKeys([Operations15.matrix, Operations15.letterLabelB], 23),
+    ArgKeys([Operations15.matrix, Operations15.letterLabelC], 24),
+    ArgKeys([Operations15.matrix, Operations15.letterLabelD], 25),
+    ArgKeys([Operations15.matrix, Operations15.letterLabelE], 26),
+    ArgKeys([Operations15.letterLabelA], 27),
+    ArgKeys([Operations15.letterLabelB], 28),
+    ArgKeys([Operations15.letterLabelC], 29),
+    ArgKeys([Operations15.letterLabelD], 30),
+    ArgKeys([Operations15.letterLabelE], 31)
+  ];
 
   @override
   Map<ProgramOperation, ProgramOperation> get synonyms =>
@@ -1240,13 +1240,13 @@ class ArgDescription15CJustI extends ArgDescription {
   @override
   int get r0ArgumentValue => 1;
 
-  static final Map<List<Operation>, int> _special = {
-    [Operations15.tan]: 0,
-    [Operations15.I15]: 0,
-  };
+  static final _special = [
+    ArgKeys([Operations15.tan], 0),
+    ArgKeys([Operations15.I15], 0)
+  ];
 
   @override
-  Map<List<ProgramOperation>, int> get special => _special;
+  List<ArgKeys> get special => _special;
 
   int mapArg(Model m, int v, int errNumber) {
     if (v == indexRegisterNumber) {
@@ -1276,7 +1276,7 @@ class ArgDescriptionFlex extends ArgDescription {
   @override
   final int r0ArgumentValue;
   @override
-  final Map<List<ProgramOperation>, int> special;
+  final List<ArgKeys> special;
   @override
   final Map<ProgramOperation, ProgramOperation> synonyms;
 
@@ -1285,7 +1285,7 @@ class ArgDescriptionFlex extends ArgDescription {
       this.indexRegisterNumber = 0xdeadbeef,
       this.numericArgs = 0,
       this.r0ArgumentValue = 0,
-      this.special = const {},
+      this.special = const [],
       this.synonyms = const {}})
-      : maxArg = numericArgs - 1 + special.values.toSet().length;
+      : maxArg = numericArgs - 1 + ArgKeys.numUniqueValues(special);
 }

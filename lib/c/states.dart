@@ -724,7 +724,7 @@ class ArgInputState extends ControllerState {
   bool _decimalPressed = false;
   bool _decimalAllowed;
   bool _digitsAllowed;
-  Map<List<ProgramOperation>, int> _specialState;
+  List<ArgKeys> _specialState;
 
   ArgInputState(Controller con, this.arg, this.lastState)
       : _specialState = arg.desc.special,
@@ -739,14 +739,14 @@ class ArgInputState extends ControllerState {
     int? special;
     if (!_decimalPressed && _specialState.isNotEmpty) {
       final ProgramOperation syn = arg.desc.synonyms[key] ?? key;
-      final nextState = <List<ProgramOperation>, int>{};
-      for (final ent in _specialState.entries) {
-        if (ent.key[0] == syn) {
-          final k = ent.key.getRange(1, ent.key.length).toList(growable: false);
+      final nextState = <ArgKeys>[];
+      for (final ent in _specialState) {
+        if (ent.keys[0] == syn) {
+          final k = ent.keys.getRange(1, ent.keys.length).toList(growable: false);
           if (k.isEmpty) {
             special = ent.value;
           } else {
-            nextState[k] = ent.value;
+            nextState.add(ArgKeys(k, ent.value));
           }
         }
       }
@@ -766,7 +766,7 @@ class ArgInputState extends ControllerState {
         lastState.handleDecimalPoint();
       } else {
         _decimalPressed = true;
-        _specialState = const {};
+        _specialState = const [];
       }
     } else if (_digitsAllowed) {
       int? argV = key.numericValue;

@@ -731,7 +731,7 @@ abstract class ArgDescription {
   int get indexRegisterNumber;
   int get maxArg;
   int get numericArgs; // Numeric args in the range 0..(numericArgs-1)
-  Map<List<ProgramOperation>, int> get special => const {};
+  List<ArgKeys> get special => const [];
   Map<ProgramOperation, ProgramOperation> get synonyms => const {};
 
   ///
@@ -742,6 +742,19 @@ abstract class ArgDescription {
   int get r0ArgumentValue;
 }
 
+///
+/// A list of keys that can be entered as the argument to an operation
+///
+@immutable
+class ArgKeys {
+  final List<ProgramOperation> keys;
+  final int value;
+
+  const ArgKeys(this.keys, this.value);
+
+  static int numUniqueValues(List<ArgKeys> keys) =>
+      keys.map((k) => k.value).toList(growable: false).toSet().length;
+}
 ///
 /// The model's view of a key on the keyboard.  The model needs to know where
 /// [ProgramOperation]s are on the portrait layout of the keyboard, because
