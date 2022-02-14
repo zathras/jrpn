@@ -235,15 +235,13 @@ class Operations15 extends Operations {
           desc: const ArgDescriptionGto15C(),
           // calc is only used when running a program - see
           // GosubArgInputState.
-          calc: (Model m, int label) =>
-              m.memory.program.gosub(label)),
+          calc: (Model m, int label) => m.memory.program.gosub(label)),
       name: 'GSB');
 
   static final NormalArgOperation gto = NormalArgOperation(
       arg: OperationArg.both(
           desc: const ArgDescriptionGto15C(),
-          calc: (Model m, int label) =>
-              m.memory.program.goto(label)),
+          calc: (Model m, int label) => m.memory.program.goto(label)),
       name: 'GTO');
 
   static final NormalArgOperation sci = NormalArgOperation(
@@ -1203,8 +1201,7 @@ class ArgDescription15CNoI extends ArgDescription {
 
 @immutable
 class ArgDescription15CSto extends ArgDescription15C {
-
-  static const int resultKey = 20;  // One byte opcode
+  static const int resultKey = 20; // One byte opcode
 
   static const int matrixStart = 23;
 
@@ -1216,7 +1213,7 @@ class ArgDescription15CSto extends ArgDescription15C {
   @override
   int get numericArgs => 20;
   @override
-  int get indirectIndexNumber => 22;  // two byte opcode
+  int get indirectIndexNumber => 22; // two byte opcode
   @override
   int get indexRegisterNumber => 21; // One byte opcode
 
@@ -1272,7 +1269,7 @@ class ArgDescription15CJustI extends ArgDescription {
     ArgKeys([Operations15.I15], 0)
   ];
 
-  static final _synonyms = { Operations15.tan: Operations15.I15 };
+  static final _synonyms = {Operations15.tan: Operations15.I15};
 
   @override
   List<ArgKeys> get special => _special;

@@ -223,11 +223,12 @@ abstract class RealController extends Controller {
       required Map<NormalOperation, ProgramInstruction> shortcuts,
       required Operation lblOperation})
       : super(model) {
-    model.memory.initializeSystem(OperationMap<Operation>(
-        keys: model.logicalKeys,
-        numbers: numbers,
-        special: Operations.special,
-        shortcuts: shortcuts),
+    model.memory.initializeSystem(
+        OperationMap<Operation>(
+            keys: model.logicalKeys,
+            numbers: numbers,
+            special: Operations.special,
+            shortcuts: shortcuts),
         lblOperation);
     state = Resting(this);
     keyboard.controller = this;
@@ -314,7 +315,7 @@ class RunningController extends Controller {
 
   void setArg(int? argValue, ArgKeys? specialArg) {
     _argValue = argValue;
-    _specialArg= specialArg;
+    _specialArg = specialArg;
   }
 
   @override

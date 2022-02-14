@@ -776,7 +776,7 @@ class ArgInputState extends ControllerState {
       final nextState = <ArgKeys>[];
       for (final ent in _specialState) {
         if (ent.keys[_specialPos] == syn) {
-          if (_specialPos == ent.keys.length-1) {
+          if (_specialPos == ent.keys.length - 1) {
             special = ent;
           } else {
             nextState.add(ent);
@@ -964,7 +964,8 @@ class ProgramEntry extends LimitedState {
   }
 
   void _addOperation(Operation op, int argValue, ArgKeys? special) {
-    model.memory.program.insert(model.newProgramInstruction(op, argValue, special));
+    model.memory.program
+        .insert(model.newProgramInstruction(op, argValue, special));
     // throws CalculatorError if memory full
     program.displayCurrent();
   }

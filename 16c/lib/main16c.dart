@@ -686,7 +686,8 @@ class ArgDescription16C extends ArgDescription {
 }
 
 class ProgramInstruction16 extends ProgramInstruction<Operation> {
-  ProgramInstruction16(Operation op, int argValue, ArgKeys? specialArg) : super(op, argValue, specialArg);
+  ProgramInstruction16(Operation op, int argValue, ArgKeys? specialArg)
+      : super(op, argValue, specialArg);
 
   @override
   String get programDisplay {
@@ -722,8 +723,9 @@ class ProgramInstruction16 extends ProgramInstruction<Operation> {
           as = ' I';
         } else if (specialKey == Operations16.parenI) {
           as = ' (i)';
-        } else if (op == Operations16.floatKey && specialKey == Operations.dot) {
-          as = ' .';    // F-FLOAT-.
+        } else if (op == Operations16.floatKey &&
+            specialKey == Operations.dot) {
+          as = ' .'; // F-FLOAT-.
         } else {
           as = specialKey.programDisplay;
         }
