@@ -172,7 +172,9 @@ class Value {
   }
 
   Value.fromMatrix(int matrixNumber)
-      : internal = (_matrixMantissa << 12) | BigInt.from(matrixNumber);
+      : internal = (_matrixMantissa << 12) | BigInt.from(matrixNumber) {
+    assert(matrixNumber >= 0 && matrixNumber < 5);
+  }
 
   /// Determine if this value is zero.  In 1's complement mode,
   /// -0 isZero, too.

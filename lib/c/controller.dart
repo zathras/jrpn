@@ -73,6 +73,7 @@ abstract class Controller {
 
   set state(ControllerState s) {
     _state = s;
+    // print('@@ state set to $s');
     s.onChangedTo();
   }
 
@@ -226,8 +227,8 @@ abstract class RealController extends Controller {
         keys: model.logicalKeys,
         numbers: numbers,
         special: Operations.special,
-        shortcuts: shortcuts,
-        lbl: lblOperation));
+        shortcuts: shortcuts),
+        lblOperation);
     state = Resting(this);
     keyboard.controller = this;
   }
@@ -241,7 +242,6 @@ abstract class RealController extends Controller {
   @override
   void runWithArg(OperationArg arg, LimitedState fromState) {
     state = arg.makeInputState(this, fromState);
-    // print('@@ state set to $state');
   }
 
   @override
@@ -258,7 +258,6 @@ abstract class RealController extends Controller {
 
   @override
   void _returnFromChild(ControllerState newState) {
-    // print('@@ Back to parent in state $newState');
     state = newState;
   }
 
@@ -299,7 +298,8 @@ abstract class RealController extends Controller {
 ///
 class RunningController extends Controller {
   final Controller real;
-  int? argValue;
+  int? _argValue;
+  ArgKeys? _specialArg;
   bool pause = false;
   CalculatorError? pendingError;
 
@@ -310,6 +310,11 @@ class RunningController extends Controller {
     } else {
       state = Resting(this);
     }
+  }
+
+  void setArg(int? argValue, ArgKeys? specialArg) {
+    _argValue = argValue;
+    _specialArg= specialArg;
   }
 
   @override
@@ -333,10 +338,15 @@ class RunningController extends Controller {
   @override
   void runWithArg(OperationArg arg, LimitedState fromState) {
     assert(state == fromState);
-    int? v = argValue;
+    int? v = _argValue;
     assert(v != null);
     if (v != null && v <= arg.desc.maxArg) {
-      arg.onArgComplete(fromState, v);
+      final sa = _specialArg;
+      if (sa == null) {
+        arg.onArgComplete(fromState, v);
+      } else {
+        arg.onArgCompleteSpecial(fromState, sa);
+      }
     }
   }
 
@@ -404,6 +414,9 @@ abstract class Operation extends ProgramOperation {
   /// operation has an argument to indicate which register to store to.
   @override
   OperationArg? get arg;
+
+  @override
+  List<ArgKeys>? get specialArgs => arg?.desc.special;
 
   /// The calculation performed when the calculator is in floating-point mode.
   void Function(Model m)? get floatCalc;
@@ -779,6 +792,9 @@ class OperationArg extends ProgramOperationArg {
   void onArgComplete(LimitedState state, int argValue) =>
       state.onArgComplete(this, argValue);
 
+  void onArgCompleteSpecial(LimitedState state, ArgKeys value) =>
+      state.onArgCompleteSpecial(this, value);
+
   ControllerState makeInputState(Controller c, LimitedState fromState) =>
       ArgInputState(c, this, fromState);
 }
@@ -818,10 +834,6 @@ class FloatKeyArg extends OperationArg {
     }
     state.onArgComplete(this, argValue);
   }
-
-  @override
-  ControllerState makeInputState(Controller c, LimitedState fromState) =>
-      FloatKeyArgInputState(c, this, fromState);
 }
 
 class KeyboardController {

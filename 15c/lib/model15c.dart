@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
+import 'dart:typed_data';
+
 import 'package:jrpn/m/model.dart';
 
 import 'matrix.dart';
@@ -35,7 +37,8 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
 
   int resultMatrix = 0; // Index into matrices
 
-  final ProgramInstruction<OT> Function(OT, int) _newProgramInstructionF;
+  final ProgramInstruction<OT> Function(OT, int, ArgKeys?)
+      _newProgramInstructionF;
   final List<List<MKey<OT>?>> Function() _getLogicalKeys;
 
   Model15(this._getLogicalKeys, this._newProgramInstructionF)
@@ -49,8 +52,9 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   late final List<List<MKey<OT>?>> logicalKeys = _getLogicalKeys();
 
   @override
-  ProgramInstruction<OT> newProgramInstruction(OT operation, int argValue) =>
-      _newProgramInstructionF(operation, argValue);
+  ProgramInstruction<OT> newProgramInstruction(
+          OT operation, int argValue, ArgKeys? special) =>
+      _newProgramInstructionF(operation, argValue, special);
 
   @override
   reset() {
@@ -248,6 +252,10 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
   Memory15(this.model, {required int memoryNybbles})
       : super(memoryNybbles: memoryNybbles);
 
+  @override
+  void initializeSystem(OperationMap<OT> layout, OT lbl) => program =
+      ProgramMemory15<OT>(this, storage, layout, model.returnStackSize);
+
   int get numRegisters => _numRegisters;
   set numRegisters(int v) {
     policy.checkAvailable(v - _numRegisters);
@@ -273,56 +281,18 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
   }
 }
 
-class ProgramInstruction15<OT extends ProgramOperation>
-    extends ProgramInstruction<OT> {
-  ProgramInstruction15(OT op, int argValue) : super(op, argValue);
+class ProgramMemory15<OT extends ProgramOperation> extends ProgramMemory<OT> {
+  ProgramMemory15(Memory<OT> memory, ByteData registerStorage,
+      OperationMap<OT> layout, int returnStackSize)
+      : super(memory, registerStorage, layout, returnStackSize);
 
   @override
-  String get programDisplay {
-    if (op.maxArg == 0) {
-      return rightJustify(op.programDisplay, 6);
-    }
-    final String as;
-    if (argIsParenI) {
-      as = '24';
-    } else if (argIsI) {
-      as = '25';
-    } else {
-      final av = argValue - op.arg!.desc.r0ArgumentValue;
-      assert(av >= 0 && av < 25);
-      if (av < 10) {
-        as = ' ${av.toRadixString(10)}';
-      } else if (av < 20) {
-        as = ' .${(av - 10).toRadixString(10)}';
-      } else {
-        // A..F
-        as = '1${av - 19}';
-      }
-    }
-    return rightJustify('${op.programDisplay}$as', 6);
+  void goto(int label) {
+    throw "@@ TODO";
   }
 
   @override
-  String get programListing {
-    final String as;
-    if (op.maxArg > 0) {
-      if (argIsParenI) {
-        as = ' (i)';
-      } else if (argIsI) {
-        as = ' I';
-      } else {
-        final av = argValue - op.arg!.desc.r0ArgumentValue;
-        assert(av >= 0 && av < 25);
-        if (av < 20) {
-          as = ' ${argValue.toRadixString(10)}';
-        } else {
-          final cc = 'A'.codeUnitAt(0) + av - 20;
-          as = ' ${String.fromCharCode(cc)}';
-        }
-      }
-    } else {
-      as = '';
-    }
-    return '${op.name}$as';
+  int valueToLabel(Value v) {
+    throw "@@ TODO";
   }
 }

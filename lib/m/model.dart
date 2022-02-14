@@ -450,7 +450,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ///
   /// Create an instance of the model-specific ProgramInstruction subtype
   ///
-  ProgramInstruction<OT> newProgramInstruction(OT operation, int argValue);
+  ProgramInstruction<OT> newProgramInstruction(OT operation, int argValue, ArgKeys? special);
 
   /// Not used, but we retain any comments found in the JSON file
   /// so we can write them back out.
@@ -1436,7 +1436,7 @@ class DebugLog {
       _model._debugLog = replacement;
       replacement.addKey(key);
     } else {
-      _keys.add(key._opCode);
+      _keys.add(key.opCode);
     }
   }
 }

@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import 'package:jrpn/c/controller.dart';
@@ -113,8 +115,8 @@ class Model16 extends Model<Operation> {
 
   @override
   ProgramInstruction<Operation> newProgramInstruction(
-          Operation operation, int argValue) =>
-      ProgramInstruction16(operation, argValue);
+          Operation operation, int argValue, ArgKeys? special) =>
+      ProgramInstruction16(operation, argValue, special);
 
   @override
   int get returnStackSize => 4;
@@ -192,6 +194,50 @@ class Memory16 extends Memory<Operation> {
 
   Memory16(this.model, {required int memoryNybbles})
       : super(memoryNybbles: memoryNybbles);
+
+  @override
+  void initializeSystem(OperationMap<Operation> layout, Operation lbl) =>
+      program =
+          ProgramMemory16(this, storage, layout, model.returnStackSize, lbl);
+}
+
+class ProgramMemory16 extends ProgramMemory<Operation> {
+  final Operation _lbl;
+
+  ProgramMemory16(Memory16 memory, ByteData registerStorage,
+      OperationMap<Operation> layout, int returnStackSize, this._lbl)
+      : super(memory, registerStorage, layout, returnStackSize);
+
+  static final BigInt _fifteen = BigInt.from(15);
+
+  @override
+  void goto(int label) {
+    gotoOpCode(_lbl.opCode + label);
+  }
+
+  @override
+  int valueToLabel(Value v) {
+    int label;
+    if (memory.model.isFloatMode) {
+      double fv = v.asDouble;
+      if (fv < 0 || fv >= 16) {
+        throw CalculatorError(4);
+      }
+      label = fv.floor();
+      if (label > 16 || label < 0) {
+        // This should be impossible, but I'm not 100% certain of double
+        // semantics, e.g. on JavaScript.
+        throw CalculatorError(4);
+      }
+    } else {
+      BigInt iv = v.internal;
+      if (iv < BigInt.zero || iv > _fifteen) {
+        throw CalculatorError(4);
+      }
+      label = iv.toInt();
+    }
+    return label;
+  }
 }
 
 class Operations16 extends Operations {
@@ -224,14 +270,30 @@ class Operations16 extends Operations {
 
   static final NormalArgOperation sto = NormalArgOperation(
       arg: OperationArg.both(
-          desc: ArgDescription16C(maxArg: 33),
+          desc: ArgDescription16C(
+              numericArgs: 32,
+              synonyms: _indexSynonyms,
+              special: [
+                ArgKeysStoreParenI([Operations16.parenI], 32),
+                ArgKeysStoreI([Operations16.I], 33)
+              ]),
           calc: (Model m, int arg) =>
               m.memory.registers.setValue(arg, sto.arg, m.x)),
       name: 'STO');
 
+  static void _recall(Value v, Model m) {
+    m.x = v;
+  }
+
   static final NormalArgOperation rcl = NormalArgOperation(
       arg: OperationArg.both(
-          desc: ArgDescription16C(maxArg: 33),
+          desc: ArgDescription16C(
+              numericArgs: 32,
+              synonyms: _indexSynonyms,
+              special: [
+                ArgKeysReadParenI([Operations16.parenI], 32, _recall),
+                ArgKeysReadI([Operations16.I], 33, _recall)
+              ]),
           pressed: (ActiveState s) => s.liftStackIfEnabled(),
           calc: (Model m, int arg) =>
               m.x = m.memory.registers.getValue(arg, rcl.arg)),
@@ -370,7 +432,7 @@ class Operations16 extends Operations {
 
   static final NormalArgOperation window = NormalArgOperation(
       arg: OperationArg.intOnly(
-          desc: ArgDescription16C(maxArg: 7),
+          desc: ArgDescription16C(numericArgs: 8),
           intCalc: (Model m, int arg) => m.display.window = arg * 8),
       stackLift: StackLift.neutral,
       name: 'WINDOW');
@@ -407,14 +469,16 @@ class Operations16 extends Operations {
   static final NormalArgOperation floatKey = NormalArgOperation(
       stackLift: StackLift.neutral, // But see also FloatKeyArg.onArgComplete()
       arg: FloatKeyArg(
-          desc: ArgDescription16C(maxArg: 10),
+          desc: ArgDescription16C(numericArgs: 10, special: [
+            ArgKeys([Operations.dot], 10)
+          ]),
           calc: (Model m, int arg) {
             m.floatOverflow = false;
             m.displayMode = DisplayMode.float(arg);
           }),
       name: 'FLOAT');
 
-  static final _flagArgDesc = ArgDescription16C(maxArg: 5);
+  static final _flagArgDesc = ArgDescription16C(numericArgs: 6); // 0..5
 
   static final NormalArgOperation sf = NormalArgOperation(
       arg: OperationArg.both(
@@ -430,20 +494,40 @@ class Operations16 extends Operations {
           calc: (Model m, int arg) => m.setFlag(arg, false)),
       name: 'CF');
 
+  static final _indexSynonyms = {
+    Operations.sst: Operations16.I,
+    Operations.rs: Operations16.parenI
+  };
+
+  static int _translateI(Model model) =>
+      model.memory.program.valueToLabel(model.memory.registers.index);
+  static int _translateParenI(Model model) =>
+      model.memory.program.valueToLabel(model.memory.registers.indirectIndex);
+
   static final NormalArgOperation gsb = NormalArgOperation(
       arg: GosubOperationArg.both(
-          desc: const ArgDescriptionGto16C(),
+          desc: ArgDescription16C(
+              numericArgs: 16,
+              special: [
+                ArgKeysTranslate([Operations16.parenI], 16, _translateParenI),
+                ArgKeysTranslate([Operations16.I], 17, _translateI)
+              ],
+              synonyms: _indexSynonyms),
           // calc is only used when running a program - see
           // GosubArgInputState.
-          calc: (Model m, int label) =>
-              m.memory.program.gosub(label, const ArgDescriptionGto16C())),
+          calc: (Model m, int label) => m.memory.program.gosub(label)),
       name: 'GSB');
 
   static final NormalArgOperation gto = NormalArgOperation(
       arg: OperationArg.both(
-          desc: const ArgDescriptionGto16C(),
-          calc: (Model m, int label) =>
-              m.memory.program.goto(label, const ArgDescriptionGto16C())),
+          desc: ArgDescription16C(
+              numericArgs: 16,
+              special: [
+                ArgKeysTranslate([Operations16.parenI], 16, _translateParenI),
+                ArgKeysTranslate([Operations16.I], 17, _translateI)
+              ],
+              synonyms: _indexSynonyms),
+          calc: (Model m, int label) => m.memory.program.goto(label)),
       name: 'GTO');
 
   static final BranchingArgOperation fQuestion = BranchingArgOperation(
@@ -528,7 +612,7 @@ class Operations16 extends Operations {
 
   static final NormalArgOperation lbl = NormalArgOperation(
       arg: OperationArg.both(
-          desc: ArgDescription16C(maxArg: 15), calc: (_, __) {}),
+          desc: ArgDescription16C(numericArgs: 16), calc: (_, __) {}),
       name: 'LBL');
 
   static final BranchingOperation dsz = BranchingOperation(
@@ -574,88 +658,51 @@ class Operations16 extends Operations {
 ///
 @immutable
 class ArgDescription16C extends ArgDescription {
-  static final _special33 = [
-    ArgKeys([Operations.sst], 33),
-    ArgKeys([Operations16.I], 33),
-    ArgKeys([Operations.rs], 32),
-    ArgKeys([Operations16.parenI], 32)
-  ];
-
   @override
   final int maxArg;
+
+  @override
+  final int numericArgs;
 
   @override
   final List<ArgKeys> special;
 
   @override
-  int get numericArgs => maxArg > 31 ? maxArg - 1 : maxArg + 1;
+  final Map<ProgramOperation, ProgramOperation> synonyms;
 
-  ArgDescription16C({required this.maxArg})
-      : special = (maxArg == 33) ? _special33 : const [];
-
-  @override
-  int get indirectIndexNumber => 32;
-  @override
-  int get indexRegisterNumber => 33; // It's to the right on the keyboard
-  @override
-  int get r0ArgumentValue => 0;
-}
-
-@immutable
-class ArgDescriptionGto16C extends ArgDescription {
-  static final _special = [
-    ArgKeys([Operations.sst], 17),
-    ArgKeys([Operations16.I], 17),
-    ArgKeys([Operations.rs], 16),
-    ArgKeys([Operations16.parenI], 16)
-  ];
-
-  const ArgDescriptionGto16C();
+  ArgDescription16C(
+      {required this.numericArgs,
+      this.special = const [],
+      this.synonyms = const {}})
+      : maxArg = numericArgs - 1 + ArgKeys.numUniqueValues(special);
 
   @override
-  List<ArgKeys> get special => _special;
+  int get indirectIndexNumber => 0xdeadbeef;
   @override
-  int get maxArg => 17;
-  // This actually allows GSB (i) and GTO (i), which AFAIK aren't implemented
-  // on a real 16c (cf. manual page 88).  Oops!  However, maxArg can't be
-  // changed to 16 without chaning the opcode assignments, which would break
-  // backwards compatibility.  Having this weird extension to the 16C's
-  // semantics is harmless, I guess, and disabling this extension would be
-  // needlessly antisocial, given that the app has been out there for a while.
-
-  @override
-  int get numericArgs => maxArg - 1;
-
-  @override
-  int get indirectIndexNumber => 16;
-  @override
-  int get indexRegisterNumber => 17; // It's to the right on the keyboard
+  int get indexRegisterNumber =>
+      0xdeadbeef; // It's to the right on the keyboard
   @override
   int get r0ArgumentValue => 0;
 }
 
 class ProgramInstruction16 extends ProgramInstruction<Operation> {
-  ProgramInstruction16(Operation op, int argValue) : super(op, argValue);
+  ProgramInstruction16(Operation op, int argValue, ArgKeys? specialArg) : super(op, argValue, specialArg);
 
   @override
   String get programDisplay {
     if (op.maxArg > 0) {
       final String as;
-      if (argValue < 16) {
-        if (argValue == 10 && op.maxArg == 10) {
-          as = '48';
-          // Special case:  f-FLOAT is the only key that takes arguments
-          // from 0 to 10, with 10 being input as ".".  It means "scientific
-          // notation," so semantically it's not really "A", and the 16C
-          // displays it is 48 (which is ".").  I guess the 16C's behavior
-          // makes sense!
+      final ProgramOperation? specialKey = specialArg?.keys.last;
+      if (specialKey != null) {
+        if (specialKey == Operations16.I) {
+          as = '32';
+        } else if (specialKey == Operations16.parenI) {
+          as = '31';
         } else {
-          as = ' ${argValue.toRadixString(16)}';
+          as = specialKey.programDisplay;
         }
-      } else if (argIsParenI) {
-        as = '31';
-      } else if (argIsI) {
-        as = '32';
+      } else if (argValue < 16) {
+        as = ' ${argValue.toRadixString(16)}';
       } else {
         as = ' .${(argValue - 16).toRadixString(16)}';
       }
@@ -669,14 +716,17 @@ class ProgramInstruction16 extends ProgramInstruction<Operation> {
   String get programListing {
     final String as;
     if (op.maxArg > 0) {
-      if (argIsParenI) {
-        as = ' (i)';
-      } else if (argIsI) {
-        as = ' I';
-      } else if (argValue == 10 && op.maxArg == 10) {
-        as = ' .';
-        // See above, under programDisplay.  "f FLOAT ." is better than
-        // "f FLOAT a," under similar reasoning.
+      final ProgramOperation? specialKey = specialArg?.keys.last;
+      if (specialKey != null) {
+        if (specialKey == Operations16.I) {
+          as = ' I';
+        } else if (specialKey == Operations16.parenI) {
+          as = ' (i)';
+        } else if (op == Operations16.floatKey && specialKey == Operations.dot) {
+          as = ' .';    // F-FLOAT-.
+        } else {
+          as = specialKey.programDisplay;
+        }
       } else {
         as = ' ${argValue.toRadixString(16)}';
       }
@@ -927,14 +977,21 @@ class Controller16 extends RealController {
             shortcuts: _shortcuts,
             lblOperation: Operations16.lbl);
 
-  /// Map from operation that is a short cut to what it's a shortcut for, with
+  /// Map from operation that is a shortcut to what it's a shortcut for, with
   /// the key as an argument
   static final Map<NormalOperation, ProgramInstruction> _shortcuts = {
-    Operations16.I: ProgramInstruction16(
-        Operations16.rcl, Operations16.rcl.arg.desc.indexRegisterNumber),
-    Operations16.parenI: ProgramInstruction16(
-        Operations16.rcl, Operations16.rcl.arg.desc.indirectIndexNumber)
+    Operations16.I: _makeShortcut(Operations16.rcl, Operations16.I),
+    Operations16.parenI: _makeShortcut(Operations16.rcl, Operations16.parenI),
   };
+
+  static ProgramInstruction16 _makeShortcut(Operation op, Operation key) {
+    for (final ArgKeys s in op.arg!.desc.special) {
+      if (s.keys[0] == key) {
+        return ProgramInstruction16(op, s.value, s);
+      }
+    }
+    throw StateError('Shortcut to nowhere');
+  }
 
   /// The numbers.  This must be in order.
   static final List<NumberEntry> _numbers = [

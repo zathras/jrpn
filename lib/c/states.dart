@@ -73,7 +73,6 @@ abstract class ControllerState {
   @protected
   T changeState<T extends ControllerState>(T v) {
     controller.state = v;
-    // print('@@ state set to $v');
     return v;
   }
 
@@ -83,6 +82,8 @@ abstract class ControllerState {
   void buttonDown(Operation key);
 
   void buttonUp(Operation key) {}
+
+  int? translateSpecial(ArgKeys special) => special.translate(model);
 
   /// Convenience method to call from an unreachable operation on a state
   @protected
@@ -107,6 +108,7 @@ abstract class LimitedState extends ControllerState {
   /// argument value is available.
   ///
   void onArgComplete(OperationArg arg, int argValue);
+  void onArgCompleteSpecial(OperationArg arg, ArgKeys value);
 
   void handleOnOff();
   void handleShift(ShiftKey k);
@@ -131,6 +133,8 @@ abstract class LimitedState extends ControllerState {
         model.displayMode.select(selector, o);
     return o.calcDefinedFor(controller, floatOrInt);
   }
+
+  ControllerState gosubDoneState();
 }
 
 ///
@@ -333,8 +337,8 @@ class Resting extends ActiveState {
     }
   }
 
-  @override
-  void onArgComplete(OperationArg arg, int argValue) {
+  void _onArgComplete(
+      OperationArg arg, void Function(void Function(Model, int) f) body) {
     const selector = _ArgOperationSelector();
     void Function(Model, int)? f = model.displayMode.select(selector, arg);
     try {
@@ -342,7 +346,7 @@ class Resting extends ActiveState {
       if (p != null) {
         p(this);
       }
-      f!(model, argValue);
+      body(f!);
       model.display.displayX();
     } on CalculatorError catch (e) {
       controller.showCalculatorError(e);
@@ -352,6 +356,25 @@ class Resting extends ActiveState {
       controller.showCalculatorError(CalculatorError(9));
     }
     arg.op.possiblyAlterStackLift(controller);
+  }
+
+  @override
+  void onArgComplete(OperationArg arg, int argValue) {
+    _onArgComplete(arg, (f) {
+      f(model, argValue);
+    });
+  }
+
+  @override
+  void onArgCompleteSpecial(OperationArg arg, ArgKeys value) {
+    _onArgComplete(arg, (f) {
+      final t = value.translate(model);
+      if (t != null) {
+        f(model, t);
+      } else if (!value.calculate(model)) {
+        f(model, value.value);
+      }
+    });
   }
 
   @override
@@ -407,7 +430,7 @@ class Resting extends ActiveState {
     program.resetReturnStack();
     final gsb = controller.gsbOperation;
     try {
-      program.gosub(operation.numericValue, gsb.arg.desc);
+      program.gosub(operation.numericValue);
     } on CalculatorError catch (e) {
       controller.showCalculatorError(e);
       return;
@@ -419,6 +442,9 @@ class Resting extends ActiveState {
     s.isDone = true;
     changeState(s);
   }
+
+  @override
+  ControllerState gosubDoneState() => Running(controller);
 }
 
 ///
@@ -697,6 +723,9 @@ class DigitEntry extends ActiveState {
   void onArgComplete(OperationArg arg, int argValue) => unreachable();
 
   @override
+  void onArgCompleteSpecial(OperationArg arg, ArgKeys value) => unreachable();
+
+  @override
   void handleGotoDot(int value) => unreachable();
 
   @override
@@ -710,6 +739,9 @@ class DigitEntry extends ActiveState {
   @override
   void handleLetterLabel(LetterLabel operation) =>
       changeState(Resting(controller)).handleLetterLabel(operation);
+
+  @override
+  ControllerState gosubDoneState() => throw StateError('unreachable');
 }
 
 ///
@@ -725,9 +757,11 @@ class ArgInputState extends ControllerState {
   bool _decimalAllowed;
   bool _digitsAllowed;
   List<ArgKeys> _specialState;
+  int _specialPos;
 
   ArgInputState(Controller con, this.arg, this.lastState)
       : _specialState = arg.desc.special,
+        _specialPos = 0,
         _decimalAllowed = arg.desc.numericArgs >= con.argBase,
         _digitsAllowed = arg.desc.numericArgs > 0,
         super(con);
@@ -736,30 +770,30 @@ class ArgInputState extends ControllerState {
 
   @override
   void buttonDown(Operation key) {
-    int? special;
+    ArgKeys? special;
     if (!_decimalPressed && _specialState.isNotEmpty) {
       final ProgramOperation syn = arg.desc.synonyms[key] ?? key;
       final nextState = <ArgKeys>[];
       for (final ent in _specialState) {
-        if (ent.keys[0] == syn) {
-          final k = ent.keys.getRange(1, ent.keys.length).toList(growable: false);
-          if (k.isEmpty) {
-            special = ent.value;
+        if (ent.keys[_specialPos] == syn) {
+          if (_specialPos == ent.keys.length-1) {
+            special = ent;
           } else {
-            nextState.add(ArgKeys(k, ent.value));
+            nextState.add(ent);
           }
         }
       }
       if (special == null) {
         _specialState = nextState;
         if (_specialState.isNotEmpty) {
+          _specialPos++;
           _decimalAllowed = _digitsAllowed = false;
           return; // Keep looking for more special args
         }
       }
     }
     if (special != null) {
-      done(special);
+      specialDone(special);
     } else if (key == Operations.dot) {
       if (_decimalPressed || !_decimalAllowed) {
         changeState(lastState);
@@ -791,38 +825,16 @@ class ArgInputState extends ControllerState {
       arg.onArgComplete(lastState, argValue);
     }
   }
-}
 
-///
-/// Inputting the argument for the FLOAT key.  This is a little different
-/// than a normal [ArgInputState] in that the "." key, by itself, means
-/// "go to scientific display," which we model as ten digits after the
-/// decimal point (which doesn't fit on the LCD display).
-///
-class FloatKeyArgInputState extends ControllerState {
-  final OperationArg arg;
-  final LimitedState lastState;
-
-  FloatKeyArgInputState(Controller con, this.arg, this.lastState) : super(con);
-
-  @override
-  void buttonDown(Operation key) {
-    if (key == Operations.dot) {
-      _done(10);
+  void specialDone(ArgKeys argValue) {
+    final t = lastState.translateSpecial(argValue);
+    if (t != null) {
+      done(t);
     } else {
-      int? argV = key.numericValue;
-      if (argV != null && argV <= 9) {
-        _done(argV);
-      } else {
-        changeState(lastState); // bail
-        lastState.buttonDown(key);
-      }
+      changeState(lastState);
+      assert(argValue.value <= arg.desc.maxArg);
+      arg.onArgCompleteSpecial(lastState, argValue);
     }
-  }
-
-  void _done(int argValue) {
-    changeState(lastState);
-    arg.onArgComplete(lastState, argValue);
   }
 }
 
@@ -836,7 +848,10 @@ class GosubArgInputState extends ArgInputState {
   bool isDone = false;
 
   @override
-  void done(int argValue) => lastState.gosubEntryDone(this, argValue);
+  void done(int argValue) {
+    lastState.gosubEntryDone(this, argValue);
+    isDone = true;
+  }
 
   ///
   /// When GSB <label> is pressed (but before it is released), and when we're
@@ -846,34 +861,30 @@ class GosubArgInputState extends ArgInputState {
   void handleGosubEntryDone(int label) {
     // We know that we're coming from a keyboard-entered GSB, since arguments
     // are being input.
-    if (label <= arg.desc.maxArg) {
-      final p = arg.pressed;
-      if (p != null) {
-        p(lastState as ActiveState);
-      }
-      assert(controller is RealController);
-      final program = model.memory.program;
-      program.resetReturnStack(); // Since we're starting new program
-      try {
-        program.gosub(label, arg.desc);
-      } on CalculatorError catch (e) {
-        changeState(lastState);
-        controller.showCalculatorError(e);
-        return;
-      }
-      program.displayCurrent();
-      isDone = true;
-      // On button up, another goto(label) will happen, but that's harmless.
-    } else {
-      super.done(label);
+    assert(label <= arg.desc.maxArg);
+    final p = arg.pressed;
+    if (p != null) {
+      p(lastState as ActiveState);
     }
+    assert(controller is RealController);
+    final program = model.memory.program;
+    program.resetReturnStack(); // Since we're starting new program
+    try {
+      program.gosub(label);
+    } on CalculatorError catch (e) {
+      changeState(lastState);
+      controller.showCalculatorError(e);
+      return;
+    }
+    program.displayCurrent();
+    // On button up, another goto(label) will happen, but that's harmless.
   }
 
   @override
   void buttonUp(Operation key) {
     if (isDone) {
       arg.op.possiblyAlterStackLift(controller);
-      changeState(Running(controller)).buttonUp(key);
+      changeState(lastState.gosubDoneState()).buttonUp(key);
     } else {
       super.buttonUp(key);
     }
@@ -930,7 +941,7 @@ class ProgramEntry extends LimitedState {
       // needed covariance.
       key.pressed(this);
     } else {
-      _addOperation(key, 0);
+      _addOperation(key, 0, null);
     }
   }
 
@@ -943,11 +954,17 @@ class ProgramEntry extends LimitedState {
   @override
   void onArgComplete(OperationArg arg, int argValue) {
     assert(arg.floatCalc != null || arg.intCalc != null);
-    _addOperation(arg.op, argValue);
+    _addOperation(arg.op, argValue, null);
   }
 
-  void _addOperation(Operation op, int argValue) {
-    model.memory.program.insert(model.newProgramInstruction(op, argValue));
+  @override
+  void onArgCompleteSpecial(OperationArg arg, ArgKeys value) {
+    assert(arg.floatCalc != null || arg.intCalc != null);
+    _addOperation(arg.op, value.value, value);
+  }
+
+  void _addOperation(Operation op, int argValue, ArgKeys? special) {
+    model.memory.program.insert(model.newProgramInstruction(op, argValue, special));
     // throws CalculatorError if memory full
     program.displayCurrent();
   }
@@ -1005,12 +1022,12 @@ class ProgramEntry extends LimitedState {
   @override
   void handleDecimalPoint() {
     // This can happen if we come from ArgInputState.
-    _addOperation(Operations.dot, 0);
+    _addOperation(Operations.dot, 0, null);
   }
 
   @override
   void gosubEntryDone(GosubArgInputState from, int label) {
-    _addOperation(controller.gsbOperation, label);
+    _addOperation(controller.gsbOperation, label, null);
   }
 
   @override
@@ -1049,6 +1066,12 @@ class ProgramEntry extends LimitedState {
     model.prgmFlag = false;
     changeState(Resting(controller)).handleOnOff();
   }
+
+  @override
+  ControllerState gosubDoneState() => this;
+
+  @override
+  int? translateSpecial(ArgKeys special) => special.value;
 }
 
 ///
@@ -1284,7 +1307,7 @@ class Running extends ControllerState {
         final ProgramInstruction<Operation> instr;
         final int line = program.currentLine;
         if (line == 0) {
-          instr = model.newProgramInstruction(Operations.rtn, 0);
+          instr = model.newProgramInstruction(Operations.rtn, 0, null);
         } else {
           instr = program[line];
           program.incrementCurrentLine();
@@ -1297,9 +1320,9 @@ class Running extends ControllerState {
         }
         final OperationArg? arg = instr.op.arg;
         if (arg != null) {
-          _fake.argValue = instr.argValue;
+          _fake.setArg(instr.argValue, instr.specialArg);
         } else {
-          _fake.argValue = null;
+          _fake.setArg(null, null);
         }
         _fake.buttonDown(instr.op);
         // This bounces back to RunningController.runWithArg() if there's an
@@ -1414,14 +1437,15 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
         // That's what my 15C does
         final OperationArg? arg = instr.op.arg;
         if (arg != null) {
-          _fake.argValue = instr.argValue;
+          _fake.setArg(instr.argValue, instr.specialArg);
         } else {
-          _fake.argValue = null;
+          _fake.setArg(null, null);
         }
         if (instr.op == Operations.rs) {
           stackLiftEnabled = true;
         } else {
           _fake.buttonDown(instr.op);
+          _fake.buttonUp();
         }
       }
     } finally {

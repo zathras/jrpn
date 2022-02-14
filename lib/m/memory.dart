@@ -35,7 +35,8 @@ abstract class MemoryPolicy {
 /// The calculator's internal memory that holds registers and
 /// programs.
 abstract class Memory<OT extends ProgramOperation> {
-  final ByteData _storage;
+  @protected
+  final ByteData storage;
   //  We hold one nybble (4 bits) in each byte of _storage.  The program
   // is also stored here, and we zero out that part of storage when
   // program lines are added/removed, to simulate the behavior of shared
@@ -47,41 +48,36 @@ abstract class Memory<OT extends ProgramOperation> {
   late final ProgramMemory<OT> program;
   late final registers = Registers(this);
 
-  @protected
   Model<OT> get model;
 
   MemoryPolicy get policy;
 
-  Memory({required int memoryNybbles}) : _storage = ByteData(memoryNybbles);
+  Memory({required int memoryNybbles}) : storage = ByteData(memoryNybbles);
 
   /// Total number of nybbles of storage
-  int get totalNybbles => _storage.lengthInBytes;
+  int get totalNybbles => storage.lengthInBytes;
 
   /// Amount of memory taken up by program
   int get programNybbles => program.programBytes * 2;
 
   /// Called by our controller, which necessarily happens after the Model
   /// exists.
-  void initializeSystem(OperationMap<OT> layout) {
-    program = ProgramMemory<OT>(
-        this, _storage, layout._operationTable, model.returnStackSize);
-
-    // We rely on our Controller to give us an OperationMap with the
-    // layout information that tells us the row/column positions of the various
-    // operations.  Those positions are how the 16C displays program
-    // instructions, and it's also how we externalize them in our JSON
-    // state file.
-    //
-    // We don't need to retain the layout, but we do need to ensure that
-    // one is created.  The OperationMap constructor has the side effect
-    // of initializing late final fields that we depend on.  Admittedly, this
-    // is a little tricky - making initialization happen while keeping modules
-    // decoupled sometimes is.
-  }
+  void initializeSystem(OperationMap<OT> layout, OT lbl);
+  // We rely on our Controller to give us an OperationMap with the
+  // layout information that tells us the row/column positions of the various
+  // operations.  Those positions are how the 16C displays program
+  // instructions, and it's also how we externalize them in our JSON
+  // state file.
+  //
+  // We don't need to retain the layout, but we do need to ensure that
+  // one is created.  The OperationMap constructor has the side effect
+  // of initializing late final fields that we depend on.  Admittedly, this
+  // is a little tricky - making initialization happen while keeping modules
+  // decoupled sometimes is.
 
   void reset() {
-    for (int i = 0; i < _storage.lengthInBytes; i++) {
-      _storage.setUint8(i, 0);
+    for (int i = 0; i < storage.lengthInBytes; i++) {
+      storage.setUint8(i, 0);
     }
     program.reset(zeroMemory: false);
     registers.resetI();
@@ -89,8 +85,8 @@ abstract class Memory<OT extends ProgramOperation> {
 
   Map<String, Object> toJson({bool comments = false}) {
     final st = StringBuffer();
-    for (int i = 0; i < _storage.lengthInBytes; i++) {
-      st.write(_storage.getUint8(i).toRadixString(16));
+    for (int i = 0; i < storage.lengthInBytes; i++) {
+      st.write(storage.getUint8(i).toRadixString(16));
     }
     final r = <String, Object>{
       'storage': st.toString(),
@@ -105,8 +101,8 @@ abstract class Memory<OT extends ProgramOperation> {
 
   void decodeJson(Map<String, dynamic> json) {
     final sto = json['storage'] as String;
-    for (int i = 0; i < _storage.lengthInBytes; i++) {
-      _storage.setUint8(i, int.parse(sto.substring(i, i + 1), radix: 16));
+    for (int i = 0; i < storage.lengthInBytes; i++) {
+      storage.setUint8(i, int.parse(sto.substring(i, i + 1), radix: 16));
     }
     // Must come after storage.  cf. ProgramMemory.decodeJson().
     program.decodeJson(json['program'] as Map<String, dynamic>);
@@ -197,7 +193,7 @@ class Registers {
     // Address of most significant nybble - 1
     BigInt value = BigInt.zero;
     for (int i = 0; i < npr; i++) {
-      value = (value << 4) | BigInt.from(_memory._storage.getUint8(++addr));
+      value = (value << 4) | BigInt.from(_memory.storage.getUint8(++addr));
     }
     final result = Value.fromInternal(value);
     if (_model.isFloatMode) {
@@ -215,7 +211,7 @@ class Registers {
     int addr = _memory.totalNybbles - 1 - i * npr;
     // Address of least significant nybble
     for (int i = 0; i < npr; i++) {
-      _memory._storage.setUint8(addr--, (value & _low4).toInt());
+      _memory.storage.setUint8(addr--, (value & _low4).toInt());
       value >>= 4;
     }
     _model.needsSave = true;
@@ -284,7 +280,7 @@ class Registers {
     resetI();
     final maxMem = _memory.totalNybbles;
     for (int addr = _memory.programNybbles; addr < maxMem; addr++) {
-      _memory._storage.setUint8(addr, 0);
+      _memory.storage.setUint8(addr, 0);
     }
   }
 
@@ -306,11 +302,17 @@ class Registers {
 /// (cf. 15C manual page 218).  For example, if line 3 is F-ENG-2, the next
 /// line will be line 4, despite the fact that F-ENG-2 takes up two bytes.
 ///
-class ProgramMemory<OT extends ProgramOperation> {
-  final Memory<OT> _memory;
+abstract class ProgramMemory<OT extends ProgramOperation> {
+  @protected
+  final Memory<OT> memory;
 
-  /// Indexed by opCode
+  /// Indexed by opcode
+  @protected
   final List<OT?> _operationTable;
+
+  /// Indexed by opcode
+  @protected
+  final List<ArgKeys?> _specialArgs;
 
   int _lines = 0;
   // Number of lines with extended op codes
@@ -333,9 +335,11 @@ class ProgramMemory<OT extends ProgramOperation> {
   /// and detect events.
   ProgramListener programListener = ProgramListener();
 
-  ProgramMemory(this._memory, this._registerStorage, this._operationTable,
+  ProgramMemory(this.memory, this._registerStorage, OperationMap<OT> layout,
       int returnStackSize)
-      : _returnStack = List.filled(returnStackSize, 0);
+      : _returnStack = List.filled(returnStackSize, 0),
+        _operationTable = layout._operationTable,
+        _specialArgs = layout._specialArgs;
 
   final ByteData _registerStorage;
 
@@ -365,7 +369,7 @@ class ProgramMemory<OT extends ProgramOperation> {
   void insert(final ProgramInstruction<OT> instruction) {
     final needed = instruction.isExtended ? 2 : 1;
     if (bytesToNextAllocation > needed) {
-      _memory.policy.checkExtendProgramMemory();
+      memory.policy.checkExtendProgramMemory();
     }
     assert(_currentLine >= 0 && _currentLine <= _lines);
     assert(instruction.argValue >= 0 &&
@@ -387,7 +391,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     _lines++;
     _currentLine++; // Where we just inserted the instruction
 
-    _memory.model.needsSave = true;
+    memory.model.needsSave = true;
   }
 
   void deleteCurrent() {
@@ -415,7 +419,7 @@ class ProgramMemory<OT extends ProgramOperation> {
     _registerStorage.setUint8(addr++, 0);
     _registerStorage.setUint8(addr, 0);
 
-    _memory.model.needsSave = true;
+    memory.model.needsSave = true;
   }
 
   /// line counts from 1
@@ -424,9 +428,10 @@ class ProgramMemory<OT extends ProgramOperation> {
     final OT op = _operationTable[opCode]!;
     // throws an exception on an illegal opCode, which is what we want.
     final int arg = opCode & 0x100 != 0
-        ? (opCode & 0xff) - op._extendedOpCode + op.numOpCodes
-        : opCode - op._opCode;
-    return _memory.model.newProgramInstruction(op, arg);
+        ? (opCode & 0xff) - op.extendedOpCode + op.numOpCodes
+        : opCode - op.opCode;
+    final ArgKeys? special = _specialArgs[opCode];
+    return memory.model.newProgramInstruction(op, arg, special);
     // We're storing the instructions as nybbles and creating instructions
     // as-needed, not to save memory.  Rather, it's the easiest way of
     // implementing it, given that we want to store the program in a form
@@ -551,7 +556,7 @@ class ProgramMemory<OT extends ProgramOperation> {
   }
 
   void displayCurrent({bool flash = false, bool delayed = false}) {
-    final display = _memory.model.display;
+    final display = memory.model.display;
     final String newText;
     if (currentLine == 0) {
       newText = '000-      ';
@@ -561,9 +566,9 @@ class ProgramMemory<OT extends ProgramOperation> {
       newText = '$ls-$disp';
     }
     if (delayed) {
-      final initial = _memory.model._newLcdContents();
+      final initial = memory.model._newLcdContents();
       display.current = newText;
-      final delayed = _memory.model._newLcdContents();
+      final delayed = memory.model._newLcdContents();
       final t = Timer(const Duration(milliseconds: 1400), () {
         display.show(delayed);
       });
@@ -585,12 +590,12 @@ class ProgramMemory<OT extends ProgramOperation> {
     }
   }
 
-  void gosub(int label, ArgDescription arg) {
+  void gosub(int label) {
     if (_returnStackPos >= _returnStack.length) {
       throw CalculatorError(5);
     }
     final returnTo = currentLine;
-    goto(label, arg);
+    goto(label);
     if (returnStackUnderflow) {
       // Keyboard entry of GSB to start program
       _returnStackPos++;
@@ -599,37 +604,12 @@ class ProgramMemory<OT extends ProgramOperation> {
     }
   }
 
-  static final BigInt _fifteen = BigInt.from(15);
+  void goto(int label);
 
-  void goto(int label, ArgDescription arg) {
-    Value? v;
-    if (label == arg.indexRegisterNumber) {
-      v = _memory.registers.index;
-    } else if (label == arg.indirectIndexNumber) {
-      v = _memory.registers.indirectIndex;
-    }
-    if (v != null) {
-      // I or (i)
-      if (_memory.model.isFloatMode) {
-        double fv = v.asDouble;
-        if (fv < 0 || fv >= 16) {
-          throw CalculatorError(4);
-        }
-        label = fv.floor();
-        if (label > 16 || label < 0) {
-          // This should be impossible, but I'm not 100% certain of double
-          // semantics, e.g. on JavaScript.
-          throw CalculatorError(4);
-        }
-      } else {
-        BigInt iv = v.internal;
-        if (iv < BigInt.zero || iv > _fifteen) {
-          throw CalculatorError(4);
-        }
-        label = iv.toInt();
-      }
-    }
-    int wanted = OperationMap._instance!.lbl._opCode + label;
+  int valueToLabel(Value v);
+
+  @protected
+  void gotoOpCode(int wanted) {
     // We might be at the label, so we start at 0.  Also, remember that
     // line 0 has the phantom return instruction, so we have to
     // iterate over lines+1 "lines".
@@ -689,9 +669,9 @@ class ProgramMemory<OT extends ProgramOperation> {
 /// part of the controller.
 ///
 abstract class ProgramOperation {
-  late final String _programDisplay;
-  late final int _opCode;
-  late final int _extendedOpCode;
+  late final String programDisplay;
+  late final int opCode;
+  late final int extendedOpCode;
 
   ProgramOperationArg? get arg;
 
@@ -706,11 +686,11 @@ abstract class ProgramOperation {
   // Invalid op codes are negative, but still distinct.  That allows them to
   // be used in the capture of a debug key log.
 
-  String get programDisplay => _programDisplay;
-
   /// Give the numeric value of a number key.
   /// cf. tests.dart, SelfTests.testNumbers().
   int? get numericValue => null;
+
+  List<ArgKeys>? get specialArgs;
 
   @override
   String toString() => 'ProgramOperation($programDisplay)';
@@ -752,9 +732,87 @@ class ArgKeys {
 
   const ArgKeys(this.keys, this.value);
 
+  ///
+  /// Do the calculation for this argument, or return false to use
+  /// value with the default calculation.
+  ///
+  bool calculate(Model m) => false;
+
+  ///
+  /// Translate this to an int that can be used as the argValue
+  ///
+  int? translate(Model m) => null;
+
   static int numUniqueValues(List<ArgKeys> keys) =>
       keys.map((k) => k.value).toList(growable: false).toSet().length;
+
+  @override
+  String toString() => '${super.toString()} : $keys, $value';
 }
+
+@immutable
+class ArgKeysTranslate extends ArgKeys {
+  final int Function(Model m) f;
+
+  const ArgKeysTranslate(List<ProgramOperation> keys, int value, this.f)
+      : super(keys, value);
+
+  @override
+  int? translate(Model m) => f(m);
+}
+
+@immutable
+class ArgKeysStoreI extends ArgKeys {
+  const ArgKeysStoreI(List<ProgramOperation> keys, int value)
+      : super(keys, value);
+
+  @override
+  bool calculate(Model m) {
+    m.memory.registers.index = m.x;
+    return true;
+  }
+}
+
+@immutable
+class ArgKeysReadI extends ArgKeys {
+  final void Function(Value, Model) f;
+
+  const ArgKeysReadI(List<ProgramOperation> keys, int value, this.f)
+      : super(keys, value);
+
+  @override
+  bool calculate(Model m) {
+    f(m.memory.registers.index, m);
+    return true;
+  }
+}
+
+@immutable
+class ArgKeysStoreParenI extends ArgKeys {
+  const ArgKeysStoreParenI(List<ProgramOperation> keys, int value)
+      : super(keys, value);
+
+  @override
+  bool calculate(Model m) {
+    m.memory.registers.indirectIndex = m.x;
+    return true;
+  }
+}
+
+@immutable
+class ArgKeysReadParenI extends ArgKeys {
+  final void Function(Value, Model) f;
+
+  const ArgKeysReadParenI(List<ProgramOperation> keys, int value, this.f)
+      : super(keys, value);
+
+  @override
+  bool calculate(Model m) {
+    f(m.memory.registers.indirectIndex, m);
+    return true;
+  }
+}
+
 ///
 /// The model's view of a key on the keyboard.  The model needs to know where
 /// [ProgramOperation]s are on the portrait layout of the keyboard, because
@@ -784,20 +842,24 @@ class MKeyExtensionOp<OT extends ProgramOperation> {
 /// sometimes, an argument value.
 ///
 abstract class ProgramInstruction<OT extends ProgramOperation> {
-  OT op;
+  final OT op;
 
   /// 0 if no argument
-  int argValue;
+  final int argValue;
 
-  ProgramInstruction(this.op, this.argValue);
+  final ArgKeys? specialArg;
+
+  ProgramInstruction(this.op, this.argValue, this.specialArg) {
+    assert(argValue != 0xdeadbeef);
+  }
 
   bool get isExtended => argValue > op.maxArg - op.numExtendedOpCodes;
 
   final _noWidth = RegExp('[,.]');
 
   int get opCode => isExtended
-      ? (op._extendedOpCode | 0x100) + (argValue - op.numOpCodes)
-      : op._opCode + argValue;
+      ? (op.extendedOpCode | 0x100) + (argValue - op.numOpCodes)
+      : op.opCode + argValue;
 
   @protected
   String rightJustify(String s, int len) {
@@ -812,12 +874,6 @@ abstract class ProgramInstruction<OT extends ProgramOperation> {
 
   /// How this is displayed in a program listing
   String get programListing;
-
-  /// (i)
-  bool get argIsParenI => argValue == op.arg?.desc.indirectIndexNumber;
-
-  /// I
-  bool get argIsI => argValue == op.arg?.desc.indexRegisterNumber;
 
   @override
   String toString() => 'ProgramInstruction($programListing)';
@@ -838,7 +894,7 @@ class OperationMap<OT extends ProgramOperation> {
   /// Maps from opCode to ProgramOperation.  Each operation occurs in the
   /// table 1+maxArg times.
   late final List<OT?> _operationTable;
-  // (i) means "RCL (i)", and I means "RCL I".
+  late final List<ArgKeys?> _specialArgs;
   int _nextOpCode = 0;
   int _nextExtendedOpCode = 0;
 
@@ -846,10 +902,7 @@ class OperationMap<OT extends ProgramOperation> {
   // The extended (two-byte) opcodes, which are stored as 0xff followed by this
   final List<OT> _inNumericOrderExtended = List.empty(growable: true);
 
-  final OT lbl; // The label instruction, for GTO and GSB implementation
-
-  OperationMap._internal(
-      this.keys, this.numbers, this.special, this.shortcuts, this.lbl);
+  OperationMap._internal(this.keys, this.numbers, this.special, this.shortcuts);
 
   static OperationMap? _instance;
 
@@ -857,12 +910,11 @@ class OperationMap<OT extends ProgramOperation> {
       {required List<List<MKey<OT>?>> keys,
       required List<OT> numbers,
       required List<OT> special,
-      required Map<OT, ProgramInstruction> shortcuts,
-      required OT lbl}) {
+      required Map<OT, ProgramInstruction> shortcuts}) {
     final instance = _instance;
     if (instance == null) {
       final i = _instance =
-          OperationMap<OT>._internal(keys, numbers, special, shortcuts, lbl);
+          OperationMap<OT>._internal(keys, numbers, special, shortcuts);
       i._initializeProgramDisplay();
       i._initializeOperationTable();
       return i;
@@ -870,7 +922,6 @@ class OperationMap<OT extends ProgramOperation> {
       assert(instance.keys == keys);
       assert(instance.numbers == numbers);
       assert(instance.special == special);
-      assert(instance.lbl == lbl);
       return instance as OperationMap<OT>;
     }
   }
@@ -879,42 +930,67 @@ class OperationMap<OT extends ProgramOperation> {
     final int numOpCodes = o.numOpCodes;
     assert(numOpCodes >= 0);
     if (numOpCodes == o.numExtendedOpCodes) {
-      o._opCode = -1;
+      o.opCode = -1;
     } else {
-      o._opCode = _nextOpCode;
+      o.opCode = _nextOpCode;
       _nextOpCode += numOpCodes;
       _inNumericOrder.add(o);
     }
     if (o.numExtendedOpCodes == 0) {
-      o._extendedOpCode = -1;
+      o.extendedOpCode = -1;
     } else {
-      o._extendedOpCode = _nextExtendedOpCode;
+      o.extendedOpCode = _nextExtendedOpCode;
       _nextExtendedOpCode += o.numExtendedOpCodes;
       _inNumericOrderExtended.add(o);
     }
   }
 
   void _initializeOperationTable() {
-    _operationTable = List.empty(growable: true);
+    List<OT?> operationTable = List.empty(growable: true);
     for (final OT o in _inNumericOrder) {
       assert(o.maxArg >= 0);
       for (int i = 0; i < o.numOpCodes; i++) {
-        _operationTable.add(o);
+        operationTable.add(o);
       }
     }
     if (_inNumericOrderExtended.isEmpty) {
-      assert(_operationTable.length < 0x100);
+      assert(operationTable.length < 0x100);
     } else {
-      assert(_operationTable.length < 0xff);
-      _operationTable.length = 0xff;
+      assert(operationTable.length < 0xff);
+      operationTable.length = 0xff;
       for (final OT o in _inNumericOrderExtended) {
         assert(o.maxArg >= 0);
         for (int i = 0; i < o.numExtendedOpCodes; i++) {
-          _operationTable.add(o);
+          operationTable.add(o);
         }
       }
-      assert(_operationTable.length < 0x200);
+      assert(operationTable.length < 0x200);
     }
+    _specialArgs = List.filled(operationTable.length, null);
+    OT? lastOp;
+    for (int i = 0; i < operationTable.length; i++) {
+      final op = operationTable[i];
+      if (op != null && op != lastOp) {
+        lastOp = op;
+        final sa = op.specialArgs;
+        if (sa != null) {
+          int lastValue = -1;
+          for (final a in sa) {
+            assert(a.value > lastValue, '$op ${a.keys} ${a.value}');
+            lastValue = a.value;
+            final numNormalOpCodes = op.maxArg + 1 - op.numExtendedOpCodes;
+            int x;
+            if (a.value < numNormalOpCodes) {
+              x = op.opCode + a.value;
+            } else {
+              x = op.extendedOpCode + a.value - numNormalOpCodes;
+            }
+            _specialArgs[x] = a;
+          }
+        }
+      }
+    }
+    _operationTable = List.unmodifiable(operationTable);
     _inNumericOrder.length = 0;
     _inNumericOrderExtended.length = 0;
   }
@@ -926,8 +1002,8 @@ class OperationMap<OT extends ProgramOperation> {
       final o = special[i];
       final ok = visited.add(o);
       assert(ok);
-      o._programDisplay = '';
-      o._opCode = ProgramOperation._invalidOpCodeStart - i;
+      o.programDisplay = '';
+      o.opCode = ProgramOperation._invalidOpCodeStart - i;
     }
     for (final k in shortcuts.keys) {
       assert(!visited.contains(k));
@@ -939,7 +1015,7 @@ class OperationMap<OT extends ProgramOperation> {
       final o = numbers[i];
       final ok = visited.add(o);
       assert(ok);
-      o._programDisplay = ' ${i.toRadixString(16)}';
+      o.programDisplay = ' ${i.toRadixString(16)}';
       _assignOpCode(o);
     }
     for (int row = 0; row < keys.length; row++) {
@@ -951,10 +1027,10 @@ class OperationMap<OT extends ProgramOperation> {
         }
         final String rcText;
         if (visited.contains(key.unshifted)) {
-          if (key.unshifted._programDisplay != '') {
+          if (key.unshifted.programDisplay != '') {
             // A number key
             assert(key.unshifted.maxArg == 0);
-            rcText = key.unshifted._programDisplay;
+            rcText = key.unshifted.programDisplay;
           } else {
             rcText = '${row + 1}${(col + 1) % 10}';
           }
@@ -962,40 +1038,40 @@ class OperationMap<OT extends ProgramOperation> {
           rcText = '${row + 1}${(col + 1) % 10}';
           visited.add(key.unshifted);
           if (key.unshifted.maxArg == 0) {
-            key.unshifted._programDisplay = rcText;
+            key.unshifted.programDisplay = rcText;
           } else {
-            key.unshifted._programDisplay = '$rcText ';
+            key.unshifted.programDisplay = '$rcText ';
           }
           _assignOpCode(key.unshifted);
         }
         if (!visited.contains(key.fShifted)) {
           visited.add(key.fShifted);
           if (key.fShifted.maxArg == 0) {
-            key.fShifted._programDisplay = '42 $rcText';
+            key.fShifted.programDisplay = '42 $rcText';
           } else {
-            key.fShifted._programDisplay = '42,$rcText,';
+            key.fShifted.programDisplay = '42,$rcText,';
           }
           _assignOpCode(key.fShifted);
         }
         if (!visited.contains(key.gShifted)) {
           visited.add(key.gShifted);
           if (key.gShifted.maxArg == 0) {
-            key.gShifted._programDisplay = '43 $rcText';
+            key.gShifted.programDisplay = '43 $rcText';
           } else {
-            key.gShifted._programDisplay = '43,$rcText,';
+            key.gShifted.programDisplay = '43,$rcText,';
           }
           _assignOpCode(key.gShifted);
         }
         for (final MKeyExtensionOp<OT> ext in key.extensionOps) {
-          ext.op._programDisplay = ext.programDisplayPrefix + rcText;
+          ext.op.programDisplay = ext.programDisplayPrefix + rcText;
           _assignOpCode(ext.op);
         }
       }
     }
     shortcuts.forEach((ProgramOperation k, ProgramInstruction v) {
       assert(v.argValue >= 0 && v.argValue <= v.op.maxArg);
-      k._opCode = v.op._opCode + v.argValue;
-      k._programDisplay = v.op._programDisplay;
+      k.opCode = v.op.opCode + v.argValue;
+      k.programDisplay = v.op.programDisplay;
     });
   }
 }

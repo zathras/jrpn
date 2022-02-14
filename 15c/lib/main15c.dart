@@ -62,7 +62,6 @@ class Operations15 extends Operations {
               synonyms: ArgDescription15C.letterSynonyms),
           calc: (_, __) {}),
       name: 'LBL');
-  // @@@@ I am here
 
   ///
   /// The HP15'c I operation, for entry of imaginary numbers.
@@ -237,14 +236,14 @@ class Operations15 extends Operations {
           // calc is only used when running a program - see
           // GosubArgInputState.
           calc: (Model m, int label) =>
-              m.memory.program.gosub(label, const ArgDescriptionGto15C())),
+              m.memory.program.gosub(label)),
       name: 'GSB');
 
   static final NormalArgOperation gto = NormalArgOperation(
       arg: OperationArg.both(
           desc: const ArgDescriptionGto15C(),
           calc: (Model m, int label) =>
-              m.memory.program.goto(label, const ArgDescriptionGto15C())),
+              m.memory.program.goto(label)),
       name: 'GTO');
 
   static final NormalArgOperation sci = NormalArgOperation(
@@ -603,6 +602,7 @@ class Operations15 extends Operations {
       name: 'STO');
 
   static final NormalArgOperation rcl15 = NormalArgOperation(
+      numExtendedOpCodes: 15,
       arg: OperationArg.both(
           desc: const ArgDescription15CSto(),
           pressed: (ActiveState s) => s.liftStackIfEnabled(),
@@ -610,7 +610,21 @@ class Operations15 extends Operations {
             if (arg == ArgDescription15CSto.resultKey) {
               m.x = Value.fromMatrix((m as Model15).resultMatrix);
             } else {
-              m.x = m.memory.registers.getValue(arg, rcl15.arg);
+              final mat = arg - ArgDescription15CSto.matrixStart;
+              if (mat >= 0) {
+                if (mat >= 5) {
+                  throw '@@ TODO:  Store to matrix ${mat - 5}';
+                  // @@ And, when pressed, display name of matrix, as per 144
+                  // @@ And handle user mode
+                  // @@ And handle STO +|-|*|/
+                  // @@ Yikes!  Also STO-g-A..E, STO-g-(i), which are single
+                  // @@ byte!
+                } else {
+                  m.x = Value.fromMatrix(mat);
+                }
+              } else {
+                m.x = m.memory.registers.getValue(arg, rcl15.arg);
+              }
             }
           }),
       name: 'RCL');
@@ -1094,13 +1108,14 @@ final Set<LetterLabel> _letterLabels = {
 };
 
 ProgramInstruction<Operation> _newProgramInstruction(
-    Operation operation, int argValue) {
+    Operation operation, int argValue, ArgKeys? special) {
   if (_letterLabels.contains(operation)) {
     assert(argValue == 0);
+    assert(special == null);
     argValue = operation.numericValue!;
     operation = Operations15.gsb;
   }
-  return ProgramInstruction15(operation, argValue);
+  return ProgramInstruction15(operation, argValue, special);
 }
 
 @immutable
@@ -1124,16 +1139,22 @@ abstract class ArgDescription15C extends ArgDescription {
 @immutable
 class ArgDescriptionGto15C extends ArgDescription {
   static final List<ArgKeys> _special = [
-    ArgKeys([Operations15.tan], 17),
-    ArgKeys([Operations15.I15], 17),
-    ArgKeys([Operations15.cos], 16),
-    ArgKeys([Operations15.parenI15], 16)
+    ArgKeys([Operations15.parenI15], 16),
+    ArgKeys([Operations15.I15], 17)
   ];
+
+  static final _synonyms = {
+    Operations15.tan: Operations15.I15,
+    Operations15.cos: Operations15.parenI15
+  };
 
   const ArgDescriptionGto15C();
 
   @override
   List<ArgKeys> get special => _special;
+
+  @override
+  Map<ProgramOperation, ProgramOperation> get synonyms => _synonyms;
 
   @override
   int get maxArg => 25;
@@ -1182,40 +1203,47 @@ class ArgDescription15CNoI extends ArgDescription {
 
 @immutable
 class ArgDescription15CSto extends ArgDescription15C {
-  static const int resultKey = 2;
+
+  static const int resultKey = 20;  // One byte opcode
+
+  static const int matrixStart = 23;
 
   const ArgDescription15CSto();
 
   @override
-  int get maxArg => 31;
+  int get maxArg => 36;
 
   @override
   int get numericArgs => 20;
   @override
-  int get indirectIndexNumber => 0;
+  int get indirectIndexNumber => 22;  // two byte opcode
   @override
-  int get indexRegisterNumber => 1; // It's to the right on the keyboard
+  int get indexRegisterNumber => 21; // One byte opcode
 
   @override
-  int get r0ArgumentValue => 3;
+  int get r0ArgumentValue => 0;
 
   @override
   List<ArgKeys> get special => _special;
 
   static final _special = [
-    ArgKeys([Operations15.parenI15], 0),
-    ArgKeys([Operations15.I15], 1),
-    ArgKeys([Operations.eex], 2),
-    ArgKeys([Operations15.matrix, Operations15.letterLabelA], 22),
-    ArgKeys([Operations15.matrix, Operations15.letterLabelB], 23),
-    ArgKeys([Operations15.matrix, Operations15.letterLabelC], 24),
-    ArgKeys([Operations15.matrix, Operations15.letterLabelD], 25),
-    ArgKeys([Operations15.matrix, Operations15.letterLabelE], 26),
-    ArgKeys([Operations15.letterLabelA], 27),
-    ArgKeys([Operations15.letterLabelB], 28),
-    ArgKeys([Operations15.letterLabelC], 29),
-    ArgKeys([Operations15.letterLabelD], 30),
-    ArgKeys([Operations15.letterLabelE], 31)
+    ArgKeys([Operations.eex], 20),
+    ArgKeys([Operations15.I15], 21),
+    ArgKeys([Operations15.parenI15], 22),
+    ArgKeys([Operations15.matrix, Operations15.letterLabelA], 23),
+    ArgKeys([Operations15.matrix, Operations15.letterLabelB], 24),
+    ArgKeys([Operations15.matrix, Operations15.letterLabelC], 25),
+    ArgKeys([Operations15.matrix, Operations15.letterLabelD], 26),
+    ArgKeys([Operations15.matrix, Operations15.letterLabelE], 27),
+    ArgKeys([Operations15.letterLabelA], 28),
+    ArgKeys([Operations15.letterLabelB], 29),
+    ArgKeys([Operations15.letterLabelC], 30),
+    ArgKeys([Operations15.letterLabelD], 31),
+    ArgKeys([Operations15.letterLabelE], 32),
+    ArgKeys([Operations.plus], 33),
+    ArgKeys([Operations.minus], 34),
+    ArgKeys([Operations.mult], 35),
+    ArgKeys([Operations.div], 36)
   ];
 
   @override
@@ -1241,12 +1269,16 @@ class ArgDescription15CJustI extends ArgDescription {
   int get r0ArgumentValue => 1;
 
   static final _special = [
-    ArgKeys([Operations15.tan], 0),
     ArgKeys([Operations15.I15], 0)
   ];
 
+  static final _synonyms = { Operations15.tan: Operations15.I15 };
+
   @override
   List<ArgKeys> get special => _special;
+
+  @override
+  Map<ProgramOperation, ProgramOperation> get synonyms => _synonyms;
 
   int mapArg(Model m, int v, int errNumber) {
     if (v == indexRegisterNumber) {
@@ -1288,4 +1320,69 @@ class ArgDescriptionFlex extends ArgDescription {
       this.special = const [],
       this.synonyms = const {}})
       : maxArg = numericArgs - 1 + ArgKeys.numUniqueValues(special);
+}
+
+class ProgramInstruction15<OT extends ProgramOperation>
+    extends ProgramInstruction<OT> {
+  ProgramInstruction15(OT op, int argValue, ArgKeys? special)
+      : super(op, argValue, special);
+
+  @override
+  String get programDisplay {
+    if (op.maxArg == 0) {
+      return rightJustify(op.programDisplay, 6);
+    }
+    final String as;
+    final ProgramOperation? specialKey = specialArg?.keys.last;
+    if (specialKey != null) {
+      if (specialKey == Operations15.I15) {
+        as = '25';
+      } else if (specialKey == Operations15.parenI15) {
+        as = '24';
+      } else {
+        as = specialKey.programDisplay;
+      }
+    } else {
+      final av = argValue - op.arg!.desc.r0ArgumentValue;
+      assert(av >= 0 && av < 25);
+      if (av < 10) {
+        as = ' ${av.toRadixString(10)}';
+      } else if (av < 20) {
+        as = ' .${(av - 10).toRadixString(10)}';
+      } else {
+        // A..F
+        as = '1${av - 19}';
+      }
+    }
+    return rightJustify('${op.programDisplay}$as', 6);
+  }
+
+  @override
+  String get programListing {
+    final String as;
+    if (op.maxArg > 0) {
+      final ProgramOperation? specialKey = specialArg?.keys.last;
+      if (specialKey != null) {
+        if (specialKey == Operations15.I15) {
+          as = ' I';
+        } else if (specialKey == Operations15.parenI15) {
+          as = ' (i)';
+        } else {
+          as = specialKey.programDisplay;
+        }
+      } else {
+        final av = argValue - op.arg!.desc.r0ArgumentValue;
+        assert(av >= 0 && av < 25);
+        if (av < 20) {
+          as = ' ${argValue.toRadixString(10)}';
+        } else {
+          final cc = 'A'.codeUnitAt(0) + av - 20;
+          as = ' ${String.fromCharCode(cc)}';
+        }
+      }
+    } else {
+      as = '';
+    }
+    return '${op.name}$as';
+  }
 }
