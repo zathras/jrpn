@@ -594,7 +594,7 @@ class Operations15 extends Operations {
                 (m as Model15).resultMatrix = matrix;
               }
             } else {
-              m.memory.registers.setValue(arg, sto15.arg, m.x);
+              m.memory.registers[arg] = m.x;
             }
           }),
       name: 'STO');
@@ -621,7 +621,7 @@ class Operations15 extends Operations {
                   m.x = Value.fromMatrix(mat);
                 }
               } else {
-                m.x = m.memory.registers.getValue(arg, rcl15.arg);
+                m.x = m.memory.registers[arg];
               }
             }
           }),
@@ -1160,16 +1160,6 @@ class ArgDescriptionGto15C extends ArgDescription {
 
   @override
   int get numericArgs => 20;
-
-  @override
-  int get indirectIndexNumber => 0xdeadbeef;
-  // The 15C doesn't allow GTO (i) or GSB (i).  Note also that the handling
-  // of negative values of I is different on the 15c.
-  // see 15C manual, bottom of page 108
-  @override
-  int get indexRegisterNumber => 25;
-  @override
-  int get r0ArgumentValue => 0;
 }
 
 @immutable
@@ -1189,14 +1179,6 @@ class ArgDescription15CNoI extends ArgDescription {
   ArgDescription15CNoI(
       {this.numericArgs = 0, this.special = const [], this.synonyms = const {}})
       : maxArg = numericArgs - 1 + ArgKeys.numUniqueValues(special);
-
-  @override
-  int get indirectIndexNumber => 0xdeadbeef;
-  @override
-  int get indexRegisterNumber => 0xdeadbeef;
-
-  @override
-  int get r0ArgumentValue => 0xdeadbeef;
 }
 
 @immutable
@@ -1212,13 +1194,6 @@ class ArgDescription15CSto extends ArgDescription15C {
 
   @override
   int get numericArgs => 20;
-  @override
-  int get indirectIndexNumber => 22; // two byte opcode
-  @override
-  int get indexRegisterNumber => 21; // One byte opcode
-
-  @override
-  int get r0ArgumentValue => 0;
 
   @override
   List<ArgKeys> get special => _special;
@@ -1258,12 +1233,9 @@ class ArgDescription15CJustI extends ArgDescription {
 
   const ArgDescription15CJustI({required this.maxArg});
 
+  static const _indexRegisterNumber = 0; // It's to the right on the keyboard
   @override
-  int get indirectIndexNumber => 0xdeadbeef;
-  @override
-  int get indexRegisterNumber => 0; // It's to the right on the keyboard
-  @override
-  int get r0ArgumentValue => 1;
+  int get numericOffset => 1;
 
   static final _special = [
     ArgKeys([Operations15.I15], 0)
@@ -1278,14 +1250,14 @@ class ArgDescription15CJustI extends ArgDescription {
   Map<ProgramOperation, ProgramOperation> get synonyms => _synonyms;
 
   int mapArg(Model m, int v, int errNumber) {
-    if (v == indexRegisterNumber) {
+    if (v == _indexRegisterNumber) {
       final i = m.xF.abs().truncate();
       if (i >= numericArgs) {
         throw CalculatorError(errNumber);
       }
       return i;
     } else {
-      return v - r0ArgumentValue;
+      return v - numericOffset;
     }
   }
 }
@@ -1295,25 +1267,19 @@ class ArgDescription15CJustI extends ArgDescription {
 ///
 class ArgDescriptionFlex extends ArgDescription {
   @override
-  final int indirectIndexNumber;
-  @override
-  final int indexRegisterNumber;
-  @override
   final int numericArgs;
   @override
   final int maxArg;
   @override
-  final int r0ArgumentValue;
+  final int numericOffset;
   @override
   final List<ArgKeys> special;
   @override
   final Map<ProgramOperation, ProgramOperation> synonyms;
 
   ArgDescriptionFlex(
-      {this.indirectIndexNumber = 0xdeadbeef,
-      this.indexRegisterNumber = 0xdeadbeef,
-      this.numericArgs = 0,
-      this.r0ArgumentValue = 0,
+      {this.numericArgs = 0,
+      this.numericOffset = 0,
       this.special = const [],
       this.synonyms = const {}})
       : maxArg = numericArgs - 1 + ArgKeys.numUniqueValues(special);
@@ -1333,14 +1299,14 @@ class ProgramInstruction15<OT extends ProgramOperation>
     final ProgramOperation? specialKey = specialArg?.keys.last;
     if (specialKey != null) {
       if (specialKey == Operations15.I15) {
-        as = '25';
+        as = '25'; // because I is shortcut to RCL-I
       } else if (specialKey == Operations15.parenI15) {
-        as = '24';
+        as = '24'; // because (i) is shortcut to RCL-(i)
       } else {
-        as = specialKey.programDisplay;
+        as = specialKey.programDisplay.trimRight();
       }
     } else {
-      final av = argValue - op.arg!.desc.r0ArgumentValue;
+      final av = argValue - op.arg!.desc.numericOffset;
       assert(av >= 0 && av < 25);
       if (av < 10) {
         as = ' ${av.toRadixString(10)}';
@@ -1365,10 +1331,10 @@ class ProgramInstruction15<OT extends ProgramOperation>
         } else if (specialKey == Operations15.parenI15) {
           as = ' (i)';
         } else {
-          as = specialKey.programDisplay;
+          as = specialKey.programDisplay.trimRight();
         }
       } else {
-        final av = argValue - op.arg!.desc.r0ArgumentValue;
+        final av = argValue - op.arg!.desc.numericOffset;
         assert(av >= 0 && av < 25);
         if (av < 20) {
           as = ' ${argValue.toRadixString(10)}';

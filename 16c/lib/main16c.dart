@@ -277,8 +277,7 @@ class Operations16 extends Operations {
                 ArgKeysStoreParenI([Operations16.parenI], 32),
                 ArgKeysStoreI([Operations16.I], 33)
               ]),
-          calc: (Model m, int arg) =>
-              m.memory.registers.setValue(arg, sto.arg, m.x)),
+          calc: (Model m, int arg) => m.memory.registers[arg] = m.x),
       name: 'STO');
 
   static void _recall(Value v, Model m) {
@@ -295,8 +294,7 @@ class Operations16 extends Operations {
                 ArgKeysReadI([Operations16.I], 33, _recall)
               ]),
           pressed: (ActiveState s) => s.liftStackIfEnabled(),
-          calc: (Model m, int arg) =>
-              m.x = m.memory.registers.getValue(arg, rcl.arg)),
+          calc: (Model m, int arg) => m.x = m.memory.registers[arg]),
       name: 'RCL');
 
   static final NormalOperation sl = NormalOperation.intOnly(
@@ -675,14 +673,6 @@ class ArgDescription16C extends ArgDescription {
       this.special = const [],
       this.synonyms = const {}})
       : maxArg = numericArgs - 1 + ArgKeys.numUniqueValues(special);
-
-  @override
-  int get indirectIndexNumber => 0xdeadbeef;
-  @override
-  int get indexRegisterNumber =>
-      0xdeadbeef; // It's to the right on the keyboard
-  @override
-  int get r0ArgumentValue => 0;
 }
 
 class ProgramInstruction16 extends ProgramInstruction<Operation> {
@@ -696,11 +686,11 @@ class ProgramInstruction16 extends ProgramInstruction<Operation> {
       final ProgramOperation? specialKey = specialArg?.keys.last;
       if (specialKey != null) {
         if (specialKey == Operations16.I) {
-          as = '32';
+          as = '32'; // because I is shortcut to RCL-I
         } else if (specialKey == Operations16.parenI) {
-          as = '31';
+          as = '31'; // because (i) is shortcut to RCL-(i)
         } else {
-          as = specialKey.programDisplay;
+          as = specialKey.programDisplay.trimRight();
         }
       } else if (argValue < 16) {
         as = ' ${argValue.toRadixString(16)}';
@@ -727,7 +717,7 @@ class ProgramInstruction16 extends ProgramInstruction<Operation> {
             specialKey == Operations.dot) {
           as = ' .'; // F-FLOAT-.
         } else {
-          as = specialKey.programDisplay;
+          as = specialKey.programDisplay.trimRight();
         }
       } else {
         as = ' ${argValue.toRadixString(16)}';

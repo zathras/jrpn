@@ -230,26 +230,6 @@ class Registers {
   Value get indirectIndex => this[_regIasIndex];
   set indirectIndex(Value v) => this[_regIasIndex] = v;
 
-  Value getValue(int i, ProgramOperationArg arg) {
-    if (i == arg.desc.indexRegisterNumber) {
-      return index;
-    } else if (i == arg.desc.indirectIndexNumber) {
-      return indirectIndex;
-    } else {
-      return this[i - arg.desc.r0ArgumentValue];
-    }
-  }
-
-  void setValue(int i, ProgramOperationArg arg, Value v) {
-    if (i == arg.desc.indexRegisterNumber) {
-      index = v;
-    } else if (i == arg.desc.indirectIndexNumber) {
-      indirectIndex = v;
-    } else {
-      this[i - arg.desc.r0ArgumentValue] = v;
-    }
-  }
-
   /// Calculate the value of the I register for use as an index.  If that
   /// value is too big to be an index, then any int that is too big will do,
   /// since we'll just end up generating a CalculatorError anyway.
@@ -707,19 +687,17 @@ abstract class ProgramOperationArg {
 abstract class ArgDescription {
   const ArgDescription();
 
-  int get indirectIndexNumber;
-  int get indexRegisterNumber;
   int get maxArg;
   int get numericArgs; // Numeric args in the range 0..(numericArgs-1)
   List<ArgKeys> get special => const [];
   Map<ProgramOperation, ProgramOperation> get synonyms => const {};
 
   ///
-  /// The argument value that corresponds to register 0.  On the 16C this is
-  /// 0, but (i) and I need to be argument values 0 and 1 for a few operations
-  /// on the 15C, so that they will be assigned single-byte opcodes.
+  /// The argument value that corresponds to a numeric entry of 0.  On the
+  /// 15C, some operations need to put special keys before the numeric
+  /// args so that those special keys can get single-byte opcodes.
   ///
-  int get r0ArgumentValue;
+  int get numericOffset => 0;
 }
 
 ///

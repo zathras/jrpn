@@ -808,7 +808,7 @@ class ArgInputState extends ControllerState {
         argV += controller.argBase;
       }
       if (argV != null && argV < arg.desc.numericArgs) {
-        done(argV + arg.desc.r0ArgumentValue);
+        done(argV + arg.desc.numericOffset);
       } else {
         changeState(lastState); // bail
         lastState.buttonDown(key);
