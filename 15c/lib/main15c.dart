@@ -53,11 +53,11 @@ class Operations15 extends Operations {
           desc: ArgDescription15CNoI(
               numericArgs: 20,
               special: [
-                ArgKeys([letterLabelA], 20),
-                ArgKeys([letterLabelB], 21),
-                ArgKeys([letterLabelC], 22),
-                ArgKeys([letterLabelD], 23),
-                ArgKeys([letterLabelE], 24)
+                ArgKey(letterLabelA, 20),
+                ArgKey(letterLabelB, 21),
+                ArgKey(letterLabelC, 22),
+                ArgKey(letterLabelD, 23),
+                ArgKey(letterLabelE, 24)
               ],
               synonyms: ArgDescription15C.letterSynonyms),
           calc: (_, __) {}),
@@ -284,11 +284,11 @@ class Operations15 extends Operations {
         throw "@@ TODO";
       },
       name: 'SOLVE');
-  static final LimitedOperation hyp = LimitedOperation(
+  static final hyp = NonProgrammableOperation(
       pressed: (LimitedState c) => c.handleShift(ShiftKey.none),
       // Controller15 handles the rest
       name: 'HYP');
-  static final LimitedOperation hypInverse = LimitedOperation(
+  static final hypInverse = NonProgrammableOperation(
       pressed: (LimitedState c) => c.handleShift(ShiftKey.none), name: 'HYP-1');
   static final NormalOperation sin = NormalOperation.floatOnly(
       floatCalc: (Model m) {
@@ -400,11 +400,11 @@ class Operations15 extends Operations {
       name: 'TANH-1');
 
   static final _justLettersMap = [
-    ArgKeys([Operations15.letterLabelA], 0),
-    ArgKeys([Operations15.letterLabelB], 1),
-    ArgKeys([Operations15.letterLabelC], 2),
-    ArgKeys([Operations15.letterLabelD], 3),
-    ArgKeys([Operations15.letterLabelE], 4)
+    ArgKey(Operations15.letterLabelA, 0),
+    ArgKey(Operations15.letterLabelB, 1),
+    ArgKey(Operations15.letterLabelC, 2),
+    ArgKey(Operations15.letterLabelD, 3),
+    ArgKey(Operations15.letterLabelE, 4)
   ];
 
   static final NormalArgOperation dim = NormalArgOperation(
@@ -526,16 +526,16 @@ class Operations15 extends Operations {
         throw "@@ TODO";
       },
       name: 'INT');
-  static final LimitedOperation userOp = LimitedOperation(
+  static final userOp = NonProgrammableOperation(
       pressed: (LimitedState s) {
-        throw "@@ TODO";
+        final m = s.model as Model15;
+        m.userMode = !m.userMode;
+        m.display.update(flash: true); // Needed in program entry mode
+      },
+      floatCalc: (Model m) {
+        // This gets us out of digit entry mode, manages stack lift, etc.
       },
       name: 'USER');
-  static final NormalOperation memOp = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: 'MEM');
   static final NormalOperation xFactorial = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         throw "@@ TODO";
@@ -583,6 +583,7 @@ class Operations15 extends Operations {
       name: 'Cy,x');
 
   static final NormalArgOperation sto15 = NormalArgOperation(
+      numExtendedOpCodes: 5, // The user shifted ones
       arg: OperationArg.both(
           desc: const ArgDescription15CSto(),
           calc: (Model m, int arg) {
@@ -600,7 +601,7 @@ class Operations15 extends Operations {
       name: 'STO');
 
   static final NormalArgOperation rcl15 = NormalArgOperation(
-      numExtendedOpCodes: 15,
+      numExtendedOpCodes: 25,
       arg: OperationArg.both(
           desc: const ArgDescription15CSto(),
           pressed: (ActiveState s) => s.liftStackIfEnabled(),
@@ -945,6 +946,27 @@ class PortraitButtonFactory15 extends PortraitButtonFactory {
   }
 }
 
+class CalculatorButtonWithUserMode extends CalculatorButton {
+  final Operation uKeyUser;
+  final Operation fKeyUser;
+
+  CalculatorButtonWithUserMode(
+      ButtonFactory bFactory,
+      String uText,
+      String fText,
+      String gText,
+      Operation uKey,
+      Operation fKey,
+      Operation gKey,
+      this.uKeyUser,
+      this.fKeyUser,
+      String acceleratorKey,
+      {String? acceleratorLabel,
+      Key? key})
+      : super(bFactory, uText, fText, gText, uKey, fKey, gKey, acceleratorKey,
+            acceleratorLabel: acceleratorLabel, key: key);
+}
+
 class Controller15 extends RealController {
   Controller15(Model<Operation> model)
       : super(model,
@@ -1009,16 +1031,6 @@ class Controller15 extends RealController {
 
   @override
   int getErrorNumber(CalculatorError err) => err.num15;
-
-  @override
-  Set<LimitedOperation> get nonProgrammableKeys => nonProgrammableKeysStatic;
-
-  static final Set<LimitedOperation> nonProgrammableKeysStatic = {
-    ...RealController.nonProgrammableKeysStatic,
-    Operations15.hyp,
-    Operations15.hypInverse,
-    Operations15.userOp
-  };
 
   @override
   NormalArgOperation get gsbOperation => Operations15.gsb;
@@ -1106,7 +1118,7 @@ final Set<LetterLabel> _letterLabels = {
 };
 
 ProgramInstruction<Operation> _newProgramInstruction(
-    Operation operation, int argValue, ArgKeys? special) {
+    Operation operation, int argValue, SpecialArg? special) {
   if (_letterLabels.contains(operation)) {
     assert(argValue == 0);
     assert(special == null);
@@ -1136,9 +1148,9 @@ abstract class ArgDescription15C extends ArgDescription {
 
 @immutable
 class ArgDescriptionGto15C extends ArgDescription {
-  static final List<ArgKeys> _special = [
-    ArgKeys([Operations15.parenI15], 16),
-    ArgKeys([Operations15.I15], 17)
+  static final List<SpecialArg> _special = [
+    ArgKey(Operations15.parenI15, 16),
+    ArgKey(Operations15.I15, 17)
   ];
 
   static final _synonyms = {
@@ -1149,7 +1161,7 @@ class ArgDescriptionGto15C extends ArgDescription {
   const ArgDescriptionGto15C();
 
   @override
-  List<ArgKeys> get special => _special;
+  List<SpecialArg> get special => _special;
 
   @override
   Map<ProgramOperation, ProgramOperation> get synonyms => _synonyms;
@@ -1171,14 +1183,14 @@ class ArgDescription15CNoI extends ArgDescription {
   final int numericArgs;
 
   @override
-  final List<ArgKeys> special;
+  final List<SpecialArg> special;
 
   @override
   final Map<ProgramOperation, ProgramOperation> synonyms;
 
   ArgDescription15CNoI(
       {this.numericArgs = 0, this.special = const [], this.synonyms = const {}})
-      : maxArg = numericArgs - 1 + ArgKeys.numUniqueValues(special);
+      : maxArg = numericArgs - 1 + SpecialArg.numUniqueValues(special);
 }
 
 @immutable
@@ -1186,6 +1198,7 @@ class ArgDescription15CSto extends ArgDescription15C {
   static const int resultKey = 20; // One byte opcode
 
   static const int matrixStart = 23;
+  static const int userStart = 23;
 
   const ArgDescription15CSto();
 
@@ -1196,26 +1209,31 @@ class ArgDescription15CSto extends ArgDescription15C {
   int get numericArgs => 20;
 
   @override
-  List<ArgKeys> get special => _special;
+  List<SpecialArg> get special => _special;
 
   static final _special = [
-    ArgKeys([Operations.eex], 20),
-    ArgKeys([Operations15.I15], 21),
-    ArgKeys([Operations15.parenI15], 22),
+    ArgKey(Operations.eex, 20),
+    ArgKey(Operations15.I15, 21),
+    ArgKey(Operations15.parenI15, 22),
     ArgKeys([Operations15.matrix, Operations15.letterLabelA], 23),
     ArgKeys([Operations15.matrix, Operations15.letterLabelB], 24),
     ArgKeys([Operations15.matrix, Operations15.letterLabelC], 25),
     ArgKeys([Operations15.matrix, Operations15.letterLabelD], 26),
     ArgKeys([Operations15.matrix, Operations15.letterLabelE], 27),
-    ArgKeys([Operations15.letterLabelA], 28),
-    ArgKeys([Operations15.letterLabelB], 29),
-    ArgKeys([Operations15.letterLabelC], 30),
-    ArgKeys([Operations15.letterLabelD], 31),
-    ArgKeys([Operations15.letterLabelE], 32),
-    ArgKeys([Operations.plus], 33),
-    ArgKeys([Operations.minus], 34),
-    ArgKeys([Operations.mult], 35),
-    ArgKeys([Operations.div], 36)
+    ArgKeyUser(Operations15.letterLabelA, false, 28),
+    ArgKeyUser(Operations15.letterLabelB, false, 29),
+    ArgKeyUser(Operations15.letterLabelC, false, 30),
+    ArgKeyUser(Operations15.letterLabelD, false, 31),
+    ArgKeyUser(Operations15.letterLabelE, false, 32),
+    ArgKey(Operations.plus, 33),
+    ArgKey(Operations.minus, 34),
+    ArgKey(Operations.mult, 35),
+    ArgKey(Operations.div, 36),
+    ArgKeyUser(Operations15.letterLabelA, true, 37),
+    ArgKeyUser(Operations15.letterLabelB, true, 38),
+    ArgKeyUser(Operations15.letterLabelC, true, 39),
+    ArgKeyUser(Operations15.letterLabelD, true, 40),
+    ArgKeyUser(Operations15.letterLabelE, true, 41)
   ];
 
   @override
@@ -1238,13 +1256,13 @@ class ArgDescription15CJustI extends ArgDescription {
   int get numericOffset => 1;
 
   static final _special = [
-    ArgKeys([Operations15.I15], 0)
+    ArgKey(Operations15.I15, 0)
   ];
 
   static final _synonyms = {Operations15.tan: Operations15.I15};
 
   @override
-  List<ArgKeys> get special => _special;
+  List<SpecialArg> get special => _special;
 
   @override
   Map<ProgramOperation, ProgramOperation> get synonyms => _synonyms;
@@ -1282,12 +1300,12 @@ class ArgDescriptionFlex extends ArgDescription {
       this.numericOffset = 0,
       this.special = const [],
       this.synonyms = const {}})
-      : maxArg = numericArgs - 1 + ArgKeys.numUniqueValues(special);
+      : maxArg = numericArgs - 1 + SpecialArg.numUniqueValues(special);
 }
 
 class ProgramInstruction15<OT extends ProgramOperation>
     extends ProgramInstruction<OT> {
-  ProgramInstruction15(OT op, int argValue, ArgKeys? special)
+  ProgramInstruction15(OT op, int argValue, SpecialArg? special)
       : super(op, argValue, special);
 
   @override
@@ -1296,7 +1314,7 @@ class ProgramInstruction15<OT extends ProgramOperation>
       return rightJustify(op.programDisplay, 6);
     }
     final String as;
-    final ProgramOperation? specialKey = specialArg?.keys.last;
+    final ProgramOperation? specialKey = specialArg?.lastKey;
     if (specialKey != null) {
       if (specialKey == Operations15.I15) {
         as = '25'; // because I is shortcut to RCL-I
@@ -1324,7 +1342,7 @@ class ProgramInstruction15<OT extends ProgramOperation>
   String get programListing {
     final String as;
     if (op.maxArg > 0) {
-      final ProgramOperation? specialKey = specialArg?.keys.last;
+      final ProgramOperation? specialKey = specialArg?.lastKey;
       if (specialKey != null) {
         if (specialKey == Operations15.I15) {
           as = ' I';

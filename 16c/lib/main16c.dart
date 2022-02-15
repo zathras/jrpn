@@ -115,7 +115,7 @@ class Model16 extends Model<Operation> {
 
   @override
   ProgramInstruction<Operation> newProgramInstruction(
-          Operation operation, int argValue, ArgKeys? special) =>
+          Operation operation, int argValue, SpecialArg? special) =>
       ProgramInstruction16(operation, argValue, special);
 
   @override
@@ -147,6 +147,7 @@ class Model16 extends Model<Operation> {
       prgmFlag: true,
       shift: ShiftKey.g,
       trigMode: TrigMode.deg,
+      userMode: false,
       extraShift: ShiftKey.f);
 
   @override
@@ -274,8 +275,8 @@ class Operations16 extends Operations {
               numericArgs: 32,
               synonyms: _indexSynonyms,
               special: [
-                ArgKeysStoreParenI([Operations16.parenI], 32),
-                ArgKeysStoreI([Operations16.I], 33)
+                ArgKeyStoreParenI(Operations16.parenI, 32),
+                ArgKeyStoreI(Operations16.I, 33)
               ]),
           calc: (Model m, int arg) => m.memory.registers[arg] = m.x),
       name: 'STO');
@@ -290,8 +291,8 @@ class Operations16 extends Operations {
               numericArgs: 32,
               synonyms: _indexSynonyms,
               special: [
-                ArgKeysReadParenI([Operations16.parenI], 32, _recall),
-                ArgKeysReadI([Operations16.I], 33, _recall)
+                ArgKeyReadParenI(Operations16.parenI, 32, _recall),
+                ArgKeyReadI(Operations16.I, 33, _recall)
               ]),
           pressed: (ActiveState s) => s.liftStackIfEnabled(),
           calc: (Model m, int arg) => m.x = m.memory.registers[arg]),
@@ -468,7 +469,7 @@ class Operations16 extends Operations {
       stackLift: StackLift.neutral, // But see also FloatKeyArg.onArgComplete()
       arg: FloatKeyArg(
           desc: ArgDescription16C(numericArgs: 10, special: [
-            ArgKeys([Operations.dot], 10)
+            ArgKey(Operations.dot, 10)
           ]),
           calc: (Model m, int arg) {
             m.floatOverflow = false;
@@ -507,8 +508,8 @@ class Operations16 extends Operations {
           desc: ArgDescription16C(
               numericArgs: 16,
               special: [
-                ArgKeysTranslate([Operations16.parenI], 16, _translateParenI),
-                ArgKeysTranslate([Operations16.I], 17, _translateI)
+                ArgKeyTranslate(Operations16.parenI, 16, _translateParenI),
+                ArgKeyTranslate(Operations16.I, 17, _translateI)
               ],
               synonyms: _indexSynonyms),
           // calc is only used when running a program - see
@@ -521,8 +522,8 @@ class Operations16 extends Operations {
           desc: ArgDescription16C(
               numericArgs: 16,
               special: [
-                ArgKeysTranslate([Operations16.parenI], 16, _translateParenI),
-                ArgKeysTranslate([Operations16.I], 17, _translateI)
+                ArgKeyTranslate(Operations16.parenI, 16, _translateParenI),
+                ArgKeyTranslate(Operations16.I, 17, _translateI)
               ],
               synonyms: _indexSynonyms),
           calc: (Model m, int label) => m.memory.program.goto(label)),
@@ -663,7 +664,7 @@ class ArgDescription16C extends ArgDescription {
   final int numericArgs;
 
   @override
-  final List<ArgKeys> special;
+  final List<SpecialArg> special;
 
   @override
   final Map<ProgramOperation, ProgramOperation> synonyms;
@@ -672,18 +673,18 @@ class ArgDescription16C extends ArgDescription {
       {required this.numericArgs,
       this.special = const [],
       this.synonyms = const {}})
-      : maxArg = numericArgs - 1 + ArgKeys.numUniqueValues(special);
+      : maxArg = numericArgs - 1 + SpecialArg.numUniqueValues(special);
 }
 
 class ProgramInstruction16 extends ProgramInstruction<Operation> {
-  ProgramInstruction16(Operation op, int argValue, ArgKeys? specialArg)
+  ProgramInstruction16(Operation op, int argValue, SpecialArg? specialArg)
       : super(op, argValue, specialArg);
 
   @override
   String get programDisplay {
     if (op.maxArg > 0) {
       final String as;
-      final ProgramOperation? specialKey = specialArg?.keys.last;
+      final ProgramOperation? specialKey = specialArg?.lastKey;
       if (specialKey != null) {
         if (specialKey == Operations16.I) {
           as = '32'; // because I is shortcut to RCL-I
@@ -707,7 +708,7 @@ class ProgramInstruction16 extends ProgramInstruction<Operation> {
   String get programListing {
     final String as;
     if (op.maxArg > 0) {
-      final ProgramOperation? specialKey = specialArg?.keys.last;
+      final ProgramOperation? specialKey = specialArg?.lastKey;
       if (specialKey != null) {
         if (specialKey == Operations16.I) {
           as = ' I';
@@ -977,9 +978,9 @@ class Controller16 extends RealController {
   };
 
   static ProgramInstruction16 _makeShortcut(Operation op, Operation key) {
-    for (final ArgKeys s in op.arg!.desc.special) {
-      if (s.keys[0] == key) {
-        return ProgramInstruction16(op, s.value, s);
+    for (final SpecialArg s in op.arg!.desc.special) {
+      if (s.matches(key, 0, false)) {
+        return ProgramInstruction16(op, s.opcodeOffset, s);
       }
     }
     throw StateError('Shortcut to nowhere');

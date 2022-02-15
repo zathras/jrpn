@@ -110,8 +110,8 @@ class Operations {
       calc: null,
       name: 'R/S');
 
-  static final LimitedOperation sst =
-      LimitedOperation(name: 'SST', pressed: (LimitedState s) => s.handleSST());
+  static final sst = NonProgrammableOperation(
+      name: 'SST', pressed: (LimitedState s) => s.handleSST());
 
   static final NormalOperation rDown =
       NormalOperation(calc: (Model m) => m.rotateStackDown(), name: 'Rv');
@@ -119,7 +119,7 @@ class Operations {
   static final NormalOperation xy =
       NormalOperation(calc: (Model m) => m.swapXY(), name: 'X<=>Y');
 
-  static final LimitedOperation bsp = LimitedOperation(
+  static final bsp = NonProgrammableOperation(
       pressed: (LimitedState c) => c.handleBackspace(), name: 'BSP');
 
   static final NormalOperation enter = NormalOperation(
@@ -147,13 +147,13 @@ class Operations {
   // On x  runs self tests, displays -8,8,8,8,8,8,8,8,8,8,, lights all status
   //            Error 9 on failure
   // on -  clears everything, displays 'Pr Error'
-  static final LimitedOperation onOff = LimitedOperation(
+  static final onOff = NonProgrammableOperation(
       pressed: (LimitedState s) => s.handleOnOff(), name: 'ON');
 
-  static final LimitedOperation fShift = LimitedOperation(
+  static final fShift = NonProgrammableOperation(
       pressed: (LimitedState c) => c.handleShift(ShiftKey.f), name: 'f');
 
-  static final LimitedOperation gShift = LimitedOperation(
+  static final gShift = NonProgrammableOperation(
       pressed: (LimitedState c) => c.handleShift(ShiftKey.g), name: 'g');
 
   static final n0 = NumberEntry('0', 0);
@@ -191,7 +191,7 @@ class Operations {
       },
       name: 'x<=>I');
 
-  static final LimitedOperation clearPrgm = LimitedOperation(
+  static final clearPrgm = NonProgrammableOperation(
       pressed: (LimitedState s) => s.handleClearProgram(), name: 'CLEAR PRGM');
 
   static final NormalOperation clearReg = NormalOperation(
@@ -199,14 +199,14 @@ class Operations {
       calc: (Model m) => m.memory.registers.clear(),
       name: 'CLEAR REG');
 
-  static final LimitedOperation clearPrefix = LimitedOperation(
+  static final clearPrefix = NonProgrammableOperation(
       pressed: (LimitedState cs) => cs.handleClearPrefix(),
       name: 'CLEAR PREFIX');
 
-  static final LimitedOperation mem = LimitedOperation(
+  static final mem = NonProgrammableOperation(
       name: 'MEM', pressed: (LimitedState s) => s.handleShowMem());
 
-  static final LimitedOperation status = LimitedOperation(
+  static final status = NonProgrammableOperation(
       pressed: (LimitedState cs) => cs.handleShowStatus(), name: 'STATUS');
 
   static final NormalOperation eex = NormalOperation(
@@ -260,11 +260,11 @@ class Operations {
       },
       name: '1/x');
 
-  static final LimitedOperation pr =
-      LimitedOperation(pressed: (LimitedState s) => s.handlePR(), name: 'P/R');
+  static final pr = NonProgrammableOperation(
+      pressed: (LimitedState s) => s.handlePR(), name: 'P/R');
 
-  static final LimitedOperation bst =
-      LimitedOperation(name: 'BST', pressed: (LimitedState s) => s.handleBST());
+  static final bst = NonProgrammableOperation(
+      name: 'BST', pressed: (LimitedState s) => s.handleBST());
 
   static final NormalOperation rUp =
       NormalOperation(calc: (Model m) => m.rotateStackUp(), name: 'R^');

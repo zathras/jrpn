@@ -69,8 +69,6 @@ abstract class Controller {
   KeyboardController get keyboard;
   ControllerState get state => _state;
 
-  Set<LimitedOperation> get nonProgrammableKeys;
-
   set state(ControllerState s) {
     _state = s;
     // print('@@ state set to $s');
@@ -265,23 +263,6 @@ abstract class RealController extends Controller {
   @override
   T? _branchingOperationCalc<T>(T? calc) => null;
 
-  @override
-  Set<LimitedOperation> get nonProgrammableKeys => nonProgrammableKeysStatic;
-
-  static final Set<LimitedOperation> nonProgrammableKeysStatic = {
-    Operations.fShift,
-    Operations.gShift,
-    Operations.pr,
-    Operations.bsp,
-    Operations.clearPrgm,
-    Operations.clearPrefix,
-    Operations.sst,
-    Operations.bst,
-    Operations.mem,
-    Operations.status,
-    Operations.onOff
-  };
-
   ButtonLayout getButtonLayout(
       ButtonFactory factory, double totalHeight, double totalButtonHeight);
 
@@ -300,7 +281,7 @@ abstract class RealController extends Controller {
 class RunningController extends Controller {
   final Controller real;
   int? _argValue;
-  ArgKeys? _specialArg;
+  SpecialArg? _specialArg;
   bool pause = false;
   CalculatorError? pendingError;
 
@@ -313,7 +294,7 @@ class RunningController extends Controller {
     }
   }
 
-  void setArg(int? argValue, ArgKeys? specialArg) {
+  void setArg(int? argValue, SpecialArg? specialArg) {
     _argValue = argValue;
     _specialArg = specialArg;
   }
@@ -389,9 +370,6 @@ class RunningController extends Controller {
   int get argBase => real.argBase;
 
   @override
-  Set<LimitedOperation> get nonProgrammableKeys => real.nonProgrammableKeys;
-
-  @override
   int getErrorNumber(CalculatorError err) => real.getErrorNumber(err);
 
   @override
@@ -417,7 +395,7 @@ abstract class Operation extends ProgramOperation {
   OperationArg? get arg;
 
   @override
-  List<ArgKeys>? get specialArgs => arg?.desc.special;
+  List<SpecialArg>? get specialArgs => arg?.desc.special;
 
   /// The calculation performed when the calculator is in floating-point mode.
   void Function(Model m)? get floatCalc;
@@ -697,6 +675,34 @@ class NormalArgOperation extends Operation {
   void pressed(LimitedState arg) {}
 }
 
+class NonProgrammableOperation extends Operation {
+
+  @override
+  void Function(Model<ProgramOperation> m)? floatCalc;
+
+  final void Function(LimitedState) _pressed;
+
+  NonProgrammableOperation(
+      {required String name, this.floatCalc, required void Function(LimitedState) pressed})
+      : _pressed = pressed,
+        super(name: name);
+
+  @override
+  StackLift get _stackLift => StackLift.neutral;
+
+  @override
+  OperationArg? get arg => null;
+
+  @override
+  void Function(Model<ProgramOperation> m)? get complexCalc => null;
+
+  @override
+  void Function(Model<ProgramOperation> m)? get intCalc => null;
+
+  @override
+  void pressed(LimitedState arg) => _pressed(arg);
+}
+
 ///
 /// A declarative description of an [Operation]'s effect on stack lift, when
 /// its calculation has been performed.  This covers the most common effects
@@ -793,7 +799,7 @@ class OperationArg extends ProgramOperationArg {
   void onArgComplete(LimitedState state, int argValue) =>
       state.onArgComplete(this, argValue);
 
-  void onArgCompleteSpecial(LimitedState state, ArgKeys value) =>
+  void onArgCompleteSpecial(LimitedState state, SpecialArg value) =>
       state.onArgCompleteSpecial(this, value);
 
   ControllerState makeInputState(Controller c, LimitedState fromState) =>

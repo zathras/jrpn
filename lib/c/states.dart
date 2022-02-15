@@ -83,7 +83,7 @@ abstract class ControllerState {
 
   void buttonUp(Operation key) {}
 
-  int? translateSpecial(ArgKeys special) => special.translate(model);
+  int? translateSpecial(SpecialArg special) => special.translate(model);
 
   /// Convenience method to call from an unreachable operation on a state
   @protected
@@ -108,7 +108,7 @@ abstract class LimitedState extends ControllerState {
   /// argument value is available.
   ///
   void onArgComplete(OperationArg arg, int argValue);
-  void onArgCompleteSpecial(OperationArg arg, ArgKeys value);
+  void onArgCompleteSpecial(OperationArg arg, SpecialArg value);
 
   void handleOnOff();
   void handleShift(ShiftKey k);
@@ -135,6 +135,8 @@ abstract class LimitedState extends ControllerState {
   }
 
   ControllerState gosubDoneState();
+
+  void terminateDigitEntry() {}
 }
 
 ///
@@ -366,13 +368,13 @@ class Resting extends ActiveState {
   }
 
   @override
-  void onArgCompleteSpecial(OperationArg arg, ArgKeys value) {
+  void onArgCompleteSpecial(OperationArg arg, SpecialArg value) {
     _onArgComplete(arg, (f) {
       final t = value.translate(model);
       if (t != null) {
         f(model, t);
       } else if (!value.calculate(model)) {
-        f(model, value.value);
+        f(model, value.opcodeOffset);
       }
     });
   }
@@ -723,7 +725,8 @@ class DigitEntry extends ActiveState {
   void onArgComplete(OperationArg arg, int argValue) => unreachable();
 
   @override
-  void onArgCompleteSpecial(OperationArg arg, ArgKeys value) => unreachable();
+  void onArgCompleteSpecial(OperationArg arg, SpecialArg value) =>
+      unreachable();
 
   @override
   void handleGotoDot(int value) => unreachable();
@@ -756,7 +759,7 @@ class ArgInputState extends ControllerState {
   bool _decimalPressed = false;
   bool _decimalAllowed;
   bool _digitsAllowed;
-  List<ArgKeys> _specialState;
+  List<SpecialArg> _specialState;
   int _specialPos;
 
   ArgInputState(Controller con, this.arg, this.lastState)
@@ -770,13 +773,13 @@ class ArgInputState extends ControllerState {
 
   @override
   void buttonDown(Operation key) {
-    ArgKeys? special;
+    SpecialArg? special;
     if (!_decimalPressed && _specialState.isNotEmpty) {
       final ProgramOperation syn = arg.desc.synonyms[key] ?? key;
-      final nextState = <ArgKeys>[];
+      final nextState = <SpecialArg>[];
       for (final ent in _specialState) {
-        if (ent.keys[_specialPos] == syn) {
-          if (_specialPos == ent.keys.length - 1) {
+        if (ent.matches(syn, _specialPos, model.userMode)) {
+          if (ent.done(_specialPos)) {
             special = ent;
           } else {
             nextState.add(ent);
@@ -826,13 +829,13 @@ class ArgInputState extends ControllerState {
     }
   }
 
-  void specialDone(ArgKeys argValue) {
+  void specialDone(SpecialArg argValue) {
     final t = lastState.translateSpecial(argValue);
     if (t != null) {
       done(t);
     } else {
       changeState(lastState);
-      assert(argValue.value <= arg.desc.maxArg);
+      assert(argValue.opcodeOffset <= arg.desc.maxArg);
       arg.onArgCompleteSpecial(lastState, argValue);
     }
   }
@@ -933,12 +936,7 @@ class ProgramEntry extends LimitedState {
     } else if (arg != null) {
       // which includes gsb and lbl
       controller.runWithArg(arg, this);
-    } else if (controller.nonProgrammableKeys.contains(key)) {
-      assert(key is LimitedOperation);
-      // It has to be, because it's in _ourKeys.  The static typing
-      // system doesn't guarantee that for us, because we're using the
-      // non-parameterized version of the generic Operation to achieve the
-      // needed covariance.
+    } else if (key is NonProgrammableOperation) {
       key.pressed(this);
     } else {
       _addOperation(key, 0, null);
@@ -958,12 +956,12 @@ class ProgramEntry extends LimitedState {
   }
 
   @override
-  void onArgCompleteSpecial(OperationArg arg, ArgKeys value) {
+  void onArgCompleteSpecial(OperationArg arg, SpecialArg value) {
     assert(arg.floatCalc != null || arg.intCalc != null);
-    _addOperation(arg.op, value.value, value);
+    _addOperation(arg.op, value.opcodeOffset, value);
   }
 
-  void _addOperation(Operation op, int argValue, ArgKeys? special) {
+  void _addOperation(Operation op, int argValue, SpecialArg? special) {
     model.memory.program
         .insert(model.newProgramInstruction(op, argValue, special));
     // throws CalculatorError if memory full
@@ -1072,7 +1070,7 @@ class ProgramEntry extends LimitedState {
   ControllerState gosubDoneState() => this;
 
   @override
-  int? translateSpecial(ArgKeys special) => special.value;
+  int? translateSpecial(SpecialArg special) => special.opcodeOffset;
 }
 
 ///

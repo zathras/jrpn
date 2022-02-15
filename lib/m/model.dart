@@ -77,6 +77,7 @@ class LcdContents {
   final bool hideComplement;
   final int? wordSize;
   final TrigMode trigMode;
+  final bool userMode;
 
   Timer? _myTimer;
 
@@ -95,6 +96,7 @@ class LcdContents {
       required this.hideComplement,
       required this.wordSize,
       required this.trigMode,
+      required this.userMode,
       this.extraShift})
       : blank = false;
 
@@ -114,6 +116,7 @@ class LcdContents {
         hideComplement = false,
         wordSize = null,
         trigMode = TrigMode.deg,
+        userMode = false,
         _myTimer = timer,
         extraShift = null;
 
@@ -132,6 +135,7 @@ class LcdContents {
         hideComplement = false,
         wordSize = null,
         trigMode = TrigMode.deg,
+        userMode = false,
         _myTimer = null,
         extraShift = null;
 
@@ -149,6 +153,9 @@ class LcdContents {
       hideComplement == other.hideComplement &&
       wordSize == other.wordSize &&
       windowEnabled == other.windowEnabled &&
+      complexFlag == other.complexFlag &&
+      trigMode == other.trigMode &&
+      userMode == other.userMode &&
       extraShift == other.extraShift;
 
   @override
@@ -447,11 +454,13 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   int get returnStackSize;
 
+  bool get userMode => false;
+
   ///
   /// Create an instance of the model-specific ProgramInstruction subtype
   ///
   ProgramInstruction<OT> newProgramInstruction(
-      OT operation, int argValue, ArgKeys? special);
+      OT operation, int argValue, SpecialArg? special);
 
   /// Not used, but we retain any comments found in the JSON file
   /// so we can write them back out.
@@ -836,6 +845,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         cFlag: cFlag,
         complexFlag: isComplexMode,
         trigMode: trigMode,
+        userMode: userMode,
         gFlag: gFlag,
         prgmFlag: prgmFlag,
         rightJustify: displayMode.rightJustify,

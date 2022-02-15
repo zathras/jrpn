@@ -292,7 +292,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
 
   /// Indexed by opcode
   @protected
-  final List<ArgKeys?> _specialArgs;
+  final List<SpecialArg?> _specialArgs;
 
   int _lines = 0;
   // Number of lines with extended op codes
@@ -410,7 +410,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     final int arg = opCode & 0x100 != 0
         ? (opCode & 0xff) - op.extendedOpCode + op.numOpCodes
         : opCode - op.opCode;
-    final ArgKeys? special = _specialArgs[opCode];
+    final SpecialArg? special = _specialArgs[opCode];
     return memory.model.newProgramInstruction(op, arg, special);
     // We're storing the instructions as nybbles and creating instructions
     // as-needed, not to save memory.  Rather, it's the easiest way of
@@ -670,7 +670,7 @@ abstract class ProgramOperation {
   /// cf. tests.dart, SelfTests.testNumbers().
   int? get numericValue => null;
 
-  List<ArgKeys>? get specialArgs;
+  List<SpecialArg>? get specialArgs;
 
   @override
   String toString() => 'ProgramOperation($programDisplay)';
@@ -689,7 +689,7 @@ abstract class ArgDescription {
 
   int get maxArg;
   int get numericArgs; // Numeric args in the range 0..(numericArgs-1)
-  List<ArgKeys> get special => const [];
+  List<SpecialArg> get special => const [];
   Map<ProgramOperation, ProgramOperation> get synonyms => const {};
 
   ///
@@ -701,14 +701,30 @@ abstract class ArgDescription {
 }
 
 ///
-/// A list of keys that can be entered as the argument to an operation
+/// "Special" args, that is, non-numeric args, like the I and (i) keys
 ///
 @immutable
-class ArgKeys {
-  final List<ProgramOperation> keys;
-  final int value;
+abstract class SpecialArg {
 
-  const ArgKeys(this.keys, this.value);
+  static int numUniqueValues(List<SpecialArg> keys) =>
+      keys.map((k) => k.opcodeOffset).toList(growable: false).toSet().length;
+
+  final int opcodeOffset;
+
+  const SpecialArg(this.opcodeOffset);
+
+  ProgramOperation get lastKey;
+
+  ///
+  /// See if key number "pos" in the sequence matches key, and if the
+  /// current userMode setting matches
+  ///
+  bool matches(ProgramOperation key, int pos, bool userMode);
+
+  ///
+  /// Is pos the last key in the sequence?
+  ///
+  bool done(int pos);
 
   ///
   /// Do the calculation for this argument, or return false to use
@@ -720,29 +736,88 @@ class ArgKeys {
   /// Translate this to an int that can be used as the argValue
   ///
   int? translate(Model m) => null;
+}
 
-  static int numUniqueValues(List<ArgKeys> keys) =>
-      keys.map((k) => k.value).toList(growable: false).toSet().length;
+///
+/// A single key that can be entered as the argument to an operation
+///
+@immutable
+class ArgKey extends SpecialArg {
+
+  final ProgramOperation key;
+
+  const ArgKey(this.key, int opcodeOffset) : super(opcodeOffset);
 
   @override
-  String toString() => '${super.toString()} : $keys, $value';
+  ProgramOperation get lastKey => key;
+
+  @override
+  String toString() => '${super.toString()} : $key, $opcodeOffset';
+
+  @override
+  bool matches(ProgramOperation key, int pos, bool userMode) => key == this.key;
+
+  @override
+  bool done(int pos) => true;
+}
+
+///
+/// A single key that can be entered as the argument to an operation, but that
+/// is only valid for the correct userMode setting
+///
+@immutable
+class ArgKeyUser extends ArgKey {
+
+  final bool userMode;
+
+  const ArgKeyUser(ProgramOperation key, this.userMode, int opcodeOffset) : super(key, opcodeOffset);
+
+  @override
+  String toString() => '${super.toString()} : $key, $userMode, $opcodeOffset';
+
+  @override
+  bool matches(ProgramOperation key, int pos, bool userMode) =>
+      key == this.key && userMode == this.userMode;
+}
+
+///
+/// A list of keys that can be entered as the argument to an operation
+///
+@immutable
+class ArgKeys extends SpecialArg {
+
+  final List<ProgramOperation> keys;
+
+  const ArgKeys(this.keys, int opcodeOffset) : super(opcodeOffset);
+
+  @override
+  ProgramOperation get lastKey => keys[keys.length - 1];
+
+  @override
+  String toString() => '${super.toString()} : $keys, $opcodeOffset';
+
+  @override
+  bool matches(ProgramOperation key, int pos, bool userMode) => key == keys[pos];
+
+  @override
+  bool done(int pos) => pos >= keys.length - 1;
 }
 
 @immutable
-class ArgKeysTranslate extends ArgKeys {
+class ArgKeyTranslate extends ArgKey {
   final int Function(Model m) f;
 
-  const ArgKeysTranslate(List<ProgramOperation> keys, int value, this.f)
-      : super(keys, value);
+  const ArgKeyTranslate(ProgramOperation key, int opcodeOffset, this.f)
+      : super(key, opcodeOffset);
 
   @override
   int? translate(Model m) => f(m);
 }
 
 @immutable
-class ArgKeysStoreI extends ArgKeys {
-  const ArgKeysStoreI(List<ProgramOperation> keys, int value)
-      : super(keys, value);
+class ArgKeyStoreI extends ArgKey {
+  const ArgKeyStoreI(ProgramOperation key, int opcodeOffset)
+      : super(key, opcodeOffset);
 
   @override
   bool calculate(Model m) {
@@ -752,11 +827,11 @@ class ArgKeysStoreI extends ArgKeys {
 }
 
 @immutable
-class ArgKeysReadI extends ArgKeys {
+class ArgKeyReadI extends ArgKey {
   final void Function(Value, Model) f;
 
-  const ArgKeysReadI(List<ProgramOperation> keys, int value, this.f)
-      : super(keys, value);
+  const ArgKeyReadI(ProgramOperation key, int opcodeOffset, this.f)
+      : super(key, opcodeOffset);
 
   @override
   bool calculate(Model m) {
@@ -766,9 +841,9 @@ class ArgKeysReadI extends ArgKeys {
 }
 
 @immutable
-class ArgKeysStoreParenI extends ArgKeys {
-  const ArgKeysStoreParenI(List<ProgramOperation> keys, int value)
-      : super(keys, value);
+class ArgKeyStoreParenI extends ArgKey {
+  const ArgKeyStoreParenI(ProgramOperation key, int opcodeOffset)
+      : super(key, opcodeOffset);
 
   @override
   bool calculate(Model m) {
@@ -778,11 +853,11 @@ class ArgKeysStoreParenI extends ArgKeys {
 }
 
 @immutable
-class ArgKeysReadParenI extends ArgKeys {
+class ArgKeyReadParenI extends ArgKey {
   final void Function(Value, Model) f;
 
-  const ArgKeysReadParenI(List<ProgramOperation> keys, int value, this.f)
-      : super(keys, value);
+  const ArgKeyReadParenI(ProgramOperation key, int opcodeOffset, this.f)
+      : super(key, opcodeOffset);
 
   @override
   bool calculate(Model m) {
@@ -825,7 +900,7 @@ abstract class ProgramInstruction<OT extends ProgramOperation> {
   /// 0 if no argument
   final int argValue;
 
-  final ArgKeys? specialArg;
+  final SpecialArg? specialArg;
 
   ProgramInstruction(this.op, this.argValue, this.specialArg) {
     assert(argValue != 0xdeadbeef);
@@ -872,7 +947,7 @@ class OperationMap<OT extends ProgramOperation> {
   /// Maps from opCode to ProgramOperation.  Each operation occurs in the
   /// table 1+maxArg times.
   late final List<OT?> _operationTable;
-  late final List<ArgKeys?> _specialArgs;
+  late final List<SpecialArg?> _specialArgs;
   int _nextOpCode = 0;
   int _nextExtendedOpCode = 0;
 
@@ -953,15 +1028,15 @@ class OperationMap<OT extends ProgramOperation> {
         final sa = op.specialArgs;
         if (sa != null) {
           int lastValue = -1;
-          for (final a in sa) {
-            assert(a.value > lastValue, '$op ${a.keys} ${a.value}');
-            lastValue = a.value;
+          for (final SpecialArg a in sa) {
+            assert(a.opcodeOffset > lastValue, '$op ${a.lastKey} ${a.opcodeOffset}');
+            lastValue = a.opcodeOffset;
             final numNormalOpCodes = op.maxArg + 1 - op.numExtendedOpCodes;
             int x;
-            if (a.value < numNormalOpCodes) {
-              x = op.opCode + a.value;
+            if (a.opcodeOffset < numNormalOpCodes) {
+              x = op.opCode + a.opcodeOffset;
             } else {
-              x = op.extendedOpCode + a.value - numNormalOpCodes;
+              x = op.extendedOpCode + a.opcodeOffset - numNormalOpCodes;
             }
             _specialArgs[x] = a;
           }

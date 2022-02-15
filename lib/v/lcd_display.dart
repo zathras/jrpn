@@ -171,6 +171,16 @@ class _DisplayPainter extends CustomPainter {
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.16, size.height * annY));
     }
+    if (contents.userMode) {
+      const String text = 'USER';
+      final TextSpan span = TextSpan(style: aStyle, text: text);
+      final TextPainter tp = TextPainter(
+          text: span,
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr);
+      tp.layout();
+      tp.paint(canvas, Offset(size.width * 0.18, size.height * annY));
+    }
     if (contents.shift.name != '') {
       final TextSpan span = TextSpan(style: aStyle, text: contents.shift.name);
       final TextPainter tp = TextPainter(

@@ -37,9 +37,12 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
 
   int resultMatrix = 0; // Index into matrices
 
-  final ProgramInstruction<OT> Function(OT, int, ArgKeys?)
+  final ProgramInstruction<OT> Function(OT, int, SpecialArg?)
       _newProgramInstructionF;
   final List<List<MKey<OT>?>> Function() _getLogicalKeys;
+
+  @override
+  bool userMode = false;
 
   Model15(this._getLogicalKeys, this._newProgramInstructionF)
       : super(DisplayMode.fix(4, false), 56, 10);
@@ -53,7 +56,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
 
   @override
   ProgramInstruction<OT> newProgramInstruction(
-          OT operation, int argValue, ArgKeys? special) =>
+          OT operation, int argValue, SpecialArg? special) =>
       _newProgramInstructionF(operation, argValue, special);
 
   @override
@@ -180,6 +183,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
       prgmFlag: true,
       shift: ShiftKey.g,
       trigMode: TrigMode.grad,
+      userMode: true,
       extraShift: ShiftKey.f);
 
   void setNeedsSave() {
