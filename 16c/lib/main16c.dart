@@ -446,9 +446,8 @@ class Operations16 extends Operations {
   static final NormalArgOperation floatKey = NormalArgOperation(
       stackLift: StackLift.neutral, // But see also FloatKeyArg.onArgComplete()
       arg: FloatKeyArg(
-          desc: ArgDescription16C(numericArgs: 10, special: [
-            ArgKey(Operations.dot, 10)
-          ]),
+          desc: ArgDescription16C(
+              numericArgs: 10, special: [ArgKey(Operations.dot, 10)]),
           calc: (Model m, int arg) {
             m.floatOverflow = false;
             m.displayMode = DisplayMode.float(arg);

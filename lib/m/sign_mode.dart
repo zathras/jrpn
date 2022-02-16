@@ -123,7 +123,7 @@ abstract class IntegerSignMode extends SignMode {
   int valueToLabel(Value v, Model m) {
     final bigLabel = toBigInt(v, m).abs();
     if (bigLabel > _tooBig) {
-      return 1000;    // Avoid overflow
+      return 1000; // Avoid overflow
     } else {
       return bigLabel.toInt();
     }
@@ -396,7 +396,7 @@ class _Float extends SignMode {
   int valueToLabel(Value v, Model<ProgramOperation> m) {
     final bigLabel = v.asDouble.abs();
     if (bigLabel > 1000) {
-      return 1000;    // avoid overflow
+      return 1000; // avoid overflow
     } else {
       return bigLabel.floor();
     }

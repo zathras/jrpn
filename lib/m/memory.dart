@@ -703,7 +703,6 @@ abstract class ArgDescription {
 ///
 @immutable
 abstract class SpecialArg {
-
   static int numUniqueValues(List<SpecialArg> keys) =>
       keys.map((k) => k.opcodeOffset).toList(growable: false).toSet().length;
 
@@ -741,7 +740,6 @@ abstract class SpecialArg {
 ///
 @immutable
 class ArgKey extends SpecialArg {
-
   final ProgramOperation key;
 
   const ArgKey(this.key, int opcodeOffset) : super(opcodeOffset);
@@ -765,10 +763,10 @@ class ArgKey extends SpecialArg {
 ///
 @immutable
 class ArgKeyUser extends ArgKey {
-
   final bool userMode;
 
-  const ArgKeyUser(ProgramOperation key, this.userMode, int opcodeOffset) : super(key, opcodeOffset);
+  const ArgKeyUser(ProgramOperation key, this.userMode, int opcodeOffset)
+      : super(key, opcodeOffset);
 
   @override
   String toString() => '${super.toString()} : $key, $userMode, $opcodeOffset';
@@ -783,7 +781,6 @@ class ArgKeyUser extends ArgKey {
 ///
 @immutable
 class ArgKeys extends SpecialArg {
-
   final List<ProgramOperation> keys;
 
   const ArgKeys(this.keys, int opcodeOffset) : super(opcodeOffset);
@@ -795,7 +792,8 @@ class ArgKeys extends SpecialArg {
   String toString() => '${super.toString()} : $keys, $opcodeOffset';
 
   @override
-  bool matches(ProgramOperation key, int pos, bool userMode) => key == keys[pos];
+  bool matches(ProgramOperation key, int pos, bool userMode) =>
+      key == keys[pos];
 
   @override
   bool done(int pos) => pos >= keys.length - 1;
@@ -869,7 +867,7 @@ class ArgKeyF extends ArgKey {
   final void Function(Model, int) f;
 
   const ArgKeyF(ProgramOperation key, int opcodeOffset, this.f)
-  : super(key, opcodeOffset);
+      : super(key, opcodeOffset);
 
   @override
   bool calculate(Model m) {
@@ -1041,7 +1039,8 @@ class OperationMap<OT extends ProgramOperation> {
         if (sa != null) {
           int lastValue = -1;
           for (final SpecialArg a in sa) {
-            assert(a.opcodeOffset > lastValue, '$op ${a.lastKey} ${a.opcodeOffset}');
+            assert(a.opcodeOffset > lastValue,
+                '$op ${a.lastKey} ${a.opcodeOffset}');
             lastValue = a.opcodeOffset;
             final numNormalOpCodes = op.maxArg + 1 - op.numExtendedOpCodes;
             int x;

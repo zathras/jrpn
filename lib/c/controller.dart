@@ -676,14 +676,15 @@ class NormalArgOperation extends Operation {
 }
 
 class NonProgrammableOperation extends Operation {
-
   @override
   void Function(Model<ProgramOperation> m)? floatCalc;
 
   final void Function(LimitedState) _pressed;
 
   NonProgrammableOperation(
-      {required String name, this.floatCalc, required void Function(LimitedState) pressed})
+      {required String name,
+      this.floatCalc,
+      required void Function(LimitedState) pressed})
       : _pressed = pressed,
         super(name: name);
 

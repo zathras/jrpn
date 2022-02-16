@@ -166,31 +166,32 @@ class RegisterReadArg extends ArgAlternates {
 
   RegisterReadArg({required int numDigits, required this.f})
       : super(synonyms: Arg.registerISynonyms, children: [
-    DigitArg(max: numDigits, calc: (m, i) => f(m, m.memory.registers[i])),
-    KeyArg(
-        key: Arg.kI,
-        child: ArgDone((m) => f(m, m.memory.registers.index))),
-    KeyArg(
-        key: Arg.kParenI,
-        child: ArgDone((m) => f(m, m.memory.registers.indirectIndex)))
-  ]);
+          DigitArg(max: numDigits, calc: (m, i) => f(m, m.memory.registers[i])),
+          KeyArg(
+              key: Arg.kI,
+              child: ArgDone((m) => f(m, m.memory.registers.index))),
+          KeyArg(
+              key: Arg.kParenI,
+              child: ArgDone((m) => f(m, m.memory.registers.indirectIndex)))
+        ]);
 }
 
 class LabelArg extends ArgAlternates {
   final void Function(Model m, int? v) f;
 
-  static int? _translate(Model m, Value v) =>
-    m.signMode.valueToLabel(v, m);
+  static int? _translate(Model m, Value v) => m.signMode.valueToLabel(v, m);
 
   LabelArg({required int numDigits, required this.f, bool indirect = false})
       : super(synonyms: Arg.registerISynonyms, children: [
           DigitArg(max: numDigits, calc: (m, i) => f(m, i)),
           KeyArg(
               key: Arg.kI,
-              child: ArgDone((m) => f(m, _translate(m, m.memory.registers.index)))),
+              child: ArgDone(
+                  (m) => f(m, _translate(m, m.memory.registers.index)))),
           KeyArg(
               key: Arg.kParenI,
-              child: ArgDone((m) => f(m, _translate(m, m.memory.registers.indirectIndex))))
+              child: ArgDone(
+                  (m) => f(m, _translate(m, m.memory.registers.indirectIndex))))
         ]);
 }
 
