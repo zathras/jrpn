@@ -42,6 +42,12 @@ abstract class SignMode {
   Value increment(NumStatus m, Value valueI, int by);
 
   int compare(NumStatus m, Value x, Value y);
+
+  ///
+  /// Translate value to an int that could be a label, without any range
+  /// checks to see if it's a valid label.  Always returns a non-negative int.
+  ///
+  int valueToLabel(Value v, Model m);
 }
 
 abstract class IntegerSignMode extends SignMode {
@@ -110,6 +116,18 @@ abstract class IntegerSignMode extends SignMode {
   @override
   Value increment(NumStatus m, Value valueI, int by) =>
       fromBigInt(toBigInt(valueI, m) + BigInt.from(by), m);
+
+  static final BigInt _tooBig = BigInt.from(1000);
+
+  @override
+  int valueToLabel(Value v, Model m) {
+    final bigLabel = toBigInt(v, m).abs();
+    if (bigLabel > _tooBig) {
+      return 1000;    // Avoid overflow
+    } else {
+      return bigLabel.toInt();
+    }
+  }
 }
 
 class _OnesComplement extends IntegerSignMode {
@@ -372,5 +390,15 @@ class _Float extends SignMode {
     final fx = x.asDouble;
     final fy = y.asDouble;
     return fx.compareTo(fy);
+  }
+
+  @override
+  int valueToLabel(Value v, Model<ProgramOperation> m) {
+    final bigLabel = v.asDouble.abs();
+    if (bigLabel > 1000) {
+      return 1000;    // avoid overflow
+    } else {
+      return bigLabel.floor();
+    }
   }
 }

@@ -42,6 +42,7 @@ Future<void> main() async {
   test('last x', lastX);
   test('no scroll reset', noScrollReset);
   test('JSON format / opcodes', opcodeTest16C);
+  test('negative gosub', testNegativeGosub);
   appendixA();
   test('Towers of Hanoi', towersOfHanoi);
   // Do this last, because it leaves a timer pending:
@@ -387,4 +388,35 @@ Future<void> testStackLift() async {
     expect(m.yF, 42.0);
     expect(m.z, Value.zero);
   }
+}
+
+Future<void> testNegativeGosub() async {
+  final tc = TestCalculator();
+  final c = tc.controller;
+  final m = tc.model;
+  final out = StreamIterator<ProgramEvent>(tc.output.stream);
+  enter(c, Operations.pr);
+  enter(c, Operations16.lbl);
+  enter(c, Operations16.letterB);
+  enter(c, Operations.n4);
+  enter(c, Operations.n2);
+  enter(c, Operations.rtn);
+  enter(c, Operations.pr);
+  enter(c, Operations16.twosCompl);
+  m.xI = BigInt.from(-0xc);
+  enter(c, Operations16.sto);
+  enter(c, Operations16.I);
+  enter(c, Operations16.gsb);
+  enter(c, Operations16.I);
+  expect(m.display.current.trim(), 'error 4');
+  enter(c, Operations.enter);
+  m.xI = BigInt.from(-0xb);
+  enter(c, Operations.enter);
+  enter(c, Operations16.sto);
+  enter(c, Operations16.I);
+  enter(c, Operations16.gsb);
+  enter(c, Operations16.I);
+  await out.moveNext();
+  expect(out.current, ProgramEvent.done);
+  expect(m.xI, BigInt.from(0x42));
 }

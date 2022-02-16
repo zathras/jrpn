@@ -209,35 +209,13 @@ class ProgramMemory16 extends ProgramMemory<Operation> {
       OperationMap<Operation> layout, int returnStackSize, this._lbl)
       : super(memory, registerStorage, layout, returnStackSize);
 
-  static final BigInt _fifteen = BigInt.from(15);
-
   @override
   void goto(int label) {
-    gotoOpCode(_lbl.opCode + label);
-  }
-
-  @override
-  int valueToLabel(Value v) {
-    int label;
-    if (memory.model.isFloatMode) {
-      double fv = v.asDouble;
-      if (fv < 0 || fv >= 16) {
-        throw CalculatorError(4);
-      }
-      label = fv.floor();
-      if (label > 16 || label < 0) {
-        // This should be impossible, but I'm not 100% certain of double
-        // semantics, e.g. on JavaScript.
-        throw CalculatorError(4);
-      }
+    if (label < 0 || label >= 16) {
+      throw CalculatorError(4);
     } else {
-      BigInt iv = v.internal;
-      if (iv < BigInt.zero || iv > _fifteen) {
-        throw CalculatorError(4);
-      }
-      label = iv.toInt();
+      gotoOpCode(_lbl.opCode + label);
     }
-    return label;
   }
 }
 
@@ -499,9 +477,9 @@ class Operations16 extends Operations {
   };
 
   static int _translateI(Model model) =>
-      model.memory.program.valueToLabel(model.memory.registers.index);
+      model.signMode.valueToLabel(model.memory.registers.index, model);
   static int _translateParenI(Model model) =>
-      model.memory.program.valueToLabel(model.memory.registers.indirectIndex);
+      model.signMode.valueToLabel(model.memory.registers.indirectIndex, model);
 
   static final NormalArgOperation gsb = NormalArgOperation(
       arg: GosubOperationArg.both(

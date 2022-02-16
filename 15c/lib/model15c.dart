@@ -292,11 +292,9 @@ class ProgramMemory15<OT extends ProgramOperation> extends ProgramMemory<OT> {
 
   @override
   void goto(int label) {
-    throw "@@ TODO";
-  }
-
-  @override
-  int valueToLabel(Value v) {
+    if (label < 0 || label >= 20) {
+      throw CalculatorError(4);
+    }
     throw "@@ TODO";
   }
 }

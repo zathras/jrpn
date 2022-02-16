@@ -586,8 +586,6 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
 
   void goto(int label);
 
-  int valueToLabel(Value v);
-
   @protected
   void gotoOpCode(int wanted) {
     // We might be at the label, so we start at 0.  Also, remember that
