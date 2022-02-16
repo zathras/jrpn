@@ -427,7 +427,7 @@ class Operations15 extends Operations {
       arg: OperationArg.both(
           desc: ArgDescription15CNoI(
               special: _justLettersMap,
-              synonyms: ArgDescription15C.matrixSynonyms),
+              synonyms: ArgDescription15C.letterSynonyms),
           calc: (Model m, int arg) {
             (m as Model15).resultMatrix = arg;
           }),
@@ -586,18 +586,8 @@ class Operations15 extends Operations {
       numExtendedOpCodes: 5, // The user shifted ones
       arg: OperationArg.both(
           desc: const ArgDescription15CSto(),
-          calc: (Model m, int arg) {
-            if (arg == ArgDescription15CSto.resultKey) {
-              final matrix = m.x.asMatrix;
-              if (matrix == null) {
-                throw CalculatorError(11);
-              } else {
-                (m as Model15).resultMatrix = matrix;
-              }
-            } else {
-              m.memory.registers[arg] = m.x;
-            }
-          }),
+          calc: (Model m, int arg) =>
+              ArgDescription15CSto.calculate(m as Model15, arg)),
       name: 'STO');
 
   static final NormalArgOperation rcl15 = NormalArgOperation(
@@ -612,7 +602,7 @@ class Operations15 extends Operations {
               final mat = arg - ArgDescription15CSto.matrixStart;
               if (mat >= 0) {
                 if (mat >= 5) {
-                  throw '@@ TODO:  Store to matrix ${mat - 5}';
+                  throw '@@ TODO:  recall from matrix ${mat - 5}';
                   // @@ And, when pressed, display name of matrix, as per 144
                   // @@ And handle user mode
                   // @@ And handle STO +|-|*|/
@@ -1142,6 +1132,7 @@ abstract class ArgDescription15C extends ArgDescription {
 
   static final matrixSynonyms = {
     Operations.chs: Operations15.matrix,
+    Operations.eex: Operations15.resultOp,
     ...letterSynonyms
   };
 }
@@ -1211,34 +1202,107 @@ class ArgDescription15CSto extends ArgDescription15C {
   @override
   List<SpecialArg> get special => _special;
 
+  static void _storeToMatrix(Model m, bool increment, int matrix) {
+    throw "@@ TODO";
+  }
+
+  static void _storeMatrix(Model m, int matrix) {
+    throw "@@ TODO";
+  }
+
+  static final _args =
+      ArgAlternates(synonyms: ArgDescription15C.matrixSynonyms, children: [
+    RegisterReadArg(numDigits: 20, f: (m, v) => m.x = v),
+    KeyArg(
+        key: Operations15.resultOp,
+        child: ArgDone((m) {
+          final matrix = (m as Model15).x.asMatrix;
+          if (matrix == null) {
+            throw CalculatorError(11);
+          } else {
+            m.resultMatrix = matrix;
+          }
+        })),
+    UserArg(
+        userMode: false,
+        child: KeysArg(
+            keys: _letterLabels,
+            generator: (i) => ArgDone((m) => _storeToMatrix(m, false, i)))),
+    UserArg(
+        userMode: true,
+        child: KeysArg(
+            keys: _letterLabels,
+            generator: (i) => ArgDone((m) => _storeToMatrix(m, true, i)))),
+    KeyArg(
+        key: Operations15.matrix,
+        child: KeysArg(
+            keys: _letterLabels,
+            generator: (i) => ArgDone((m) => _storeMatrix(m, i)))),
+    KeyArg(
+        key: Operations.plus,
+        child: RegisterOpArg(numDigits: 20, f: (double r, double x) => r + x)),
+    KeyArg(
+        key: Operations.minus,
+        child: RegisterOpArg(numDigits: 20, f: (double r, double x) => r - x)),
+    KeyArg(
+        key: Operations.mult,
+        child: RegisterOpArg(numDigits: 20, f: (double r, double x) => r * x)),
+    KeyArg(
+        key: Operations.div,
+        child: RegisterOpArg(numDigits: 20, f: (double r, double x) => r / x))
+  ]);
+
   static final _special = [
-    ArgKey(Operations.eex, 20),
-    ArgKey(Operations15.I15, 21),
-    ArgKey(Operations15.parenI15, 22),
-    ArgKeys([Operations15.matrix, Operations15.letterLabelA], 23),
-    ArgKeys([Operations15.matrix, Operations15.letterLabelB], 24),
-    ArgKeys([Operations15.matrix, Operations15.letterLabelC], 25),
-    ArgKeys([Operations15.matrix, Operations15.letterLabelD], 26),
-    ArgKeys([Operations15.matrix, Operations15.letterLabelE], 27),
-    ArgKeyUser(Operations15.letterLabelA, false, 28),
-    ArgKeyUser(Operations15.letterLabelB, false, 29),
-    ArgKeyUser(Operations15.letterLabelC, false, 30),
-    ArgKeyUser(Operations15.letterLabelD, false, 31),
-    ArgKeyUser(Operations15.letterLabelE, false, 32),
-    ArgKey(Operations.plus, 33),
-    ArgKey(Operations.minus, 34),
-    ArgKey(Operations.mult, 35),
-    ArgKey(Operations.div, 36),
-    ArgKeyUser(Operations15.letterLabelA, true, 37),
-    ArgKeyUser(Operations15.letterLabelB, true, 38),
-    ArgKeyUser(Operations15.letterLabelC, true, 39),
-    ArgKeyUser(Operations15.letterLabelD, true, 40),
-    ArgKeyUser(Operations15.letterLabelE, true, 41)
+    ArgKeyF(Operations15.resultOp, 20, (Model m, int _) {
+      final matrix = (m as Model15).x.asMatrix;
+      if (matrix == null) {
+        throw CalculatorError(11);
+      } else {
+        m.resultMatrix = matrix;
+      }
+    }),
+    ArgKeyStoreI(Operations15.I15, 21),
+    ArgKeyStoreParenI(Operations15.parenI15, 22),
+    ArgStoreMatrix(Operations15.letterLabelA, false, 0, 23),
+    ArgStoreMatrix(Operations15.letterLabelB, false, 1, 24),
+    ArgStoreMatrix(Operations15.letterLabelC, false, 2, 25),
+    ArgStoreMatrix(Operations15.letterLabelD, false, 3, 26),
+    ArgStoreMatrix(Operations15.letterLabelE, false, 4, 27),
+    ArgKey(Operations.plus, 28), // @@ TODO
+    ArgKey(Operations.minus, 29),
+    ArgKey(Operations.mult, 30),
+    ArgKey(Operations.div, 31),
+    ArgStoreMatrix(Operations15.letterLabelA, true, 0, 32),
+    ArgStoreMatrix(Operations15.letterLabelB, true, 1, 33),
+    ArgStoreMatrix(Operations15.letterLabelC, true, 2, 34),
+    ArgStoreMatrix(Operations15.letterLabelD, true, 3, 35),
+    ArgStoreMatrix(Operations15.letterLabelE, true, 4, 36)
+    // @@ TODO:  "STO MATRIX A" copies elements of X matrix into A
   ];
 
   @override
   Map<ProgramOperation, ProgramOperation> get synonyms =>
       ArgDescription15C.matrixSynonyms;
+
+  static void calculate(Model15 model, int arg) {
+    model.memory.registers[arg] = model.x;
+    // @@ TODO:  Finish this
+  }
+}
+
+@immutable
+class ArgStoreMatrix extends ArgKeyUser {
+  final int matrixNumber;
+
+  ArgStoreMatrix(
+      ProgramOperation key, bool userMode, this.matrixNumber, int opcodeOffset)
+      : super(key, userMode, opcodeOffset);
+
+  @override
+  bool calculate(Model m) {
+    throw "@@ TODO";
+    return true;
+  }
 }
 
 @immutable
@@ -1255,9 +1319,7 @@ class ArgDescription15CJustI extends ArgDescription {
   @override
   int get numericOffset => 1;
 
-  static final _special = [
-    ArgKey(Operations15.I15, 0)
-  ];
+  static final _special = [ArgKey(Operations15.I15, 0)];
 
   static final _synonyms = {Operations15.tan: Operations15.I15};
 

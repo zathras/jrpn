@@ -866,6 +866,20 @@ class ArgKeyReadParenI extends ArgKey {
   }
 }
 
+@immutable
+class ArgKeyF extends ArgKey {
+  final void Function(Model, int) f;
+
+  const ArgKeyF(ProgramOperation key, int opcodeOffset, this.f)
+  : super(key, opcodeOffset);
+
+  @override
+  bool calculate(Model m) {
+    f(m, opcodeOffset);
+    return true;
+  }
+}
+
 ///
 /// The model's view of a key on the keyboard.  The model needs to know where
 /// [ProgramOperation]s are on the portrait layout of the keyboard, because
