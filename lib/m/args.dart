@@ -19,16 +19,39 @@ this program; if not, see https://www.gnu.org/licenses/ .
 */
 part of 'model.dart';
 
+typedef OpInitFunction = void Function(ArgDone resolved,
+    {required ProgramOperation? shift,
+    required bool argDot,
+    required ProgramOperation? arg,
+    required bool userMode});
+
 abstract class Arg {
   static late final List<ProgramOperation> kDigits;
   static late final ProgramOperation kI;
   static late final ProgramOperation kParenI;
   static late final ProgramOperation kDot;
+  static late final ProgramOperation fShift;
+  static late final ProgramOperation gShift;
   static late final Map<ProgramOperation, ProgramOperation> registerISynonyms;
+
+  static bool assertStaticInitialized() {
+    // Assert that these values are initialized, by using them in a logical
+    // expression.  The expression itself is pretty meaningless.
+    assert(kDigits[0] != kI &&
+        kParenI != kDot &&
+        fShift != gShift &&
+        registerISynonyms[kI] == null);
+    return true;
+  }
 
   Arg? matches(ProgramOperation key, bool userMode);
 
-  void assignOpcodes(Model m, void Function(ArgDone resolved) f);
+  void init(int registerBase,
+      {required OpInitFunction f,
+      required ProgramOperation? shift,
+      required bool argDot,
+      required ProgramOperation? arg,
+      required bool userMode});
 }
 
 class DigitArg extends Arg {
@@ -55,19 +78,41 @@ class DigitArg extends Arg {
   }
 
   @override
-  void assignOpcodes(Model m, void Function(ArgDone resolved) f) {
-    final int base = m.registerNumberBase;
-    _next = List.generate(min(max + 1, base), (i) {
+  void init(int registerBase,
+      {required OpInitFunction f,
+      required ProgramOperation? shift,
+      required bool argDot,
+      required ProgramOperation? arg,
+      required bool userMode}) {
+    if (arg != null) {
+      // Move arg over to shift, e.g. for STO + 7
+      assert(shift == null);
+      shift = arg;
+      arg = null;
+    }
+    _next = List.generate(min(max + 1, registerBase), (i) {
       final a = ArgDone((m) => calc(m, i)); // Function currying, baby
-      a.assignOpcodes(m, f);
+      a.init(registerBase,
+          f: f,
+          shift: shift,
+          argDot: argDot,
+          arg: Arg.kDigits[i],
+          userMode: userMode);
       return a;
     }, growable: false);
-    if (max < base) {
+    if (max < registerBase) {
       _nextOnDot = null;
     } else {
-      _nextOnDot = KeyArg(
+      assert(!argDot, 'max: $max');
+      final ka = _nextOnDot = KeyArg(
           key: Arg.kDot,
-          child: DigitArg(max: max - base, calc: (m, i) => calc(m, i + base)));
+          child: DigitArg(
+              max: max - registerBase,
+              calc: (m, i) => calc(m, i + registerBase)));
+      // Skip over ka, straight to its child:
+      ka.child.init(registerBase,
+          f: f, shift: shift, argDot: true, arg: arg, userMode: userMode);
+      // argName: '.', userMode: userMode));
     }
   }
 }
@@ -87,8 +132,22 @@ class KeyArg extends Arg {
   }
 
   @override
-  void assignOpcodes(Model m, void Function(ArgDone resolved) f) =>
-      child.assignOpcodes(m, f);
+  void init(int registerBase,
+      {required OpInitFunction f,
+      required ProgramOperation? shift,
+      required bool argDot,
+      required ProgramOperation? arg,
+      required bool userMode}) {
+    if (arg != null) {
+      // Move arg over to shift, e.g. for STO + (i)
+      assert(shift == null);
+      shift = arg;
+      arg = null;
+    }
+    assert(!argDot);
+    child.init(registerBase,
+        f: f, shift: shift, arg: key, argDot: argDot, userMode: userMode);
+  }
 }
 
 class KeysArg extends Arg {
@@ -111,10 +170,29 @@ class KeysArg extends Arg {
   }
 
   @override
-  void assignOpcodes(Model m, void Function(ArgDone resolved) f) {
+  void init(int registerBase,
+      {required OpInitFunction f,
+      required ProgramOperation? shift,
+      required bool argDot,
+      required ProgramOperation? arg,
+      required bool userMode}) {
+    if (arg != null) {
+      // Move arg over to shift, e.g. for STO MATRIX A
+      assert(shift == null);
+      shift = arg;
+      arg = null;
+    }
+    assert(!argDot);
+    final nextKey = keys.iterator;
     _next = List.generate(keys.length, (i) {
-      final a = generator(i);
-      a.assignOpcodes(m, f);
+      nextKey.moveNext();
+      final Arg a = generator(i);
+      a.init(registerBase,
+          f: f,
+          shift: shift,
+          argDot: argDot,
+          arg: nextKey.current,
+          userMode: userMode);
       return a;
     });
   }
@@ -128,6 +206,7 @@ class ArgAlternates extends Arg {
 
   @override
   Arg? matches(ProgramOperation key, bool userMode) {
+    key = synonyms[key] ?? key;
     for (final a in children) {
       final r = a.matches(key, userMode);
       if (r != null) {
@@ -138,9 +217,15 @@ class ArgAlternates extends Arg {
   }
 
   @override
-  void assignOpcodes(Model m, void Function(ArgDone resolved) f) {
+  void init(int registerBase,
+      {required OpInitFunction f,
+      required ProgramOperation? shift,
+      required bool argDot,
+      required ProgramOperation? arg,
+      required bool userMode}) {
     for (final a in children) {
-      a.assignOpcodes(m, f);
+      a.init(registerBase,
+          f: f, shift: shift, argDot: argDot, arg: arg, userMode: userMode);
     }
   }
 }
@@ -148,71 +233,142 @@ class ArgAlternates extends Arg {
 class RegisterWriteArg extends ArgAlternates {
   final Value Function(Model m) f;
 
-  RegisterWriteArg({required int numDigits, required this.f})
+  RegisterWriteArg(
+      {required int maxDigit, required this.f, bool noParenI = false})
       : super(synonyms: Arg.registerISynonyms, children: [
-          DigitArg(
-              max: numDigits, calc: (m, i) => m.memory.registers[i] = f(m)),
+          DigitArg(max: maxDigit, calc: (m, i) => m.memory.registers[i] = f(m)),
+          ...(noParenI
+              ? const []
+              : [
+                  KeyArg(
+                      key: Arg.kParenI,
+                      child: ArgDone(
+                          (m) => m.memory.registers.indirectIndex = f(m))),
+                ]),
           KeyArg(
               key: Arg.kI,
               child: ArgDone((m) => m.memory.registers.index = f(m))),
-          KeyArg(
-              key: Arg.kParenI,
-              child: ArgDone((m) => m.memory.registers.indirectIndex = f(m)))
         ]);
 }
 
 class RegisterReadArg extends ArgAlternates {
   final void Function(Model m, Value v) f;
 
-  RegisterReadArg({required int numDigits, required this.f})
+  RegisterReadArg(
+      {required int maxDigit, required this.f, bool noParenI = false})
       : super(synonyms: Arg.registerISynonyms, children: [
-          DigitArg(max: numDigits, calc: (m, i) => f(m, m.memory.registers[i])),
+          DigitArg(max: maxDigit, calc: (m, i) => f(m, m.memory.registers[i])),
+          ...(noParenI
+              ? const []
+              : [
+                  KeyArg(
+                      key: Arg.kParenI,
+                      child: ArgDone(
+                          (m) => f(m, m.memory.registers.indirectIndex))),
+                ]),
           KeyArg(
               key: Arg.kI,
               child: ArgDone((m) => f(m, m.memory.registers.index))),
-          KeyArg(
-              key: Arg.kParenI,
-              child: ArgDone((m) => f(m, m.memory.registers.indirectIndex)))
         ]);
 }
 
 class LabelArg extends ArgAlternates {
-  final void Function(Model m, int? v) f;
-
   static int? _translate(Model m, Value v) => m.signMode.valueToLabel(v, m);
 
-  LabelArg({required int numDigits, required this.f, bool indirect = false})
+  LabelArg(
+      {required int maxDigit,
+      List<ProgramOperation> letters = const [],
+      required void Function(Model m, int? v) f,
+      bool indirect = false,
+      bool iFirst = false})
+      : super(
+            synonyms: Arg.registerISynonyms,
+            children: _makeChildren(maxDigit, indirect, iFirst, letters, f));
+
+  static List<Arg> _makeChildren(int maxDigit, bool indirect, bool iFirst,
+      List<ProgramOperation> letters, void Function(Model, int? v) f) {
+    final List<Arg> iList = List.empty(growable: true);
+    if (indirect) {
+      iList.add(KeyArg(
+          key: Arg.kParenI,
+          child: ArgDone(
+              (m) => f(m, _translate(m, m.memory.registers.indirectIndex)))));
+    }
+    iList.add(KeyArg(
+        key: Arg.kI,
+        child: ArgDone((m) => f(m, _translate(m, m.memory.registers.index)))));
+    // Note that (i) comes before I on the 16C keyboard, so I originally
+    // did the opcodes in that order.  On the 15C, I has to come first, so it's
+    // a one-byte opcode; on the 16C, I initially did it in the other order.
+
+    return [
+      ...(iFirst ? iList : const []),
+      DigitArg(max: maxDigit, calc: (m, i) => f(m, i)),
+      ...letters.map((ProgramOperation letter) =>
+          ArgDone((m) => f(m, letter.numericValue!))),
+      ...(iFirst ? const [] : iList)
+    ];
+  }
+}
+
+///
+/// The argument to the 15C's FIX, SCI and ENG keys
+///
+class PrecisionArg extends ArgAlternates {
+  final void Function(Model m, int v) f;
+
+  static int _translate(Model m, Value v) => min(9, max(0, m.xF)).floor();
+
+  PrecisionArg({required this.f})
       : super(synonyms: Arg.registerISynonyms, children: [
-          DigitArg(max: numDigits, calc: (m, i) => f(m, i)),
+          DigitArg(max: 9, calc: (m, i) => f(m, i)),
           KeyArg(
               key: Arg.kI,
               child: ArgDone(
                   (m) => f(m, _translate(m, m.memory.registers.index)))),
-          KeyArg(
-              key: Arg.kParenI,
-              child: ArgDone(
-                  (m) => f(m, _translate(m, m.memory.registers.indirectIndex))))
         ]);
 }
 
-class RegisterOpArg extends ArgAlternates {
+class RegisterReadOpArg extends ArgAlternates {
   final double Function(double, double) f;
 
-  RegisterOpArg({required int numDigits, required this.f})
+  RegisterReadOpArg({required int maxDigit, required this.f})
       : super(synonyms: Arg.registerISynonyms, children: [
-          DigitArg(
-              max: numDigits,
-              calc: (m, i) => m.memory.registers[i] =
-                  Value.fromDouble(f(m.memory.registers[i].asDouble, m.xF))),
+          KeyArg(
+              key: Arg.kParenI,
+              child: ArgDone((m) => m.resultXF =
+                  f(m.xF, m.memory.registers.indirectIndex.asDouble))),
           KeyArg(
               key: Arg.kI,
-              child: ArgDone((m) => m.memory.registers.index = Value.fromDouble(
-                  f(m.memory.registers.index.asDouble, m.xF)))),
+              child: ArgDone((m) =>
+                  m.resultXF = f(m.xF, m.memory.registers.index.asDouble))),
+          DigitArg(
+              max: maxDigit,
+              calc: (m, i) =>
+                  m.resultXF = f(m.xF, m.memory.registers[i].asDouble)),
+        ]);
+  // Note that (i) comes before I on the 16C keyboard, so I originally
+  // did the opcodes in that order.
+}
+
+class RegisterWriteOpArg extends ArgAlternates {
+  final double Function(double, double) f;
+
+  RegisterWriteOpArg({required int maxDigit, required this.f})
+      : super(synonyms: Arg.registerISynonyms, children: [
           KeyArg(
               key: Arg.kParenI,
               child: ArgDone((m) => m.memory.registers.indirectIndex =
                   Value.fromDouble(
-                      f(m.memory.registers.indirectIndex.asDouble, m.xF))))
+                      f(m.memory.registers.indirectIndex.asDouble, m.xF)))),
+          KeyArg(
+              key: Arg.kI,
+              child: ArgDone((m) => m.memory.registers.index = Value.fromDouble(
+                  f(m.memory.registers.index.asDouble, m.xF)))),
+          DigitArg(
+              max: maxDigit,
+              calc: (m, i) => m.memory.registers[i] =
+                  Value.fromDouble(f(m.memory.registers[i].asDouble, m.xF))),
         ]);
 }
 
@@ -232,21 +388,39 @@ class UserArg extends Arg {
   }
 
   @override
-  void assignOpcodes(Model m, void Function(ArgDone resolved) f) =>
-      child.assignOpcodes(m, f);
+  void init(int registerBase,
+      {required OpInitFunction f,
+      required ProgramOperation? shift,
+      required bool argDot,
+      required ProgramOperation? arg,
+      required bool userMode}) {
+    assert(!argDot);
+    child.init(registerBase,
+        f: f, shift: shift, argDot: argDot, arg: arg, userMode: this.userMode);
+  }
 }
 
 class ArgDone extends Arg {
-  late final String programDisplay; // @@ TODO
+  late final int opcode;
+  late final String programDisplay;
+  late final String programListing;
 
-  late final String programListing; // @@ TODO
+  final void Function(Model) _calculate;
 
-  final void Function(Model) calculate;
+  ArgDone(this._calculate);
 
-  ArgDone(this.calculate);
+  void Function(Model)? getCalculation<T extends ProgramOperation>(
+          Model m, DisplayModeSelector<void Function(Model)?, T> selector) =>
+      _calculate;
 
   @override
-  void assignOpcodes(Model m, void Function(ArgDone resolved) f) => f(this);
+  void init(int registerBase,
+          {required OpInitFunction f,
+          required ProgramOperation? shift,
+          required bool argDot,
+          required ProgramOperation? arg,
+          required bool userMode}) =>
+      f(this, shift: shift, argDot: argDot, arg: arg, userMode: userMode);
 
   @override
   Arg? matches(ProgramOperation key, bool userMode) => null;

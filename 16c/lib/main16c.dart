@@ -33,7 +33,26 @@ import 'package:jrpn/v/main_screen.dart';
 import 'back_panel16c.dart';
 import 'tests16c.dart';
 
-void main() async => genericMain(Jrpn(Controller16(Model16())));
+void main() async {
+  runStaticInitialization16();
+  genericMain(Jrpn(Controller16(Model16())));
+}
+
+void runStaticInitialization16() {
+  // None of these operations has an argument, so there is no circular
+  // initialization here.
+  Arg.kI = Operations16.I;
+  Arg.kParenI = Operations16.parenI;
+  Arg.kDigits = Controller16.numbers;
+  Arg.kDot = Operations.dot;
+  Arg.fShift = Operations.fShift;
+  Arg.gShift = Operations.gShift;
+  Arg.registerISynonyms = {
+    Operations.sst: Operations16.I,
+    Operations.rs: Operations16.parenI
+  };
+  assert(Arg.assertStaticInitialized());
+}
 
 class Model16 extends Model<Operation> {
   Model16() : super(DisplayMode.hex, 16, 6);
@@ -115,8 +134,8 @@ class Model16 extends Model<Operation> {
 
   @override
   ProgramInstruction<Operation> newProgramInstruction(
-          Operation operation, int argValue, SpecialArg? special) =>
-      ProgramInstruction16(operation, argValue, special);
+          Operation operation, ArgDone arg) =>
+      ProgramInstruction16(operation, arg);
 
   @override
   int get returnStackSize => 4;
@@ -197,16 +216,16 @@ class Memory16 extends Memory<Operation> {
       : super(memoryNybbles: memoryNybbles);
 
   @override
-  void initializeSystem(OperationMap<Operation> layout, Operation lbl) =>
-      program =
-          ProgramMemory16(this, storage, layout, model.returnStackSize, lbl);
+  void initializeSystem(OperationMap<Operation> layout, int lblOpcode) =>
+      program = ProgramMemory16(
+          this, storage, layout, model.returnStackSize, lblOpcode);
 }
 
 class ProgramMemory16 extends ProgramMemory<Operation> {
-  final Operation _lbl;
+  final int _lblOpcode;
 
   ProgramMemory16(Memory16 memory, ByteData registerStorage,
-      OperationMap<Operation> layout, int returnStackSize, this._lbl)
+      OperationMap<Operation> layout, int returnStackSize, this._lblOpcode)
       : super(memory, registerStorage, layout, returnStackSize);
 
   @override
@@ -214,7 +233,7 @@ class ProgramMemory16 extends ProgramMemory<Operation> {
     if (label < 0 || label >= 16) {
       throw CalculatorError(4);
     } else {
-      gotoOpCode(_lbl.opCode + label);
+      gotoOpCode(_lblOpcode + label);
     }
   }
 }
@@ -248,32 +267,14 @@ class Operations16 extends Operations {
       name: 'BIN');
 
   static final NormalArgOperation sto = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: ArgDescription16C(
-              numericArgs: 32,
-              synonyms: _indexSynonyms,
-              special: [
-                ArgKeyStoreParenI(Operations16.parenI, 32),
-                ArgKeyStoreI(Operations16.I, 33)
-              ]),
-          calc: (Model m, int arg) => m.memory.registers[arg] = m.x),
-      name: 'STO');
+      arg: RegisterWriteArg(maxDigit: 31, f: (m) => m.x), name: 'STO');
 
-  static void _recall(Value v, Model m) {
-    m.x = v;
-  }
-
-  static final NormalArgOperation rcl = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: ArgDescription16C(
-              numericArgs: 32,
-              synonyms: _indexSynonyms,
-              special: [
-                ArgKeyReadParenI(Operations16.parenI, 32, _recall),
-                ArgKeyReadI(Operations16.I, 33, _recall)
-              ]),
-          pressed: (ActiveState s) => s.liftStackIfEnabled(),
-          calc: (Model m, int arg) => m.x = m.memory.registers[arg]),
+  static final NormalArgOperation rcl = NormalArgOperationWithBeforeCalc(
+      beforeCalculate: (Resting s) {
+        s.liftStackIfEnabled();
+        return StackLift.neutral;
+      },
+      arg: RegisterReadArg(maxDigit: 31, f: (m, v) => m.x = v),
       name: 'RCL');
 
   static final NormalOperation sl = NormalOperation.intOnly(
@@ -338,24 +339,28 @@ class Operations16 extends Operations {
       calc: null,
       pressed: (ActiveState cs) => cs.handleShow(DisplayMode.hex),
       stackLift: StackLift.neutral,
+      endsDigitEntry: false, // Not in float moad
       name: 'SHOW HEX');
 
   static final NormalOperation showDec = NormalOperation(
       calc: null,
       pressed: (ActiveState cs) => cs.handleShow(DisplayMode.decimal),
       stackLift: StackLift.neutral,
+      endsDigitEntry: false, // Not in float moad
       name: 'SHOW DEC');
 
   static final NormalOperation showOct = NormalOperation(
       calc: null,
       pressed: (ActiveState cs) => cs.handleShow(DisplayMode.oct),
       stackLift: StackLift.neutral,
+      endsDigitEntry: false, // Not in float moad
       name: 'SHOW OCT');
 
   static final NormalOperation showBin = NormalOperation(
       calc: null,
       pressed: (ActiveState cs) => cs.handleShow(DisplayMode.bin),
       stackLift: StackLift.neutral,
+      endsDigitEntry: false, // Not in float moad
       name: 'SHOW BIN');
 
   static final NormalOperation sb = NormalOperation.intOnly(
@@ -408,9 +413,13 @@ class Operations16 extends Operations {
       name: 'I');
 
   static final NormalArgOperation window = NormalArgOperation(
-      arg: OperationArg.intOnly(
-          desc: ArgDescription16C(numericArgs: 8),
-          intCalc: (Model m, int arg) => m.display.window = arg * 8),
+      arg: DigitArg(
+          max: 7,
+          calc: (m, i) {
+            if (!m.isFloatMode) {
+              m.display.window = i * 8;
+            }
+          }),
       stackLift: StackLift.neutral,
       name: 'WINDOW');
 
@@ -443,73 +452,74 @@ class Operations16 extends Operations {
       name: 'WSIZE');
 
   /// The 16C's float key
-  static final NormalArgOperation floatKey = NormalArgOperation(
+  static void _setFloat(Model m, int digits) {
+    m.floatOverflow = false;
+    m.displayMode = DisplayMode.float(digits);
+  }
+
+  static final NormalArgOperation floatKey = NormalArgOperationWithBeforeCalc(
       stackLift: StackLift.neutral, // But see also FloatKeyArg.onArgComplete()
-      arg: FloatKeyArg(
-          desc: ArgDescription16C(
-              numericArgs: 10, special: [ArgKey(Operations.dot, 10)]),
-          calc: (Model m, int arg) {
-            m.floatOverflow = false;
-            m.displayMode = DisplayMode.float(arg);
-          }),
+      beforeCalculate: (state) {
+        if (!state.model.isFloatMode) {
+          return StackLift.enable;
+          // See page 100:  Stack lift is enabled when we go from int mode to
+          // float mode, but not when we stay in float mode.  So: CLX,
+          // FLOAT 2, 7 will not lift stack.
+        } else {
+          return StackLift.neutral;
+        }
+      },
+      arg: ArgAlternates(children: [
+        DigitArg(max: 9, calc: (m, i) => _setFloat(m, i)),
+        KeyArg(key: Operations.dot, child: ArgDone((m) => _setFloat(m, 10))),
+      ]),
       name: 'FLOAT');
 
-  static final _flagArgDesc = ArgDescription16C(numericArgs: 6); // 0..5
-
   static final NormalArgOperation sf = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: _flagArgDesc,
-          calc: (Model m, int arg) {
-            m.setFlag(arg, true);
-          }),
+      arg: DigitArg(max: 5, calc: (model, arg) => model.setFlag(arg, true)),
       name: 'SF');
 
   static final NormalArgOperation cf = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: _flagArgDesc,
-          calc: (Model m, int arg) => m.setFlag(arg, false)),
+      arg: DigitArg(max: 5, calc: (model, arg) => model.setFlag(arg, false)),
       name: 'CF');
 
-  static final _indexSynonyms = {
-    Operations.sst: Operations16.I,
-    Operations.rs: Operations16.parenI
-  };
-
-  static int _translateI(Model model) =>
-      model.signMode.valueToLabel(model.memory.registers.index, model);
-  static int _translateParenI(Model model) =>
-      model.signMode.valueToLabel(model.memory.registers.indirectIndex, model);
-
-  static final NormalArgOperation gsb = NormalArgOperation(
-      arg: GosubOperationArg.both(
-          desc: ArgDescription16C(
-              numericArgs: 16,
-              special: [
-                ArgKeyTranslate(Operations16.parenI, 16, _translateParenI),
-                ArgKeyTranslate(Operations16.I, 17, _translateI)
-              ],
-              synonyms: _indexSynonyms),
-          // calc is only used when running a program - see
-          // GosubArgInputState.
-          calc: (Model m, int label) => m.memory.program.gosub(label)),
+  static final NormalArgOperation gsb = GosubOperation(
+      arg: LabelArg(
+          maxDigit: 15,
+          indirect: true,
+          f: (m, final int? label) {
+            // indirect: set true, because GSB (i) was implemented in the first
+            // released versions of JRPN.  I'm pretty sure this isn't implemented
+            // in the real 16C.  For stricter simulation, we could disallow it
+            // and make the corresponding opcode illegal.
+            if (label == null) {
+              // Like, I is a float outside int range
+              throw CalculatorError(4);
+            }
+            m.memory.program.gosub(label);
+          }),
       name: 'GSB');
 
   static final NormalArgOperation gto = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: ArgDescription16C(
-              numericArgs: 16,
-              special: [
-                ArgKeyTranslate(Operations16.parenI, 16, _translateParenI),
-                ArgKeyTranslate(Operations16.I, 17, _translateI)
-              ],
-              synonyms: _indexSynonyms),
-          calc: (Model m, int label) => m.memory.program.goto(label)),
+      arg: LabelArg(
+          maxDigit: 15,
+          indirect: true,
+          f: (m, final int? label) {
+            // indirect: set true, because GTO (i) was implemented in the first
+            // released versions of JRPN.  I'm pretty sure this isn't implemented
+            // in the real 16C.  For stricter simulation, we could disallow it
+            // and make the corresponding opcode illegal.
+            if (label == null) {
+              throw CalculatorError(4);
+            }
+            m.memory.program.goto(label);
+          }),
       name: 'GTO');
 
   static final BranchingArgOperation fQuestion = BranchingArgOperation(
-      arg: OperationArg.both(
-          desc: _flagArgDesc,
-          calc: (Model m, int arg) => m.program.doNextIf(m.getFlag(arg))),
+      arg: DigitArg(
+          max: 5,
+          calc: (model, arg) => model.program.doNextIf(model.getFlag(arg))),
       name: 'F?');
 
   static final NormalOperation or = NormalOperation.intOnly(
@@ -586,10 +596,8 @@ class Operations16 extends Operations {
   static final NormalOperation dblDiv =
       NormalOperation.intOnly(intCalc: _doubleIntDivide, name: 'DBL/');
 
-  static final NormalArgOperation lbl = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: ArgDescription16C(numericArgs: 16), calc: (_, __) {}),
-      name: 'LBL');
+  static final NormalArgOperation lbl =
+      NormalArgOperation(arg: DigitArg(max: 15, calc: (_, __) {}), name: 'LBL');
 
   static final BranchingOperation dsz = BranchingOperation(
       name: 'DSZ',
@@ -629,82 +637,9 @@ class Operations16 extends Operations {
       name: '>');
 }
 
-///
-/// A description suitable for most of the args on the 16C
-///
-@immutable
-class ArgDescription16C extends ArgDescription {
-  @override
-  final int maxArg;
-
-  @override
-  final int numericArgs;
-
-  @override
-  final List<SpecialArg> special;
-
-  @override
-  final Map<ProgramOperation, ProgramOperation> synonyms;
-
-  ArgDescription16C(
-      {required this.numericArgs,
-      this.special = const [],
-      this.synonyms = const {}})
-      : maxArg = numericArgs - 1 + SpecialArg.numUniqueValues(special);
-}
-
+/* @@ TODO:  Vestegial?  */
 class ProgramInstruction16 extends ProgramInstruction<Operation> {
-  ProgramInstruction16(Operation op, int argValue, SpecialArg? specialArg)
-      : super(op, argValue, specialArg);
-
-  @override
-  String get programDisplay {
-    if (op.maxArg > 0) {
-      final String as;
-      final ProgramOperation? specialKey = specialArg?.lastKey;
-      if (specialKey != null) {
-        if (specialKey == Operations16.I) {
-          as = '32'; // because I is shortcut to RCL-I
-        } else if (specialKey == Operations16.parenI) {
-          as = '31'; // because (i) is shortcut to RCL-(i)
-        } else {
-          as = specialKey.programDisplay.trimRight();
-        }
-      } else if (argValue < 16) {
-        as = ' ${argValue.toRadixString(16)}';
-      } else {
-        as = ' .${(argValue - 16).toRadixString(16)}';
-      }
-      return rightJustify('${op.programDisplay}$as', 6);
-    } else {
-      return rightJustify(op.programDisplay, 6);
-    }
-  }
-
-  @override
-  String get programListing {
-    final String as;
-    if (op.maxArg > 0) {
-      final ProgramOperation? specialKey = specialArg?.lastKey;
-      if (specialKey != null) {
-        if (specialKey == Operations16.I) {
-          as = ' I';
-        } else if (specialKey == Operations16.parenI) {
-          as = ' (i)';
-        } else if (op == Operations16.floatKey &&
-            specialKey == Operations.dot) {
-          as = ' .'; // F-FLOAT-.
-        } else {
-          as = specialKey.programDisplay.trimRight();
-        }
-      } else {
-        as = ' ${argValue.toRadixString(16)}';
-      }
-    } else {
-      as = '';
-    }
-    return '${op.name}$as';
-  }
+  ProgramInstruction16(Operation op, ArgDone arg) : super(op, arg);
 }
 
 ///
@@ -943,28 +878,37 @@ class PortraitButtonFactory16 extends PortraitButtonFactory {
 class Controller16 extends RealController {
   Controller16(Model<Operation> model)
       : super(model,
-            numbers: _numbers,
+            numbers: numbers,
             shortcuts: _shortcuts,
             lblOperation: Operations16.lbl);
 
   /// Map from operation that is a shortcut to what it's a shortcut for, with
-  /// the key as an argument
-  static final Map<NormalOperation, ProgramInstruction> _shortcuts = {
-    Operations16.I: _makeShortcut(Operations16.rcl, Operations16.I),
-    Operations16.parenI: _makeShortcut(Operations16.rcl, Operations16.parenI),
+  /// the key as an argument.  We want the identical instance of ArgDone, so
+  /// we climb down the tree.  It's admittedly a bit of a hack.
+  static final Map<Operation, ArgDone> _shortcuts = {
+    Operations16.I: _makeShortcut(Operations16.rcl.arg, Operations16.I)!,
+    Operations16.parenI:
+        _makeShortcut(Operations16.rcl.arg, Operations16.parenI)!,
   };
 
-  static ProgramInstruction16 _makeShortcut(Operation op, Operation key) {
-    for (final SpecialArg s in op.arg!.desc.special) {
-      if (s.matches(key, 0, false)) {
-        return ProgramInstruction16(op, s.opcodeOffset, s);
+  static ArgDone? _makeShortcut(Arg arg, Operation wanted) {
+    if (arg is ArgAlternates) {
+      for (final a in arg.children) {
+        final r = _makeShortcut(a, wanted);
+        if (r != null) {
+          return r;
+        }
+      }
+    } else if (arg is KeyArg) {
+      if (arg.key == wanted) {
+        return arg.child as ArgDone;
       }
     }
-    throw StateError('Shortcut to nowhere');
+    return null;
   }
 
   /// The numbers.  This must be in order.
-  static final List<NumberEntry> _numbers = [
+  static final List<NumberEntry> numbers = [
     Operations.n0,
     Operations.n1,
     Operations.n2,

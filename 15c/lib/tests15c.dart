@@ -39,8 +39,8 @@ class SelfTests15 extends SelfTests {
   Controller newController() => Controller15(createModel15());
 
   Future<void> _testOneArgComplex(
-      Model15 m, Operation op, Complex arg, Complex result,
-      [Operation? inverse]) async {
+      Model15 m, NormalOperation op, Complex arg, Complex result,
+      [NormalOperation? inverse]) async {
     m.xC = arg;
     op.complexCalc!(m);
     await expect(m.x, Value.fromDouble(result.real));
@@ -50,8 +50,8 @@ class SelfTests15 extends SelfTests {
     }
   }
 
-  Future<void> _testTwoArgComplex(
-      Model15 m, Operation op, Complex x, Complex y, Complex result) async {
+  Future<void> _testTwoArgComplex(Model15 m, NormalOperation op, Complex x,
+      Complex y, Complex result) async {
     m.xC = x;
     m.yC = y;
     op.complexCalc!(m);
@@ -60,8 +60,8 @@ class SelfTests15 extends SelfTests {
   }
 
   Future<void> _testOneArgFloat(
-      Model15 m, Operation op, double arg, double result,
-      [Operation? inverse]) async {
+      Model15 m, NormalOperation op, double arg, double result,
+      [NormalOperation? inverse]) async {
     m.xF = arg;
     op.floatCalc!(m);
     await expect(m.x, Value.fromDouble(result));
@@ -77,7 +77,7 @@ class SelfTests15 extends SelfTests {
   }
 
   Future<void> _testTwoArgFloat(
-      Model15 m, Operation op, double x, double y, double result) async {
+      Model15 m, NormalOperation op, double x, double y, double result) async {
     m.xF = x;
     m.yF = y;
     op.floatCalc!(m);

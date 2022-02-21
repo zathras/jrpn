@@ -83,8 +83,6 @@ abstract class ControllerState {
 
   void buttonUp(Operation key) {}
 
-  int? translateSpecial(SpecialArg special) => special.translate(model);
-
   /// Convenience method to call from an unreachable operation on a state
   @protected
   void unreachable() {
@@ -104,11 +102,10 @@ abstract class LimitedState extends ControllerState {
   LimitedState(Controller con) : super(con);
 
   ///
-  /// Process an [Operation] that takes an [OperationArg], once the
+  /// Process an [Operation] with the argument [ArgDone], once the
   /// argument value is available.
   ///
-  void onArgComplete(OperationArg arg, int argValue);
-  void onArgCompleteSpecial(OperationArg arg, SpecialArg value);
+  void onArgComplete(Operation op, ArgDone arg);
 
   void handleOnOff();
   void handleShift(ShiftKey k);
@@ -124,15 +121,11 @@ abstract class LimitedState extends ControllerState {
   void handleBST();
   void handleClearProgram();
 
-  void gosubEntryDone(GosubArgInputState from, int label);
+  void gosubEntryDone(GosubArgInputState from, ArgDone label);
 
   @protected
-  void Function(Model<Operation>)? getCalculation(Operation o) {
-    const selector = _OperationSelector();
-    Function(Model<Operation>)? floatOrInt =
-        model.displayMode.select(selector, o);
-    return o.calcDefinedFor(controller, floatOrInt);
-  }
+  void Function(Model<Operation>)? getCalculation(ArgDone ad) =>
+      ad.getCalculation(model, const _OperationSelector());
 
   ControllerState gosubDoneState();
 
@@ -187,29 +180,37 @@ class Resting extends ActiveState {
       changeState(WaitingForGotoDot(controller, this));
       return;
     }
-    final OperationArg? arg = key.arg;
-    if (arg != null) {
-      const selector = _ArgOperationSelector();
-      final void Function(Model, int)? f =
-          model.displayMode.select(selector, arg);
-      if (key.calcDefinedFor(controller, f) != null) {
-        // If there's a calculation for our current mode
-        controller.runWithArg(arg, this);
-      } else {
-        key.pressed(this);
-      }
+    final Arg arg = key.arg;
+    if (arg is ArgDone) {
+      // If it's a no-arg operation
+      calculate(key, arg);
     } else {
-      try {
+      if (key.calcDisabled(controller)) {
         key.pressed(this);
+      } else {
+        // If our current mode doesn't disable calculations.  A branching
+        // operation disables itself when we're not running a program.
+        controller.getArgsAndRun(key, arg, this);
+      }
+    }
+  }
+
+  void calculate(Operation op, ArgDone arg) {
+    op.pressed(this);
+    final f = op.calcDisabled(controller) ? null : getCalculation(arg);
+    if (f != null) {
+      try {
+        op.beforeCalculate(this);
+        f(model);
+        model.display.displayX();
       } on CalculatorError catch (e) {
         controller.showCalculatorError(e);
-        return;
+        // ignore: avoid_catches_without_on_clauses
+      } catch (e, s) {
+        debugPrint('Unexpected exception $e\n\n$s');
+        controller.showCalculatorError(CalculatorError(9));
       }
-      final f = getCalculation(key);
-      if (f != null) {
-        _calculate(f);
-        key.possiblyAlterStackLift(controller);
-      }
+      op.possiblyAlterStackLift(controller);
     }
   }
 
@@ -326,58 +327,8 @@ class Resting extends ActiveState {
   @override
   void handleShift(ShiftKey k) => model.shift = k;
 
-  void _calculate(void Function(Model<Operation>) f) {
-    try {
-      f(model);
-      model.display.displayX();
-    } on CalculatorError catch (e) {
-      controller.showCalculatorError(e);
-      // ignore: avoid_catches_without_on_clauses
-    } catch (e, s) {
-      debugPrint('Unexpected exception $e\n\n$s');
-      controller.showCalculatorError(CalculatorError(9));
-    }
-  }
-
-  void _onArgComplete(
-      OperationArg arg, void Function(void Function(Model, int) f) body) {
-    const selector = _ArgOperationSelector();
-    void Function(Model, int)? f = model.displayMode.select(selector, arg);
-    try {
-      final p = arg.pressed;
-      if (p != null) {
-        p(this);
-      }
-      body(f!);
-      model.display.displayX();
-    } on CalculatorError catch (e) {
-      controller.showCalculatorError(e);
-      // ignore: avoid_catches_without_on_clauses
-    } catch (e, s) {
-      debugPrint('Unexpected exception $e\n\n$s');
-      controller.showCalculatorError(CalculatorError(9));
-    }
-    arg.op.possiblyAlterStackLift(controller);
-  }
-
   @override
-  void onArgComplete(OperationArg arg, int argValue) {
-    _onArgComplete(arg, (f) {
-      f(model, argValue);
-    });
-  }
-
-  @override
-  void onArgCompleteSpecial(OperationArg arg, SpecialArg value) {
-    _onArgComplete(arg, (f) {
-      final t = value.translate(model);
-      if (t != null) {
-        f(model, t);
-      } else if (!value.calculate(model)) {
-        f(model, value.opcodeOffset);
-      }
-    });
-  }
+  void onArgComplete(Operation op, ArgDone arg) => calculate(op, arg);
 
   @override
   void handleGotoDot(int value) {
@@ -417,7 +368,7 @@ class Resting extends ActiveState {
   }
 
   @override
-  void gosubEntryDone(GosubArgInputState from, int label) =>
+  void gosubEntryDone(GosubArgInputState from, ArgDone label) =>
       from.handleGosubEntryDone(label);
 
   @override
@@ -438,10 +389,11 @@ class Resting extends ActiveState {
       return;
     }
     program.displayCurrent();
-    final arg = GosubOperationArg.both(desc: gsb.arg.desc, calc: (_, __) {});
-    arg.op = gsb;
-    final s = GosubArgInputState(controller, arg, this);
+    final s = GosubArgInputState(gsb, gsb.arg, controller, this);
     s.isDone = true;
+    // Since we're telling the state it's done, it won't try to do the gosub.
+    // It will just wait for button up, then switch to gosubDoneState, which
+    // will run the program.
     changeState(s);
   }
 
@@ -473,7 +425,7 @@ class DigitEntry extends ActiveState {
 
   @override
   void buttonDown(Operation key) {
-    if (getCalculation(key) != null || key.arg != null) {
+    if (key.endsDigitEntry) {
       changeState(Resting(controller)).buttonDown(key);
     } else {
       key.pressed(this);
@@ -722,11 +674,7 @@ class DigitEntry extends ActiveState {
   void handleShift(ShiftKey k) => model.shift = k;
 
   @override
-  void onArgComplete(OperationArg arg, int argValue) => unreachable();
-
-  @override
-  void onArgCompleteSpecial(OperationArg arg, SpecialArg value) =>
-      unreachable();
+  void onArgComplete(Operation op, ArgDone arg) => unreachable();
 
   @override
   void handleGotoDot(int value) => unreachable();
@@ -736,7 +684,7 @@ class DigitEntry extends ActiveState {
       changeState(Resting(controller)).handleClearProgram();
 
   @override
-  void gosubEntryDone(GosubArgInputState from, int label) =>
+  void gosubEntryDone(GosubArgInputState from, ArgDone label) =>
       changeState(Resting(controller)).gosubEntryDone(from, label);
 
   @override
@@ -754,90 +702,31 @@ class DigitEntry extends ActiveState {
 /// state while waiting for the ". c" to be pressed.
 ///
 class ArgInputState extends ControllerState {
-  final OperationArg arg;
+  final Operation op;
+  Arg _arg;
   final LimitedState lastState;
-  bool _decimalPressed = false;
-  bool _decimalAllowed;
-  bool _digitsAllowed;
-  List<SpecialArg> _specialState;
-  int _specialPos;
 
-  ArgInputState(Controller con, this.arg, this.lastState)
-      : _specialState = arg.desc.special,
-        _specialPos = 0,
-        _decimalAllowed = arg.desc.numericArgs >= con.argBase,
-        _digitsAllowed = arg.desc.numericArgs > 0,
-        super(con);
+  ArgInputState(this.op, this._arg, Controller con, this.lastState)
+      : super(con);
 
   // GTO and GSB take index registers, but not .
 
   @override
   void buttonDown(Operation key) {
-    SpecialArg? special;
-    if (!_decimalPressed && _specialState.isNotEmpty) {
-      final ProgramOperation syn = arg.desc.synonyms[key] ?? key;
-      final nextState = <SpecialArg>[];
-      for (final ent in _specialState) {
-        if (ent.matches(syn, _specialPos, model.userMode)) {
-          if (ent.done(_specialPos)) {
-            special = ent;
-          } else {
-            nextState.add(ent);
-          }
-        }
-      }
-      if (special == null) {
-        _specialState = nextState;
-        if (_specialState.isNotEmpty) {
-          _specialPos++;
-          _decimalAllowed = _digitsAllowed = false;
-          return; // Keep looking for more special args
-        }
-      }
-    }
-    if (special != null) {
-      specialDone(special);
-    } else if (key == Operations.dot) {
-      if (_decimalPressed || !_decimalAllowed) {
-        changeState(lastState);
-        lastState.handleDecimalPoint();
-      } else {
-        _decimalPressed = true;
-        _specialState = const [];
-      }
-    } else if (_digitsAllowed) {
-      int? argV = key.numericValue;
-      if (argV != null && _decimalPressed) {
-        argV += controller.argBase;
-      }
-      if (argV != null && argV < arg.desc.numericArgs) {
-        done(argV + arg.desc.numericOffset);
-      } else {
-        changeState(lastState); // bail
-        lastState.buttonDown(key);
-      }
-    } else {
+    final Arg? next = _arg.matches(key, model.userMode);
+    if (next == null) {
       changeState(lastState);
       lastState.buttonDown(key);
-    }
-  }
-
-  void done(int argValue) {
-    changeState(lastState);
-    if (argValue <= arg.desc.maxArg) {
-      arg.onArgComplete(lastState, argValue);
-    }
-  }
-
-  void specialDone(SpecialArg argValue) {
-    final t = lastState.translateSpecial(argValue);
-    if (t != null) {
-      done(t);
+    } else if (next is ArgDone) {
+      done(next);
     } else {
-      changeState(lastState);
-      assert(argValue.opcodeOffset <= arg.desc.maxArg);
-      arg.onArgCompleteSpecial(lastState, argValue);
+      _arg = next;
     }
+  }
+
+  void done(ArgDone arg) {
+    changeState(lastState);
+    lastState.onArgComplete(op, arg);
   }
 }
 
@@ -845,14 +734,15 @@ class ArgInputState extends ControllerState {
 /// Inputting the argument for GSB.  See [handleGosubEntryDone].
 ///
 class GosubArgInputState extends ArgInputState {
-  GosubArgInputState(Controller con, OperationArg arg, LimitedState lastState)
-      : super(con, arg, lastState);
+  GosubArgInputState(
+      Operation op, Arg arg, Controller con, LimitedState lastState)
+      : super(op, arg, con, lastState);
 
   bool isDone = false;
 
   @override
-  void done(int argValue) {
-    lastState.gosubEntryDone(this, argValue);
+  void done(ArgDone arg) {
+    lastState.gosubEntryDone(this, arg);
     isDone = true;
   }
 
@@ -861,19 +751,14 @@ class GosubArgInputState extends ArgInputState {
   /// not entering a program, we pre-display the first instruction of the
   /// program.  So, Resting.gosubEntryDone calls this method to do that.
   ///
-  void handleGosubEntryDone(int label) {
+  void handleGosubEntryDone(ArgDone label) {
     // We know that we're coming from a keyboard-entered GSB, since arguments
     // are being input.
-    assert(label <= arg.desc.maxArg);
-    final p = arg.pressed;
-    if (p != null) {
-      p(lastState as ActiveState);
-    }
     assert(controller is RealController);
     final program = model.memory.program;
     program.resetReturnStack(); // Since we're starting new program
     try {
-      program.gosub(label);
+      label.getCalculation(model, const _OperationSelector())!(model);
     } on CalculatorError catch (e) {
       changeState(lastState);
       controller.showCalculatorError(e);
@@ -881,12 +766,13 @@ class GosubArgInputState extends ArgInputState {
     }
     program.displayCurrent();
     // On button up, another goto(label) will happen, but that's harmless.
+    // @@ TODO:  Check that it's a goto, not a gosub, and explain this better.
   }
 
   @override
   void buttonUp(Operation key) {
     if (isDone) {
-      arg.op.possiblyAlterStackLift(controller);
+      op.possiblyAlterStackLift(controller);
       changeState(lastState.gosubDoneState()).buttonUp(key);
     } else {
       super.buttonUp(key);
@@ -930,16 +816,18 @@ class ProgramEntry extends LimitedState {
 
   @override
   void buttonDown(Operation key) {
-    final OperationArg? arg = key.arg;
     if (key == controller.gtoOperation) {
       changeState(WaitingForGotoDot(controller, this));
-    } else if (arg != null) {
-      // which includes gsb and lbl
-      controller.runWithArg(arg, this);
     } else if (key is NonProgrammableOperation) {
       key.pressed(this);
     } else {
-      _addOperation(key, 0, null);
+      final arg = key.arg;
+      if (arg is ArgDone) {
+        _addOperation(key, arg);
+      } else {
+        // This includes gsb and lbl
+        controller.state = key.makeInputState(key.arg, controller, this);
+      }
     }
   }
 
@@ -950,20 +838,12 @@ class ProgramEntry extends LimitedState {
   }
 
   @override
-  void onArgComplete(OperationArg arg, int argValue) {
-    assert(arg.floatCalc != null || arg.intCalc != null);
-    _addOperation(arg.op, argValue, null);
+  void onArgComplete(Operation op, ArgDone arg) {
+    _addOperation(op, arg);
   }
 
-  @override
-  void onArgCompleteSpecial(OperationArg arg, SpecialArg value) {
-    assert(arg.floatCalc != null || arg.intCalc != null);
-    _addOperation(arg.op, value.opcodeOffset, value);
-  }
-
-  void _addOperation(Operation op, int argValue, SpecialArg? special) {
-    model.memory.program
-        .insert(model.newProgramInstruction(op, argValue, special));
+  void _addOperation(Operation op, ArgDone argValue) {
+    model.memory.program.insert(model.newProgramInstruction(op, argValue));
     // throws CalculatorError if memory full
     program.displayCurrent();
   }
@@ -1021,12 +901,12 @@ class ProgramEntry extends LimitedState {
   @override
   void handleDecimalPoint() {
     // This can happen if we come from ArgInputState.
-    _addOperation(Operations.dot, 0, null);
+    _addOperation(Operations.dot, Operations.dot.arg as ArgDone);
   }
 
   @override
-  void gosubEntryDone(GosubArgInputState from, int label) {
-    _addOperation(controller.gsbOperation, label, null);
+  void gosubEntryDone(GosubArgInputState from, ArgDone label) {
+    _addOperation(controller.gsbOperation, label);
   }
 
   @override
@@ -1068,9 +948,6 @@ class ProgramEntry extends LimitedState {
 
   @override
   ControllerState gosubDoneState() => this;
-
-  @override
-  int? translateSpecial(SpecialArg special) => special.opcodeOffset;
 }
 
 ///
@@ -1093,7 +970,8 @@ class WaitingForGotoDot extends ControllerState {
     if (key == controller.gotoLineNumberKey) {
       changeState(WaitingForGotoDotLines(controller, last));
     } else {
-      changeState(ArgInputState(controller, controller.gtoOperation.arg, last))
+      changeState(ArgInputState(controller.gtoOperation,
+              controller.gtoOperation.arg, controller, last))
           .buttonDown(key);
       // Not controller.runWithArg().  We need to invoke buttonDown, which can't
       // be done with a RunningController.  In the RunningController case, we
@@ -1256,9 +1134,6 @@ class Running extends ControllerState {
   Running(Controller c)
       : _fake = RunningController(c),
         super(c);
-  // My 15C does about 100 add instructions in ten seconds, which would be
-  // 100ms per instruction.  Going about double that speed gives pleasing
-  // results.
 
   bool _stop = false;
   ProgramMemory<Operation> get program => model.memory.program;
@@ -1306,7 +1181,8 @@ class Running extends ControllerState {
         final ProgramInstruction<Operation> instr;
         final int line = program.currentLine;
         if (line == 0) {
-          instr = model.newProgramInstruction(Operations.rtn, 0, null);
+          instr = model.newProgramInstruction(
+              Operations.rtn, Operations.rtn.arg as ArgDone);
         } else {
           instr = program[line];
           program.incrementCurrentLine();
@@ -1317,12 +1193,7 @@ class Running extends ControllerState {
           listener.onRS();
           break;
         }
-        final OperationArg? arg = instr.op.arg;
-        if (arg != null) {
-          _fake.setArg(instr.argValue, instr.specialArg);
-        } else {
-          _fake.setArg(null, null);
-        }
+        _fake.setArg(instr.arg);
         _fake.buttonDown(instr.op);
         // This bounces back to RunningController.runWithArg() if there's an
         // argument.
@@ -1434,15 +1305,10 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
         ProgramInstruction<Operation> instr = program[program.currentLine];
         program.currentLine = (program.currentLine + 1) % (program.lines + 1);
         // That's what my 15C does
-        final OperationArg? arg = instr.op.arg;
-        if (arg != null) {
-          _fake.setArg(instr.argValue, instr.specialArg);
-        } else {
-          _fake.setArg(null, null);
-        }
         if (instr.op == Operations.rs) {
           stackLiftEnabled = true;
         } else {
+          _fake.setArg(instr.arg);
           _fake.buttonDown(instr.op);
           _fake.buttonUp();
         }
@@ -1458,7 +1324,7 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
         if (old != null) {
           final replacement = DigitEntry(_fake.real);
           replacement.takeOverFrom(old);
-          // We came from DigitEntryState in our parent.  If and we're
+          // We came from DigitEntryState in our parent.  If we're
           // still in DigitEntryState in the program, stay in digit entry
           // state, with whatever changes have been made.
           _fake.returnToParent(replacement);
@@ -1507,26 +1373,14 @@ void _handleShowMemImpl(Model model) {
   model.display.update();
 }
 
-class _ArgOperationSelector
-    extends DisplayModeSelector<void Function(Model, int)?, OperationArg> {
-  const _ArgOperationSelector();
-
-  @override
-  void Function(Model, int)? selectInteger(OperationArg arg) => arg.intCalc;
-  @override
-  void Function(Model, int)? selectFloat(OperationArg arg) => arg.floatCalc;
-  @override
-  void Function(Model, int)? selectComplex(OperationArg arg) => arg.complexCalc;
-}
-
 class _OperationSelector
-    extends DisplayModeSelector<void Function(Model)?, Operation> {
+    extends DisplayModeSelector<void Function(Model)?, NormalOperation> {
   const _OperationSelector();
 
   @override
-  void Function(Model)? selectInteger(Operation arg) => arg.intCalc;
+  void Function(Model)? selectInteger(NormalOperation arg) => arg.intCalc;
   @override
-  void Function(Model)? selectFloat(Operation arg) => arg.floatCalc;
+  void Function(Model)? selectFloat(NormalOperation arg) => arg.floatCalc;
   @override
-  void Function(Model)? selectComplex(Operation arg) => arg.complexCalc;
+  void Function(Model)? selectComplex(NormalOperation arg) => arg.complexCalc;
 }

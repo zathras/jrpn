@@ -120,7 +120,9 @@ class Operations {
       NormalOperation(calc: (Model m) => m.swapXY(), name: 'X<=>Y');
 
   static final bsp = NonProgrammableOperation(
-      pressed: (LimitedState c) => c.handleBackspace(), name: 'BSP');
+      endsDigitEntry: false,
+      pressed: (LimitedState c) => c.handleBackspace(),
+      name: 'BSP');
 
   static final NormalOperation enter = NormalOperation(
       calc: (Model m) => m.pushStack(),
@@ -159,10 +161,15 @@ class Operations {
   static final n0 = NumberEntry('0', 0);
 
   static final LimitedOperation dot = LimitedOperation(
-      pressed: (LimitedState c) => c.handleDecimalPoint(), name: '.');
+      endsDigitEntry: false,
+      pressed: (LimitedState c) => c.handleDecimalPoint(),
+      name: '.');
 
   static final NormalOperation chs = NormalOperation(
-      calc: null, pressed: (ActiveState c) => c.handleCHS(), name: 'CHS');
+      endsDigitEntry: false,
+      calc: null,
+      pressed: (ActiveState c) => c.handleCHS(),
+      name: 'CHS');
 
   static final NormalOperation plus = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
@@ -201,6 +208,7 @@ class Operations {
 
   static final clearPrefix = NonProgrammableOperation(
       pressed: (LimitedState cs) => cs.handleClearPrefix(),
+      endsDigitEntry: false,
       name: 'CLEAR PREFIX');
 
   static final mem = NonProgrammableOperation(
@@ -210,7 +218,10 @@ class Operations {
       pressed: (LimitedState cs) => cs.handleShowStatus(), name: 'STATUS');
 
   static final NormalOperation eex = NormalOperation(
-      pressed: (ActiveState c) => c.handleEEX(), calc: null, name: 'EEX');
+      endsDigitEntry: false,
+      pressed: (ActiveState c) => c.handleEEX(),
+      calc: null,
+      name: 'EEX');
 
   static final NormalOperation abs = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {

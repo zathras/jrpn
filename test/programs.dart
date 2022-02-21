@@ -172,6 +172,42 @@ void appendixA() {
   }
 }
 
+Future<void> programEntry() async {
+  final tc = TestCalculator();
+  final m = tc.model;
+  tc.enter(Operations.pr);
+  int line = 0;
+  expect(m.display.current, '${(line++).toString().padLeft(3, '0')}-      ');
+  tc.enter(Operations16.bin);
+  expect(m.display.current, '${(line++).toString().padLeft(3, '0')}-    26');
+  tc.enter(Operations.sqrtOp);
+  expect(m.display.current, '${(line++).toString().padLeft(3, '0')}- 43 25');
+  tc.enter(Operations.n1);
+  expect(m.display.current, '${(line++).toString().padLeft(3, '0')}-     1');
+  tc.enter(Operations16.gsb);
+  tc.enter(Operations.n0);
+  expect(m.display.current, '${(line++).toString().padLeft(3, '0')}- 21  0');
+  tc.enter(Operations16.gsb);
+  tc.enter(Operations.sst);
+  expect(m.display.current, '${(line++).toString().padLeft(3, '0')}- 21 32');
+  tc.enter(Operations16.gsb);
+  tc.enter(Operations16.I);
+  expect(m.display.current, '${(line++).toString().padLeft(3, '0')}- 21 32');
+  tc.enter(Operations16.gto);
+  tc.enter(Operations.dot);
+  tc.enter(Operations.n0);
+  tc.enter(Operations.n0);
+  tc.enter(Operations.n2);
+  line = 2;
+  expect(m.display.current, '${(line++).toString().padLeft(3, '0')}- 43 25');
+  tc.enter(Operations16.floatKey);
+  tc.enter(Operations.n4);
+  expect(m.display.current, '${(line++).toString().padLeft(3, '0')}-42,45, 4');
+  tc.enter(Operations16.floatKey);
+  tc.enter(Operations.dot);
+  expect(m.display.current, '${(line++).toString().padLeft(3, '0')}-42,45,48');
+}
+
 Future<void> p79Program() async {
   final p = TestCalculator()..loadState('p79_example.jrpn');
   final out = StreamIterator<ProgramEvent>(p.output.stream);

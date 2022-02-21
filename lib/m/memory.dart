@@ -62,7 +62,7 @@ abstract class Memory<OT extends ProgramOperation> {
 
   /// Called by our controller, which necessarily happens after the Model
   /// exists.
-  void initializeSystem(OperationMap<OT> layout, OT lbl);
+  void initializeSystem(OperationMap<OT> layout, int lblOpcode);
   // We rely on our Controller to give us an OperationMap with the
   // layout information that tells us the row/column positions of the various
   // operations.  Those positions are how the 16C displays program
@@ -292,7 +292,13 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
 
   /// Indexed by opcode
   @protected
-  final List<SpecialArg?> _specialArgs;
+  final List<ArgDone?> _argValues;
+
+  @protected
+  final int _extendedOpcode;
+  // 0xfe on 15C, which means fe and ff are each a 256-entry page of
+  // extended opcodes, where 0xfe is 0x100-0x1ff and xff are 0x200-0x2ff.
+  // The 15C doesn't use up all of the potential opcodes, however.
 
   int _lines = 0;
   // Number of lines with extended op codes
@@ -319,7 +325,8 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       int returnStackSize)
       : _returnStack = List.filled(returnStackSize, 0),
         _operationTable = layout._operationTable,
-        _specialArgs = layout._specialArgs;
+        _argValues = layout._argValues,
+        _extendedOpcode = layout._extendedOpcode;
 
   final ByteData _registerStorage;
 
@@ -352,22 +359,21 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       memory.policy.checkExtendProgramMemory();
     }
     assert(_currentLine >= 0 && _currentLine <= _lines);
-    assert(instruction.argValue >= 0 &&
-        instruction.argValue <= instruction.op.maxArg);
     _setCachedAddress(_currentLine + 1);
     int addr = _cachedAddress; // stored as nybbles
     for (int a = _maxAddress; a >= addr; a--) {
       _registerStorage.setUint8(a + 2 * needed, _registerStorage.getUint8(a));
     }
-    final int opCode = instruction.opCode;
-    assert(opCode >= 0 && opCode <= 0x1ff);
-    if (opCode & 0x100 != 0) {
-      _registerStorage.setUint8(addr++, 0xf);
-      _registerStorage.setUint8(addr++, 0xf);
+    final int opcode = instruction.opcode;
+    if (opcode & 0x100 != 0) {
+      final int pageCode = (opcode >> 8) - 1 + _extendedOpcode;
+      assert(pageCode >= _extendedOpcode && pageCode < 0x100);
+      _registerStorage.setUint8(addr++, pageCode >> 4);
+      _registerStorage.setUint8(addr++, pageCode & 0xf);
       _extendedLines++;
     }
-    _registerStorage.setUint8(addr++, (opCode >> 4) & 0xf);
-    _registerStorage.setUint8(addr++, opCode & 0xf);
+    _registerStorage.setUint8(addr++, (opcode >> 4) & 0xf);
+    _registerStorage.setUint8(addr++, opcode & 0xf);
     _lines++;
     _currentLine++; // Where we just inserted the instruction
 
@@ -406,18 +412,16 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   ProgramInstruction<OT> operator [](final int line) {
     final int opCode = opcodeAt(line);
     final OT op = _operationTable[opCode]!;
-    // throws an exception on an illegal opCode, which is what we want.
-    final int arg = opCode & 0x100 != 0
-        ? (opCode & 0xff) - op.extendedOpCode + op.numOpCodes
-        : opCode - op.opCode;
-    final SpecialArg? special = _specialArgs[opCode];
-    return memory.model.newProgramInstruction(op, arg, special);
-    // We're storing the instructions as nybbles and creating instructions
-    // as-needed, not to save memory.  Rather, it's the easiest way of
-    // implementing it, given that we want to store the program in a form
-    // that is faithful to the original 16C, that preserves the memory
-    // management constraints.  The extra time we spend converting back and
-    // forth is, of course, irrelevant.
+    // "!" throws an exception on an illegal opCode, which is what we want.
+    final ArgDone arg = _argValues[opCode]!;
+    return memory.model.newProgramInstruction(op, arg);
+    // We're storing the instructions as nybbles and creating
+    // ProgramInstruction instances as needed, but not to save memory.
+    // Rather, it's the easiest way of implementing it, given that we
+    // want to store the program in a form that is faithful to the
+    // original 16C, that preserves the memory management constraints.
+    // The extra time we spend converting back and forth is, of course,
+    // irrelevant.
   }
 
   void _setCachedAddress(final int line) {
@@ -439,10 +443,10 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     assert(line > 0 && line <= _lines);
     _setCachedAddress(line);
     final b = _byteAt(_cachedAddress);
-    if (b != 0xff) {
+    if (b < _extendedOpcode) {
       return b;
     } else {
-      return 0x100 | _byteAt(_cachedAddress + 2);
+      return (((b - _extendedOpcode) + 1) << 8) | _byteAt(_cachedAddress + 2);
     }
   }
 
@@ -517,9 +521,10 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       String line = i.toString().padLeft(3, '0');
       String opc = opcodeAt(i).toRadixString(16).padLeft(2, '0');
       final ProgramInstruction<OT> pi = this[i];
-      String semiHuman = this[i].programDisplay.padLeft(9);
+      final pd = this[i].programDisplay;
+      String semiHuman = pd.substring(0, 1) + pd.substring(1).padLeft(9);
       String human = pi.programListing;
-      r.add('$line --$semiHuman    0x$opc  $human');
+      r.add('$line -$semiHuman    0x$opc  $human');
     }
     return r;
   }
@@ -543,7 +548,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     } else {
       String ls = currentLine.toRadixString(10).padLeft(3, '0');
       String disp = getCurrent().programDisplay;
-      newText = '$ls-$disp';
+      newText = '$ls$disp';
     }
     if (delayed) {
       final initial = memory.model._newLcdContents();
@@ -647,233 +652,26 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
 /// part of the controller.
 ///
 abstract class ProgramOperation {
-  late final String programDisplay;
-  late final int opCode;
-  late final int extendedOpCode;
+  Arg get arg;
 
-  ProgramOperationArg? get arg;
-
-  /// 0 if this operation doesn't take an argument
-  int get maxArg;
+  /// Human-readable name for program listing
   String get name;
 
-  int get numExtendedOpCodes => 0;
-  int get numOpCodes => 1 + maxArg - numExtendedOpCodes;
+  /// The row/column "name", which for digits looks like " 1".
+  late final String rcName;
 
-  static const _invalidOpCodeStart = -1;
+  late final int debugLogId;
+
+  int get maxOneByteOpcodes => 9999;
+
+  static const _invalidOpcodeStart = -1;
   // Invalid op codes are negative, but still distinct.  That allows them to
   // be used in the capture of a debug key log.
 
-  /// Give the numeric value of a number key.
+  /// Give the numeric value of a number key, or one of the 15C's
+  /// letters (which are 20..24).
   /// cf. tests.dart, SelfTests.testNumbers().
   int? get numericValue => null;
-
-  List<SpecialArg>? get specialArgs;
-
-  @override
-  String toString() => 'ProgramOperation($programDisplay)';
-}
-
-abstract class ProgramOperationArg {
-  ArgDescription get desc;
-}
-
-///
-/// Some metadata about an argument to a program operation.
-///
-@immutable
-abstract class ArgDescription {
-  const ArgDescription();
-
-  int get maxArg;
-  int get numericArgs; // Numeric args in the range 0..(numericArgs-1)
-  List<SpecialArg> get special => const [];
-  Map<ProgramOperation, ProgramOperation> get synonyms => const {};
-
-  ///
-  /// The argument value that corresponds to a numeric entry of 0.  On the
-  /// 15C, some operations need to put special keys before the numeric
-  /// args so that those special keys can get single-byte opcodes.
-  ///
-  int get numericOffset => 0;
-}
-
-///
-/// "Special" args, that is, non-numeric args, like the I and (i) keys
-///
-@immutable
-abstract class SpecialArg {
-  static int numUniqueValues(List<SpecialArg> keys) =>
-      keys.map((k) => k.opcodeOffset).toList(growable: false).toSet().length;
-
-  final int opcodeOffset;
-
-  const SpecialArg(this.opcodeOffset);
-
-  ProgramOperation get lastKey;
-
-  ///
-  /// See if key number "pos" in the sequence matches key, and if the
-  /// current userMode setting matches
-  ///
-  bool matches(ProgramOperation key, int pos, bool userMode);
-
-  ///
-  /// Is pos the last key in the sequence?
-  ///
-  bool done(int pos);
-
-  ///
-  /// Do the calculation for this argument, or return false to use
-  /// value with the default calculation.
-  ///
-  bool calculate(Model m) => false;
-
-  ///
-  /// Translate this to an int that can be used as the argValue
-  ///
-  int? translate(Model m) => null;
-}
-
-///
-/// A single key that can be entered as the argument to an operation
-///
-@immutable
-class ArgKey extends SpecialArg {
-  final ProgramOperation key;
-
-  const ArgKey(this.key, int opcodeOffset) : super(opcodeOffset);
-
-  @override
-  ProgramOperation get lastKey => key;
-
-  @override
-  String toString() => '${super.toString()} : $key, $opcodeOffset';
-
-  @override
-  bool matches(ProgramOperation key, int pos, bool userMode) => key == this.key;
-
-  @override
-  bool done(int pos) => true;
-}
-
-///
-/// A single key that can be entered as the argument to an operation, but that
-/// is only valid for the correct userMode setting
-///
-@immutable
-class ArgKeyUser extends ArgKey {
-  final bool userMode;
-
-  const ArgKeyUser(ProgramOperation key, this.userMode, int opcodeOffset)
-      : super(key, opcodeOffset);
-
-  @override
-  String toString() => '${super.toString()} : $key, $userMode, $opcodeOffset';
-
-  @override
-  bool matches(ProgramOperation key, int pos, bool userMode) =>
-      key == this.key && userMode == this.userMode;
-}
-
-///
-/// A list of keys that can be entered as the argument to an operation
-///
-@immutable
-class ArgKeys extends SpecialArg {
-  final List<ProgramOperation> keys;
-
-  const ArgKeys(this.keys, int opcodeOffset) : super(opcodeOffset);
-
-  @override
-  ProgramOperation get lastKey => keys[keys.length - 1];
-
-  @override
-  String toString() => '${super.toString()} : $keys, $opcodeOffset';
-
-  @override
-  bool matches(ProgramOperation key, int pos, bool userMode) =>
-      key == keys[pos];
-
-  @override
-  bool done(int pos) => pos >= keys.length - 1;
-}
-
-@immutable
-class ArgKeyTranslate extends ArgKey {
-  final int Function(Model m) f;
-
-  const ArgKeyTranslate(ProgramOperation key, int opcodeOffset, this.f)
-      : super(key, opcodeOffset);
-
-  @override
-  int? translate(Model m) => f(m);
-}
-
-@immutable
-class ArgKeyStoreI extends ArgKey {
-  const ArgKeyStoreI(ProgramOperation key, int opcodeOffset)
-      : super(key, opcodeOffset);
-
-  @override
-  bool calculate(Model m) {
-    m.memory.registers.index = m.x;
-    return true;
-  }
-}
-
-@immutable
-class ArgKeyReadI extends ArgKey {
-  final void Function(Value, Model) f;
-
-  const ArgKeyReadI(ProgramOperation key, int opcodeOffset, this.f)
-      : super(key, opcodeOffset);
-
-  @override
-  bool calculate(Model m) {
-    f(m.memory.registers.index, m);
-    return true;
-  }
-}
-
-@immutable
-class ArgKeyStoreParenI extends ArgKey {
-  const ArgKeyStoreParenI(ProgramOperation key, int opcodeOffset)
-      : super(key, opcodeOffset);
-
-  @override
-  bool calculate(Model m) {
-    m.memory.registers.indirectIndex = m.x;
-    return true;
-  }
-}
-
-@immutable
-class ArgKeyReadParenI extends ArgKey {
-  final void Function(Value, Model) f;
-
-  const ArgKeyReadParenI(ProgramOperation key, int opcodeOffset, this.f)
-      : super(key, opcodeOffset);
-
-  @override
-  bool calculate(Model m) {
-    f(m.memory.registers.indirectIndex, m);
-    return true;
-  }
-}
-
-@immutable
-class ArgKeyF extends ArgKey {
-  final void Function(Model, int) f;
-
-  const ArgKeyF(ProgramOperation key, int opcodeOffset, this.f)
-      : super(key, opcodeOffset);
-
-  @override
-  bool calculate(Model m) {
-    f(m, opcodeOffset);
-    return true;
-  }
 }
 
 ///
@@ -901,28 +699,21 @@ class MKeyExtensionOp<OT extends ProgramOperation> {
 }
 
 ///
-/// An instruction in a program, consisting of a [ProgramOperation] and,
-/// sometimes, an argument value.
+/// An instruction in a program, consisting of a [ProgramOperation] and
+/// a keyboard argument value.
 ///
 abstract class ProgramInstruction<OT extends ProgramOperation> {
   final OT op;
 
-  /// 0 if no argument
-  final int argValue;
+  final ArgDone arg;
 
-  final SpecialArg? specialArg;
+  ProgramInstruction(this.op, this.arg);
 
-  ProgramInstruction(this.op, this.argValue, this.specialArg) {
-    assert(argValue != 0xdeadbeef);
-  }
-
-  bool get isExtended => argValue > op.maxArg - op.numExtendedOpCodes;
+  bool get isExtended => arg.opcode & 0x100 != 0;
 
   final _noWidth = RegExp('[,.]');
 
-  int get opCode => isExtended
-      ? (op.extendedOpCode | 0x100) + (argValue - op.numOpCodes)
-      : op.opCode + argValue;
+  int get opcode => arg.opcode;
 
   @protected
   String rightJustify(String s, int len) {
@@ -933,10 +724,10 @@ abstract class ProgramInstruction<OT extends ProgramOperation> {
   ///
   /// How this is displayed in the LCD
   ///
-  String get programDisplay;
+  String get programDisplay => arg.programDisplay;
 
   /// How this is displayed in a program listing
-  String get programListing;
+  String get programListing => arg.programListing;
 
   @override
   String toString() => 'ProgramInstruction($programListing)';
@@ -947,41 +738,45 @@ abstract class ProgramInstruction<OT extends ProgramOperation> {
 /// to assign op codes and labels to [ProgramOperation]s.
 ///
 class OperationMap<OT extends ProgramOperation> {
+  final int registerBase;
   final List<List<MKey<OT>?>> keys;
   final List<OT> numbers;
+
+  /// Operations that can't be stored in the calculator's memory
   final List<OT> special;
 
   /// Key entry shortcuts, like how on the 16C, I is RCL-I and (i) is RCL-(i)
-  final Map<OT, ProgramInstruction> shortcuts;
+  final Map<OT, ArgDone> shortcuts;
 
   /// Maps from opCode to ProgramOperation.  Each operation occurs in the
   /// table 1+maxArg times.
-  late final List<OT?> _operationTable;
-  late final List<SpecialArg?> _specialArgs;
-  int _nextOpCode = 0;
-  int _nextExtendedOpCode = 0;
+  List<OT?> _operationTable = List.filled(0x400, null, growable: false);
+  List<ArgDone?> _argValues = List.filled(0x400, null, growable: false);
+  int _nextOpcode = 0;
+  int _nextExtendedOpcode = 0;
+  int _extendedOpcode =
+      0; // The "opcode" that means "this is an extended opcode".
+  // Opcodes >= _extendedOpcode are extended.
 
-  final List<OT> _inNumericOrder = List.empty(growable: true);
-  // The extended (two-byte) opcodes, which are stored as 0xff followed by this
-  final List<OT> _inNumericOrderExtended = List.empty(growable: true);
-
-  OperationMap._internal(this.keys, this.numbers, this.special, this.shortcuts);
+  OperationMap._internal(
+      this.registerBase, this.keys, this.numbers, this.special, this.shortcuts);
 
   static OperationMap? _instance;
 
   factory OperationMap(
-      {required List<List<MKey<OT>?>> keys,
+      {required int registerBase,
+      required List<List<MKey<OT>?>> keys,
       required List<OT> numbers,
       required List<OT> special,
-      required Map<OT, ProgramInstruction> shortcuts}) {
+      required Map<OT, ArgDone> shortcuts}) {
     final instance = _instance;
     if (instance == null) {
-      final i = _instance =
-          OperationMap<OT>._internal(keys, numbers, special, shortcuts);
-      i._initializeProgramDisplay();
-      i._initializeOperationTable();
+      final i = _instance = OperationMap<OT>._internal(
+          registerBase, keys, numbers, special, shortcuts);
+      i._initialize();
       return i;
     } else {
+      assert(instance.registerBase == registerBase);
       assert(instance.keys == keys);
       assert(instance.numbers == numbers);
       assert(instance.special == special);
@@ -989,98 +784,15 @@ class OperationMap<OT extends ProgramOperation> {
     }
   }
 
-  void _assignOpCode(OT o) {
-    final int numOpCodes = o.numOpCodes;
-    assert(numOpCodes >= 0);
-    if (numOpCodes == o.numExtendedOpCodes) {
-      o.opCode = -1;
-    } else {
-      o.opCode = _nextOpCode;
-      _nextOpCode += numOpCodes;
-      _inNumericOrder.add(o);
-    }
-    if (o.numExtendedOpCodes == 0) {
-      o.extendedOpCode = -1;
-    } else {
-      o.extendedOpCode = _nextExtendedOpCode;
-      _nextExtendedOpCode += o.numExtendedOpCodes;
-      _inNumericOrderExtended.add(o);
-    }
-  }
-
-  void _initializeOperationTable() {
-    List<OT?> operationTable = List.empty(growable: true);
-    for (final OT o in _inNumericOrder) {
-      assert(o.maxArg >= 0);
-      for (int i = 0; i < o.numOpCodes; i++) {
-        operationTable.add(o);
-      }
-    }
-    if (_inNumericOrderExtended.isEmpty) {
-      assert(operationTable.length < 0x100);
-    } else {
-      assert(operationTable.length < 0xff);
-      operationTable.length = 0xff;
-      for (final OT o in _inNumericOrderExtended) {
-        assert(o.maxArg >= 0);
-        for (int i = 0; i < o.numExtendedOpCodes; i++) {
-          operationTable.add(o);
-        }
-      }
-      assert(operationTable.length < 0x200);
-    }
-    _specialArgs = List.filled(operationTable.length, null);
-    OT? lastOp;
-    for (int i = 0; i < operationTable.length; i++) {
-      final op = operationTable[i];
-      if (op != null && op != lastOp) {
-        lastOp = op;
-        final sa = op.specialArgs;
-        if (sa != null) {
-          int lastValue = -1;
-          for (final SpecialArg a in sa) {
-            assert(a.opcodeOffset > lastValue,
-                '$op ${a.lastKey} ${a.opcodeOffset}');
-            lastValue = a.opcodeOffset;
-            final numNormalOpCodes = op.maxArg + 1 - op.numExtendedOpCodes;
-            int x;
-            if (a.opcodeOffset < numNormalOpCodes) {
-              x = op.opCode + a.opcodeOffset;
-            } else {
-              x = op.extendedOpCode + a.opcodeOffset - numNormalOpCodes;
-            }
-            _specialArgs[x] = a;
-          }
-        }
-      }
-    }
-    _operationTable = List.unmodifiable(operationTable);
-    _inNumericOrder.length = 0;
-    _inNumericOrderExtended.length = 0;
-  }
-
-  void _initializeProgramDisplay() {
-    assert(_inNumericOrder.isEmpty);
+  void _initialize() {
     final visited = <OT>{};
-    for (int i = 0; i < special.length; i++) {
-      final o = special[i];
-      final ok = visited.add(o);
-      assert(ok);
-      o.programDisplay = '';
-      o.opCode = ProgramOperation._invalidOpCodeStart - i;
-    }
-    for (final k in shortcuts.keys) {
-      assert(!visited.contains(k));
-      visited.add(k);
-      // We will visit k, at the end, when the thing to which its
-      // shortcut has been initialized.
-    }
+    int nextInvalidOpcode = ProgramOperation._invalidOpcodeStart;
     for (int i = 0; i < numbers.length; i++) {
       final o = numbers[i];
       final ok = visited.add(o);
       assert(ok);
-      o.programDisplay = ' ${i.toRadixString(16)}';
-      _assignOpCode(o);
+      o.rcName = ' ${i.toRadixString(16)}';
+      _initializeOperation(o, null);
     }
     for (int row = 0; row < keys.length; row++) {
       final keyRow = keys[row];
@@ -1089,53 +801,150 @@ class OperationMap<OT extends ProgramOperation> {
         if (key == null) {
           continue;
         }
-        final String rcText;
-        if (visited.contains(key.unshifted)) {
-          if (key.unshifted.programDisplay != '') {
-            // A number key
-            assert(key.unshifted.maxArg == 0);
-            rcText = key.unshifted.programDisplay;
-          } else {
-            rcText = '${row + 1}${(col + 1) % 10}';
-          }
-        } else {
-          rcText = '${row + 1}${(col + 1) % 10}';
-          visited.add(key.unshifted);
-          if (key.unshifted.maxArg == 0) {
-            key.unshifted.programDisplay = rcText;
-          } else {
-            key.unshifted.programDisplay = '$rcText ';
-          }
-          _assignOpCode(key.unshifted);
+        if (!visited.contains(key.unshifted)) {
+          key.unshifted.rcName = '${row + 1}${(col + 1) % 10}';
         }
-        if (!visited.contains(key.fShifted)) {
-          visited.add(key.fShifted);
-          if (key.fShifted.maxArg == 0) {
-            key.fShifted.programDisplay = '42 $rcText';
-          } else {
-            key.fShifted.programDisplay = '42,$rcText,';
-          }
-          _assignOpCode(key.fShifted);
+        final String rcText = key.unshifted.rcName;
+        if (!visited.contains(key.fShifted) && key.fShifted != key.unshifted) {
+          key.fShifted.rcName = rcText;
         }
-        if (!visited.contains(key.gShifted)) {
-          visited.add(key.gShifted);
-          if (key.gShifted.maxArg == 0) {
-            key.gShifted.programDisplay = '43 $rcText';
-          } else {
-            key.gShifted.programDisplay = '43,$rcText,';
-          }
-          _assignOpCode(key.gShifted);
+        if (!visited.contains(key.gShifted) && key.gShifted != key.unshifted) {
+          key.gShifted.rcName = rcText;
         }
         for (final MKeyExtensionOp<OT> ext in key.extensionOps) {
-          ext.op.programDisplay = ext.programDisplayPrefix + rcText;
-          _assignOpCode(ext.op);
+          ext.op.rcName = rcText; // @@ TODO:  Rest of name
         }
       }
     }
-    shortcuts.forEach((ProgramOperation k, ProgramInstruction v) {
-      assert(v.argValue >= 0 && v.argValue <= v.op.maxArg);
-      k.opCode = v.op.opCode + v.argValue;
-      k.programDisplay = v.op.programDisplay;
+    for (final k in shortcuts.keys) {
+      assert(!visited.contains(k));
+      visited.add(k);
+      // We will visit k at the end, when the thing to which it is a
+      // shortcut has been initialized.
+    }
+    for (int i = 0; i < special.length; i++) {
+      // Handle keys that can't be part of a program
+      final o = special[i];
+      final ok = visited.add(o);
+      assert(ok);
+      o.debugLogId = nextInvalidOpcode;
+      o.arg.init(registerBase,
+          shift: null, arg: null, argDot: false, userMode: false, f: (ArgDone r,
+              {required ProgramOperation? arg,
+              required ProgramOperation? shift,
+              required bool argDot,
+              required bool userMode}) {
+        r.opcode = nextInvalidOpcode--;
+        r.programDisplay = 'unreachable';
+        r.programListing = 'unreachable';
+      });
+    }
+    for (int row = 0; row < keys.length; row++) {
+      final keyRow = keys[row];
+      for (int col = 0; col < keyRow.length; col++) {
+        final MKey<OT>? key = keyRow[col];
+        if (key == null) {
+          continue;
+        }
+        if (!visited.contains(key.unshifted)) {
+          visited.add(key.unshifted);
+          _initializeOperation(key.unshifted, null);
+        }
+        if (!visited.contains(key.fShifted)) {
+          visited.add(key.fShifted);
+          _initializeOperation(key.fShifted, Arg.fShift);
+        }
+        if (!visited.contains(key.gShifted)) {
+          visited.add(key.gShifted);
+          _initializeOperation(key.gShifted, Arg.gShift);
+        }
+        for (final MKeyExtensionOp<OT> ext in key.extensionOps) {
+          visited.add(ext.op);
+          _initializeOperation(ext.op, null, ext.programDisplayPrefix);
+        }
+      }
+    }
+    shortcuts.forEach((OT op, ArgDone v) {
+      final s = op.arg as ArgDone;
+      s.opcode = v.opcode;
+      s.programDisplay = v.programDisplay;
+      s.programListing = v.programListing;
+      op.debugLogId = s.opcode;
+    });
+    // The HP 15C has 294 extended op codes.  Wow!
+    final int pages = (_nextExtendedOpcode + 0xff) >> 8;
+    _extendedOpcode = 0x100 - pages;
+    print("@@ $_nextOpcode one byte opcodes");
+    print("@@ $_nextExtendedOpcode extended opcodes");
+    print("@@ $_extendedOpcode and above is extended escape");
+    assert(_extendedOpcode >= 0 && _nextOpcode <= _extendedOpcode,
+        'one byte opcodes:  $_nextOpcode, extended opcode: $_extendedOpcode');
+    final len = (_nextExtendedOpcode == 0)
+        ? _nextOpcode
+        : (_nextExtendedOpcode + 0x100);
+    _operationTable = List.unmodifiable(_operationTable.getRange(0, len));
+    _argValues = List.unmodifiable(_argValues.getRange(0, len));
+  }
+
+  void _initializeOperation(OT op, ProgramOperation? shiftIn,
+      [String? extensionDisplayPrefix]) {
+    // @@ TODO:  extensionDisplayPrefix
+    int remaining = op.maxOneByteOpcodes;
+    op.debugLogId = remaining == 0 ? _nextExtendedOpcode : _nextOpcode;
+    op.arg.init(registerBase,
+        shift: shiftIn,
+        arg: null,
+        argDot: false,
+        userMode: false, f: (ArgDone r,
+            {required bool argDot,
+            required ProgramOperation? shift,
+            required ProgramOperation? arg,
+            required bool userMode}) {
+      if (remaining-- > 0) {
+        r.opcode = _nextOpcode++;
+      } else {
+        r.opcode = 0x100 + _nextExtendedOpcode++;
+      }
+      _operationTable[r.opcode] = op;
+      _argValues[r.opcode] = r;
+      final String dash = userMode ? 'u' : '-';
+      final String pd;
+      final String las;
+      if (shift == null && arg == null) {
+        assert(!argDot);
+        pd = '    ${op.rcName}';
+        las = '';
+      } else if (arg == null) {
+        assert(!argDot);
+        pd = ' ${shift!.rcName} ${op.rcName}';
+        las = '';
+      } else {
+        // arg != null
+        final String as;
+        if (argDot) {
+          as = ' .${arg.rcName.trim()}';
+          assert(as.length == 3);
+          las = ' 1${arg.rcName.trim()}';
+        } else {
+          as = arg.rcName;
+          assert(as.length == 2, '$op:  $arg $as');
+          if (arg == Arg.kI || arg == Arg.kParenI) {
+            las = ' ' + arg.name;
+          } else if (arg == Arg.kDot) {
+            las = ' .'; // "FLOAT  ." is nicer than "FLOAT 48".
+          } else {
+            las = ' ' + as.trim();
+          }
+        }
+        if (shift == null) {
+          pd = ' ${op.rcName} $as';
+        } else {
+          pd = '${shift.rcName},${op.rcName},$as';
+        }
+      }
+      r.programDisplay = '$dash$pd';
+      r.programListing = '${op.name}$las';
+      assert(r.programDisplay.length < 20, '$op');
     });
   }
 }

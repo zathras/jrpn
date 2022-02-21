@@ -27,9 +27,12 @@ import 'package:jrpn15c/tests15c.dart';
 import 'hyperbolic.dart';
 
 Future<void> main() async {
+  runStaticInitialization15();
+
   // Note that passing Jrpn into testWidgets actually tests very little, because
   // the deferred initialization doesn't happen.  I think it stalls on a plugin
-  // waiting for the system, maybe related to receiving links.
+  // waiting for the system, maybe related to receiving links.  Anyway, we
+  // don't do it here.
 
   testWidgets('15C Buttons', (WidgetTester tester) async {
     final controller = Controller15(createModel15());

@@ -28,7 +28,7 @@ part of 'model.dart';
 /// NB:  In Dart, this isn't as statically type-safe as one might imagine,
 /// because Dart allows unsound covariant assignment, viz
 /// https://github.com/dart-lang/sdk/issues/45731
-/// That's mostly harmless here
+/// That's mostly harmless here.
 ///
 abstract class DisplayModeSelector<R, A> {
   const DisplayModeSelector();

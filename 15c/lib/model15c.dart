@@ -37,8 +37,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
 
   int resultMatrix = 0; // Index into matrices
 
-  final ProgramInstruction<OT> Function(OT, int, SpecialArg?)
-      _newProgramInstructionF;
+  final ProgramInstruction<OT> Function(OT, ArgDone) _newProgramInstructionF;
   final List<List<MKey<OT>?>> Function() _getLogicalKeys;
 
   @override
@@ -55,9 +54,8 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   late final List<List<MKey<OT>?>> logicalKeys = _getLogicalKeys();
 
   @override
-  ProgramInstruction<OT> newProgramInstruction(
-          OT operation, int argValue, SpecialArg? special) =>
-      _newProgramInstructionF(operation, argValue, special);
+  ProgramInstruction<OT> newProgramInstruction(OT operation, ArgDone arg) =>
+      _newProgramInstructionF(operation, arg);
 
   @override
   reset() {
@@ -257,8 +255,9 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
       : super(memoryNybbles: memoryNybbles);
 
   @override
-  void initializeSystem(OperationMap<OT> layout, OT lbl) => program =
-      ProgramMemory15<OT>(this, storage, layout, model.returnStackSize);
+  void initializeSystem(OperationMap<OT> layout, int lblOpcode) =>
+      program = ProgramMemory15<OT>(
+          this, storage, layout, model.returnStackSize, lblOpcode);
 
   int get numRegisters => _numRegisters;
   set numRegisters(int v) {
@@ -267,7 +266,6 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
     model.setNeedsSave();
   }
 
-  /// @@ TODO
   /// Number of uncommitted registers available in the pool.
   int get availableRegisters {
     int result = totalNybbles ~/ 14;
@@ -286,8 +284,9 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
 }
 
 class ProgramMemory15<OT extends ProgramOperation> extends ProgramMemory<OT> {
+  final int _lblOpcode;
   ProgramMemory15(Memory<OT> memory, ByteData registerStorage,
-      OperationMap<OT> layout, int returnStackSize)
+      OperationMap<OT> layout, int returnStackSize, this._lblOpcode)
       : super(memory, registerStorage, layout, returnStackSize);
 
   @override
@@ -295,6 +294,6 @@ class ProgramMemory15<OT extends ProgramOperation> extends ProgramMemory<OT> {
     if (label < 0 || label >= 20) {
       throw CalculatorError(4);
     }
-    throw "@@ TODO";
+    throw "@@ TODO $_lblOpcode";
   }
 }

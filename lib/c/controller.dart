@@ -110,10 +110,9 @@ abstract class Controller {
   }
 
   ///
-  /// Run the operation `arg.op` when its argument is available.
-  /// When running a program, that's now.
+  /// Get the arguments described by Arg, and then run it.
   ///
-  void runWithArg(OperationArg arg, LimitedState fromState);
+  void getArgsAndRun(Operation op, Arg arg, Resting fromState);
 
   /// Show an error on the LCD screen.
   void showCalculatorError(CalculatorError e) =>
@@ -151,7 +150,7 @@ abstract class Controller {
   @mustCallSuper
   void handlePSE() => _stackLiftEnabled = true;
 
-  T? _branchingOperationCalc<T>(T? calc);
+  bool _branchingOperationCalcDisabled();
 
   bool pasteToX(String clipboard) {
     final v = model.tryParseValue(clipboard);
@@ -218,19 +217,26 @@ abstract class RealController extends Controller {
 
   RealController(Model<Operation> model,
       {required List<NumberEntry> numbers,
-      required Map<NormalOperation, ProgramInstruction> shortcuts,
+      required Map<Operation, ArgDone> shortcuts,
       required Operation lblOperation})
       : super(model) {
     model.memory.initializeSystem(
         OperationMap<Operation>(
+            registerBase: model.registerNumberBase,
             keys: model.logicalKeys,
             numbers: numbers,
-            special: Operations.special,
+            special: nonProgrammableOperations,
             shortcuts: shortcuts),
-        lblOperation);
+        lblOpcode(lblOperation));
     state = Resting(this);
     keyboard.controller = this;
   }
+
+  List<Operation> get nonProgrammableOperations => Operations.special;
+
+  // This must be run after the OperationMap constructor, above.
+  static int lblOpcode(Operation lblOperation) =>
+      (lblOperation.arg.matches(Operations.n0, false) as ArgDone).opcode;
 
   @override
   void buttonDown(Operation key) {
@@ -239,8 +245,8 @@ abstract class RealController extends Controller {
   }
 
   @override
-  void runWithArg(OperationArg arg, LimitedState fromState) {
-    state = arg.makeInputState(this, fromState);
+  void getArgsAndRun(Operation op, Arg arg, Resting fromState) {
+    state = op.makeInputState(arg, this, fromState);
   }
 
   @override
@@ -261,7 +267,7 @@ abstract class RealController extends Controller {
   }
 
   @override
-  T? _branchingOperationCalc<T>(T? calc) => null;
+  bool _branchingOperationCalcDisabled() => true;
 
   ButtonLayout getButtonLayout(
       ButtonFactory factory, double totalHeight, double totalButtonHeight);
@@ -280,10 +286,11 @@ abstract class RealController extends Controller {
 ///
 class RunningController extends Controller {
   final Controller real;
-  int? _argValue;
-  SpecialArg? _specialArg;
   bool pause = false;
   CalculatorError? pendingError;
+  ArgDone _argValue = _dummy;
+
+  static final _dummy = ArgDone((_) {});
 
   RunningController(this.real, {bool digitEntryState = false})
       : super(real.model) {
@@ -294,9 +301,8 @@ class RunningController extends Controller {
     }
   }
 
-  void setArg(int? argValue, SpecialArg? specialArg) {
+  void setArg(ArgDone argValue) {
     _argValue = argValue;
-    _specialArg = specialArg;
   }
 
   @override
@@ -318,18 +324,11 @@ class RunningController extends Controller {
   }
 
   @override
-  void runWithArg(OperationArg arg, LimitedState fromState) {
+  void getArgsAndRun(Operation op, Arg arg, Resting fromState) {
     assert(state == fromState);
-    int? v = _argValue;
-    assert(v != null);
-    if (v != null && v <= arg.desc.maxArg) {
-      final sa = _specialArg;
-      if (sa == null) {
-        arg.onArgComplete(fromState, v);
-      } else {
-        arg.onArgCompleteSpecial(fromState, sa);
-      }
-    }
+    assert(_argValue != _dummy);
+    fromState.calculate(op, _argValue);
+    assert((_argValue = _dummy) == _dummy);
   }
 
   void returnToParent(ControllerState s) => real._returnFromChild(s);
@@ -354,7 +353,7 @@ class RunningController extends Controller {
   }
 
   @override
-  T? _branchingOperationCalc<T>(T? calc) => calc;
+  bool _branchingOperationCalcDisabled() => false;
 
   @override
   void showCalculatorError(CalculatorError e) => pendingError = e;
@@ -389,27 +388,13 @@ abstract class Operation extends ProgramOperation {
 
   Operation({required this.name});
 
-  /// A description of an argument, if there is one.  For example, the STO
-  /// operation has an argument to indicate which register to store to.
+  /// A description of this arguments operation, or ArgDone if there is none.
+  /// For example, the STO operation has an argument to indicate which register
+  /// to store to.
   @override
-  OperationArg? get arg;
-
-  @override
-  List<SpecialArg>? get specialArgs => arg?.desc.special;
-
-  /// The calculation performed when the calculator is in floating-point mode.
-  void Function(Model m)? get floatCalc;
-
-  /// The calculation performed when the calculator is in integer mode.
-  void Function(Model m)? get intCalc;
-
-  /// The calculation performed when the calculator is in complex mode.
-  void Function(Model m)? get complexCalc;
+  Arg get arg;
 
   StackLift get _stackLift;
-
-  @override
-  int get maxArg => arg?.desc.maxArg ?? 0;
 
   @override
   String toString() => 'Operation($name)';
@@ -425,9 +410,43 @@ abstract class Operation extends ProgramOperation {
   /// or on its argument).
   void possiblyAlterStackLift(Controller c) => _stackLift._possiblyAlter(c);
 
+  ControllerState makeInputState(
+          Arg arg, Controller c, LimitedState fromState) =>
+      ArgInputState(this, arg, c, fromState);
+
   /// By default, operations, if present, work for all kinds of controllers,
   /// but cf. [BranchingOperation]
-  T? calcDefinedFor<T>(Controller controller, T? calc) => calc;
+  bool calcDisabled(Controller controller) => false;
+
+  void beforeCalculate(Resting resting) {}
+
+  bool get endsDigitEntry;
+}
+
+abstract class NoArgOperation extends Operation implements ArgDone {
+  NoArgOperation({required String name}) : super(name: name);
+
+  @override
+  late final int opcode;
+  @override
+  late final String programDisplay;
+  @override
+  late final String programListing;
+
+  @override
+  Arg get arg => this;
+
+  @override
+  void init(int registerBase,
+          {required OpInitFunction f,
+          required ProgramOperation? shift,
+          required bool argDot,
+          required ProgramOperation? arg,
+          required bool userMode}) =>
+      f(this, shift: shift, argDot: argDot, arg: arg, userMode: userMode);
+
+  @override
+  Arg? matches(ProgramOperation key, bool userMode) => null;
 }
 
 ///
@@ -446,17 +465,20 @@ abstract class Operation extends ProgramOperation {
 /// relationship between the operations and the types, because the
 /// operations, in essence, take an operation as argument.
 ///
-class LimitedOperation extends Operation implements NormalOperation {
+class LimitedOperation extends NoArgOperation implements NormalOperation {
+  @override
+  final bool endsDigitEntry;
+
   @override
   final void Function(LimitedState) _pressed;
 
   LimitedOperation(
-      {required void Function(LimitedState) pressed, required String name})
+      {required void Function(LimitedState) pressed,
+      required String name,
+      this.endsDigitEntry = true})
       : _pressed = pressed,
         super(name: name);
 
-  @override
-  OperationArg? get arg => null;
   @override
   void Function(Model m)? get floatCalc => null;
   @override
@@ -469,25 +491,24 @@ class LimitedOperation extends Operation implements NormalOperation {
 
   @override
   StackLift get _stackLift => StackLift.neutral;
+
+  @override
+  void Function(Model)? getCalculation<T extends ProgramOperation>(
+          Model m, DisplayModeSelector<void Function(Model)?, T> selector) =>
+      null;
 }
 
 ///
 /// One of the number keys, from 0 to f.
 ///
-class NumberEntry extends Operation {
+class NumberEntry extends NoArgOperation {
   @override
   final int numericValue;
 
-  NumberEntry(String name, this.numericValue) : super(name: name);
+  @override
+  bool get endsDigitEntry => false;
 
-  @override
-  OperationArg? get arg => null;
-  @override
-  void Function(Model m)? get floatCalc => null;
-  @override
-  void Function(Model m)? get intCalc => null;
-  @override
-  void Function(Model m)? get complexCalc => null;
+  NumberEntry(String name, this.numericValue) : super(name: name);
 
   @override
   void pressed(LimitedState arg) =>
@@ -496,6 +517,11 @@ class NumberEntry extends Operation {
 
   @override
   StackLift get _stackLift => StackLift.neutral;
+
+  @override
+  void Function(Model)? getCalculation<T extends ProgramOperation>(
+          Model m, DisplayModeSelector<void Function(Model)?, T> selector) =>
+      null;
 }
 
 ///
@@ -503,6 +529,9 @@ class NumberEntry extends Operation {
 ///
 class LetterLabel extends NumberEntry {
   LetterLabel(String name, int value) : super(name, value);
+
+  @override
+  bool get endsDigitEntry => true;
 
   @override
   void pressed(LimitedState arg) =>
@@ -514,17 +543,18 @@ class LetterLabel extends NumberEntry {
 }
 
 ///
-///  A "normal" calculator operation.  Generally, they perform some kind of
+///  A "normal" calculator operation that doesn't take any keyboard arguments.
+///  Generally, they perform some kind of
 ///  calculation, or otherwise manipulate the model.
 ///
-class NormalOperation extends Operation {
-  @override
+class NormalOperation extends NoArgOperation implements ArgDone {
+  /// The calculation performed when the calculator is in floating-point mode.
   final void Function(Model m)? floatCalc;
 
-  @override
+  /// The calculation performed when the calculator is in integer mode.
   final void Function(Model m)? intCalc;
 
-  @override
+  /// The calculation performed when the calculator is in complex mode.
   final void Function(Model m)? complexCalc;
 
   final void Function(ActiveState)? _pressed;
@@ -532,11 +562,19 @@ class NormalOperation extends Operation {
   @override
   final StackLift _stackLift;
 
+  @override
+  final bool endsDigitEntry;
+
+  @override
+  final int maxOneByteOpcodes;
+
   NormalOperation(
       {void Function(ActiveState)? pressed,
       StackLift? stackLift,
       required void Function(Model m)? calc,
-      required String name})
+      required String name,
+      this.endsDigitEntry = true,
+      this.maxOneByteOpcodes = 9999})
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
         floatCalc = calc,
@@ -548,11 +586,13 @@ class NormalOperation extends Operation {
       {void Function(ActiveState)? pressed,
       StackLift? stackLift,
       required void Function(Model) this.intCalc,
-      required String name})
+      required String name,
+      this.endsDigitEntry = true})
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
         floatCalc = null,
         complexCalc = null,
+        maxOneByteOpcodes = 9999,
         super(name: name);
 
   NormalOperation.floatOnly(
@@ -560,7 +600,9 @@ class NormalOperation extends Operation {
       StackLift? stackLift,
       required void Function(Model) this.floatCalc,
       void Function(Model)? complexCalc,
-      required String name})
+      required String name,
+      this.endsDigitEntry = true,
+      this.maxOneByteOpcodes = 9999})
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
         intCalc = null,
@@ -573,14 +615,13 @@ class NormalOperation extends Operation {
       required void Function(Model) this.intCalc,
       required void Function(Model) this.floatCalc,
       void Function(Model)? complexCalc,
-      required String name})
+      required String name,
+      this.endsDigitEntry = true,
+      this.maxOneByteOpcodes = 9999})
       : _pressed = pressed,
         _stackLift = stackLift ?? StackLift.enable,
         complexCalc = complexCalc ?? floatCalc,
         super(name: name);
-
-  @override
-  OperationArg? get arg => null;
 
   @override
   void pressed(LimitedState arg) {
@@ -588,19 +629,24 @@ class NormalOperation extends Operation {
     if (p != null) {
       p(arg as ActiveState);
     }
+    // Note the downcast.  LimitedState implementations need to ensure that
+    // this method is only called on LimitedOperation instances.  As long as
+    // that invariant holds, this bit of covariance increases static checking,
+    // because it ensures that LimtedState pressed functions don't call any of
+    // the methods declared lower in the hierarchy (like handleCHS or, notably,
+    // the methods related to stack lift).  This simplifies reasoning about the
+    // state machine, and avoids a bunch of null handleXXX methods in states
+    // that don't use them, but it does come at the prices of a little less
+    // static type safety.
+    //
+    // See ArgInputState._buttonDown and ProgramEntry._buttonDown to see how
+    // they robustly guarantee that the covariant relationship isn't violated.
   }
-  // Note the downcast.  LimitedState implementations need to ensure that
-  // this method is only called on LimitedOperation instances.  As long as
-  // that invariant holds, this bit of covariance increases static checking,
-  // because it ensures that LimtedState pressed functions don't call any of
-  // the methods declared lower in the hierarchy (like handleCHS or, notably,
-  // the methods related to stack lift).  This simplifies reasoning about the
-  // state machine, and avoids a bunch of null handleXXX methods in states
-  // that don't use them, but it does come at the prices of a little less
-  // static type safety.
-  //
-  // See ArgInputState._buttonDown and ProgramEntry._buttonDown to see how
-  // they robustly guarantee that the covariant relationship isn't violated.
+
+  @override
+  void Function(Model)? getCalculation<T extends ProgramOperation>(
+          Model m, DisplayModeSelector<void Function(Model)?, T> selector) =>
+      m.displayMode.select(selector, this);
 }
 
 ///
@@ -638,15 +684,15 @@ class NormalOperationOrLetter extends NormalOperation {
 }
 
 ///
-/// A [NormalOperation] that takes an argument.  For example, the RCL and STO
+/// An [Operation] that takes an argument.  For example, the RCL and STO
 /// operations take an argument, giving the register to store to or recall from.
 ///
 class NormalArgOperation extends Operation {
   @override
-  final OperationArg arg;
+  final Arg arg;
 
   @override
-  final int numExtendedOpCodes;
+  final int maxOneByteOpcodes;
 
   @override
   final StackLift _stackLift;
@@ -655,53 +701,60 @@ class NormalArgOperation extends Operation {
       {StackLift? stackLift,
       required this.arg,
       required String name,
-      this.numExtendedOpCodes = 0})
+      this.maxOneByteOpcodes = 9999})
       : _stackLift = stackLift ?? StackLift.enable,
-        super(name: name) {
-    arg.op = this;
-  }
-
-  @override
-  void Function(Model m)? get floatCalc => null;
-  @override
-  void Function(Model m)? get intCalc => null;
-  @override
-  void Function(Model m)? get complexCalc => null;
+        super(name: name);
 
   ///
   /// Do nothing -- we don't know our argument yet.
   ///
   @override
   void pressed(LimitedState arg) {}
+
+  @override
+  bool get endsDigitEntry => true;
 }
 
-class NonProgrammableOperation extends Operation {
+class GosubOperation extends NormalArgOperation {
+  GosubOperation({required Arg arg, required String name})
+      : super(arg: arg, name: name);
+
   @override
-  void Function(Model<ProgramOperation> m)? floatCalc;
+  ControllerState makeInputState(
+          Arg arg, Controller c, LimitedState fromState) =>
+      GosubArgInputState(this, arg, c, fromState);
+}
 
-  final void Function(LimitedState) _pressed;
+class NormalArgOperationWithBeforeCalc extends NormalArgOperation {
+  final StackLift Function(Resting state) _beforeCalculate;
 
+  NormalArgOperationWithBeforeCalc(
+      {StackLift? stackLift,
+      required Arg arg,
+      required StackLift Function(Resting) beforeCalculate,
+      required String name,
+      int maxOneByteOpcodes = 9999})
+      : _beforeCalculate = beforeCalculate,
+        super(
+            stackLift: stackLift ?? StackLift.enable,
+            arg: arg,
+            name: name,
+            maxOneByteOpcodes: maxOneByteOpcodes);
+
+  @override
+  void beforeCalculate(Resting resting) {
+    final StackLift lift = _beforeCalculate(resting);
+    lift._possiblyAlter(resting.controller);
+  }
+}
+
+/// @@ TODO:  Is this vestegial?
+class NonProgrammableOperation extends LimitedOperation implements ArgDone {
   NonProgrammableOperation(
       {required String name,
-      this.floatCalc,
-      required void Function(LimitedState) pressed})
-      : _pressed = pressed,
-        super(name: name);
-
-  @override
-  StackLift get _stackLift => StackLift.neutral;
-
-  @override
-  OperationArg? get arg => null;
-
-  @override
-  void Function(Model<ProgramOperation> m)? get complexCalc => null;
-
-  @override
-  void Function(Model<ProgramOperation> m)? get intCalc => null;
-
-  @override
-  void pressed(LimitedState arg) => _pressed(arg);
+      required void Function(LimitedState) pressed,
+      bool endsDigitEntry = false})
+      : super(pressed: pressed, name: name, endsDigitEntry: endsDigitEntry);
 }
 
 ///
@@ -731,18 +784,11 @@ class BranchingOperation extends NormalOperation {
   BranchingOperation({required String name, required void Function(Model) calc})
       : super(name: name, calc: calc);
 
-  BranchingOperation.differentFloatAndInt(
-      {required String name,
-      required void Function(Model) floatCalc,
-      required void Function(Model) intCalc})
-      : super.differentFloatAndInt(
-            name: name, floatCalc: floatCalc, intCalc: intCalc);
-
   /// Branching operations only perform a calculation when we are running
   /// a program.
   @override
-  T? calcDefinedFor<T>(Controller controller, T? calc) =>
-      controller._branchingOperationCalc(calc);
+  bool calcDisabled(Controller controller) =>
+      controller._branchingOperationCalcDisabled();
 }
 
 ///
@@ -750,98 +796,14 @@ class BranchingOperation extends NormalOperation {
 ///
 class BranchingArgOperation extends NormalArgOperation {
   BranchingArgOperation(
-      {required OperationArg arg,
-      required String name,
-      int numExtendedOpCodes = 0})
-      : super(arg: arg, name: name, numExtendedOpCodes: numExtendedOpCodes);
+      {required Arg arg, required String name, int maxOneByteOpcodes = 9999})
+      : super(arg: arg, name: name, maxOneByteOpcodes: maxOneByteOpcodes);
 
   /// Branching operations only perform a calculation when we are running
   /// a program.
   @override
-  T? calcDefinedFor<T>(Controller controller, T? calc) =>
-      controller._branchingOperationCalc(calc);
-}
-
-///
-/// A description of the argument for a [NormalArgOperation] or a
-/// [BranchingArgOperation].  This includes the calculation that is to be
-/// performed when the argument value is available.
-///
-class OperationArg extends ProgramOperationArg {
-  final void Function(Model, int)? floatCalc;
-  final void Function(Model, int)? intCalc;
-  final void Function(Model, int)? complexCalc;
-  final void Function(ActiveState)? pressed;
-  late final NormalArgOperation op;
-  @override
-  final ArgDescription desc;
-
-  OperationArg(
-      {required this.floatCalc,
-      required this.intCalc,
-      Function(Model, int)? complexCalc,
-      this.pressed,
-      required this.desc})
-      : complexCalc = complexCalc ?? floatCalc;
-
-  OperationArg.both(
-      {required void Function(Model, int) calc,
-      this.pressed,
-      required this.desc})
-      : floatCalc = calc,
-        intCalc = calc,
-        complexCalc = calc;
-
-  OperationArg.intOnly(
-      {required this.intCalc, this.pressed, required this.desc})
-      : floatCalc = null,
-        complexCalc = null;
-
-  void onArgComplete(LimitedState state, int argValue) =>
-      state.onArgComplete(this, argValue);
-
-  void onArgCompleteSpecial(LimitedState state, SpecialArg value) =>
-      state.onArgCompleteSpecial(this, value);
-
-  ControllerState makeInputState(Controller c, LimitedState fromState) =>
-      ArgInputState(c, this, fromState);
-}
-
-///
-/// The description of an argument for GSB, which requires a special state
-/// for inputting the argument to preview the instruction that's about to
-/// be executed.
-///
-class GosubOperationArg extends OperationArg {
-  GosubOperationArg.both(
-      {required void Function(Model, int) calc, required ArgDescription desc})
-      : super.both(calc: calc, desc: desc);
-
-  @override
-  ControllerState makeInputState(Controller c, LimitedState fromState) =>
-      GosubArgInputState(c, this, fromState);
-}
-
-///
-/// The argument for the float mode key.  It's special
-/// because stack lift is enabled when going from int mode to float mode,
-/// but it's stack neutral if staying in float mode.
-///
-class FloatKeyArg extends OperationArg {
-  FloatKeyArg(
-      {required ArgDescription desc, required void Function(Model, int) calc})
-      : super(floatCalc: calc, intCalc: calc, desc: desc);
-
-  @override
-  void onArgComplete(LimitedState state, int argValue) {
-    if (!state.model.isFloatMode) {
-      state.controller._stackLiftEnabled = true;
-      // See page 100:  Stack lift is enabled when we go from int mode to
-      // float mode, but not when we stay in float mode.  So: CLX,
-      // FLOAT 2, 7 will not lift stack.
-    }
-    state.onArgComplete(this, argValue);
-  }
+  bool calcDisabled(Controller controller) =>
+      controller._branchingOperationCalcDisabled();
 }
 
 class KeyboardController {

@@ -197,6 +197,9 @@ class Settings {
   double? _msPerInstruction;
   bool _traceProgramToStdout = false;
   static const double _msPerInstructionDefault = 50;
+  // My 15C does about 100 add instructions in ten seconds, which would be
+  // 100ms per instruction.  Going about double that speed gives pleasing
+  // results.
   OrientationSetting _orientation = OrientationSetting.auto;
   bool _systemOverlaysDisabled = false;
 
@@ -460,8 +463,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ///
   /// Create an instance of the model-specific ProgramInstruction subtype
   ///
-  ProgramInstruction<OT> newProgramInstruction(
-      OT operation, int argValue, SpecialArg? special);
+  ProgramInstruction<OT> newProgramInstruction(OT operation, ArgDone arg);
 
   /// Not used, but we retain any comments found in the JSON file
   /// so we can write them back out.
@@ -1448,7 +1450,7 @@ class DebugLog {
       _model._debugLog = replacement;
       replacement.addKey(key);
     } else {
-      _keys.add(key.opCode);
+      _keys.add(key.debugLogId);
     }
   }
 }

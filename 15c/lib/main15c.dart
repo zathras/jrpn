@@ -35,7 +35,26 @@ import 'back_panel15c.dart';
 import 'tests15c.dart';
 import 'model15c.dart';
 
-void main() async => genericMain(Jrpn(Controller15(createModel15())));
+void main() async {
+  runStaticInitialization15();
+  genericMain(Jrpn(Controller15(createModel15())));
+}
+
+void runStaticInitialization15() {
+  // None of these operations has an argument, so there is no circular
+  // initialization here.
+  Arg.kI = Operations15.I15;
+  Arg.kParenI = Operations15.parenI15;
+  Arg.kDigits = Controller15.numbers;
+  Arg.kDot = Operations.dot;
+  Arg.fShift = Operations.fShift;
+  Arg.gShift = Operations.gShift;
+  Arg.registerISynonyms = {
+    Operations.sst: Operations15.I15,
+    Operations.rs: Operations15.parenI15
+  };
+  assert(Arg.assertStaticInitialized());
+}
 
 Model15<Operation> createModel15() {
   return Model15<Operation>(() => _logicalKeys, _newProgramInstruction);
@@ -48,19 +67,24 @@ class Operations15 extends Operations {
   static final letterLabelD = LetterLabel('D', 23);
   static final letterLabelE = LetterLabel('E', 24);
 
+  static final _letterSynonyms = {
+    Operations15.sqrtOp15: Operations15.letterLabelA,
+    Operations15.eX15: Operations15.letterLabelB,
+    Operations15.tenX15: Operations15.letterLabelC,
+    Operations15.yX15: Operations15.letterLabelD,
+    Operations15.reciprocal15: Operations15.letterLabelE
+  };
+
   static final NormalArgOperation lbl15 = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: ArgDescription15CNoI(
-              numericArgs: 20,
-              special: [
-                ArgKey(letterLabelA, 20),
-                ArgKey(letterLabelB, 21),
-                ArgKey(letterLabelC, 22),
-                ArgKey(letterLabelD, 23),
-                ArgKey(letterLabelE, 24)
-              ],
-              synonyms: ArgDescription15C.letterSynonyms),
-          calc: (_, __) {}),
+      maxOneByteOpcodes: 15,
+      arg: ArgAlternates(synonyms: _letterSynonyms, children: [
+        DigitArg(max: 19, calc: (_, __) {}),
+        KeyArg(key: letterLabelA, child: ArgDone((m) {})),
+        KeyArg(key: letterLabelB, child: ArgDone((m) {})),
+        KeyArg(key: letterLabelC, child: ArgDone((m) {})),
+        KeyArg(key: letterLabelD, child: ArgDone((m) {})),
+        KeyArg(key: letterLabelE, child: ArgDone((m) {}))
+      ]),
       name: 'LBL');
 
   ///
@@ -171,9 +195,9 @@ class Operations15 extends Operations {
       },
       name: 'delta%');
   static final NormalArgOperation matrix = NormalArgOperation(
-      numExtendedOpCodes: 10,
-      arg: OperationArg.both(
-          desc: ArgDescription15CNoI(numericArgs: 10),
+      maxOneByteOpcodes: 0,
+      arg: DigitArg(
+          max: 9,
           calc: (Model m, int arg) {
             m as Model15;
             throw "@@ TODO";
@@ -181,88 +205,64 @@ class Operations15 extends Operations {
       name: 'MATRIX');
   static final NormalArgOperation fix = NormalArgOperation(
       stackLift: StackLift.neutral,
-      numExtendedOpCodes: 11,
-      arg: OperationArg.both(
-          desc: const ArgDescription15CJustI(maxArg: 10),
-          calc: (Model m, int arg) {
-            final digits = _precisionDigits(arg, m);
-            m.displayMode = DisplayMode.fix(digits, m.isComplexMode);
-          }),
+      maxOneByteOpcodes: 0,
+      arg: PrecisionArg(
+          f: (m, v) => m.displayMode = DisplayMode.fix(v, m.isComplexMode)),
       name: 'FIX');
-  static int _precisionDigits(int arg, Model m) {
-    if (arg == 0) {
-      int i = m.memory.registers.index.asDouble.toInt();
-      return max(0, min(i, 9));
-    } else {
-      return arg - 1;
-    }
-  }
-
-  static const _flagArgDesc = ArgDescription15CJustI(maxArg: 10);
 
   static final NormalArgOperation sf = NormalArgOperation(
-      numExtendedOpCodes: 11,
-      arg: OperationArg.both(
-          desc: _flagArgDesc,
-          calc: (Model m, int arg) {
-            arg = _flagArgDesc.mapArg(m, arg, 6);
-            m.setFlag(arg, true);
-          }),
+      maxOneByteOpcodes: 0,
+      arg: LabelArg(maxDigit: 9, f: (m, v) => m.setFlag(v ?? 999, true)),
       name: 'SF');
 
   static final NormalArgOperation cf = NormalArgOperation(
-      numExtendedOpCodes: 11,
-      arg: OperationArg.both(
-          desc: _flagArgDesc,
-          calc: (Model m, int arg) {
-            arg = _flagArgDesc.mapArg(m, arg, 6);
-            m.setFlag(arg, false);
-          }),
+      maxOneByteOpcodes: 0,
+      arg: LabelArg(maxDigit: 9, f: (m, v) => m.setFlag(v ?? 999, false)),
       name: 'CF');
 
   static final BranchingArgOperation fQuestion = BranchingArgOperation(
-      numExtendedOpCodes: 11,
-      arg: OperationArg.both(
-          desc: _flagArgDesc,
-          calc: (Model m, int arg) {
-            arg = _flagArgDesc.mapArg(m, arg, 6);
-            m.program.doNextIf(m.getFlag(arg));
-          }),
+      maxOneByteOpcodes: 0,
+      arg: LabelArg(
+          maxDigit: 9, f: (m, v) => m.program.doNextIf(m.getFlag(v ?? 99))),
       name: 'F?');
 
-  static final NormalArgOperation gsb = NormalArgOperation(
-      arg: GosubOperationArg.both(
-          desc: const ArgDescriptionGto15C(),
-          // calc is only used when running a program - see
-          // GosubArgInputState.
-          calc: (Model m, int label) => m.memory.program.gosub(label)),
+  static final NormalArgOperation gsb = GosubOperation(
+      arg: LabelArg(
+          maxDigit: 19,
+          letters: _letterLabelsList,
+          f: (m, final int? label) {
+            if (label == null) {
+              throw CalculatorError(4);
+            }
+            m.memory.program.goto(label);
+          }),
       name: 'GSB');
 
   static final NormalArgOperation gto = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: const ArgDescriptionGto15C(),
-          calc: (Model m, int label) => m.memory.program.goto(label)),
+      maxOneByteOpcodes: 16, // I, 0..9 and A..E
+      arg: LabelArg(
+          iFirst: true,
+          maxDigit: 19,
+          letters: _letterLabelsList,
+          f: (m, final int? label) {
+            if (label == null) {
+              throw CalculatorError(4);
+            }
+            m.memory.program.goto(label);
+          }),
       name: 'GTO');
 
   static final NormalArgOperation sci = NormalArgOperation(
       stackLift: StackLift.neutral,
-      numExtendedOpCodes: 11,
-      arg: OperationArg.both(
-          desc: const ArgDescription15CJustI(maxArg: 10),
-          calc: (Model m, int arg) {
-            final digits = _precisionDigits(arg, m);
-            m.displayMode = DisplayMode.sci(min(digits, 6), m.isComplexMode);
-          }),
+      maxOneByteOpcodes: 0,
+      arg: PrecisionArg(
+          f: (m, v) => m.displayMode = DisplayMode.sci(v, m.isComplexMode)),
       name: 'SCI');
   static final NormalArgOperation eng = NormalArgOperation(
       stackLift: StackLift.neutral,
-      numExtendedOpCodes: 11,
-      arg: OperationArg.both(
-          desc: const ArgDescription15CJustI(maxArg: 10),
-          calc: (Model m, int arg) {
-            final digits = _precisionDigits(arg, m);
-            m.displayMode = DisplayMode.eng(min(6, digits), m.isComplexMode);
-          }),
+      maxOneByteOpcodes: 0,
+      arg: PrecisionArg(
+          f: (m, v) => m.displayMode = DisplayMode.eng(v, m.isComplexMode)),
       name: 'SCI');
   static final NormalOperation deg = NormalOperation.floatOnly(
       floatCalc: (Model m) {
@@ -280,6 +280,7 @@ class Operations15 extends Operations {
       },
       name: 'GRD');
   static final NormalOperation solve = NormalOperation.floatOnly(
+      maxOneByteOpcodes: 0,
       floatCalc: (Model m) {
         throw "@@ TODO";
       },
@@ -399,38 +400,51 @@ class Operations15 extends Operations {
       },
       name: 'TANH-1');
 
-  static final _justLettersMap = [
-    ArgKey(Operations15.letterLabelA, 0),
-    ArgKey(Operations15.letterLabelB, 1),
-    ArgKey(Operations15.letterLabelC, 2),
-    ArgKey(Operations15.letterLabelD, 3),
-    ArgKey(Operations15.letterLabelE, 4)
-  ];
+  static final _matrixSynonyms = {
+    Operations.chs: Operations15.matrix,
+    Operations.eex: Operations15.resultOp,
+    ..._letterSynonyms
+  };
+
+  static void _dim(Model m, int arg) {
+    if (arg < 0 || arg >= (m as Model15).matrices.length) {
+      throw CalculatorError(11);
+    }
+    int r = m.xF.truncate();
+    int c = m.yF.truncate();
+    if (r < 0 || c < 0) {
+      throw CalculatorError(1);
+    }
+    final mat = m.matrices[arg];
+    m.memory.policy.checkAvailable(r * c - mat.length);
+    mat.resize(r, c);
+  }
 
   static final NormalArgOperation dim = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: ArgDescription15CNoI(
-              special: _justLettersMap,
-              synonyms: ArgDescription15C.matrixSynonyms),
-          calc: (Model m, int arg) {
-            int r = m.xF.truncate();
-            int c = m.yF.truncate();
-            if (r < 0 || c < 0) {
-              throw CalculatorError(1);
-            }
-            final mat = (m as Model15).matrices[arg];
-            m.memory.policy.checkAvailable(r * c - mat.length);
-            mat.resize(r, c);
-          }),
+      arg: ArgAlternates(synonyms: _letterSynonyms, children: [
+        ...List.generate(
+            _letterLabelsList.length,
+            (i) => KeyArg(
+                key: _letterLabelsList[i], child: ArgDone((m) => _dim(m, i)))),
+        KeyArg(
+            key: Operations15.I15,
+            child: ArgDone(
+                (m) => _dim(m, m.memory.registers.index.asMatrix ?? 99))),
+        KeyArg(
+            key: Operations15.parenI15,
+            child: ArgDone((m) =>
+                _dim(m, m.memory.registers.indirectIndex.asMatrix ?? 99))),
+      ]),
       name: 'DIM');
+
   static final NormalArgOperation resultOp = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: ArgDescription15CNoI(
-              special: _justLettersMap,
-              synonyms: ArgDescription15C.letterSynonyms),
-          calc: (Model m, int arg) {
-            (m as Model15).resultMatrix = arg;
-          }),
+      arg: ArgAlternates(
+          synonyms: _letterSynonyms,
+          children: List.generate(
+              _letterLabelsList.length,
+              (i) => KeyArg(
+                  key: _letterLabelsList[i],
+                  child: ArgDone((m) => (m as Model15).resultMatrix = i)))),
       name: 'RESULT');
 
   static final NormalOperation piOp = NormalOperation.floatOnly(
@@ -438,23 +452,26 @@ class Operations15 extends Operations {
         m.xF = dart.pi;
       },
       name: 'PI');
-  static final NormalOperation xExchange = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
+  static final NormalArgOperation xExchange = NormalArgOperation(
+      maxOneByteOpcodes: 4,
+      arg: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
+        KeyArg(key: Arg.kParenI, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Arg.kI, child: ArgDone((m) => throw "@@ TODO")),
+        DigitArg(max: 19, calc: (m, i) => throw "@@ TODO")
+      ]),
       name: 'x<->');
-  static final NormalOperation dse = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-        // calc: (Model m, int arg) => m.program.doNextIf(m.getFlag(arg))),
-      },
+  static final NormalArgOperation dse = NormalArgOperation(
+      maxOneByteOpcodes: 4,
+      arg: RegisterWriteOpArg(
+          maxDigit: 19, f: (double r, double x) => throw "@@ TODO"),
       name: 'DSE');
-  static final NormalOperation isg = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
+  static final NormalArgOperation isg = NormalArgOperation(
+      maxOneByteOpcodes: 4,
+      arg: RegisterWriteOpArg(
+          maxDigit: 19, f: (double r, double x) => throw "@@ TODO"),
       name: 'ISG');
   static final NormalOperation integrate = NormalOperation.floatOnly(
+      maxOneByteOpcodes: 0,
       floatCalc: (Model m) {
         throw "@@ TODO";
       },
@@ -509,13 +526,14 @@ class Operations15 extends Operations {
         throw "@@ TODO";
       },
       name: 'Re<=>Im');
-  static final NormalArgOperation testOp = NormalArgOperation(
-      arg: OperationArg.both(
-          desc: ArgDescription15CNoI(numericArgs: 10),
-          calc: (Model m, int arg) {
-            throw "@@ TODO";
-          }),
-      name: 'TEST');
+
+  static void _testOp(Model m, int arg) {
+    throw "@@ TODO";
+  }
+
+  static final NormalArgOperation testOp =
+      NormalArgOperation(arg: DigitArg(max: 9, calc: _testOp), name: 'TEST');
+
   static final NormalOperation fracOp = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         throw "@@ TODO";
@@ -531,9 +549,7 @@ class Operations15 extends Operations {
         final m = s.model as Model15;
         m.userMode = !m.userMode;
         m.display.update(flash: true); // Needed in program entry mode
-      },
-      floatCalc: (Model m) {
-        // This gets us out of digit entry mode, manages stack lift, etc.
+        throw "@@ TODO:  Get out of digit entry mode, handle stack lift, etc.";
       },
       name: 'USER');
   static final NormalOperation xFactorial = NormalOperation.floatOnly(
@@ -582,40 +598,182 @@ class Operations15 extends Operations {
       },
       name: 'Cy,x');
 
+  static void _storeToMatrix(Model m, bool increment, int matrix) {
+    throw "@@ TODO";
+  }
+
+  static void _storeMatrix(Model m, int matrix) {
+    throw "@@ TODO";
+  }
+
   static final NormalArgOperation sto15 = NormalArgOperation(
-      numExtendedOpCodes: 5, // The user shifted ones
-      arg: OperationArg.both(
-          desc: const ArgDescription15CSto(),
-          calc: (Model m, int arg) =>
-              ArgDescription15CSto.calculate(m as Model15, arg)),
+      maxOneByteOpcodes: 33,
+      arg: ArgAlternates(synonyms: _matrixSynonyms, children: [
+        // 0-.9, I
+        RegisterWriteArg(
+            maxDigit: 19, noParenI: true, f: (m) => m.x), // 21 opcodes
+        KeyArg(
+            key: Operations15.resultOp,
+            child: ArgDone((m) {
+              final matrix = (m as Model15).x.asMatrix;
+              if (matrix == null) {
+                throw CalculatorError(11);
+              } else {
+                m.resultMatrix = matrix;
+              }
+            })),
+        // g A..E
+        KeyArg(
+            key: Operations15.xSquared, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations15.lnOp, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations15.logOp, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(
+            key: Operations15.percent, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(
+            key: Operations15.deltaPercent,
+            child: ArgDone((m) => throw "@@ TODO")),
+        // Not user mode, A..E, (i)
+        UserArg(
+            userMode: false,
+            child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
+              KeysArg(
+                  keys: _letterLabels,
+                  generator: (i) =>
+                      ArgDone((m) => _storeToMatrix(m, false, i))),
+              KeyArg(
+                  key: Operations15.parenI15,
+                  child: ArgDone((m) => throw "@@ TODO"))
+            ])),
+        UserArg(
+            userMode: true,
+            child: ArgAlternates(
+              synonyms: Arg.registerISynonyms,
+              children: [
+                KeysArg(
+                    keys: _letterLabels,
+                    generator: (i) =>
+                        ArgDone((m) => _storeToMatrix(m, true, i))),
+                KeyArg(
+                    key: Operations15.parenI15,
+                    child: ArgDone((m) => throw "@@ TODO"))
+              ],
+            )),
+        KeyArg(
+            // STO MATRIX A..E.  These are two-byte opcodes.
+            key: Operations15.matrix,
+            child: KeysArg(
+                keys: _letterLabels,
+                generator: (i) => ArgDone((m) => _storeMatrix(m, i)))),
+        KeyArg(
+            key: Operations.plus,
+            child: RegisterWriteOpArg(
+                maxDigit: 19, f: (double r, double x) => r + x)),
+        KeyArg(
+            key: Operations.minus,
+            child: RegisterWriteOpArg(
+                maxDigit: 19, f: (double r, double x) => r - x)),
+        KeyArg(
+            key: Operations.mult,
+            child: RegisterWriteOpArg(
+                maxDigit: 19, f: (double r, double x) => r * x)),
+        KeyArg(
+            key: Operations.div,
+            child: RegisterWriteOpArg(
+                maxDigit: 19, f: (double r, double x) => r / x)),
+        KeyArg(
+            key: Operations15.cosInverse, // That's g (i)
+            child: ArgDone((m) => throw "@@ TODO"))
+      ]),
       name: 'STO');
 
-  static final NormalArgOperation rcl15 = NormalArgOperation(
-      numExtendedOpCodes: 25,
-      arg: OperationArg.both(
-          desc: const ArgDescription15CSto(),
-          pressed: (ActiveState s) => s.liftStackIfEnabled(),
-          calc: (Model m, int arg) {
-            if (arg == ArgDescription15CSto.resultKey) {
-              m.x = Value.fromMatrix((m as Model15).resultMatrix);
-            } else {
-              final mat = arg - ArgDescription15CSto.matrixStart;
-              if (mat >= 0) {
-                if (mat >= 5) {
-                  throw '@@ TODO:  recall from matrix ${mat - 5}';
-                  // @@ And, when pressed, display name of matrix, as per 144
-                  // @@ And handle user mode
-                  // @@ And handle STO +|-|*|/
-                  // @@ Yikes!  Also STO-g-A..E, STO-g-(i), which are single
-                  // @@ byte!
-                } else {
-                  m.x = Value.fromMatrix(mat);
-                }
-              } else {
-                m.x = m.memory.registers[arg];
-              }
-            }
-          }),
+  static void _recallFromMatrix(Model m, bool increment, int matrix) {
+    throw "@@ TODO";
+  }
+
+  static void _recallMatrix(Model m, int matrix) {
+    throw "@@ TODO";
+  }
+
+  static final NormalArgOperation rcl15 = NormalArgOperationWithBeforeCalc(
+      maxOneByteOpcodes: 44,
+      beforeCalculate: (Resting s) {
+        s.liftStackIfEnabled();
+        return StackLift.neutral;
+      },
+      arg: ArgAlternates(synonyms: _matrixSynonyms, children: [
+        RegisterWriteArg(maxDigit: 19, noParenI: true, f: (m) => m.x),
+        // g A..E
+        KeyArg(
+            key: Operations15.xSquared, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations15.lnOp, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations15.logOp, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(
+            key: Operations15.percent, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(
+            key: Operations15.deltaPercent,
+            child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(
+            key: Operations15.dim,
+            child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
+              KeysArg(
+                  keys: _letterLabels,
+                  generator: (i) => ArgDone((m) => throw "@@ TODO")),
+              KeyArg(
+                  key: Operations15.parenI15,
+                  child: ArgDone((m) => throw "@@ TODO"))
+            ])),
+        KeyArg(
+            key: Operations15.resultOp,
+            child: ArgDone((m) =>
+                m.resultX = Value.fromMatrix((m as Model15).resultMatrix))),
+        KeyArg(
+            // RCL MATRIX A..E.  These are one-byte opcodes.
+            key: Operations15.matrix,
+            child: KeysArg(
+                keys: _letterLabels,
+                generator: (i) => ArgDone((m) => _recallMatrix(m, i)))),
+        UserArg(
+            userMode: false,
+            child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
+              KeysArg(
+                  keys: _letterLabels,
+                  generator: (i) =>
+                      ArgDone((m) => _recallFromMatrix(m, false, i))),
+              KeyArg(
+                  key: Operations15.parenI15,
+                  child: ArgDone((m) => throw "@@ TODO"))
+            ])),
+        UserArg(
+            userMode: true,
+            child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
+              KeysArg(
+                  keys: _letterLabels,
+                  generator: (i) =>
+                      ArgDone((m) => _recallFromMatrix(m, true, i))),
+              KeyArg(
+                  key: Operations15.parenI15,
+                  child: ArgDone((m) => throw "@@ TODO"))
+            ])),
+        KeyArg(
+            key: Operations.plus,
+            child: RegisterReadOpArg(
+                maxDigit: 19, f: (double r, double x) => r + x)),
+        KeyArg(
+            key: Operations.minus,
+            child: RegisterReadOpArg(
+                maxDigit: 19, f: (double r, double x) => r - x)),
+        KeyArg(
+            key: Operations.mult,
+            child: RegisterReadOpArg(
+                maxDigit: 19, f: (double r, double x) => r * x)),
+        KeyArg(
+            key: Operations.div,
+            child: RegisterReadOpArg(
+                maxDigit: 19, f: (double r, double x) => r / x)),
+        KeyArg(
+            key: Operations15.cosInverse, // That's g (i)
+            child: ArgDone((m) => throw "@@ TODO"))
+      ]),
       name: 'RCL');
 
   static double _checkResult(double Function() f, int errNo) {
@@ -960,9 +1118,19 @@ class CalculatorButtonWithUserMode extends CalculatorButton {
 class Controller15 extends RealController {
   Controller15(Model<Operation> model)
       : super(model,
-            numbers: _numbers,
+            numbers: numbers,
             shortcuts: const {},
             lblOperation: Operations15.lbl15);
+
+  @override
+  List<Operation> get nonProgrammableOperations => _nonProgrammableOperations;
+
+  static final _nonProgrammableOperations = [
+    ...Operations.special,
+    Operations15.hyp,
+    Operations15.hypInverse,
+    Operations15.userOp,
+  ];
 
   @override
   void buttonWidgetDown(CalculatorButton b) {
@@ -978,7 +1146,7 @@ class Controller15 extends RealController {
   }
 
   /// The numbers.  This must be in order.
-  static final List<NumberEntry> _numbers = [
+  static final List<NumberEntry> numbers = [
     Operations.n0,
     Operations.n1,
     Operations.n2,
@@ -1107,325 +1275,18 @@ final Set<LetterLabel> _letterLabels = {
   Operations15.letterLabelE
 };
 
+final _letterLabelsList = _letterLabels.toList(growable: false);
+
 ProgramInstruction<Operation> _newProgramInstruction(
-    Operation operation, int argValue, SpecialArg? special) {
+    Operation operation, ArgDone arg) {
   if (_letterLabels.contains(operation)) {
-    assert(argValue == 0);
-    assert(special == null);
-    argValue = operation.numericValue!;
+    arg = Operations15.gsb.arg.matches(operation, false) as ArgDone;
     operation = Operations15.gsb;
   }
-  return ProgramInstruction15(operation, argValue, special);
-}
-
-@immutable
-abstract class ArgDescription15C extends ArgDescription {
-  const ArgDescription15C();
-
-  static final letterSynonyms = {
-    Operations15.sqrtOp15: Operations15.letterLabelA,
-    Operations15.eX15: Operations15.letterLabelB,
-    Operations15.tenX15: Operations15.letterLabelC,
-    Operations15.yX15: Operations15.letterLabelD,
-    Operations15.reciprocal15: Operations15.letterLabelE
-  };
-
-  static final matrixSynonyms = {
-    Operations.chs: Operations15.matrix,
-    Operations.eex: Operations15.resultOp,
-    ...letterSynonyms
-  };
-}
-
-@immutable
-class ArgDescriptionGto15C extends ArgDescription {
-  static final List<SpecialArg> _special = [
-    ArgKey(Operations15.parenI15, 16),
-    ArgKey(Operations15.I15, 17)
-  ];
-
-  static final _synonyms = {
-    Operations15.tan: Operations15.I15,
-    Operations15.cos: Operations15.parenI15
-  };
-
-  const ArgDescriptionGto15C();
-
-  @override
-  List<SpecialArg> get special => _special;
-
-  @override
-  Map<ProgramOperation, ProgramOperation> get synonyms => _synonyms;
-
-  @override
-  int get maxArg => 25;
-  // That's 0 to 9, .0 to .9, A-E, and I
-
-  @override
-  int get numericArgs => 20;
-}
-
-@immutable
-class ArgDescription15CNoI extends ArgDescription {
-  @override
-  final int maxArg;
-
-  @override
-  final int numericArgs;
-
-  @override
-  final List<SpecialArg> special;
-
-  @override
-  final Map<ProgramOperation, ProgramOperation> synonyms;
-
-  ArgDescription15CNoI(
-      {this.numericArgs = 0, this.special = const [], this.synonyms = const {}})
-      : maxArg = numericArgs - 1 + SpecialArg.numUniqueValues(special);
-}
-
-@immutable
-class ArgDescription15CSto extends ArgDescription15C {
-  static const int resultKey = 20; // One byte opcode
-
-  static const int matrixStart = 23;
-  static const int userStart = 23;
-
-  const ArgDescription15CSto();
-
-  @override
-  int get maxArg => 36;
-
-  @override
-  int get numericArgs => 20;
-
-  @override
-  List<SpecialArg> get special => _special;
-
-  static void _storeToMatrix(Model m, bool increment, int matrix) {
-    throw "@@ TODO";
-  }
-
-  static void _storeMatrix(Model m, int matrix) {
-    throw "@@ TODO";
-  }
-
-  static final _args =
-      ArgAlternates(synonyms: ArgDescription15C.matrixSynonyms, children: [
-    RegisterReadArg(numDigits: 20, f: (m, v) => m.x = v),
-    KeyArg(
-        key: Operations15.resultOp,
-        child: ArgDone((m) {
-          final matrix = (m as Model15).x.asMatrix;
-          if (matrix == null) {
-            throw CalculatorError(11);
-          } else {
-            m.resultMatrix = matrix;
-          }
-        })),
-    UserArg(
-        userMode: false,
-        child: KeysArg(
-            keys: _letterLabels,
-            generator: (i) => ArgDone((m) => _storeToMatrix(m, false, i)))),
-    UserArg(
-        userMode: true,
-        child: KeysArg(
-            keys: _letterLabels,
-            generator: (i) => ArgDone((m) => _storeToMatrix(m, true, i)))),
-    KeyArg(
-        key: Operations15.matrix,
-        child: KeysArg(
-            keys: _letterLabels,
-            generator: (i) => ArgDone((m) => _storeMatrix(m, i)))),
-    KeyArg(
-        key: Operations.plus,
-        child: RegisterOpArg(numDigits: 20, f: (double r, double x) => r + x)),
-    KeyArg(
-        key: Operations.minus,
-        child: RegisterOpArg(numDigits: 20, f: (double r, double x) => r - x)),
-    KeyArg(
-        key: Operations.mult,
-        child: RegisterOpArg(numDigits: 20, f: (double r, double x) => r * x)),
-    KeyArg(
-        key: Operations.div,
-        child: RegisterOpArg(numDigits: 20, f: (double r, double x) => r / x))
-  ]);
-
-  static final _special = [
-    ArgKeyF(Operations15.resultOp, 20, (Model m, int _) {
-      final matrix = (m as Model15).x.asMatrix;
-      if (matrix == null) {
-        throw CalculatorError(11);
-      } else {
-        m.resultMatrix = matrix;
-      }
-    }),
-    ArgKeyStoreI(Operations15.I15, 21),
-    ArgKeyStoreParenI(Operations15.parenI15, 22),
-    ArgStoreMatrix(Operations15.letterLabelA, false, 0, 23),
-    ArgStoreMatrix(Operations15.letterLabelB, false, 1, 24),
-    ArgStoreMatrix(Operations15.letterLabelC, false, 2, 25),
-    ArgStoreMatrix(Operations15.letterLabelD, false, 3, 26),
-    ArgStoreMatrix(Operations15.letterLabelE, false, 4, 27),
-    ArgKey(Operations.plus, 28), // @@ TODO
-    ArgKey(Operations.minus, 29),
-    ArgKey(Operations.mult, 30),
-    ArgKey(Operations.div, 31),
-    ArgStoreMatrix(Operations15.letterLabelA, true, 0, 32),
-    ArgStoreMatrix(Operations15.letterLabelB, true, 1, 33),
-    ArgStoreMatrix(Operations15.letterLabelC, true, 2, 34),
-    ArgStoreMatrix(Operations15.letterLabelD, true, 3, 35),
-    ArgStoreMatrix(Operations15.letterLabelE, true, 4, 36)
-    // @@ TODO:  "STO MATRIX A" copies elements of X matrix into A
-  ];
-
-  @override
-  Map<ProgramOperation, ProgramOperation> get synonyms =>
-      ArgDescription15C.matrixSynonyms;
-
-  static void calculate(Model15 model, int arg) {
-    model.memory.registers[arg] = model.x;
-    // @@ TODO:  Finish this
-  }
-}
-
-@immutable
-class ArgStoreMatrix extends ArgKeyUser {
-  final int matrixNumber;
-
-  ArgStoreMatrix(
-      ProgramOperation key, bool userMode, this.matrixNumber, int opcodeOffset)
-      : super(key, userMode, opcodeOffset);
-
-  @override
-  bool calculate(Model m) {
-    throw "@@ TODO";
-    return true;
-  }
-}
-
-@immutable
-class ArgDescription15CJustI extends ArgDescription {
-  @override
-  final int maxArg;
-
-  @override
-  int get numericArgs => maxArg - 0;
-
-  const ArgDescription15CJustI({required this.maxArg});
-
-  static const _indexRegisterNumber = 0; // It's to the right on the keyboard
-  @override
-  int get numericOffset => 1;
-
-  static final _special = [ArgKey(Operations15.I15, 0)];
-
-  static final _synonyms = {Operations15.tan: Operations15.I15};
-
-  @override
-  List<SpecialArg> get special => _special;
-
-  @override
-  Map<ProgramOperation, ProgramOperation> get synonyms => _synonyms;
-
-  int mapArg(Model m, int v, int errNumber) {
-    if (v == _indexRegisterNumber) {
-      final i = m.xF.abs().truncate();
-      if (i >= numericArgs) {
-        throw CalculatorError(errNumber);
-      }
-      return i;
-    } else {
-      return v - numericOffset;
-    }
-  }
-}
-
-///
-/// A maximally flexible arg description
-///
-class ArgDescriptionFlex extends ArgDescription {
-  @override
-  final int numericArgs;
-  @override
-  final int maxArg;
-  @override
-  final int numericOffset;
-  @override
-  final List<ArgKeys> special;
-  @override
-  final Map<ProgramOperation, ProgramOperation> synonyms;
-
-  ArgDescriptionFlex(
-      {this.numericArgs = 0,
-      this.numericOffset = 0,
-      this.special = const [],
-      this.synonyms = const {}})
-      : maxArg = numericArgs - 1 + SpecialArg.numUniqueValues(special);
+  return ProgramInstruction15(operation, arg);
 }
 
 class ProgramInstruction15<OT extends ProgramOperation>
     extends ProgramInstruction<OT> {
-  ProgramInstruction15(OT op, int argValue, SpecialArg? special)
-      : super(op, argValue, special);
-
-  @override
-  String get programDisplay {
-    if (op.maxArg == 0) {
-      return rightJustify(op.programDisplay, 6);
-    }
-    final String as;
-    final ProgramOperation? specialKey = specialArg?.lastKey;
-    if (specialKey != null) {
-      if (specialKey == Operations15.I15) {
-        as = '25'; // because I is shortcut to RCL-I
-      } else if (specialKey == Operations15.parenI15) {
-        as = '24'; // because (i) is shortcut to RCL-(i)
-      } else {
-        as = specialKey.programDisplay.trimRight();
-      }
-    } else {
-      final av = argValue - op.arg!.desc.numericOffset;
-      assert(av >= 0 && av < 25);
-      if (av < 10) {
-        as = ' ${av.toRadixString(10)}';
-      } else if (av < 20) {
-        as = ' .${(av - 10).toRadixString(10)}';
-      } else {
-        // A..F
-        as = '1${av - 19}';
-      }
-    }
-    return rightJustify('${op.programDisplay}$as', 6);
-  }
-
-  @override
-  String get programListing {
-    final String as;
-    if (op.maxArg > 0) {
-      final ProgramOperation? specialKey = specialArg?.lastKey;
-      if (specialKey != null) {
-        if (specialKey == Operations15.I15) {
-          as = ' I';
-        } else if (specialKey == Operations15.parenI15) {
-          as = ' (i)';
-        } else {
-          as = specialKey.programDisplay.trimRight();
-        }
-      } else {
-        final av = argValue - op.arg!.desc.numericOffset;
-        assert(av >= 0 && av < 25);
-        if (av < 20) {
-          as = ' ${argValue.toRadixString(10)}';
-        } else {
-          final cc = 'A'.codeUnitAt(0) + av - 20;
-          as = ' ${String.fromCharCode(cc)}';
-        }
-      }
-    } else {
-      as = '';
-    }
-    return '${op.name}$as';
-  }
+  ProgramInstruction15(OT op, ArgDone arg) : super(op, arg);
 }

@@ -31,9 +31,11 @@ import 'opcodes.dart';
 import 'programs.dart';
 
 Future<void> main() async {
+  runStaticInitialization16();
   testWidgets('16C Buttons', (WidgetTester tester) async {
     await tester.pumpWidget(Jrpn(Controller16(Model16())));
   });
+  test('programEntry', programEntry);
   test('p79 program', p79Program);
   test('p93 checksum program', p93Checksum);
   test('stack lift', testStackLift);
@@ -43,6 +45,7 @@ Future<void> main() async {
   test('no scroll reset', noScrollReset);
   test('JSON format / opcodes', opcodeTest16C);
   test('negative gosub', testNegativeGosub);
+  test('float stack lift', testFloatStackLift);
   appendixA();
   test('Towers of Hanoi', towersOfHanoi);
   // Do this last, because it leaves a timer pending:
@@ -419,4 +422,39 @@ Future<void> testNegativeGosub() async {
   await out.moveNext();
   expect(out.current, ProgramEvent.done);
   expect(m.xI, BigInt.from(0x42));
+}
+
+Future<void> testFloatStackLift() async {
+  final tc = TestCalculator();
+  final c = tc.controller;
+  final m = tc.model;
+  enter(c, Operations16.floatKey);
+  enter(c, Operations.n2);
+  enter(c, Operations.n1);
+  enter(c, Operations.enter);
+  enter(c, Operations.n2);
+  enter(c, Operations.enter);
+  expect(m.x, Value.fromDouble(2));
+  expect(m.y, Value.fromDouble(2));
+  expect(m.z, Value.fromDouble(1));
+  enter(c, Operations16.floatKey);
+  enter(c, Operations.n4);
+  enter(c, Operations.n3); // Stack lift not enabled
+  expect(m.x, Value.fromDouble(3));
+  expect(m.y, Value.fromDouble(2));
+  expect(m.z, Value.fromDouble(1));
+
+  enter(c, Operations16.hex);
+  enter(c, Operations.enter);
+  enter(c, Operations.n2);
+  enter(c, Operations.enter);
+  enter(c, Operations16.floatKey);
+  enter(c, Operations.n4);
+  expect(m.x, Value.fromDouble(8));
+  expect(m.y, Value.fromDouble(0));
+  expect(m.z, Value.fromDouble(0));
+  enter(c, Operations.n7); // Stack lift enabled
+  expect(m.x, Value.fromDouble(7));
+  expect(m.y, Value.fromDouble(8));
+  expect(m.z, Value.fromDouble(0));
 }
