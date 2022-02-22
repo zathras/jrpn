@@ -495,7 +495,7 @@ class LimitedOperation extends NoArgOperation implements NormalOperation {
   @override
   void Function(Model)? getCalculation<T extends ProgramOperation>(
           Model m, DisplayModeSelector<void Function(Model)?, T> selector) =>
-      null;
+      m.displayMode.select(selector, this); // See subclass(es)
 }
 
 ///
@@ -748,11 +748,17 @@ class NormalArgOperationWithBeforeCalc extends NormalArgOperation {
   }
 }
 
-/// @@ TODO:  Is this vestegial?
 class NonProgrammableOperation extends LimitedOperation implements ArgDone {
+  final Function(Model m)? calc;
+
+  @override
+  void Function(Model m)? get floatCalc => calc;
+  @override
+  void Function(Model m)? get complexCalc => calc;
   NonProgrammableOperation(
       {required String name,
       required void Function(LimitedState) pressed,
+      this.calc,
       bool endsDigitEntry = false})
       : super(pressed: pressed, name: name, endsDigitEntry: endsDigitEntry);
 }

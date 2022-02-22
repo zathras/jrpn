@@ -196,12 +196,29 @@ class Operations15 extends Operations {
       name: 'delta%');
   static final NormalArgOperation matrix = NormalArgOperation(
       maxOneByteOpcodes: 0,
-      arg: DigitArg(
-          max: 9,
-          calc: (Model m, int arg) {
-            m as Model15;
-            throw "@@ TODO";
-          }),
+      arg: ArgAlternates(children: [
+        KeyArg(
+            key: Operations.n0,
+            child: ArgDone((m) {
+              for (final mat in (m as Model15).matrices) {
+                mat.resize(0, 0);
+              }
+            })),
+        KeyArg(
+            key: Operations.n1,
+            child: ArgDone((m) {
+              m.memory.registers[0] =
+                  m.memory.registers[1] = Value.fromDouble(1);
+            })),
+        KeyArg(key: Operations.n2, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations.n3, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations.n4, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations.n5, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations.n6, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations.n7, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations.n8, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations.n9, child: ArgDone((m) => throw "@@ TODO")),
+      ]),
       name: 'MATRIX');
   static final NormalArgOperation fix = NormalArgOperation(
       stackLift: StackLift.neutral,
@@ -239,7 +256,7 @@ class Operations15 extends Operations {
       name: 'GSB');
 
   static final NormalArgOperation gto = NormalArgOperation(
-      maxOneByteOpcodes: 16, // I, 0..9 and A..E
+      maxOneByteOpcodes: 16, // I, A..E, 0..9, and .0-.9
       arg: LabelArg(
           iFirst: true,
           maxDigit: 19,
@@ -493,12 +510,28 @@ class Operations15 extends Operations {
       name: 'RAN #');
   static final NormalOperation toR = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        double r = m.xF;
+        double theta = m.yF;
+        m.xF = r * dart.cos(theta * m.trigMode.scaleFactor);
+        m.yF = r * dart.sin(theta * m.trigMode.scaleFactor);
+      },
+      complexCalc: (Model m) {
+        Complex v = m.xC;
+        m.xC = Complex(v.real * dart.cos(v.imaginary * m.trigMode.scaleFactor),
+            v.real * dart.sin(v.imaginary * m.trigMode.scaleFactor));
       },
       name: '->R');
   static final NormalOperation toP = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        double x = m.xF;
+        double y = m.yF;
+        m.xF = sqrt(x * x + y * y);
+        m.yF = atan2(y, x) / m.trigMode.scaleFactor;
+      },
+      complexCalc: (Model m) {
+        Complex v = m.xC;
+        m.xC = Complex(sqrt(v.real * v.real + v.imaginary * v.imaginary),
+            atan2(v.imaginary, v.real) / m.trigMode.scaleFactor);
       },
       name: '->P');
   static final NormalOperation toHMS = NormalOperation.floatOnly(
@@ -545,11 +578,12 @@ class Operations15 extends Operations {
       },
       name: 'INT');
   static final userOp = NonProgrammableOperation(
+      endsDigitEntry: true,
+      calc: (_) {},
       pressed: (LimitedState s) {
         final m = s.model as Model15;
         m.userMode = !m.userMode;
         m.display.update(flash: true); // Needed in program entry mode
-        throw "@@ TODO:  Get out of digit entry mode, handle stack lift, etc.";
       },
       name: 'USER');
   static final NormalOperation xFactorial = NormalOperation.floatOnly(
@@ -1132,10 +1166,28 @@ class Controller15 extends RealController {
     Operations15.userOp,
   ];
 
+  static final _userModeSwapped = <Operation, Operation>{
+    Operations15.letterLabelA: Operations15.sqrtOp15,
+    Operations15.sqrtOp15: Operations15.letterLabelA,
+    Operations15.letterLabelB: Operations15.eX15,
+    Operations15.eX15: Operations15.letterLabelB,
+    Operations15.letterLabelC: Operations15.tenX15,
+    Operations15.tenX15: Operations15.letterLabelC,
+    Operations15.letterLabelD: Operations15.yX15,
+    Operations15.yX15: Operations15.letterLabelD,
+    Operations15.letterLabelE: Operations15.reciprocal15,
+    Operations15.reciprocal15: Operations15.letterLabelE
+  };
+
   @override
   void buttonWidgetDown(CalculatorButton b) {
     if (b is! CalculatorButtonHyperbolic) {
-      super.buttonWidgetDown(b);
+      if (model.userMode) {
+        final Operation op = model.shift.select(b);
+        buttonDown(_userModeSwapped[op] ?? op);
+      } else {
+        super.buttonWidgetDown(b);
+      }
     } else if (lastKey == Operations15.hyp) {
       buttonDown(b.hyperOp);
     } else if (lastKey == Operations15.hypInverse) {
@@ -1221,18 +1273,24 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
     MKey(Operations15.gto, Operations15.hyp, Operations15.hypInverse),
     MKey(Operations15.sin, Operations15.dim, Operations15.sinInverse,
         extensionOps: [
-          MKeyExtensionOp(Operations15.sinh, '42,22,'),
-          MKeyExtensionOp(Operations15.sinhInverse, '43,22,')
+          MKeyExtensionOp(
+              Operations15.sinh, Operations.fShift, Operations15.hyp),
+          MKeyExtensionOp(Operations15.sinhInverse, Operations.gShift,
+              Operations15.hypInverse)
         ]),
     MKey(Operations15.cos, Operations15.parenI15, Operations15.cosInverse,
         extensionOps: [
-          MKeyExtensionOp(Operations15.cosh, '42,22,'),
-          MKeyExtensionOp(Operations15.coshInverse, '43,22,')
+          MKeyExtensionOp(
+              Operations15.cosh, Operations.fShift, Operations15.hyp),
+          MKeyExtensionOp(Operations15.coshInverse, Operations.gShift,
+              Operations15.hypInverse)
         ]),
     MKey(Operations15.tan, Operations15.I15, Operations15.tanInverse,
         extensionOps: [
-          MKeyExtensionOp(Operations15.tanh, '42,22,'),
-          MKeyExtensionOp(Operations15.tanhInverse, '43,22,')
+          MKeyExtensionOp(
+              Operations15.tanh, Operations.fShift, Operations15.hyp),
+          MKeyExtensionOp(Operations15.tanhInverse, Operations.gShift,
+              Operations15.hypInverse)
         ]),
     MKey(Operations.eex, Operations15.resultOp, Operations15.piOp),
     MKey(Operations.n4, Operations15.xExchange, Operations15.sf),

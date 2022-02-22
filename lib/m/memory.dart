@@ -693,9 +693,10 @@ class MKey<OT extends ProgramOperation> {
 @immutable
 class MKeyExtensionOp<OT extends ProgramOperation> {
   final OT op;
-  final String programDisplayPrefix;
+  final OT? shiftIn;
+  final OT? secondShift;
 
-  const MKeyExtensionOp(this.op, this.programDisplayPrefix);
+  const MKeyExtensionOp(this.op, this.shiftIn, this.secondShift);
 }
 
 ///
@@ -812,7 +813,7 @@ class OperationMap<OT extends ProgramOperation> {
           key.gShifted.rcName = rcText;
         }
         for (final MKeyExtensionOp<OT> ext in key.extensionOps) {
-          ext.op.rcName = rcText; // @@ TODO:  Rest of name
+          ext.op.rcName = rcText;
         }
       }
     }
@@ -860,7 +861,7 @@ class OperationMap<OT extends ProgramOperation> {
         }
         for (final MKeyExtensionOp<OT> ext in key.extensionOps) {
           visited.add(ext.op);
-          _initializeOperation(ext.op, null, ext.programDisplayPrefix);
+          _initializeOperation(ext.op, ext.shiftIn, ext.secondShift);
         }
       }
     }
@@ -887,8 +888,7 @@ class OperationMap<OT extends ProgramOperation> {
   }
 
   void _initializeOperation(OT op, ProgramOperation? shiftIn,
-      [String? extensionDisplayPrefix]) {
-    // @@ TODO:  extensionDisplayPrefix
+      [ProgramOperation? secondShift]) {
     int remaining = op.maxOneByteOpcodes;
     op.debugLogId = remaining == 0 ? _nextExtendedOpcode : _nextOpcode;
     op.arg.init(registerBase,
@@ -910,7 +910,12 @@ class OperationMap<OT extends ProgramOperation> {
       final String dash = userMode ? 'u' : '-';
       final String pd;
       final String las;
-      if (shift == null && arg == null) {
+      if (secondShift != null) {
+        assert(shift != null);
+        assert(arg == null);
+        pd = '${shift!.rcName},${secondShift.rcName}${op.rcName}';
+        las = '';
+      } else if (shift == null && arg == null) {
         assert(!argDot);
         pd = '    ${op.rcName}';
         las = '';

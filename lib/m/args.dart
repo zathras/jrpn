@@ -303,9 +303,9 @@ class LabelArg extends ArgAlternates {
 
     return [
       ...(iFirst ? iList : const []),
-      DigitArg(max: maxDigit, calc: (m, i) => f(m, i)),
       ...letters.map((ProgramOperation letter) =>
           ArgDone((m) => f(m, letter.numericValue!))),
+      DigitArg(max: maxDigit, calc: (m, i) => f(m, i)),
       ...(iFirst ? const [] : iList)
     ];
   }
