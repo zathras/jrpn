@@ -22,6 +22,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:jrpn/c/operations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/controller.dart';
@@ -110,6 +111,11 @@ class TestCalculator implements ProgramListener {
   void enter(Operation key) {
     controller.buttonDown(key);
     controller.buttonUp();
+  }
+
+  @override
+  void onErrorShown(CalculatorError err) {
+    debugPrint('Calculator error shown:  $err');
   }
 }
 

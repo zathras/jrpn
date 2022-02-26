@@ -57,8 +57,8 @@ abstract class DisplayMode {
       ? _FloatMode(const _Sci16FloatFormatter())
       : _FloatMode(_Fix16FloatFormatter(fractionDigits));
   static DisplayMode fix(int fractionDigits, bool complex) => complex
-      ? _ComplexMode(_FixFloatFormatter(fractionDigits))
-      : _FloatMode(_FixFloatFormatter(fractionDigits));
+      ? _ComplexMode(FixFloatFormatter(fractionDigits))
+      : _FloatMode(FixFloatFormatter(fractionDigits));
   static DisplayMode sci(int fractionDigits, bool complex) => complex
       ? _ComplexMode(_SciFloatFormatter(fractionDigits))
       : _FloatMode(_SciFloatFormatter(fractionDigits));
@@ -568,9 +568,9 @@ class _SciFloatFormatter extends _FloatFormatter {
 }
 
 @immutable
-class _FixFloatFormatter extends _FloatFormatter {
+class FixFloatFormatter extends _FloatFormatter {
   final int fractionDigits;
-  const _FixFloatFormatter(this.fractionDigits);
+  const FixFloatFormatter(this.fractionDigits);
 
   @override
   String get _jsonName => 'x$fractionDigits';
@@ -588,7 +588,7 @@ class _FixFloatFormatter extends _FloatFormatter {
 /// idiom for always being in 7 digit scientific notation).
 ///
 @immutable
-class _Fix16FloatFormatter extends _FixFloatFormatter {
+class _Fix16FloatFormatter extends FixFloatFormatter {
   const _Fix16FloatFormatter(int fractionDigits) : super(fractionDigits);
 
   @override

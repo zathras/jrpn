@@ -332,7 +332,8 @@ class Digit {
     'R'.codeUnitAt(0): Digit._p([_s.top, _s.upL]),
     'r'.codeUnitAt(0): Digit._p([_s.mid, _s.lowL]),
     'U'.codeUnitAt(0): Digit._p([_s.upL, _s.lowL, _s.bot, _s.lowR, _s.upR]),
-    'u'.codeUnitAt(0): Digit._p([_s.upL, _s.mid, _s.upR]),
+    'u'.codeUnitAt(0): Digit._p([_s.upL, _s.mid, _s.upR]), // u on top part
+    'v'.codeUnitAt(0): Digit._p([_s.lowL, _s.bot, _s.lowR]), // u on bottom part
     '.'.codeUnitAt(0): Digit._p([_s.decimalPoint], noWidth: true),
     ','.codeUnitAt(0): Digit._p([_s.decimalPoint, _s.commaTail], noWidth: true),
     'E'.codeUnitAt(0): Digit._p([], noWidth: true), // For exponent

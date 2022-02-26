@@ -62,7 +62,7 @@ abstract class Memory<OT extends ProgramOperation> {
 
   /// Called by our controller, which necessarily happens after the Model
   /// exists.
-  void initializeSystem(OperationMap<OT> layout, int lblOpcode);
+  void initializeSystem(OperationMap<OT> layout, OT lbl);
   // We rely on our Controller to give us an OperationMap with the
   // layout information that tells us the row/column positions of the various
   // operations.  Those positions are how the 16C displays program
@@ -283,6 +283,8 @@ class Registers {
 /// line will be line 4, despite the fact that F-ENG-2 takes up two bytes.
 ///
 abstract class ProgramMemory<OT extends ProgramOperation> {
+  bool isRunning = false;
+
   @protected
   final Memory<OT> memory;
 
@@ -351,6 +353,8 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     }
     _currentLine = v;
   }
+
+  bool get hasExtended => _extendedOpcode < 0x100;
 
   /// Insert a new instruction, and increment currentLine to refer to it.
   void insert(final ProgramInstruction<OT> instruction) {
@@ -431,7 +435,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     }
     while (_cachedLine < line) {
       _cachedLine++;
-      if (_byteAt(_cachedAddress) == 0xff) {
+      if (_byteAt(_cachedAddress) >= _extendedOpcode) {
         _cachedAddress += 4;
       } else {
         _cachedAddress += 2;
@@ -519,7 +523,8 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     final r = List<String>.empty(growable: true);
     for (int i = 1; i <= lines; i++) {
       String line = i.toString().padLeft(3, '0');
-      String opc = opcodeAt(i).toRadixString(16).padLeft(2, '0');
+      final pad = hasExtended ? 3 : 2;
+      String opc = opcodeAt(i).toRadixString(16).padLeft(pad, '0');
       final ProgramInstruction<OT> pi = this[i];
       final pd = this[i].programDisplay;
       String semiHuman = pd.substring(0, 1) + pd.substring(1).padLeft(9);
@@ -537,6 +542,14 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       currentLine = 0;
     } else {
       currentLine = line;
+    }
+  }
+
+  void skipIfRunning() {
+    // @@ TODO:  This is different than incrementCurrentLine.  Make sure
+    // @@ that's really how the 15C behaves.
+    if (isRunning && currentLine < lines) {
+      currentLine++;
     }
   }
 
@@ -672,6 +685,10 @@ abstract class ProgramOperation {
   /// letters (which are 20..24).
   /// cf. tests.dart, SelfTests.testNumbers().
   int? get numericValue => null;
+
+  /// Name for this key as an arg in the program listing, if other than the
+  /// default.
+  String? get programListingArgName => null;
 }
 
 ///
@@ -755,8 +772,8 @@ class OperationMap<OT extends ProgramOperation> {
   List<ArgDone?> _argValues = List.filled(0x400, null, growable: false);
   int _nextOpcode = 0;
   int _nextExtendedOpcode = 0;
-  int _extendedOpcode =
-      0; // The "opcode" that means "this is an extended opcode".
+  int _extendedOpcode = 0;
+  // The "opcode" that means "this is an extended opcode".
   // Opcodes >= _extendedOpcode are extended.
 
   OperationMap._internal(
@@ -877,7 +894,7 @@ class OperationMap<OT extends ProgramOperation> {
     _extendedOpcode = 0x100 - pages;
     print("@@ $_nextOpcode one byte opcodes");
     print("@@ $_nextExtendedOpcode extended opcodes");
-    print("@@ $_extendedOpcode and above is extended escape");
+    print("@@ $_extendedOpcode through 255:  extended escape");
     assert(_extendedOpcode >= 0 && _nextOpcode <= _extendedOpcode,
         'one byte opcodes:  $_nextOpcode, extended opcode: $_extendedOpcode');
     final len = (_nextExtendedOpcode == 0)
@@ -938,7 +955,7 @@ class OperationMap<OT extends ProgramOperation> {
           } else if (arg == Arg.kDot) {
             las = ' .'; // "FLOAT  ." is nicer than "FLOAT 48".
           } else {
-            las = ' ' + as.trim();
+            las = ' ' + (arg.programListingArgName ?? as.trim());
           }
         }
         if (shift == null) {
@@ -970,7 +987,7 @@ class ProgramListener {
   /// display results.
   void onPause() {}
 
-  /// Called when the program has a CalculatorError
+  /// Called when the program stops due to a CalculatorError
   void onError(CalculatorError err) {}
 
   /// Called when the program is stopped due to a keypress
@@ -979,4 +996,9 @@ class ProgramListener {
   /// A future that completes when we should resume from a pause instruction,
   /// after [onPause()] is called.
   Future<void> resumeFromPause() => Future.delayed(const Duration(seconds: 1));
+
+  /// Called at the moment a calculator error is shown, whether a program is
+  /// running or not.  If a program is running, this should be followed by
+  /// onError().
+  void onErrorShown(CalculatorError err) {}
 }

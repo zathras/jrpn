@@ -358,7 +358,7 @@ class Resting extends ActiveState {
       program.currentLine = 1;
     }
     program.displayCurrent();
-    changeState(Running(controller));
+    changeState(Running(controller as RealController));
   }
 
   @override
@@ -398,7 +398,7 @@ class Resting extends ActiveState {
   }
 
   @override
-  ControllerState gosubDoneState() => Running(controller);
+  ControllerState gosubDoneState() => Running(controller as RealController);
 }
 
 ///
@@ -1088,14 +1088,14 @@ class OnOffKeyPressed extends DoNothing {
       model.settings.euroComma = !model.settings.euroComma;
       model.display.displayX();
       changeState(Resting(controller));
-    } else if (key == Operations.minus) {
+    } else if (key == controller.minusOp) {
       controller.reset();
       model.reset();
       final r = changeState(Resting(controller));
       model.display.current = 'pr error ';
       model.display.update();
       changeState(MessageShowing(r));
-    } else if (key == Operations.mult) {
+    } else if (key == controller.multOp) {
       changeState(DoNothing(controller));
       Future<void> runTests() async {
         try {
@@ -1131,7 +1131,7 @@ class OnOffKeyPressed extends DoNothing {
 ///
 class Running extends ControllerState {
   final RunningController _fake;
-  Running(Controller c)
+  Running(RealController c)
       : _fake = RunningController(c),
         super(c);
 
@@ -1146,7 +1146,7 @@ class Running extends ControllerState {
   @override
   void buttonUp(Operation key) {
     if (!_stop) {
-      model.isRunningProgram = true;
+      model.displayDisabled = true;
       unawaited(_run());
     }
   }
@@ -1155,11 +1155,11 @@ class Running extends ControllerState {
   /// we don't get a very short flash of "running" when msPerInstruction
   /// is set to 0.
   Timer _showRunning() => Timer(const Duration(milliseconds: 20), () {
-        assert(model.isRunningProgram);
-        model.isRunningProgram = false;
+        assert(model.displayDisabled);
+        model.displayDisabled = false;
         model.display.current = 'RuNNING  ';
         model.display.update(blink: true);
-        model.isRunningProgram = true;
+        model.displayDisabled = true;
       });
 
   Future<void> _run() async {
@@ -1170,9 +1170,10 @@ class Running extends ControllerState {
       program.currentLine = min(1, program.lines);
     }
     CalculatorError? pendingError;
-    assert(model.isRunningProgram); // Because buttonUp() set it
+    assert(model.displayDisabled); // Because buttonUp() set it
     Timer showRunningTimer = _showRunning();
     try {
+      model.program.isRunning = true;
       do {
         await (Future<void>.delayed(
             Duration(milliseconds: (pendingDelay ~/ 4) * 4)));
@@ -1198,7 +1199,8 @@ class Running extends ControllerState {
         // This bounces back to RunningController.runWithArg() if there's an
         // argument.
         _fake.buttonUp();
-        if (settings.traceProgramToStdout) {
+        if (true || settings.traceProgramToStdout) {
+          // @@@@
           final out = StringBuffer();
           out.write('  ');
           out.write(line.toString().padLeft(3, '0'));
@@ -1210,14 +1212,15 @@ class Running extends ControllerState {
           }
           for (int i = 0; i < 4; i++) {
             out.write('  ');
-            if (model.isComplexMode) {
-              final v = model.getStackByIndexC(i);
-              out.write(v);
+            final Value v = model.getStackByIndex(i);
+            final int? vm = v.asMatrix;
+            if (vm != null) {
+              out.write(v.internal.toRadixString(16));
+            } else if (model.isComplexMode) {
+              out.write(model.getStackByIndexC(i));
             } else if (model.isFloatMode) {
-              final Value v = model.getStackByIndex(i);
               out.write(v);
             } else {
-              final Value v = model.getStackByIndex(i);
               out.write(v.internal.toRadixString(16));
             }
           }
@@ -1233,10 +1236,10 @@ class Running extends ControllerState {
           _fake.pause = false;
           listener.onPause();
           showRunningTimer.cancel();
-          model.isRunningProgram = false;
+          model.displayDisabled = false;
           model.display.displayX(flash: false);
           await listener.resumeFromPause();
-          model.isRunningProgram = true;
+          model.displayDisabled = true;
           showRunningTimer = _showRunning();
         }
         if (program.returnStackUnderflow) {
@@ -1256,7 +1259,8 @@ class Running extends ControllerState {
       // For  bit of robustness in case there's a bug, we put the restoration
       // to a normal state in a finally.
       showRunningTimer.cancel();
-      model.isRunningProgram = false;
+      model.displayDisabled = false;
+      model.program.isRunning = false;
       model.display.current = ' ';
       changeState(Resting(controller));
       if (pendingError != null) {
@@ -1292,7 +1296,7 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
       changeState(Resting(_fake));
     }
     program.displayCurrent();
-    model.isRunningProgram = true;
+    model.displayDisabled = true;
   }
 
   @override
@@ -1308,13 +1312,18 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
         if (instr.op == Operations.rs) {
           stackLiftEnabled = true;
         } else {
-          _fake.setArg(instr.arg);
-          _fake.buttonDown(instr.op);
-          _fake.buttonUp();
+          model.memory.program.isRunning = true;
+          try {
+            _fake.setArg(instr.arg);
+            _fake.buttonDown(instr.op);
+            _fake.buttonUp();
+          } finally {
+            model.memory.program.isRunning = false;
+          }
         }
       }
     } finally {
-      model.isRunningProgram = false;
+      model.displayDisabled = false;
       CalculatorError? pendingError = _fake.pendingError;
       if (pendingError != null) {
         _fake.real.showCalculatorError(pendingError);

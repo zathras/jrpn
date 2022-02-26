@@ -43,6 +43,8 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   @override
   bool userMode = false;
 
+  void Function()? deferToButtonUp;
+
   Model15(this._getLogicalKeys, this._newProgramInstructionF)
       : super(DisplayMode.fix(4, false), 56, 10);
 
@@ -255,9 +257,8 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
       : super(memoryNybbles: memoryNybbles);
 
   @override
-  void initializeSystem(OperationMap<OT> layout, int lblOpcode) =>
-      program = ProgramMemory15<OT>(
-          this, storage, layout, model.returnStackSize, lblOpcode);
+  void initializeSystem(OperationMap<OT> layout, OT lbl) => program =
+      ProgramMemory15<OT>(this, storage, layout, model.returnStackSize, lbl);
 
   int get numRegisters => _numRegisters;
   set numRegisters(int v) {
@@ -284,16 +285,46 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
 }
 
 class ProgramMemory15<OT extends ProgramOperation> extends ProgramMemory<OT> {
-  final int _lblOpcode;
+  final List<int> _lblOpcodes;
+
   ProgramMemory15(Memory<OT> memory, ByteData registerStorage,
-      OperationMap<OT> layout, int returnStackSize, this._lblOpcode)
-      : super(memory, registerStorage, layout, returnStackSize);
+      OperationMap<OT> layout, int returnStackSize, OT lbl)
+      : _lblOpcodes = _makeLblOpcodes(lbl),
+        super(memory, registerStorage, layout, returnStackSize);
+
+  static List<int> _makeLblOpcodes(ProgramOperation lbl) {
+    /// Because LBL . n is two-byte, we have to chase down the opcodes
+    /// assigned to the LBL instruction.
+    final List<int?> table = List.filled(25, null);
+    void visit(final Arg arg) {
+      if (arg is KeyArg) {
+        final ad = arg.child as ArgDone;
+        final nv = arg.key.numericValue!;
+        table[nv] = ad.opcode;
+      } else if (arg is ArgAlternates) {
+        for (final c in arg.children) {
+          visit(c);
+        }
+      } else if (arg is DigitArg) {
+        arg.visitChildren((nv, ad) => table[nv] = ad.opcode);
+      } else {
+        assert(false);
+      }
+    }
+
+    visit(lbl.arg);
+    print(table);
+    return List.generate(table.length, (i) => table[i]!);
+  }
 
   @override
   void goto(int label) {
-    if (label < 0 || label >= 20) {
+    if (label < 0) {
+      currentLine = -label;
+    } else if (label >= _lblOpcodes.length) {
       throw CalculatorError(4);
+    } else {
+      gotoOpCode(_lblOpcodes[label]);
     }
-    throw "@@ TODO $_lblOpcode";
   }
 }

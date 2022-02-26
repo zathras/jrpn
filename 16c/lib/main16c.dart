@@ -78,7 +78,7 @@ class Model16 extends Model<Operation> {
       MKey(Operations.n7, Operations16.maskl, Operations16.poundB),
       MKey(Operations.n8, Operations16.maskr, Operations.abs),
       MKey(Operations.n9, Operations16.rmd, Operations16.dblr),
-      MKey(Operations.div, Operations16.xor, Operations16.dblDiv),
+      MKey(Operations16.div, Operations16.xor, Operations16.dblDiv),
     ],
     [
       MKey(Operations16.gsb, Operations.xSwapParenI, Operations.rtn),
@@ -90,7 +90,7 @@ class Model16 extends Model<Operation> {
       MKey(Operations.n4, Operations16.sb, Operations16.sf),
       MKey(Operations.n5, Operations16.cb, Operations16.cf),
       MKey(Operations.n6, Operations16.bQuestion, Operations16.fQuestion),
-      MKey(Operations.mult, Operations16.and, Operations16.dblx),
+      MKey(Operations16.mult, Operations16.and, Operations16.dblx),
     ],
     [
       MKey(Operations.rs, Operations16.parenI, Operations.pr),
@@ -102,7 +102,7 @@ class Model16 extends Model<Operation> {
       MKey(Operations.n1, Operations16.onesCompl, Operations.xLEy),
       MKey(Operations.n2, Operations16.twosCompl, Operations.xLT0),
       MKey(Operations.n3, Operations16.unsign, Operations.xGTy),
-      MKey(Operations.minus, Operations16.not, Operations.xGT0),
+      MKey(Operations16.minus, Operations16.not, Operations.xGT0),
     ],
     [
       MKey(Operations.onOff, Operations.onOff, Operations.onOff),
@@ -114,7 +114,7 @@ class Model16 extends Model<Operation> {
       MKey(Operations.n0, Operations.mem, Operations.xNEy),
       MKey(Operations.dot, Operations.status, Operations.xNE0),
       MKey(Operations.chs, Operations.eex, Operations.xEQy),
-      MKey(Operations.plus, Operations16.or, Operations.xEQ0),
+      MKey(Operations16.plus, Operations16.or, Operations.xEQ0),
     ]
   ];
 
@@ -216,9 +216,12 @@ class Memory16 extends Memory<Operation> {
       : super(memoryNybbles: memoryNybbles);
 
   @override
-  void initializeSystem(OperationMap<Operation> layout, int lblOpcode) =>
-      program = ProgramMemory16(
-          this, storage, layout, model.returnStackSize, lblOpcode);
+  void initializeSystem(OperationMap<Operation> layout, Operation lbl) {
+    final int opcode =
+        (lbl.arg.matches(Operations.n0, false) as ArgDone).opcode;
+    program =
+        ProgramMemory16(this, storage, layout, model.returnStackSize, opcode);
+  }
 }
 
 class ProgramMemory16 extends ProgramMemory<Operation> {
@@ -230,7 +233,8 @@ class ProgramMemory16 extends ProgramMemory<Operation> {
 
   @override
   void goto(int label) {
-    if (label < 0 || label >= 16) {
+    label = label.abs();
+    if (label >= 16) {
       throw CalculatorError(4);
     } else {
       gotoOpCode(_lblOpcode + label);
@@ -379,11 +383,61 @@ class Operations16 extends Operations {
         m.lastX = m.x;
         bool r = (m.y.internal & (BigInt.one << _bitNumber(m.xI.abs(), m))) !=
             BigInt.zero;
-        if (m.isRunningProgram) {
+        if (m.displayDisabled) {
           m.program.doNextIf(r);
         }
         m.popStack(); // Even when not running a program
       });
+
+  static final NormalOperation plus = NormalOperation.differentFloatAndInt(
+      floatCalc: (Model m) {
+        m.floatOverflow = false;
+        m.popSetResultXF = m.yF + m.xF;
+      },
+      intCalc: (Model m) => m.integerSignMode.intAdd(m),
+      name: '+');
+
+  static final NormalOperation minus = NormalOperation.differentFloatAndInt(
+      floatCalc: (Model m) {
+        m.floatOverflow = false;
+        m.popSetResultXF = m.yF - m.xF;
+      },
+      intCalc: (Model m) => m.integerSignMode.intSubtract(m),
+      name: '-');
+
+  static final NormalOperation mult = NormalOperation.differentFloatAndInt(
+      floatCalc: (Model m) {
+        m.floatOverflow = false;
+        m.popSetResultXF = m.xF * m.yF;
+      },
+      intCalc: (Model m) => _storeMultDiv(m.xI * m.yI, m),
+      name: '*');
+
+  static final NormalOperation div = NormalOperation.differentFloatAndInt(
+      floatCalc: (Model m) {
+        try {
+          m.floatOverflow = false;
+          m.popSetResultXF = m.yF / m.xF;
+          // ignore: avoid_catches_without_on_clauses
+        } catch (e) {
+          throw CalculatorError(0);
+        }
+      },
+      intCalc: (Model m) {
+        try {
+          final BigInt yi = m.yI;
+          final BigInt xi = m.xI;
+          _storeMultDiv(yi ~/ xi, m);
+          // On one emulator I tried, -32768 / -1 resulted in Error 0
+          // in 2-16 mode.  But 0 with overflow set is the right answer,
+          // and that's what this gives, so I kept it.
+          m.cFlag = yi.remainder(xi) != BigInt.zero;
+          // ignore: avoid_catches_without_on_clauses
+        } catch (e) {
+          throw CalculatorError(0);
+        }
+      },
+      name: '/');
 
   static final NormalOperation and = NormalOperation.intOnly(
       intCalc: (Model m) =>
@@ -671,8 +725,15 @@ class ButtonLayout16 extends ButtonLayout {
       Operations.n8, Operations16.maskr, Operations.abs, '8');
   CalculatorButton get n9 => CalculatorButton(factory, '9', 'RMD', 'DBLR',
       Operations.n9, Operations16.rmd, Operations16.dblr, '9');
-  CalculatorButton get div => CalculatorButton(factory, '\u00F7', 'XOR',
-      'DBL\u00F7', Operations.div, Operations16.xor, Operations16.dblDiv, '/');
+  CalculatorButton get div => CalculatorButton(
+      factory,
+      '\u00F7',
+      'XOR',
+      'DBL\u00F7',
+      Operations16.div,
+      Operations16.xor,
+      Operations16.dblDiv,
+      '/');
 
   CalculatorButton get gsb => CalculatorButton(factory, 'GSB', 'x\u2B0C(i)',
       'RTN', Operations16.gsb, Operations.xSwapParenI, Operations.rtn, 'U');
@@ -704,7 +765,7 @@ class ButtonLayout16 extends ButtonLayout {
       '\u00D7',
       'AND',
       'DBLx',
-      Operations.mult,
+      Operations16.mult,
       Operations16.and,
       Operations16.dblx,
       'X*',
@@ -751,7 +812,7 @@ class ButtonLayout16 extends ButtonLayout {
       '\u2212',
       'NOT',
       'x>0',
-      Operations.minus,
+      Operations16.minus,
       Operations16.not,
       Operations.xGT0,
       '-',
@@ -786,7 +847,7 @@ class ButtonLayout16 extends ButtonLayout {
   CalculatorButton get chs => CalculatorButton(factory, 'CHS', 'EEX', 'x=y',
       Operations.chs, Operations.eex, Operations.xEQy, 'H');
   CalculatorButton get plus => CalculatorButton(factory, '+', 'OR', 'x=0',
-      Operations.plus, Operations16.or, Operations.xEQ0, '+=');
+      Operations16.plus, Operations16.or, Operations.xEQ0, '+=');
 
   @override
   List<List<CalculatorButton?>> get landscapeLayout => [
@@ -876,8 +937,11 @@ class PortraitButtonFactory16 extends PortraitButtonFactory {
 }
 
 class Controller16 extends RealController {
-  Controller16(Model<Operation> model)
-      : super(model,
+  @override
+  final Model16 model;
+
+  Controller16(this.model)
+      : super(
             numbers: numbers,
             shortcuts: _shortcuts,
             lblOperation: Operations16.lbl);
@@ -963,6 +1027,12 @@ class Controller16 extends RealController {
 
   @override
   NormalArgOperation get gtoOperation => Operations16.gto;
+
+  @override
+  Operation get minusOp => Operations16.minus;
+
+  @override
+  Operation get multOp => Operations16.mult;
 }
 
 void _doubleIntMultiply(Model m) {
@@ -1090,3 +1160,22 @@ int _numberOfBits(BigInt n, NumStatus m) {
 }
 
 BigInt _maskr(int n) => (BigInt.one << n) - BigInt.one;
+
+// Store the result of a multiplication or division, setting the
+// G flag appropriately
+void _storeMultDiv(BigInt r, Model m) {
+  final max = m.maxInt;
+  if (r > m.maxInt) {
+    m.popSetResultXI = r & max;
+    m.gFlag = true;
+  } else {
+    final min = m.minInt;
+    if (r < min) {
+      m.popSetResultXI = -((-r) & max); // Valid for 1's complement, too!
+      m.gFlag = true;
+    } else {
+      m.popSetResultXI = r;
+      m.gFlag = false;
+    }
+  }
+}

@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
+import 'dart:async';
 import 'dart:math';
 import 'dart:math' as dart;
 
@@ -32,8 +33,10 @@ import 'package:jrpn/v/buttons.dart';
 import 'package:jrpn/v/main_screen.dart';
 
 import 'back_panel15c.dart';
+import 'matrix.dart';
 import 'tests15c.dart';
 import 'model15c.dart';
+import 'linear_algebra.dart' as linalg;
 
 void main() async {
   runStaticInitialization15();
@@ -66,6 +69,8 @@ class Operations15 extends Operations {
   static final letterLabelC = LetterLabel('C', 22);
   static final letterLabelD = LetterLabel('D', 23);
   static final letterLabelE = LetterLabel('E', 24);
+  // The numeric values match the I register values for GSB I, as per the
+  // table on page 107 of the 15C manual.
 
   static final _letterSynonyms = {
     Operations15.sqrtOp15: Operations15.letterLabelA,
@@ -78,14 +83,89 @@ class Operations15 extends Operations {
   static final NormalArgOperation lbl15 = NormalArgOperation(
       maxOneByteOpcodes: 15,
       arg: ArgAlternates(synonyms: _letterSynonyms, children: [
-        DigitArg(max: 19, calc: (_, __) {}),
         KeyArg(key: letterLabelA, child: ArgDone((m) {})),
         KeyArg(key: letterLabelB, child: ArgDone((m) {})),
         KeyArg(key: letterLabelC, child: ArgDone((m) {})),
         KeyArg(key: letterLabelD, child: ArgDone((m) {})),
-        KeyArg(key: letterLabelE, child: ArgDone((m) {}))
+        KeyArg(key: letterLabelE, child: ArgDone((m) {})),
+        DigitArg(max: 19, calc: (_, __) {})
       ]),
       name: 'LBL');
+
+  static final NormalOperation div = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        if (!_matrixDiv(m as Model15)) {
+          try {
+            m.popSetResultXF = m.yF / m.xF;
+            // ignore: avoid_catches_without_on_clauses
+          } catch (e) {
+            throw CalculatorError(0);
+          }
+        }
+      },
+      complexCalc: (Model m) {
+        m.popSetResultXC = m.xC / m.yC;
+      },
+      name: '/');
+
+  static bool _matrixDiv(Model15 m) {
+    final int? mx = m.x.asMatrix;
+    final int? my = m.y.asMatrix;
+    if (mx == null) {
+      if (my == null) {
+        return false;
+      }
+      throw "@@ TODO";
+    } else {
+      final matX = m.matrices[mx];
+      if (my == null) {
+        throw "@@ TODO";
+      } else {
+        final matY = m.matrices[my];
+        final result = m.matrices[m.resultMatrix];
+        if (matX != result) {
+          m.memory.policy
+              .checkAvailable(matY.rows * matY.columns - result.length);
+          result.resize(matY.rows, matY.columns);
+        }
+        // @@ TODO:  Order of arg checks?
+        try {
+          linalg.solve(matX, matY, result);
+        } on linalg.MatrixOverflow {
+          m.floatOverflow = true;
+        }
+        m.popSetResultX = Value.fromMatrix(m.resultMatrix);
+      }
+    }
+    return true;
+  }
+
+  static final NormalOperation mult = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        m.popSetResultXF = m.xF * m.yF;
+      },
+      complexCalc: (Model m) {
+        m.popSetResultXC = m.xC * m.yC;
+      },
+      name: '*');
+
+  static final NormalOperation plus = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        m.popSetResultXF = m.yF + m.xF;
+      },
+      complexCalc: (Model m) {
+        m.popSetResultXC = m.xC + m.yC;
+      },
+      name: '+');
+
+  static final NormalOperation minus = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        m.popSetResultXF = m.yF - m.xF;
+      },
+      complexCalc: (Model m) {
+        m.popSetResultXC = m.xC - m.yC;
+      },
+      name: '-');
 
   ///
   /// The HP15'c I operation, for entry of imaginary numbers.
@@ -115,7 +195,6 @@ class Operations15 extends Operations {
       letter: letterLabelB,
       floatCalc: (Model m) {
         double x = m.xF;
-        m.floatOverflow = false;
         m.resultXF = pow(e, x) as double;
       },
       complexCalc: (Model m) {
@@ -125,7 +204,6 @@ class Operations15 extends Operations {
   static final NormalOperation xSquared = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         double x = m.xF;
-        m.floatOverflow = false;
         m.resultXF = x * x;
       },
       complexCalc: (Model m) {
@@ -139,7 +217,6 @@ class Operations15 extends Operations {
         if (x <= 0) {
           throw CalculatorError(0);
         }
-        m.floatOverflow = false;
         m.resultXF = _checkResult(() => log(x), 0);
       },
       complexCalc: (Model m) {
@@ -150,7 +227,6 @@ class Operations15 extends Operations {
       letter: letterLabelC,
       floatCalc: (Model m) {
         double x = m.xF;
-        m.floatOverflow = false;
         m.resultXF = pow(10, x) as double;
       },
       complexCalc: (Model m) {
@@ -163,7 +239,6 @@ class Operations15 extends Operations {
         if (x <= 0) {
           throw CalculatorError(0);
         }
-        m.floatOverflow = false;
         m.resultXF = log(x) / ln10;
       },
       complexCalc: (Model m) {
@@ -173,7 +248,6 @@ class Operations15 extends Operations {
   static final NormalOperation yX15 = NormalOperationOrLetter.floatOnly(
       letter: letterLabelD,
       floatCalc: (Model m) {
-        m.floatOverflow = false;
         m.popSetResultXF = pow(m.yF, m.xF) as double;
       },
       complexCalc: (Model m) {
@@ -182,7 +256,6 @@ class Operations15 extends Operations {
       name: 'yX');
   static final NormalOperation percent = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.floatOverflow = false;
         m.resultXF = m.xF * 0.01 * m.yF;
       },
       name: '%');
@@ -190,7 +263,6 @@ class Operations15 extends Operations {
       NormalOperationOrLetter(Operations.reciprocal, letterLabelE);
   static final NormalOperation deltaPercent = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.floatOverflow = false;
         m.resultXF = ((m.xF - m.yF) / m.yF) * 100.0;
       },
       name: 'delta%');
@@ -251,12 +323,12 @@ class Operations15 extends Operations {
             if (label == null) {
               throw CalculatorError(4);
             }
-            m.memory.program.goto(label);
+            m.memory.program.gosub(label);
           }),
       name: 'GSB');
 
   static final NormalArgOperation gto = NormalArgOperation(
-      maxOneByteOpcodes: 16, // I, A..E, 0..9, and .0-.9
+      maxOneByteOpcodes: 16, // I, A..E, 0..9.  .0-.9 are two byte.
       arg: LabelArg(
           iFirst: true,
           maxDigit: 19,
@@ -427,8 +499,8 @@ class Operations15 extends Operations {
     if (arg < 0 || arg >= (m as Model15).matrices.length) {
       throw CalculatorError(11);
     }
-    int r = m.xF.truncate();
-    int c = m.yF.truncate();
+    int r = m.yF.truncate();
+    int c = m.xF.truncate();
     if (r < 0 || c < 0) {
       throw CalculatorError(1);
     }
@@ -632,8 +704,47 @@ class Operations15 extends Operations {
       },
       name: 'Cy,x');
 
-  static void _storeToMatrix(Model m, bool increment, int matrix) {
-    throw "@@ TODO";
+  static void _storeToMatrix(Model m, bool increment, int matrixNumber) =>
+      _storeOrRecallFromMatrix(m, increment, matrixNumber,
+          (row, col, matrix) => matrix.set(row, col, m.x));
+
+  static void _recallFromMatrix(Model m, bool increment, int matrixNumber) =>
+      _storeOrRecallFromMatrix(m, increment, matrixNumber,
+          (row, col, matrix) => m.x = matrix.get(row, col));
+
+  static void _storeOrRecallFromMatrix(
+      Model m,
+      bool increment,
+      int matrixNumber,
+      void Function(int r, int c, Matrix matrix) storeOrRecall) {
+    final matrix = (m as Model15).matrices[matrixNumber];
+    int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
+    void storeI(int r, int v) {
+      final d = m.memory.registers[r].asDouble;
+      m.memory.registers[r] = Value.fromDouble(v * d.sign + (d - d.truncate()));
+    }
+
+    int row = toI(0) - 1;
+    int col = toI(1) - 1;
+    matrix.checkIndices(row, col);
+    m.display.current = '${matrix.name}  $row,$col';
+    m.display.update(flash: false);
+    m.deferToButtonUp = DeferredFunction(m, () {
+      storeOrRecall(row, col, matrix);
+      if (increment) {
+        col++;
+        if (col >= matrix.columns) {
+          col = 0;
+          row++;
+          if (row >= matrix.rows) {
+            row = 0;
+            m.program.skipIfRunning();
+          }
+        }
+        storeI(0, row + 1);
+        storeI(1, col + 1);
+      }
+    }).run;
   }
 
   static void _storeMatrix(Model m, int matrix) {
@@ -699,19 +810,19 @@ class Operations15 extends Operations {
                 keys: _letterLabels,
                 generator: (i) => ArgDone((m) => _storeMatrix(m, i)))),
         KeyArg(
-            key: Operations.plus,
+            key: Operations15.plus,
             child: RegisterWriteOpArg(
                 maxDigit: 19, f: (double r, double x) => r + x)),
         KeyArg(
-            key: Operations.minus,
+            key: Operations15.minus,
             child: RegisterWriteOpArg(
                 maxDigit: 19, f: (double r, double x) => r - x)),
         KeyArg(
-            key: Operations.mult,
+            key: Operations15.mult,
             child: RegisterWriteOpArg(
                 maxDigit: 19, f: (double r, double x) => r * x)),
         KeyArg(
-            key: Operations.div,
+            key: Operations15.div,
             child: RegisterWriteOpArg(
                 maxDigit: 19, f: (double r, double x) => r / x)),
         KeyArg(
@@ -719,14 +830,6 @@ class Operations15 extends Operations {
             child: ArgDone((m) => throw "@@ TODO"))
       ]),
       name: 'STO');
-
-  static void _recallFromMatrix(Model m, bool increment, int matrix) {
-    throw "@@ TODO";
-  }
-
-  static void _recallMatrix(Model m, int matrix) {
-    throw "@@ TODO";
-  }
 
   static final NormalArgOperation rcl15 = NormalArgOperationWithBeforeCalc(
       maxOneByteOpcodes: 44,
@@ -764,8 +867,10 @@ class Operations15 extends Operations {
             // RCL MATRIX A..E.  These are one-byte opcodes.
             key: Operations15.matrix,
             child: KeysArg(
+                synonyms: _matrixSynonyms,
                 keys: _letterLabels,
-                generator: (i) => ArgDone((m) => _recallMatrix(m, i)))),
+                generator: (i) =>
+                    ArgDone((m) => m.resultX = Value.fromMatrix(i)))),
         UserArg(
             userMode: false,
             child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
@@ -789,19 +894,19 @@ class Operations15 extends Operations {
                   child: ArgDone((m) => throw "@@ TODO"))
             ])),
         KeyArg(
-            key: Operations.plus,
+            key: Operations15.plus,
             child: RegisterReadOpArg(
                 maxDigit: 19, f: (double r, double x) => r + x)),
         KeyArg(
-            key: Operations.minus,
+            key: Operations15.minus,
             child: RegisterReadOpArg(
                 maxDigit: 19, f: (double r, double x) => r - x)),
         KeyArg(
-            key: Operations.mult,
+            key: Operations15.mult,
             child: RegisterReadOpArg(
                 maxDigit: 19, f: (double r, double x) => r * x)),
         KeyArg(
-            key: Operations.div,
+            key: Operations15.div,
             child: RegisterReadOpArg(
                 maxDigit: 19, f: (double r, double x) => r / x)),
         KeyArg(
@@ -879,7 +984,7 @@ class ButtonLayout15 extends ButtonLayout {
   CalculatorButton get n9 => CalculatorButton(factory, '9', 'ENG', 'GRD',
       Operations.n9, Operations15.eng, Operations15.grd, '9');
   CalculatorButton get div => CalculatorButton(factory, '\u00F7', 'SOLVE',
-      'x\u2264y', Operations.div, Operations15.solve, Operations.xLEy, '/');
+      'x\u2264y', Operations15.div, Operations15.solve, Operations.xLEy, '/');
 
   CalculatorButton get sst => CalculatorButton(factory, 'SST', 'LBL', 'BST',
       Operations.sst, Operations15.lbl15, Operations.bst, 'U');
@@ -939,7 +1044,7 @@ class ButtonLayout15 extends ButtonLayout {
       '\u00D7',
       '\u222b^\u200ax^y',
       'x=0',
-      Operations.mult,
+      Operations15.mult,
       Operations15.integrate,
       Operations.xEQ0,
       'X*',
@@ -987,7 +1092,7 @@ class ButtonLayout15 extends ButtonLayout {
       '\u2212',
       'Re\u2b0cIm',
       'TEST',
-      Operations.minus,
+      Operations15.minus,
       Operations15.reImSwap,
       Operations15.testOp,
       '-',
@@ -1028,8 +1133,15 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.linearRegression,
       Operations15.sigmaMinus,
       'H');
-  CalculatorButton get plus => CalculatorButton(factory, '+', 'P\u200ay,x',
-      'C\u2009y,x', Operations.plus, Operations15.pYX, Operations15.cYX, '+=');
+  CalculatorButton get plus => CalculatorButton(
+      factory,
+      '+',
+      'P\u200ay,x',
+      'C\u2009y,x',
+      Operations15.plus,
+      Operations15.pYX,
+      Operations15.cYX,
+      '+=');
 
   @override
   List<List<CalculatorButton?>> get landscapeLayout => [
@@ -1150,8 +1262,11 @@ class CalculatorButtonWithUserMode extends CalculatorButton {
 }
 
 class Controller15 extends RealController {
-  Controller15(Model<Operation> model)
-      : super(model,
+  @override
+  final Model15<Operation> model;
+
+  Controller15(this.model)
+      : super(
             numbers: numbers,
             shortcuts: const {},
             lblOperation: Operations15.lbl15);
@@ -1195,6 +1310,37 @@ class Controller15 extends RealController {
     } else {
       super.buttonWidgetDown(b);
     }
+  }
+
+  @override
+  bool doDeferred() {
+    try {
+      bool s = super.doDeferred();
+      final deferred = model.deferToButtonUp;
+      if (deferred != null) {
+        deferred();
+        s = true;
+      }
+      return s;
+    } finally {
+      model.deferToButtonUp = null;
+    }
+  }
+
+  @override
+  void buttonUp() {
+    try {
+      if (doDeferred()) {
+        model.display.displayX();
+      }
+    } on CalculatorError catch (e) {
+      showCalculatorError(e);
+      // ignore: avoid_catches_without_on_clauses
+    } catch (e, s) {
+      debugPrint('Unexpected exception $e\n\n$s');
+      showCalculatorError(CalculatorError(9));
+    }
+    super.buttonUp();
   }
 
   /// The numbers.  This must be in order.
@@ -1247,6 +1393,12 @@ class Controller15 extends RealController {
 
   @override
   NormalArgOperation get gtoOperation => Operations15.gto;
+
+  @override
+  Operation get minusOp => Operations15.minus;
+
+  @override
+  Operation get multOp => Operations15.mult;
 }
 
 //
@@ -1266,7 +1418,7 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
     MKey(Operations.n7, Operations15.fix, Operations15.deg),
     MKey(Operations.n8, Operations15.sci, Operations15.rad),
     MKey(Operations.n9, Operations15.eng, Operations15.grd),
-    MKey(Operations.div, Operations15.solve, Operations.xLEy),
+    MKey(Operations15.div, Operations15.solve, Operations.xLEy),
   ],
   [
     MKey(Operations.sst, Operations15.lbl15, Operations.bst),
@@ -1296,7 +1448,7 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
     MKey(Operations.n4, Operations15.xExchange, Operations15.sf),
     MKey(Operations.n5, Operations15.dse, Operations15.cf),
     MKey(Operations.n6, Operations15.isg, Operations15.fQuestion),
-    MKey(Operations.mult, Operations15.integrate, Operations.xEQ0),
+    MKey(Operations15.mult, Operations15.integrate, Operations.xEQ0),
   ],
   [
     MKey(Operations.rs, Operations.pse, Operations.pr),
@@ -1308,7 +1460,7 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
     MKey(Operations.n1, Operations15.toR, Operations15.toP),
     MKey(Operations.n2, Operations15.toHMS, Operations15.toH),
     MKey(Operations.n3, Operations15.toRad, Operations15.toDeg),
-    MKey(Operations.minus, Operations15.reImSwap, Operations15.testOp),
+    MKey(Operations15.minus, Operations15.reImSwap, Operations15.testOp),
   ],
   [
     MKey(Operations.onOff, Operations.onOff, Operations.onOff),
@@ -1321,7 +1473,7 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
     MKey(Operations.dot, Operations15.yHatR, Operations15.sOp),
     MKey(Operations15.sigmaPlus, Operations15.linearRegression,
         Operations15.sigmaMinus),
-    MKey(Operations.plus, Operations15.pYX, Operations15.cYX),
+    MKey(Operations15.plus, Operations15.pYX, Operations15.cYX),
   ]
 ];
 
@@ -1347,4 +1499,34 @@ ProgramInstruction<Operation> _newProgramInstruction(
 class ProgramInstruction15<OT extends ProgramOperation>
     extends ProgramInstruction<OT> {
   ProgramInstruction15(OT op, ArgDone arg) : super(op, arg);
+}
+
+///
+/// A function that is deferred  until button up, like storing matrix
+/// elements (e.g. STO A).
+///
+class DeferredFunction {
+  final void Function() f;
+  final Model m;
+  final bool disableDisplay;
+  late final Timer _timeout;
+
+  DeferredFunction(this.m, this.f) : disableDisplay = m.displayDisabled {
+    _timeout = Timer(const Duration(seconds: 2), _expired);
+    m.displayDisabled = true;
+  }
+
+  void _expired() {
+    m.displayDisabled = disableDisplay;
+    m.display.current = 'nv11';
+    m.display.update(flash: false);
+  }
+
+  void run() {
+    if (_timeout.isActive) {
+      m.displayDisabled = disableDisplay;
+      _timeout.cancel();
+      f(); // could throw exception
+    }
+  }
 }

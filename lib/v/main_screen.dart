@@ -205,8 +205,9 @@ class MainScreen extends OrientedScreen {
       if (cd == null || cd == '') {
         return showErrorDialog(context, 'Empty clipboard', null);
       }
-      if (model.isRunningProgram) {
-        return showErrorDialog(context, 'Program is running', null);
+      if (model.displayDisabled) {
+        return showErrorDialog(
+            context, 'Program is running / display disabled', null);
       }
       if (!controller.pasteToX(cd)) {
         return showErrorDialog(context, 'Number format error', null);

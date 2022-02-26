@@ -62,10 +62,10 @@ void enter(Controller c, Operation key) {
 Future<void> noScrollReset() async {
   // p. 100
   final ops = <Operation>[
-    Operations.minus,
-    Operations.plus,
-    Operations.mult,
-    Operations.div,
+    Operations16.minus,
+    Operations16.plus,
+    Operations16.mult,
+    Operations16.div,
     Operations16.rmd,
     Operations16.dblx,
     Operations16.dblDiv,
@@ -94,10 +94,10 @@ Future<void> noScrollReset() async {
     Operations.chs
   ];
   final fops = [
-    Operations.minus,
-    Operations.plus,
-    Operations.mult,
-    Operations.div,
+    Operations16.minus,
+    Operations16.plus,
+    Operations16.mult,
+    Operations16.div,
     Operations.reciprocal,
     Operations.abs,
     Operations.sqrtOp,
@@ -140,10 +140,10 @@ Future<void> noScrollReset() async {
 Future<void> lastX() async {
   // p. 100
   final ops = <Operation>[
-    Operations.minus,
-    Operations.plus,
-    Operations.mult,
-    Operations.div,
+    Operations16.minus,
+    Operations16.plus,
+    Operations16.mult,
+    Operations16.div,
     Operations16.rmd,
     Operations16.dblx,
     Operations16.dblDiv,
@@ -172,10 +172,10 @@ Future<void> lastX() async {
     Operations.chs
   ];
   final fops = [
-    Operations.minus,
-    Operations.plus,
-    Operations.mult,
-    Operations.div,
+    Operations16.minus,
+    Operations16.plus,
+    Operations16.mult,
+    Operations16.div,
     Operations.reciprocal,
     Operations.abs,
     Operations.sqrtOp,
@@ -246,7 +246,7 @@ Future<void> programWithError() async {
   final tc = TestCalculator();
   final m = tc.model;
   final c = tc.controller;
-  var out = StreamIterator<ProgramEvent>(tc.output.stream);
+  final out = StreamIterator<ProgramEvent>(tc.output.stream);
 
   enter(c, Operations.pr);
   enter(c, Operations16.lbl);
@@ -268,7 +268,7 @@ Future<void> programWithError() async {
   enter(c, Operations16.lbl);
   enter(c, Operations16.letterA);
   enter(c, Operations.n1);
-  enter(c, Operations.plus);
+  enter(c, Operations16.plus);
   enter(c, Operations16.gsb);
   enter(c, Operations16.letterA);
   enter(c, Operations.pr);
@@ -379,7 +379,7 @@ Future<void> testStackLift() async {
     enter(c, Operations16.rcl);
     enter(c, Operations.n0);
     enter(c, Operations.n2);
-    enter(c, Operations.mult);
+    enter(c, Operations16.mult);
     if (program) {
       final out = StreamIterator<ProgramEvent>(tc.output.stream);
       enter(c, Operations.pr);

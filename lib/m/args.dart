@@ -58,8 +58,8 @@ class DigitArg extends Arg {
   final int max;
   final void Function(Model, int) calc;
 
-  late final List<Arg> _next;
-  late final Arg? _nextOnDot;
+  late final List<ArgDone> _next;
+  late final KeyArg? _nextOnDot;
 
   DigitArg({required this.max, required this.calc});
 
@@ -115,6 +115,18 @@ class DigitArg extends Arg {
       // argName: '.', userMode: userMode));
     }
   }
+
+  void visitChildren(void Function(int, ArgDone) f, [int offset = 0]) {
+    int n = 0;
+    for (final c in _next) {
+      f(offset + n++, c);
+    }
+    final nd = _nextOnDot;
+    if (nd != null) {
+      final da = nd.child as DigitArg;
+      da.visitChildren(f, n);
+    }
+  }
 }
 
 class KeyArg extends Arg {
@@ -153,12 +165,15 @@ class KeyArg extends Arg {
 class KeysArg extends Arg {
   final Iterable<ProgramOperation> keys;
   final Arg Function(int) generator;
+  final Map<ProgramOperation, ProgramOperation> synonyms;
   late final List<Arg> _next;
 
-  KeysArg({required this.keys, required this.generator});
+  KeysArg(
+      {required this.keys, required this.generator, this.synonyms = const {}});
 
   @override
   Arg? matches(ProgramOperation key, bool userMode) {
+    key = synonyms[key] ?? key;
     int i = 0;
     for (final k in keys) {
       if (k == key) {
@@ -303,8 +318,8 @@ class LabelArg extends ArgAlternates {
 
     return [
       ...(iFirst ? iList : const []),
-      ...letters.map((ProgramOperation letter) =>
-          ArgDone((m) => f(m, letter.numericValue!))),
+      ...letters.map((ProgramOperation letter) => KeyArg(
+          key: letter, child: ArgDone((m) => f(m, letter.numericValue!)))),
       DigitArg(max: maxDigit, calc: (m, i) => f(m, i)),
       ...(iFirst ? const [] : iList)
     ];

@@ -434,7 +434,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   TrigMode trigMode = TrigMode.deg;
   DisplayMode _displayMode;
   IntegerSignMode _integerSignMode = SignMode.twosComplement;
-  bool isRunningProgram = false;
+  bool displayDisabled = false;
   Model(this._displayMode, this._wordSize, int numFlags)
       : _flags = List<bool>.filled(numFlags, false, growable: false),
         _wordMask = (BigInt.one << _wordSize) - BigInt.one,
@@ -1208,7 +1208,7 @@ class DisplayModel {
   int _window = 0; // Number of digits scrolled off the right side
   bool _suspendWindow = false;
   final Observable<LcdContents> _lastShown;
-  bool get ignoreUpdates => model.isRunningProgram;
+  bool get ignoreUpdates => model.displayDisabled;
 
   DisplayModel(Model model)
       : this._p(model, model.displayMode.format(model.x, model));

@@ -59,15 +59,18 @@ part 'tests.dart';
 /// which manages a running calculator program.
 ///
 abstract class Controller {
-  final Model<Operation> model;
+  Model<Operation> get model;
   late ControllerState _state;
   @protected
   Operation? lastKey;
 
-  Controller(this.model);
+  Controller();
 
   KeyboardController get keyboard;
   ControllerState get state => _state;
+
+  Operation get minusOp;
+  Operation get multOp;
 
   set state(ControllerState s) {
     _state = s;
@@ -115,8 +118,10 @@ abstract class Controller {
   void getArgsAndRun(Operation op, Arg arg, Resting fromState);
 
   /// Show an error on the LCD screen.
-  void showCalculatorError(CalculatorError e) =>
-      showMessage('  error ${getErrorNumber(e)}  ');
+  void showCalculatorError(CalculatorError e) {
+    showMessage('  error ${getErrorNumber(e)}  ');
+    model.program.programListener.onErrorShown(e);
+  }
 
   int getErrorNumber(CalculatorError err);
 
@@ -135,7 +140,7 @@ abstract class Controller {
   void resetAll() {
     reset();
     state = Resting(this);
-    model.isRunningProgram = false;
+    model.displayDisabled = false;
   }
 
   /// Perform a single step action by running one instruction, and then
@@ -215,11 +220,11 @@ abstract class RealController extends Controller {
   @override
   final KeyboardController keyboard = KeyboardController();
 
-  RealController(Model<Operation> model,
+  RealController(
       {required List<NumberEntry> numbers,
       required Map<Operation, ArgDone> shortcuts,
       required Operation lblOperation})
-      : super(model) {
+      : super() {
     model.memory.initializeSystem(
         OperationMap<Operation>(
             registerBase: model.registerNumberBase,
@@ -227,16 +232,14 @@ abstract class RealController extends Controller {
             numbers: numbers,
             special: nonProgrammableOperations,
             shortcuts: shortcuts),
-        lblOpcode(lblOperation));
+        lblOperation);
     state = Resting(this);
     keyboard.controller = this;
   }
 
   List<Operation> get nonProgrammableOperations => Operations.special;
 
-  // This must be run after the OperationMap constructor, above.
-  static int lblOpcode(Operation lblOperation) =>
-      (lblOperation.arg.matches(Operations.n0, false) as ArgDone).opcode;
+  bool doDeferred() => false;
 
   @override
   void buttonDown(Operation key) {
@@ -285,21 +288,23 @@ abstract class RealController extends Controller {
 /// A controller for when a program is running.
 ///
 class RunningController extends Controller {
-  final Controller real;
+  final RealController real;
   bool pause = false;
   CalculatorError? pendingError;
   ArgDone _argValue = _dummy;
 
   static final _dummy = ArgDone((_) {});
 
-  RunningController(this.real, {bool digitEntryState = false})
-      : super(real.model) {
+  RunningController(this.real, {bool digitEntryState = false}) {
     if (digitEntryState) {
       state = DigitEntry(this);
     } else {
       state = Resting(this);
     }
   }
+
+  @override
+  Model<Operation> get model => real.model;
 
   void setArg(ArgDone argValue) {
     _argValue = argValue;
@@ -328,6 +333,7 @@ class RunningController extends Controller {
     assert(state == fromState);
     assert(_argValue != _dummy);
     fromState.calculate(op, _argValue);
+    real.doDeferred();
     assert((_argValue = _dummy) == _dummy);
   }
 
@@ -376,6 +382,12 @@ class RunningController extends Controller {
 
   @override
   NormalArgOperation get gtoOperation => real.gtoOperation;
+
+  @override
+  Operation get minusOp => real.minusOp;
+
+  @override
+  Operation get multOp => real.multOp;
 }
 
 ///
@@ -540,6 +552,9 @@ class LetterLabel extends NumberEntry {
 
   @override
   StackLift get _stackLift => StackLift.neutral;
+
+  @override
+  String? get programListingArgName => name;
 }
 
 ///

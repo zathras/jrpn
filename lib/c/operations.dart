@@ -60,49 +60,9 @@ class Operations {
   static final n8 = NumberEntry('8', 8);
   static final n9 = NumberEntry('9', 9);
 
-  static final NormalOperation div = NormalOperation.differentFloatAndInt(
-      floatCalc: (Model m) {
-        try {
-          m.floatOverflow = false;
-          m.popSetResultXF = m.yF / m.xF;
-          // ignore: avoid_catches_without_on_clauses
-        } catch (e) {
-          throw CalculatorError(0);
-        }
-      },
-      complexCalc: (Model m) {
-        m.popSetResultXC = m.xC / m.yC;
-      },
-      intCalc: (Model m) {
-        try {
-          final BigInt yi = m.yI;
-          final BigInt xi = m.xI;
-          _storeMultDiv(yi ~/ xi, m);
-          // On one emulator I tried, -32768 / -1 resulted in Error 0
-          // in 2-16 mode.  But 0 with overflow set is the right answer,
-          // and that's what this gives, so I kept it.
-          m.cFlag = yi.remainder(xi) != BigInt.zero;
-          // ignore: avoid_catches_without_on_clauses
-        } catch (e) {
-          throw CalculatorError(0);
-        }
-      },
-      name: '/');
-
   static final n4 = NumberEntry('4', 4);
   static final n5 = NumberEntry('5', 5);
   static final n6 = NumberEntry('6', 6);
-
-  static final NormalOperation mult = NormalOperation.differentFloatAndInt(
-      floatCalc: (Model m) {
-        m.floatOverflow = false;
-        m.popSetResultXF = m.xF * m.yF;
-      },
-      complexCalc: (Model m) {
-        m.popSetResultXC = m.xC * m.yC;
-      },
-      intCalc: (Model m) => _storeMultDiv(m.xI * m.yI, m),
-      name: '*');
 
   static final NormalOperation rs = NormalOperation(
       stackLift: StackLift.neutral,
@@ -133,17 +93,6 @@ class Operations {
   static final n2 = NumberEntry('2', 2);
   static final n3 = NumberEntry('3', 3);
 
-  static final NormalOperation minus = NormalOperation.differentFloatAndInt(
-      floatCalc: (Model m) {
-        m.floatOverflow = false;
-        m.popSetResultXF = m.yF - m.xF;
-      },
-      complexCalc: (Model m) {
-        m.popSetResultXC = m.xC - m.yC;
-      },
-      intCalc: (Model m) => m.integerSignMode.intSubtract(m),
-      name: '-');
-
   // On . changes decimal point
   // On on turns off
   // On x  runs self tests, displays -8,8,8,8,8,8,8,8,8,8,, lights all status
@@ -170,17 +119,6 @@ class Operations {
       calc: null,
       pressed: (ActiveState c) => c.handleCHS(),
       name: 'CHS');
-
-  static final NormalOperation plus = NormalOperation.differentFloatAndInt(
-      floatCalc: (Model m) {
-        m.floatOverflow = false;
-        m.popSetResultXF = m.yF + m.xF;
-      },
-      complexCalc: (Model m) {
-        m.popSetResultXC = m.xC + m.yC;
-      },
-      intCalc: (Model m) => m.integerSignMode.intAdd(m),
-      name: '+');
 
   static final NormalOperation xSwapParenI = NormalOperation(
       calc: (Model m) {
@@ -374,23 +312,4 @@ BigInt _sqrtI(BigInt num, NumStatus status) {
   }
   status.cFlag = num > BigInt.zero;
   return res;
-}
-
-// Store the result of a multiplication or division, setting the
-// G flag appropriately
-void _storeMultDiv(BigInt r, Model m) {
-  final max = m.maxInt;
-  if (r > m.maxInt) {
-    m.popSetResultXI = r & max;
-    m.gFlag = true;
-  } else {
-    final min = m.minInt;
-    if (r < min) {
-      m.popSetResultXI = -((-r) & max); // Valid for 1's complement, too!
-      m.gFlag = true;
-    } else {
-      m.popSetResultXI = r;
-      m.gFlag = false;
-    }
-  }
 }

@@ -22,7 +22,6 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 
 import 'package:jrpn/m/model.dart';
-import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/c/controller.dart';
 
 import 'main16c.dart';
@@ -78,7 +77,7 @@ class SelfTests16 extends SelfTests {
       m.cFlag = false;
       m.yI = BigInt.from(-1);
       m.xI = BigInt.from(1);
-      Operations.plus.intCalc!(m);
+      Operations16.plus.intCalc!(m);
       await expect(m.xI, BigInt.zero);
       await expect(m.cFlag, true);
 
@@ -86,7 +85,7 @@ class SelfTests16 extends SelfTests {
       m.cFlag = true;
       m.yI = BigInt.from(0);
       m.xI = BigInt.from(1);
-      Operations.plus.intCalc!(m);
+      Operations16.plus.intCalc!(m);
       await expect(m.xI, BigInt.one);
       await expect(m.cFlag, false);
 
@@ -94,7 +93,7 @@ class SelfTests16 extends SelfTests {
       m.gFlag = false;
       m.yI = BigInt.from(32767);
       m.xI = BigInt.from(2);
-      Operations.mult.intCalc!(m);
+      Operations16.mult.intCalc!(m);
       await expect(m.xI, BigInt.from(32766));
       await expect(m.gFlag, true);
 
@@ -102,7 +101,7 @@ class SelfTests16 extends SelfTests {
       m.cFlag = true;
       m.yI = BigInt.from(1440);
       m.xI = BigInt.from(-12);
-      Operations.div.intCalc!(m);
+      Operations16.div.intCalc!(m);
       await expect(m.xI, BigInt.from(-120));
       await expect(m.cFlag, false);
     });
@@ -117,7 +116,7 @@ class SelfTests16 extends SelfTests {
       m.cFlag = true;
       m.yI = BigInt.from(-1);
       m.xI = BigInt.from(-1);
-      Operations.plus.intCalc!(m);
+      Operations16.plus.intCalc!(m);
       await expect(m.xI, BigInt.from(-2));
       await expect(m.cFlag, true);
 
@@ -125,7 +124,7 @@ class SelfTests16 extends SelfTests {
       m.cFlag = false;
       m.yI = BigInt.from(3);
       m.xI = BigInt.from(4);
-      Operations.minus.intCalc!(m);
+      Operations16.minus.intCalc!(m);
       await expect(m.xI, BigInt.from(-1));
       await expect(m.cFlag, true);
 
@@ -133,7 +132,7 @@ class SelfTests16 extends SelfTests {
       m.cFlag = true;
       m.yI = BigInt.from(-3);
       m.xI = BigInt.from(3);
-      Operations.plus.intCalc!(m);
+      Operations16.plus.intCalc!(m);
       await expect(m.xI, BigInt.from(0));
       await expect(m.cFlag, false);
 
@@ -141,7 +140,7 @@ class SelfTests16 extends SelfTests {
       m.cFlag = true;
       m.yI = BigInt.from(6);
       m.xI = BigInt.from(5);
-      Operations.minus.intCalc!(m);
+      Operations16.minus.intCalc!(m);
       await expect(m.xI, BigInt.from(1));
       await expect(m.cFlag, false);
     });
@@ -156,7 +155,7 @@ class SelfTests16 extends SelfTests {
         m.cFlag = false;
         m.yI = BigInt.from(-6);
         m.xI = BigInt.from(-4);
-        Operations.minus.intCalc!(m);
+        Operations16.minus.intCalc!(m);
         await expect(m.xI, BigInt.from(-2));
         await expect(m.cFlag, true);
 
@@ -164,7 +163,7 @@ class SelfTests16 extends SelfTests {
         m.cFlag = true;
         m.yI = BigInt.from(6);
         m.xI = BigInt.from(1);
-        Operations.minus.intCalc!(m);
+        Operations16.minus.intCalc!(m);
         await expect(m.xI, BigInt.from(5));
         await expect(m.cFlag, false);
       }
@@ -178,7 +177,7 @@ class SelfTests16 extends SelfTests {
       m.gFlag = false;
       m.yI = BigInt.from(7);
       m.xI = BigInt.from(6);
-      Operations.plus.intCalc!(m);
+      Operations16.plus.intCalc!(m);
       await expect(m.xI, BigInt.from(-3));
       await expect(m.cFlag, false);
       await expect(m.gFlag, true);
@@ -188,11 +187,11 @@ class SelfTests16 extends SelfTests {
       Model m = newModel();
       m.yI = BigInt.from(0x66);
       m.xI = BigInt.from(7);
-      Operations.div.intCalc!(m);
+      Operations16.div.intCalc!(m);
       await expect(m.xI, BigInt.from(0xe));
       m.pushStack();
       m.xI = BigInt.from(2);
-      Operations.div.intCalc!(m);
+      Operations16.div.intCalc!(m);
       await expect(m.xI, BigInt.from(0x7));
       m.pushStack();
       m.xI = BigInt.from(4);
@@ -609,9 +608,9 @@ class SelfTests16 extends SelfTests {
         model.yI = BigInt.from(ys[i]);
         model.xI = BigInt.from(xs[i]);
         if (i < 4) {
-          c.buttonDown(Operations.plus);
+          c.buttonDown(Operations16.plus);
         } else {
-          c.buttonDown(Operations.minus);
+          c.buttonDown(Operations16.minus);
         }
         c.buttonUp();
         await expect(model.xI.toInt(), result[i]);
