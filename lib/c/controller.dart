@@ -253,6 +253,22 @@ abstract class RealController extends Controller {
   }
 
   @override
+  void buttonUp() {
+    try {
+      if (doDeferred()) {
+        model.display.displayX();
+      }
+    } on CalculatorError catch (e) {
+      showCalculatorError(e);
+      // ignore: avoid_catches_without_on_clauses
+    } catch (e, s) {
+      debugPrint('Unexpected exception $e\n\n$s');
+      showCalculatorError(CalculatorError(9));
+    }
+    super.buttonUp();
+  }
+
+  @override
   void singleStep(DigitEntry? digitEntryStateFrom) {
     final RunningController rc;
     if (digitEntryStateFrom == null) {

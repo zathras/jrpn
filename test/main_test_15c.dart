@@ -211,20 +211,16 @@ class MatrixTests {
       controller.buttonWidgetDown(layout.rs); // P/R
       controller.buttonWidgetDown(layout.fShift);
       controller.buttonWidgetDown(layout.rdown); // CLEAR PRGM
-      printListing(model); // @@@@
       controller.buttonWidgetDown(layout.fShift);
       controller.buttonWidgetDown(layout.sst); // LBL
       controller.buttonWidgetDown(layout.sqrt); // A
-      printListing(model); // @@@@
     }
     controller.buttonWidgetDown(layout.fShift);
     controller.buttonWidgetDown(layout.n7); // FIX
     controller.buttonWidgetDown(layout.n4);
-    printListing(model); // @@@@
     controller.buttonWidgetDown(layout.gShift);
     controller.buttonWidgetDown(layout.n5); // CF
     controller.buttonWidgetDown(layout.n8);
-    printListing(model); // @@@@
     if (!asProgram) {
       expect(false, model.isComplexMode);
     }
@@ -233,7 +229,6 @@ class MatrixTests {
     controller.buttonWidgetDown(layout.fShift);
     controller.buttonWidgetDown(layout.sin); // DIM
     controller.buttonWidgetDown(layout.sqrt); // A
-    printListing(model); // @@@@
     controller.buttonWidgetDown(layout.fShift);
     controller.buttonWidgetDown(layout.chs); // MATRIX
     controller.buttonWidgetDown(layout.n1); // A
@@ -352,8 +347,6 @@ class MatrixTests {
       expect(await out.moveNext(), true);
       expect(out.current, ProgramEvent.done);
     }
-    print("@@ ${model.matrices[0]}");
-    print("@@ ${model.matrices[2]}");
     expect(model.x, Value.fromMatrix(2));
 
     if (asProgram) {
@@ -381,7 +374,6 @@ class MatrixTests {
       expect(model.matrices[i].length, 0);
     }
     expect(model.userMode, false);
-    print("@@ Yay!  $asProgram");
   }
 
   Future<void> run() async {
