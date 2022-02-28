@@ -704,47 +704,62 @@ class Operations15 extends Operations {
       },
       name: 'Cy,x');
 
-  static void _storeToMatrix(Model m, bool increment, int matrixNumber) =>
-      _storeOrRecallFromMatrix(m, increment, matrixNumber,
-          (row, col, matrix) => matrix.set(row, col, m.x));
-
-  static void _recallFromMatrix(Model m, bool increment, int matrixNumber) =>
-      _storeOrRecallFromMatrix(m, increment, matrixNumber,
-          (row, col, matrix) => m.x = matrix.get(row, col));
-
-  static void _storeOrRecallFromMatrix(
-      Model m,
-      bool increment,
-      int matrixNumber,
-      void Function(int r, int c, Matrix matrix) storeOrRecall) {
+  static void _storeToMatrix(Model m, bool increment, int matrixNumber) {
     final matrix = (m as Model15).matrices[matrixNumber];
     int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
+
+    int row = toI(0) - 1;
+    int col = toI(1) - 1;
+    _showMatrixR0R1(m, matrix);
+    m.deferToButtonUp = DeferredFunction(m, () {
+      matrix.set(row, col, m.x);
+      if (increment) {
+        _incrementR0R1(m, row, col, matrix);
+      }
+    }).run;
+  }
+
+  static void _recallFromMatrix(Model m, Matrix matrix, bool increment) {
+    int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
+
+    int row = toI(0) - 1;
+    int col = toI(1) - 1;
+    m.x = matrix.get(row, col);
+    if (increment) {
+      _incrementR0R1(m, row, col, matrix);
+    }
+  }
+
+  static void _incrementR0R1(Model m, int row, int col, Matrix matrix) {
     void storeI(int r, int v) {
       final d = m.memory.registers[r].asDouble;
       m.memory.registers[r] = Value.fromDouble(v * d.sign + (d - d.truncate()));
     }
 
+    col++;
+    if (col >= matrix.columns) {
+      col = 0;
+      row++;
+      if (row >= matrix.rows) {
+        row = 0;
+        m.program.skipIfRunning();
+      }
+    }
+    storeI(0, row + 1);
+    storeI(1, col + 1);
+  }
+
+  static void _showMatrixR0R1(Model m, Matrix matrix) {
+    int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
     int row = toI(0) - 1;
     int col = toI(1) - 1;
     matrix.checkIndices(row, col);
+    _showMatrix(m, matrix, row, col);
+  }
+
+  static void _showMatrix(Model m, Matrix matrix, int row, int col) {
     m.display.current = '${matrix.name}  $row,$col';
     m.display.update(flash: false);
-    m.deferToButtonUp = DeferredFunction(m, () {
-      storeOrRecall(row, col, matrix);
-      if (increment) {
-        col++;
-        if (col >= matrix.columns) {
-          col = 0;
-          row++;
-          if (row >= matrix.rows) {
-            row = 0;
-            m.program.skipIfRunning();
-          }
-        }
-        storeI(0, row + 1);
-        storeI(1, col + 1);
-      }
-    }).run;
   }
 
   static void _storeMatrix(Model m, int matrix) {
@@ -769,14 +784,21 @@ class Operations15 extends Operations {
             })),
         // g A..E
         KeyArg(
-            key: Operations15.xSquared, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(key: Operations15.lnOp, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(key: Operations15.logOp, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(
-            key: Operations15.percent, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(
-            key: Operations15.deltaPercent,
-            child: ArgDone((m) => throw "@@ TODO")),
+            key: Operations.gShift,
+            child: ArgAlternates(children: [
+              KeysArg(
+                  synonyms: _letterSynonyms,
+                  keys: _letterLabels,
+                  generator: (i) => ArgDone((m) {
+                        final matrix = (m as Model15).matrices[i];
+                        final int row = m.yF.truncate().abs() - 1;
+                        final int col = m.xF.truncate().abs() - 1;
+                        m.z.asDouble; // Make sure it's a float
+                        matrix.set(row, col, m.z);
+                        m.popStack();
+                        m.popStack();
+                      })),
+            ])),
         // Not user mode, A..E, (i)
         UserArg(
             userMode: false,
@@ -834,21 +856,36 @@ class Operations15 extends Operations {
   static final NormalArgOperation rcl15 = NormalArgOperationWithBeforeCalc(
       maxOneByteOpcodes: 44,
       beforeCalculate: (Resting s) {
+        // For the matrix operations, this is deferred to key release.  It is
+        // not run if the operation is cancelled.
         s.liftStackIfEnabled();
         return StackLift.neutral;
       },
       arg: ArgAlternates(synonyms: _matrixSynonyms, children: [
-        RegisterWriteArg(maxDigit: 19, noParenI: true, f: (m) => m.x),
+        RegisterReadArg(
+            maxDigit: 19, noParenI: true, f: (m, v) => m.resultX = v),
         // g A..E
         KeyArg(
-            key: Operations15.xSquared, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(key: Operations15.lnOp, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(key: Operations15.logOp, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(
-            key: Operations15.percent, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(
-            key: Operations15.deltaPercent,
-            child: ArgDone((m) => throw "@@ TODO")),
+            key: Operations.gShift,
+            child: ArgAlternates(children: [
+              KeysArg(
+                  synonyms: _letterSynonyms,
+                  keys: _letterLabels,
+                  generator: (i) => DeferredRclArg(
+                      matrixNumber: i,
+                      noStackLift: true,
+                      pressed: (m, matrix) {
+                        final int row = m.yF.truncate().abs() - 1;
+                        final int col = m.xF.truncate().abs() - 1;
+                        _showMatrix(m, matrix, row, col);
+                      },
+                      released: (m, matrix) {
+                        final int row = m.yF.truncate().abs() - 1;
+                        final int col = m.xF.truncate().abs() - 1;
+                        m.popStack();
+                        m.popSetResultX = matrix.get(row, col);
+                      })),
+            ])),
         KeyArg(
             key: Operations15.dim,
             child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
@@ -876,8 +913,11 @@ class Operations15 extends Operations {
             child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
               KeysArg(
                   keys: _letterLabels,
-                  generator: (i) =>
-                      ArgDone((m) => _recallFromMatrix(m, false, i))),
+                  generator: (i) => DeferredRclArg(
+                      matrixNumber: i,
+                      pressed: _showMatrixR0R1,
+                      released: (m, matrix) =>
+                          _recallFromMatrix(m, matrix, false))),
               KeyArg(
                   key: Operations15.parenI15,
                   child: ArgDone((m) => throw "@@ TODO"))
@@ -887,8 +927,11 @@ class Operations15 extends Operations {
             child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
               KeysArg(
                   keys: _letterLabels,
-                  generator: (i) =>
-                      ArgDone((m) => _recallFromMatrix(m, true, i))),
+                  generator: (i) => DeferredRclArg(
+                      matrixNumber: i,
+                      pressed: _showMatrixR0R1,
+                      released: (m, matrix) =>
+                          _recallFromMatrix(m, matrix, true))),
               KeyArg(
                   key: Operations15.parenI15,
                   child: ArgDone((m) => throw "@@ TODO"))
@@ -937,6 +980,44 @@ class Operations15 extends Operations {
       debugPrint('Converting $ex to CalculatorException($errNo)');
     }
     throw CalculatorError(errNo);
+  }
+}
+
+class DeferredRclArg extends ArgDone {
+  final bool noStackLift;
+  final int matrixNumber;
+
+  ///
+  /// Our superclasses calculate function is a NOP, because we defer the
+  /// real calculation.  We need a non-null NOP there, however, so that the
+  /// state machine will call our beforeCalculate().  It's a little tangled,
+  /// but the 15C has a really complicated state machine!
+  ///
+  final void Function(Model, Matrix) pressed;
+  final void Function(Model, Matrix) released;
+
+  DeferredRclArg(
+      {required this.pressed,
+      required this.released,
+      required this.matrixNumber,
+      this.noStackLift = false})
+      : super((_) {});
+
+  ///
+  /// For many of the RCL operations on matrices, we need to take over
+  /// stack lift, so we do the deferral on beforeCalculate rather than
+  /// calc.
+  ///
+  @override
+  void handleOpBeforeCalculate(Model m, void Function() opBeforeCalculate) {
+    final matrix = (m as Model15).matrices[matrixNumber];
+    pressed(m, matrix);
+    m.deferToButtonUp = DeferredFunction(m, () {
+      if (!noStackLift) {
+        opBeforeCalculate();
+      }
+      released(m, matrix);
+    }).run;
   }
 }
 

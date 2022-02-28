@@ -148,8 +148,6 @@ abstract class Controller {
   /// determined by the executed instruction).
   void singleStep(DigitEntry? digitEntryStateFrom);
 
-  void _returnFromChild(ControllerState newState);
-
   /// Handle the pause operation.  Note that this enables stack lift --
   /// see p. 100
   @mustCallSuper
@@ -280,7 +278,6 @@ abstract class RealController extends Controller {
     state = SingleStepping(rc);
   }
 
-  @override
   void _returnFromChild(ControllerState newState) {
     state = newState;
   }
@@ -350,7 +347,9 @@ class RunningController extends Controller {
     assert(_argValue != _dummy);
     fromState.calculate(op, _argValue);
     real.doDeferred();
-    assert((_argValue = _dummy) == _dummy);
+    assert((_argValue = _dummy) == _dummy); // Reset _argValue if in debug mode
+    // If not in debug mode, leaving _argValue pointing to a stray ArgDone
+    // is harmless.
   }
 
   void returnToParent(ControllerState s) => real._returnFromChild(s);
@@ -368,11 +367,6 @@ class RunningController extends Controller {
 
   @override
   void buttonUp() {}
-
-  @override
-  void _returnFromChild(ControllerState newState) {
-    assert(false);
-  }
 
   @override
   bool _branchingOperationCalcDisabled() => false;
@@ -475,6 +469,10 @@ abstract class NoArgOperation extends Operation implements ArgDone {
 
   @override
   Arg? matches(ProgramOperation key, bool userMode) => null;
+
+  @override
+  void handleOpBeforeCalculate(Model m, void Function() opBeforeCalculate) =>
+      opBeforeCalculate();
 }
 
 ///

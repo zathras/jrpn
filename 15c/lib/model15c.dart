@@ -313,7 +313,6 @@ class ProgramMemory15<OT extends ProgramOperation> extends ProgramMemory<OT> {
     }
 
     visit(lbl.arg);
-    print(table);
     return List.generate(table.length, (i) => table[i]!);
   }
 

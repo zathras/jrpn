@@ -200,7 +200,10 @@ class Resting extends ActiveState {
     final f = op.calcDisabled(controller) ? null : getCalculation(arg);
     if (f != null) {
       try {
-        op.beforeCalculate(this);
+        // Give the argument a chance to veto or defer the beforeCalculate
+        // step.  This is needed for operations with a timeout, like the
+        // 15C's STO to matrix.
+        arg.handleOpBeforeCalculate(model, () => op.beforeCalculate(this));
         f(model);
         model.display.displayX();
       } on CalculatorError catch (e) {
@@ -1199,8 +1202,7 @@ class Running extends ControllerState {
         // This bounces back to RunningController.runWithArg() if there's an
         // argument.
         _fake.buttonUp();
-        if (true || settings.traceProgramToStdout) {
-          // @@@@
+        if (settings.traceProgramToStdout) {
           final out = StringBuffer();
           out.write('  ');
           out.write(line.toString().padLeft(3, '0'));

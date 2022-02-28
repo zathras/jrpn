@@ -439,4 +439,12 @@ class ArgDone extends Arg {
 
   @override
   Arg? matches(ProgramOperation key, bool userMode) => null;
+
+  ///
+  /// Execute the beforeCalculate function of the operation.  Normally it
+  /// just executes, but some 15C operations can be deferred; this method
+  /// can be overridden to do that.
+  ///
+  void handleOpBeforeCalculate(Model m, void Function() opBeforeCalculate) =>
+      opBeforeCalculate();
 }

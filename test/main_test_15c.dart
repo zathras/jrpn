@@ -27,6 +27,7 @@ import 'package:jrpn/m/model.dart';
 
 import 'package:jrpn/v/main_screen.dart';
 import 'package:jrpn15c/main15c.dart';
+import 'package:jrpn15c/matrix.dart';
 import 'package:jrpn15c/model15c.dart';
 import 'package:jrpn15c/tests15c.dart';
 import 'hyperbolic.dart';
@@ -341,7 +342,6 @@ class MatrixTests {
       controller.buttonWidgetDown(layout.tenX); // C
       controller.buttonWidgetDown(layout.gShift);
       controller.buttonWidgetDown(layout.rs); // P/R
-      printListing(model);
       controller.buttonWidgetDown(layout.sqrt); // A (in user mode)
       controller.buttonUp();
       expect(await out.moveNext(), true);
@@ -376,18 +376,50 @@ class MatrixTests {
     expect(model.userMode, false);
   }
 
+  ///
+  /// Test STO-G-<matrix> and RCL-G-Matrix
+  void _page146() {
+    final Matrix mat = model.matrices[3];
+    mat.resize(3, 3);
+    mat.set(2, 1, Value.zero);
+    mat.set(1, 2, Value.fromDouble(99.99));
+    model.yF = 42.42;
+    model.pushStack();
+    model.yF = 3.9; // Row 3
+    model.xF = 2.01; // Column 2
+    controller.buttonWidgetDown(layout.sto);
+    controller.buttonWidgetDown(layout.gShift);
+    controller.buttonWidgetDown(layout.yX); // D
+    controller.buttonUp();
+    expect(mat.get(2, 1), Value.fromDouble(42.42));
+    expect(model.x, Value.fromDouble(42.42));
+    model.xF = 6.66;
+    model.pushStack();
+    controller.buttonDown(Operations.n2); // Ro2
+    controller.buttonDown(Operations.enter);
+    controller.buttonDown(Operations.n3); // Column
+    controller.buttonWidgetDown(layout.rcl);
+    controller.buttonWidgetDown(layout.gShift);
+    controller.buttonWidgetDown(layout.yX); // D
+    controller.buttonUp();
+    expect(model.x, Value.fromDouble(99.99));
+    expect(model.y, Value.fromDouble(6.66));
+    mat.resize(0, 0);
+  }
+
   Future<void> run() async {
     await _page139(asProgram: false);
     await _page139(asProgram: true);
+    _page146();
   }
 }
 
 void printListing(Model model) {
   final j = model.toJson(comments: true);
   final pl = (j['memory'] as Map)['commentProgramListing'] as List;
-  print('');
+  debugPrint('');
   for (final line in pl) {
-    print(line);
+    debugPrint(line.toString());
   }
-  print('');
+  debugPrint('');
 }
