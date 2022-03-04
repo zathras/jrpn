@@ -79,44 +79,48 @@ void decomposeLU(Matrix m) {
 /// Solve the system of linear equations AX = B.  This is a port of
 /// la4j's ForwardBackSubstitutionSolver.solve.
 ///
-void solve(Matrix a, Matrix b, Matrix x) {
+void solve(Matrix a, AMatrix b, AMatrix x) {
   if (!a.isLU) {
     decomposeLU(a);
   }
   final int n = b.rows;
-  if (x.rows != n || x.columns != 1 || b.columns != 1 || a.rows != n) {
+  if (x.rows != n || x.columns != b.columns || a.rows != n) {
     throw CalculatorError(11);
   }
 
   // Check for a singular matrix
   for (int i = 0; i < n; i++) {
     if (a.get(i, i) == Value.zero) {
-      for (int j = 0; j < n; j++) {
-        x.set(j, 0, Value.fMaxValue);
+      for (int rCol = 0; rCol < x.columns; rCol++) {
+        for (int j = 0; j < n; j++) {
+          x.set(j, rCol, Value.fMaxValue);
+        }
       }
       throw MatrixOverflow();
     }
   }
 
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      if (a.getP(i, j)) {
-        x.set(i, 0, b.get(j, 0));
-        break;
+  for (int rCol = 0; rCol < x.columns; rCol++) {
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        if (a.getP(i, j)) {
+          x.set(i, rCol, b.get(j, rCol));
+          break;
+        }
       }
     }
-  }
 
-  for (int j = 0; j < n; j++) {
-    for (int i = j + 1; i < n; i++) {
-      x.setF(i, 0, x.getF(i, 0) - x.getF(j, 0) * a.getF(i, j));
+    for (int j = 0; j < n; j++) {
+      for (int i = j + 1; i < n; i++) {
+        x.setF(i, rCol, x.getF(i, rCol) - x.getF(j, rCol) * a.getF(i, j));
+      }
     }
-  }
 
-  for (int j = n - 1; j >= 0; j--) {
-    x.setF(j, 0, x.getF(j, 0) / a.getF(j, j));
-    for (int i = 0; i < j; i++) {
-      x.setF(i, 0, x.getF(i, 0) - x.getF(j, 0) * a.getF(i, j));
+    for (int j = n - 1; j >= 0; j--) {
+      x.setF(j, rCol, x.getF(j, rCol) / a.getF(j, j));
+      for (int i = 0; i < j; i++) {
+        x.setF(i, rCol, x.getF(i, rCol) - x.getF(j, rCol) * a.getF(i, j));
+      }
     }
   }
 }

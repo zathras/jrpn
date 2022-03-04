@@ -185,7 +185,8 @@ class Matrix extends AMatrix {
   }
 
   ///
-  /// calculate this = this dot p
+  /// calculate this = this dot P.
+  /// This is not to be confused with P dot this!
   ///
   void dotByP() {
     // This is equivalent to doing the inverse of swapping the columns according

@@ -456,7 +456,18 @@ class MatrixTests {
     }
   }
 
-  void _invertMatrix() {
+  void _invertMatrix(bool useInvert) {
+    void invert(Matrix m) {
+      if (useInvert) {
+        linalg.invert(m);
+      } else {
+        final identity = CopyMatrix(m)..identity();
+        final result = CopyMatrix(m);
+        linalg.solve(m, identity, result);
+        m.isLU = false;
+        result.visit((r, c) => m.set(r, c, result.get(r, c)));
+      }
+    }
     final Matrix mat2 = model.matrices[4];
     final Matrix mat = model.matrices[3];
     mat2.resize(model, 2, 2);
@@ -465,12 +476,12 @@ class MatrixTests {
     mat2.setF(1, 0, 0.2);
     mat2.setF(1, 1, 0.4);
     AMatrix mat2c = CopyMatrix(mat2);
-    linalg.invert(mat2);
+    invert(mat2);
     expect(mat2.getF(0, 0), 20);
     expect(mat2.getF(0, 1), -5);
     expect(mat2.getF(1, 0), -10);
     expect(mat2.getF(1, 1), 5);
-    linalg.invert(mat2);
+    invert(mat2);
     expect(mat2, mat2c);
 
     mat2.resize(model, 3, 3);
@@ -484,7 +495,7 @@ class MatrixTests {
     mat2.setF(2, 1, 0.3);
     mat2.setF(2, 2, 0.6);
     mat2c = CopyMatrix(mat2);
-    linalg.invert(mat2);
+    invert(mat2);
     expect(mat2.getF(0, 0), 0);
     expect(mat2.getF(0, 1), 15);
     expect(mat2.getF(0, 2), -20);
@@ -494,8 +505,8 @@ class MatrixTests {
     expect(mat2.getF(2, 0), -10);
     expect(mat2.getF(2, 1), 10);
     expect(mat2.getF(2, 2), -10);
-    linalg.invert(mat2);
-    expectMatrix(mat2, mat2c, 5e-10);
+    invert(mat2);
+    expectMatrix(mat2, mat2c, useInvert ? 5e-10 : 2e-9);
 
     // Test 1/x on matrix E
     mat2.setF(0, 0, 0.1);
@@ -579,10 +590,10 @@ class MatrixTests {
               }
             }
             final o = CopyMatrix(mat);
-            linalg.invert(mat);
+            invert(mat);
             expectMatrix(mat, mat2, 5e-6);
-            linalg.invert(mat);
-            expectMatrix(mat, o, 2e-8);
+            invert(mat);
+            expectMatrix(mat, o, useInvert ? 2e-8 : 5e-8);
             give();
             give();
           }
@@ -712,9 +723,9 @@ class MatrixTests {
           mat.setF(r, c, random[pos++]);
           pos = pos % random.length;
         });
-        linalg.invert(mat2);
+        invert(mat2);
         result.dot(mat, mat2);
-        expectMatrix(result, identity, 5e-7);
+        expectMatrix(result, identity, useInvert ? 5e-7 : 2e-6);
       }
     }
 
@@ -745,7 +756,8 @@ class MatrixTests {
     await _page139(asProgram: true);
     _page146();
     _stoMatrixAndChs();
-    _invertMatrix();
+    _invertMatrix(true);
+    _invertMatrix(false);
   }
 
   void expectMatrix(AMatrix m, AMatrix expected, double epsilon) {
