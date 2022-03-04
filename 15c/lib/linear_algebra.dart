@@ -124,16 +124,15 @@ void solve(Matrix a, Matrix b, Matrix x) {
 ///
 /// Invert m in place.
 ///
-void invert(final Matrix mTmp) {
-  // @@ TODO:  Change back to m
-  AMatrix m = mTmp;
-  if (!mTmp.isLU) {
-    decomposeLU(mTmp);
+void invert(final Matrix m) {
+  if (!m.isLU) {
+    decomposeLU(m);
   }
 
-  // Calculate U^-1.  Adapted from dtri2.f in LAPACK from www.netlib.org.
+  /// Now use A^-1 = U^-1 * l^-1 * P, as per HP 15C Advanced Functions p. 83
+  // @@ TODO:  Perturb matrix to avoid divide by zero
 
-  m = UpperTriangular(mTmp); // @@ TODO remove
+  // Calculate U^-1.  Adapted from dtri2.f in LAPACK from www.netlib.org.
   for (int j = 0; j < m.rows; j++) {
     final ajj = -1 / m.getF(j, j);
     m.setF(j, j, -ajj);
@@ -152,7 +151,6 @@ void invert(final Matrix mTmp) {
     }
   }
 
-  m = LowerTriangular(mTmp); // @@ TODO remove
   // Calculate L^-1, adapted from dtri2.f.
   for (int j = m.rows - 2; j >= 0; j--) {
     const ajj = -1;
@@ -170,18 +168,22 @@ void invert(final Matrix mTmp) {
     }
   }
 
-  // @@ TODO:  Make the real, in-place version of this
-  // @@ TODO:  Perturb matirx to avoid divide by zero
-  m = mTmp; // @@ TODO:  Remove
-  final copy = CopyMatrix(m);
-  final u = CopyMatrix(UpperTriangular(mTmp));
-  final l = CopyMatrix(LowerTriangular(mTmp));
-  final p = PermutationMatrix(mTmp);
-
-  /// Now use A^-1 = U^-1 * l^-1 * P, as per HP 15C Advanced Functions p. 83
-  copy.dot(u, l);
-  m.dot(copy, p);
-  mTmp.isLU = false; // @@ TODO:  m.isLU = false;
+  // Calculate m = U^-1 dot L^-1 in-place:
+  for (int r = 0; r < m.rows; r++) {
+    for (int c = 0; c < m.columns; c++) {
+      double v = 0;
+      for (int k = max(r, c); k < m.columns; k++) {
+        assert(r <= k); // Otherwise U is zero
+        assert(c <= k); // Otherwise L is zero;
+        final uv = m.getF(r, k);
+        final lv = (k == c) ? 1 : m.getF(k, c);
+        v += uv * lv;
+      }
+      m.setF(r, c, v);
+    }
+  }
+  m.dotByP();
+  m.isLU = false;
 }
 
 class MatrixOverflow {}

@@ -46,9 +46,7 @@ abstract class AMatrix {
       for (int j = 0; j < columns; j++) {
         double v = 0;
         for (int k = 0; k < a.columns; k++) {
-          final av = a.getF(i, k);
-          final bv = b.getF(k, j);
-          v += av * bv;
+          v += a.getF(i, k) * b.getF(k, j);
         }
         setF(i, j, v);
       }
@@ -184,6 +182,37 @@ class Matrix extends AMatrix {
       }());
     }
     assert(isLU == v);
+  }
+
+  ///
+  /// calculate this = this dot p
+  ///
+  void dotByP() {
+    // This is equivalent to doing the inverse of swapping the columns according
+    // to _rowSwaps
+    assert(isLU);
+    final rs = _rowSwaps!;
+    final swaps = List.generate(rs.length, (i) => rs[i]);
+    for (int c = 0; c < columns;) {
+      final sc = swaps[c];
+      if (sc == c) {
+        c++;
+      } else {
+        for (int r = 0; r < rows; r++) {
+          final t = get(r, c);
+          set(r, c, get(r, sc));
+          set(r, sc, t);
+        }
+        swaps[c] = swaps[sc];
+        swaps[sc] = sc;
+      }
+    }
+    assert(() {
+      for (int c = 0; c < columns; c++) {
+        assert(c == swaps[c]);
+      }
+      return true;
+    }());
   }
 
   void resize(Model15 m, int rows, int columns) {
