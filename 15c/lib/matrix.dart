@@ -19,26 +19,127 @@ this program; if not, see https://www.gnu.org/licenses/ .
 */
 
 import 'package:jrpn/m/model.dart';
+import 'package:meta/meta.dart';
+
+import 'model15c.dart';
+
+///
+/// Abstract matrix.  This is narrower than the Matrix interface.
+///
+abstract class AMatrix {
+  int get rows;
+  int get columns;
+  void set(int row, int col, Value v);
+  Value get(int row, int col);
+
+  void setF(int row, int col, double d) => set(row, col, Value.fromDouble(d));
+  double getF(int row, int col) => get(row, col).asDouble;
+
+  ///
+  /// Computes this = a dot b.  r, a and b must already be properly dimensioned.
+  ///
+  void dot(AMatrix a, AMatrix b) {
+    if (a.columns != b.rows || rows != a.rows || columns != b.columns) {
+      throw CalculatorError(11);
+    }
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < columns; j++) {
+        double v = 0;
+        for (int k = 0; k < a.columns; k++) {
+          final av = a.getF(i, k);
+          final bv = b.getF(k, j);
+          v += av * bv;
+        }
+        setF(i, j, v);
+      }
+    }
+  }
+
+  @protected
+  String get toStringDim => '($rows, $columns)';
+
+  void visit(void Function(int r, int c) f) {
+    for (int r = 0; r < rows; r++) {
+      for (int c = 0; c < columns; c++) {
+        f(r, c);
+      }
+    }
+  }
+
+  String formatValueWith(String Function(Value) fmt) {
+    final sb = StringBuffer();
+    for (int r = 0; r < rows; r++) {
+      for (int c = 0; c < columns; c++) {
+        if (c == 0) {
+          sb.write('    ');
+        }
+        sb.write(fmt(get(r, c)).trim().padLeft(11));
+        if (c != columns - 1) {
+          sb.write(',   ');
+        }
+      }
+      sb.writeln();
+    }
+    return sb.toString();
+  }
+
+  @override
+  String toString() {
+    final sb = StringBuffer('Matrix');
+    sb.write(toStringDim);
+    if (columns != 0 && rows != 0) {
+      sb.writeln(':');
+    }
+    sb.write(formatValueWith((v) => (const FixFloatFormatter(4)).format(v)));
+    return sb.toString();
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! AMatrix) {
+      return false;
+    } else if (other.rows != rows && other.columns != columns) {
+      return false;
+    } else {
+      for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+          if (get(i, j) != other.get(i, j)) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+  }
+
+  @override
+  int get hashCode {
+    final values = Iterable.generate(
+        rows * columns, (i) => get(i ~/ columns, i % columns));
+    return Object.hash(rows, columns, Object.hashAll(values));
+  }
+}
 
 ///
 /// A matrix stored in the 15C's registers, with values held in the 15C's
 /// internal format, with ten decimal digits of mantissa.
 ///
-class Matrix {
+class Matrix extends AMatrix {
   final String name;
   List<Value> _values = [];
 
   /// List of rows swapped in the LU decomposition
   List<int>? _rowSwaps;
   int _columns = 0;
-  int get _rows => (_values.isEmpty) ? 0 : (_values.length ~/ _columns);
+  @override
+  int get rows => (_values.isEmpty) ? 0 : (_values.length ~/ _columns);
 
   Matrix(this.name);
 
   /// Number of registers this matrix occupies
   int get length => _values.length;
 
-  int get rows => _rows;
+  @override
   int get columns => _columns;
 
   bool get isLU => _rowSwaps != null;
@@ -53,7 +154,7 @@ class Matrix {
       }
       _rowSwaps = List.generate(rows, (i) => i, growable: false);
     } else {
-      _rowSwaps = null; // Do early so get/set work on "raw" matrix.
+      _rowSwaps = null;
       for (int r = 0; r < rows; r++) {
         final sr = swaps[r];
         if (sr != r) {
@@ -63,18 +164,43 @@ class Matrix {
             set(r, c, get(sr, c));
             set(sr, c, t);
           }
-          // Don't swap back when we get up to sr!
-          swaps[sr] = sr;
+          swaps[r] = r;
+          bool ok = false;
+          for (int i = r + 1; i < swaps.length; i++) {
+            if (swaps[i] == r) {
+              swaps[i] = sr;
+              ok = true;
+              break;
+            }
+          }
+          assert(ok);
         }
       }
+      assert(() {
+        for (int r = 0; r < rows; r++) {
+          assert(r == swaps[r]);
+        }
+        return true;
+      }());
     }
     assert(isLU == v);
   }
 
-  void resize(int rows, int columns) {
+  void resize(Model15 m, int rows, int columns) {
     if (rows < 0 || columns < 0) {
       throw ArgumentError('rows $rows columns $columns');
+    } else if (rows == this.rows && columns == this.columns) {
+      return;
     }
+    int totalMatrix = rows * columns - 2 * length;
+    for (final mat in m.matrices) {
+      totalMatrix += mat.length;
+    }
+    if (totalMatrix > 64) {
+      // bottom of page 148
+      throw CalculatorError(10);
+    }
+    m.memory.policy.checkAvailable(rows * columns - length);
     isLU = false;
     final values = List<Value>.filled(rows * columns, Value.zero);
     for (int i = 0; i < values.length && i < _values.length; i++) {
@@ -84,12 +210,26 @@ class Matrix {
     _values = values;
   }
 
+  void copyFrom(Model15 m, Matrix other) {
+    resize(m, other.rows, other.columns);
+    for (int i = 0; i < length; i++) {
+      _values[i] = other._values[i];
+    }
+    final ors = other._rowSwaps;
+    if (ors == null) {
+      _rowSwaps = null;
+    } else {
+      _rowSwaps = List.generate(ors.length, (i) => ors[i], growable: false);
+    }
+  }
+
   void checkIndices(int row, int col) {
     if (row < 0 || col < 0 || row >= rows || col >= columns) {
       throw CalculatorError(3);
     }
   }
 
+  @override
   void set(int row, int col, Value v) {
     checkIndices(row, col);
     final swaps = _rowSwaps;
@@ -99,8 +239,7 @@ class Matrix {
     _values[row * columns + col] = v;
   }
 
-  void setF(int row, int col, double d) => set(row, col, Value.fromDouble(d));
-
+  @override
   Value get(int row, int col) {
     checkIndices(row, col);
     final swaps = _rowSwaps;
@@ -110,13 +249,10 @@ class Matrix {
     return _values[row * columns + col];
   }
 
-  double getF(int row, int col) => get(row, col).asDouble;
-
   ///
   /// Swap rows in a matrix holding an LU decomposition.
   ///
   void swapRowsLU(int r1, int r2) {
-    print("@@@@ Swap $r1 $r2");
     assert(isLU);
     checkIndices(r1, r2); // It's square, so this works
     final swaps = _rowSwaps!;
@@ -158,30 +294,133 @@ class Matrix {
   }
 
   @override
-  String toString() {
-    final sb = StringBuffer('Matrix(');
-    sb.write(lcdString);
-    sb.writeln('):');
-    if (columns == 0 || rows == 0) {
-      sb.writeln('    empty');
-    }
-    for (int r = 0; r < rows; r++) {
-      for (int c = 0; c < columns; c++) {
-        if (c == 0) {
-          sb.write('    ');
-        }
-        const fmt = FixFloatFormatter(4);
-        sb.write(fmt.format(get(r, c)).padLeft(12));
-      }
-      sb.writeln();
-    }
-    return sb.toString();
-  }
+  String get toStringDim => '($lcdString)';
 
   String get lcdString {
-    final r = _rows.toString().padLeft(3);
+    final r = rows.toString().padLeft(3);
     final c = _columns.toString().padLeft(3);
     final luString = isLU ? '--' : '  ';
     return '$name$luString  $r$c';
+  }
+
+  void chsElements() {
+    for (int i = 0; i < _values.length; i++) {
+      _values[i] = _values[i].negateAsFloat();
+    }
+  }
+}
+
+///
+/// A copy of a matrix.  This isn't used by the 15C simulator, but it comes
+/// in handy for experiments and testing.
+///
+class CopyMatrix extends AMatrix {
+  @override
+  final int rows;
+  @override
+  final int columns;
+  final List<Value> _values;
+
+  CopyMatrix(AMatrix src)
+      : rows = src.rows,
+        columns = src.columns,
+        _values = List.generate(src.rows * src.columns,
+            (i) => src.get(i ~/ src.columns, i % src.columns),
+            growable: false);
+
+  @override
+  void set(int row, int col, Value v) => _values[row * columns + col] = v;
+  @override
+  Value get(int row, int col) => _values[row * columns + col];
+
+  /// Make this the identity matrix
+  void identity() {
+    visit((r, c) {
+      if (r == c) {
+        setF(r, c, 1);
+      } else {
+        setF(r, c, 0);
+      }
+    });
+  }
+}
+
+///
+/// A view of a 15C matrix giving the permutation matrix (P).  Only valid if
+/// the underlying matrix is in LU form.
+///
+class PermutationMatrix extends AMatrix {
+  final Matrix _m;
+
+  PermutationMatrix(this._m);
+
+  @override
+  int get rows => _m.rows;
+
+  @override
+  int get columns => _m.columns;
+
+  @override
+  Value get(int row, int col) => _m.getP(row, col) ? Value.oneF : Value.zero;
+
+  @override
+  void set(int row, int col, Value v) {
+    throw Error();
+  }
+}
+
+abstract class UpperOrLowerTriangular extends AMatrix {
+  final Matrix _m;
+
+  UpperOrLowerTriangular(this._m);
+
+  @protected
+  Value? getFixed(int r, int c);
+
+  @override
+  int get rows => _m.rows;
+
+  @override
+  int get columns => _m.columns;
+
+  @override
+  Value get(int row, int col) => getFixed(row, col) ?? _m.get(row, col);
+
+  @override
+  void set(int row, int col, Value v) {
+    final f = getFixed(row, col);
+    if (f == null) {
+      _m.set(row, col, v);
+    } else if (v != f) {
+      print('Attempt to set fixed part of triangle to $v ($f expected)');
+    }
+  }
+}
+
+class UpperTriangular extends UpperOrLowerTriangular {
+  UpperTriangular(Matrix m) : super(m);
+
+  @override
+  getFixed(int r, int c) {
+    if (c < r) {
+      return Value.zero;
+    } else {
+      return null;
+    }
+  }
+}
+
+class LowerTriangular extends UpperOrLowerTriangular {
+  LowerTriangular(Matrix m) : super(m);
+
+  @override
+  getFixed(int r, int c) {
+    if (c > r) {
+      return Value.zero;
+    } else if (c == r) {
+      return Value.oneF;
+    } else {
+      return null;
+    }
   }
 }

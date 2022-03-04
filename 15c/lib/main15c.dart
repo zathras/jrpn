@@ -123,10 +123,9 @@ class Operations15 extends Operations {
       } else {
         final matY = m.matrices[my];
         final result = m.matrices[m.resultMatrix];
+        // @@ TODO:  Matrix / Matrix, not just vector
         if (matX != result) {
-          m.memory.policy
-              .checkAvailable(matY.rows * matY.columns - result.length);
-          result.resize(matY.rows, matY.columns);
+          result.resize(m, matY.rows, matY.columns);
         }
         // @@ TODO:  Order of arg checks?
         try {
@@ -259,8 +258,34 @@ class Operations15 extends Operations {
         m.resultXF = m.xF * 0.01 * m.yF;
       },
       name: '%');
-  static final reciprocal15 =
-      NormalOperationOrLetter(Operations.reciprocal, letterLabelE);
+
+  static final reciprocal15 = NormalOperationOrLetter.floatOnly(
+      letter: letterLabelE,
+      floatCalc: (Model m) {
+        final mat = m.x.asMatrix;
+        if (mat == null) {
+          double x = m.xF;
+          if (x == 0.0) {
+            throw CalculatorError(0);
+          } else {
+            m.resultXF = 1.0 / x;
+          }
+        } else {
+          final result = (m as Model15).matrices[m.resultMatrix];
+          result.copyFrom(m, m.matrices[mat]);
+          linalg.invert(result);
+        }
+      },
+      complexCalc: (Model m) {
+        final x = m.xC;
+        if (x == Complex.zero) {
+          throw CalculatorError(0);
+        } else {
+          m.resultXC = const Complex(1, 0) / x;
+        }
+      },
+      name: '1/x');
+
   static final NormalOperation deltaPercent = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         m.resultXF = ((m.xF - m.yF) / m.yF) * 100.0;
@@ -273,7 +298,7 @@ class Operations15 extends Operations {
             key: Operations.n0,
             child: ArgDone((m) {
               for (final mat in (m as Model15).matrices) {
-                mat.resize(0, 0);
+                mat.resize(m, 0, 0);
               }
             })),
         KeyArg(
@@ -506,7 +531,7 @@ class Operations15 extends Operations {
     }
     final mat = m.matrices[arg];
     m.memory.policy.checkAvailable(r * c - mat.length);
-    mat.resize(r, c);
+    mat.resize(m, r, c);
   }
 
   static final NormalArgOperation dim = NormalArgOperation(
@@ -763,7 +788,18 @@ class Operations15 extends Operations {
   }
 
   static void _storeMatrix(Model m, int matrix) {
-    throw "@@ TODO";
+    final srcMatrix = m.x.asMatrix;
+    final dest = (m as Model15).matrices[matrix];
+    if (srcMatrix != null) {
+      dest.copyFrom(m, m.matrices[srcMatrix]);
+    } else {
+      dest.isLU = false; // @@ TODO:  Where else does this happen?
+      for (int i = 0; i < dest.rows; i++) {
+        for (int j = 0; j < dest.columns; j++) {
+          dest.set(i, j, m.x);
+        }
+      }
+    }
   }
 
   static final NormalArgOperation sto15 = NormalArgOperation(
@@ -782,23 +818,18 @@ class Operations15 extends Operations {
                 m.resultMatrix = matrix;
               }
             })),
-        // g A..E
-        KeyArg(
-            key: Operations.gShift,
-            child: ArgAlternates(children: [
-              KeysArg(
-                  synonyms: _letterSynonyms,
-                  keys: _letterLabels,
-                  generator: (i) => ArgDone((m) {
-                        final matrix = (m as Model15).matrices[i];
-                        final int row = m.yF.truncate().abs() - 1;
-                        final int col = m.xF.truncate().abs() - 1;
-                        m.z.asDouble; // Make sure it's a float
-                        matrix.set(row, col, m.z);
-                        m.popStack();
-                        m.popStack();
-                      })),
-            ])),
+        // g A..E:
+        KeysArg(
+            keys: _letterLabelsGShifted,
+            generator: (i) => ArgDone((m) {
+                  final matrix = (m as Model15).matrices[i];
+                  final int row = m.yF.truncate().abs() - 1;
+                  final int col = m.xF.truncate().abs() - 1;
+                  m.z.asDouble; // Make sure it's a float
+                  matrix.set(row, col, m.z);
+                  m.popStack();
+                  m.popStack();
+                })),
         // Not user mode, A..E, (i)
         UserArg(
             userMode: false,
@@ -829,6 +860,7 @@ class Operations15 extends Operations {
             // STO MATRIX A..E.  These are two-byte opcodes.
             key: Operations15.matrix,
             child: KeysArg(
+                synonyms: _matrixSynonyms,
                 keys: _letterLabels,
                 generator: (i) => ArgDone((m) => _storeMatrix(m, i)))),
         KeyArg(
@@ -865,27 +897,22 @@ class Operations15 extends Operations {
         RegisterReadArg(
             maxDigit: 19, noParenI: true, f: (m, v) => m.resultX = v),
         // g A..E
-        KeyArg(
-            key: Operations.gShift,
-            child: ArgAlternates(children: [
-              KeysArg(
-                  synonyms: _letterSynonyms,
-                  keys: _letterLabels,
-                  generator: (i) => DeferredRclArg(
-                      matrixNumber: i,
-                      noStackLift: true,
-                      pressed: (m, matrix) {
-                        final int row = m.yF.truncate().abs() - 1;
-                        final int col = m.xF.truncate().abs() - 1;
-                        _showMatrix(m, matrix, row, col);
-                      },
-                      released: (m, matrix) {
-                        final int row = m.yF.truncate().abs() - 1;
-                        final int col = m.xF.truncate().abs() - 1;
-                        m.popStack();
-                        m.popSetResultX = matrix.get(row, col);
-                      })),
-            ])),
+        KeysArg(
+            keys: _letterLabelsGShifted,
+            generator: (i) => DeferredRclArg(
+                matrixNumber: i,
+                noStackLift: true,
+                pressed: (m, matrix) {
+                  final int row = m.yF.truncate().abs() - 1;
+                  final int col = m.xF.truncate().abs() - 1;
+                  _showMatrix(m, matrix, row, col);
+                },
+                released: (m, matrix) {
+                  final int row = m.yF.truncate().abs() - 1;
+                  final int col = m.xF.truncate().abs() - 1;
+                  m.popStack();
+                  m.popSetResultX = matrix.get(row, col);
+                })),
         KeyArg(
             key: Operations15.dim,
             child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
@@ -1549,6 +1576,14 @@ final Set<LetterLabel> _letterLabels = {
   Operations15.letterLabelD,
   Operations15.letterLabelE
 };
+
+final _letterLabelsGShifted = [
+  Operations15.xSquared,
+  Operations15.lnOp,
+  Operations15.logOp,
+  Operations15.percent,
+  Operations15.deltaPercent
+];
 
 final _letterLabelsList = _letterLabels.toList(growable: false);
 

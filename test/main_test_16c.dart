@@ -98,7 +98,7 @@ Future<void> noScrollReset() async {
     Operations16.plus,
     Operations16.mult,
     Operations16.div,
-    Operations.reciprocal,
+    Operations16.reciprocal,
     Operations.abs,
     Operations.sqrtOp,
   ];
@@ -176,7 +176,7 @@ Future<void> lastX() async {
     Operations16.plus,
     Operations16.mult,
     Operations16.div,
-    Operations.reciprocal,
+    Operations16.reciprocal,
     Operations.abs,
     Operations.sqrtOp,
   ];
@@ -254,7 +254,7 @@ Future<void> programWithError() async {
   enter(c, Operations16.floatKey);
   enter(c, Operations.n2);
   enter(c, Operations.n0);
-  enter(c, Operations.reciprocal);
+  enter(c, Operations16.reciprocal);
   enter(c, Operations.pr);
   enter(c, Operations16.gsb);
   enter(c, Operations16.letterA);

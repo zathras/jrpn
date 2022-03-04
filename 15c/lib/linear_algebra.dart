@@ -121,4 +121,67 @@ void solve(Matrix a, Matrix b, Matrix x) {
   }
 }
 
+///
+/// Invert m in place.
+///
+void invert(final Matrix mTmp) {
+  // @@ TODO:  Change back to m
+  AMatrix m = mTmp;
+  if (!mTmp.isLU) {
+    decomposeLU(mTmp);
+  }
+
+  // Calculate U^-1.  Adapted from dtri2.f in LAPACK from www.netlib.org.
+
+  m = UpperTriangular(mTmp); // @@ TODO remove
+  for (int j = 0; j < m.rows; j++) {
+    final ajj = -1 / m.getF(j, j);
+    m.setF(j, j, -ajj);
+    // Compute elements 0..j-1 of the jth column
+    // DTRMV call:
+    for (int jj = 0; jj < j; jj++) {
+      final temp = m.getF(jj, j);
+      for (int i = 0; i < jj; i++) {
+        m.setF(i, j, m.getF(i, j) + temp * m.getF(i, jj));
+      }
+      m.setF(jj, j, m.getF(jj, j) * m.getF(jj, jj));
+    }
+    // DSCAL call:
+    for (int i = 0; i < j; i++) {
+      m.setF(i, j, m.getF(i, j) * ajj);
+    }
+  }
+
+  m = LowerTriangular(mTmp); // @@ TODO remove
+  // Calculate L^-1, adapted from dtri2.f.
+  for (int j = m.rows - 2; j >= 0; j--) {
+    const ajj = -1;
+    // DTRMV call:
+    for (int jj = m.rows - 2 - j; jj >= 0; jj--) {
+      final temp = m.getF(j + jj + 1, j);
+      for (int i = m.rows - 2 - j; i > jj; i--) {
+        m.setF(j + 1 + i, j,
+            m.getF(j + 1 + i, j) + temp * m.getF(j + i + 1, j + jj + 1));
+      }
+    }
+    // DSCAL call:
+    for (int i = j + 1; i < m.rows; i++) {
+      m.setF(i, j, m.getF(i, j) * ajj);
+    }
+  }
+
+  // @@ TODO:  Make the real, in-place version of this
+  // @@ TODO:  Perturb matirx to avoid divide by zero
+  m = mTmp; // @@ TODO:  Remove
+  final copy = CopyMatrix(m);
+  final u = CopyMatrix(UpperTriangular(mTmp));
+  final l = CopyMatrix(LowerTriangular(mTmp));
+  final p = PermutationMatrix(mTmp);
+
+  /// Now use A^-1 = U^-1 * l^-1 * P, as per HP 15C Advanced Functions p. 83
+  copy.dot(u, l);
+  m.dot(copy, p);
+  mTmp.isLU = false; // @@ TODO:  m.isLU = false;
+}
+
 class MatrixOverflow {}

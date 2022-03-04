@@ -84,6 +84,7 @@ class Value {
 
   /// Zero for both floats and ints
   static final Value zero = Value.fromInternal(BigInt.from(0));
+  static final Value oneF = Value.fromDouble(1);
   static final Value fMaxValue = Value._fromMantissaAndExponent(
       BigInt.parse('09999999999', radix: 16), 0x099);
   static final Value fMinValue = Value._fromMantissaAndExponent(

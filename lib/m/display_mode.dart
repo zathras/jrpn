@@ -60,8 +60,8 @@ abstract class DisplayMode {
       ? _ComplexMode(FixFloatFormatter(fractionDigits))
       : _FloatMode(FixFloatFormatter(fractionDigits));
   static DisplayMode sci(int fractionDigits, bool complex) => complex
-      ? _ComplexMode(_SciFloatFormatter(fractionDigits))
-      : _FloatMode(_SciFloatFormatter(fractionDigits));
+      ? _ComplexMode(SciFloatFormatter(fractionDigits))
+      : _FloatMode(SciFloatFormatter(fractionDigits));
   static DisplayMode eng(int fractionDigits, bool complex) => complex
       ? _ComplexMode(_EngFloatFormatter(fractionDigits))
       : _FloatMode(_EngFloatFormatter(fractionDigits));
@@ -343,7 +343,7 @@ class _DecimalMode extends IntegerDisplayMode {
 }
 
 class _FloatMode extends DisplayMode {
-  final _FloatFormatter _formatter;
+  final FloatFormatter _formatter;
 
   _FloatMode(this._formatter) : super._protected();
 
@@ -431,7 +431,7 @@ class _FloatMode extends DisplayMode {
 }
 
 class _ComplexMode extends _FloatMode {
-  _ComplexMode(_FloatFormatter formatter) : super(formatter);
+  _ComplexMode(FloatFormatter formatter) : super(formatter);
 
   @override
   void setComplexMode(Model m, bool v) {
@@ -446,8 +446,8 @@ class _ComplexMode extends _FloatMode {
 }
 
 @immutable
-abstract class _FloatFormatter {
-  const _FloatFormatter();
+abstract class FloatFormatter {
+  const FloatFormatter();
 
   String get _jsonName;
 
@@ -556,9 +556,9 @@ abstract class _FloatFormatter {
 }
 
 @immutable
-class _SciFloatFormatter extends _FloatFormatter {
+class SciFloatFormatter extends FloatFormatter {
   final int fractionDigits;
-  const _SciFloatFormatter(this.fractionDigits);
+  const SciFloatFormatter(this.fractionDigits);
 
   @override
   String get _jsonName => 's$fractionDigits';
@@ -568,7 +568,7 @@ class _SciFloatFormatter extends _FloatFormatter {
 }
 
 @immutable
-class FixFloatFormatter extends _FloatFormatter {
+class FixFloatFormatter extends FloatFormatter {
   final int fractionDigits;
   const FixFloatFormatter(this.fractionDigits);
 
@@ -604,7 +604,7 @@ class _Fix16FloatFormatter extends FixFloatFormatter {
 /// from "FLOAT-."  It's stored in JSON as 'f10' for backwards compatibility.
 ///
 @immutable
-class _Sci16FloatFormatter extends _SciFloatFormatter {
+class _Sci16FloatFormatter extends SciFloatFormatter {
   const _Sci16FloatFormatter() : super(6);
 
   @override
@@ -612,7 +612,7 @@ class _Sci16FloatFormatter extends _SciFloatFormatter {
 }
 
 @immutable
-class _EngFloatFormatter extends _SciFloatFormatter {
+class _EngFloatFormatter extends SciFloatFormatter {
   const _EngFloatFormatter(int fractionDigits) : super(fractionDigits);
 
   @override

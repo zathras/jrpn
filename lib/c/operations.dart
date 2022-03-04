@@ -37,7 +37,6 @@ library controller.operations;
 
 import 'dart:math';
 
-import '../m/complex.dart';
 import '../m/model.dart';
 import 'controller.dart';
 import 'states.dart';
@@ -188,26 +187,6 @@ class Operations {
       },
       intCalc: (Model m) => m.resultXI = _sqrtI(m.xI, m),
       name: 'sqrt(x)');
-
-  static final NormalOperation reciprocal = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        double x = m.xF;
-        if (x == 0.0) {
-          throw CalculatorError(0);
-        } else {
-          m.floatOverflow = false;
-          m.resultXF = 1.0 / x;
-        }
-      },
-      complexCalc: (Model m) {
-        final x = m.xC;
-        if (x == Complex.zero) {
-          throw CalculatorError(0);
-        } else {
-          m.resultXC = const Complex(1, 0) / x;
-        }
-      },
-      name: '1/x');
 
   static final pr = NonProgrammableOperation(
       pressed: (LimitedState s) => s.handlePR(), name: 'P/R');

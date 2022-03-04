@@ -133,6 +133,17 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   void resetErrorBlink() => setFlag(9, false);
 
   @override
+  void chsX() {
+    final mi = x.asMatrix;
+    if (mi == null) {
+      super.chsX();
+    } else {
+      matrices[mi].chsElements();
+      needsSave = true;
+    }
+  }
+
+  @override
   String formatValue(Value v) {
     final int? mx = v.asMatrix;
     if (mx == null) {

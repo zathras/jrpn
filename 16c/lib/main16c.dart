@@ -86,7 +86,7 @@ class Model16 extends Model<Operation> {
       MKey(Operations16.hex, Operations16.showHex, Operations16.dsz),
       MKey(Operations16.dec, Operations16.showDec, Operations16.isz),
       MKey(Operations16.oct, Operations16.showOct, Operations.sqrtOp),
-      MKey(Operations16.bin, Operations16.showBin, Operations.reciprocal),
+      MKey(Operations16.bin, Operations16.showBin, Operations16.reciprocal),
       MKey(Operations.n4, Operations16.sb, Operations16.sf),
       MKey(Operations.n5, Operations16.cb, Operations16.cf),
       MKey(Operations.n6, Operations16.bQuestion, Operations16.fQuestion),
@@ -388,6 +388,18 @@ class Operations16 extends Operations {
         }
         m.popStack(); // Even when not running a program
       });
+
+  static final NormalOperation reciprocal = NormalOperation.floatOnly(
+      floatCalc: (Model m) {
+        double x = m.xF;
+        if (x == 0.0) {
+          throw CalculatorError(0);
+        } else {
+          m.floatOverflow = false;
+          m.resultXF = 1.0 / x;
+        }
+      },
+      name: '1/x');
 
   static final NormalOperation plus = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
@@ -753,7 +765,7 @@ class ButtonLayout16 extends ButtonLayout {
       Operations.sqrtOp,
       'K');
   CalculatorButton get bin => CalculatorButton(factory, 'BIN', '', '1/x',
-      Operations16.bin, Operations16.showBin, Operations.reciprocal, 'L');
+      Operations16.bin, Operations16.showBin, Operations16.reciprocal, 'L');
   CalculatorButton get n4 => CalculatorButton(factory, '4', 'SB', 'SF',
       Operations.n4, Operations16.sb, Operations16.sf, '4');
   CalculatorButton get n5 => CalculatorButton(factory, '5', 'CB', 'CF',

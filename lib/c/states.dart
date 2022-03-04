@@ -716,6 +716,10 @@ class ArgInputState extends ControllerState {
 
   @override
   void buttonDown(Operation key) {
+    if (key == Arg.fShift || key == Arg.gShift) {
+      lastState.buttonDown(key);
+      return;
+    }
     final Arg? next = _arg.matches(key, model.userMode);
     if (next == null) {
       changeState(lastState);
