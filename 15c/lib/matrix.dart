@@ -92,11 +92,8 @@ abstract class AMatrix {
     return sb.toString();
   }
 
-  @override
-  bool operator ==(Object other) {
-    if (other is! AMatrix) {
-      return false;
-    } else if (other.rows != rows && other.columns != columns) {
+  bool equivalent(AMatrix other) {
+    if (other.rows != rows && other.columns != columns) {
       return false;
     } else {
       for (int i = 0; i < rows; i++) {
@@ -108,13 +105,6 @@ abstract class AMatrix {
       }
       return true;
     }
-  }
-
-  @override
-  int get hashCode {
-    final values = Iterable.generate(
-        rows * columns, (i) => get(i ~/ columns, i % columns));
-    return Object.hash(rows, columns, Object.hashAll(values));
   }
 }
 
@@ -241,6 +231,9 @@ class Matrix extends AMatrix {
   }
 
   void copyFrom(Model15 m, Matrix other) {
+    if (other == this) {
+      return;
+    }
     resize(m, other.rows, other.columns);
     for (int i = 0; i < length; i++) {
       _values[i] = other._values[i];
@@ -336,6 +329,35 @@ class Matrix extends AMatrix {
   void chsElements() {
     for (int i = 0; i < _values.length; i++) {
       _values[i] = _values[i].negateAsFloat();
+    }
+  }
+
+  void transpose() {
+    isLU = false;
+    _columns = rows;
+    if (length <= 2) {
+      return;
+    }
+    final moved = List<bool>.filled(length, false);
+    final last = length - 1;
+    moved[0] = true;
+    moved[last] = true;
+    int i = 1;
+    assert(!moved[i]);
+    while (i < last) {
+      final cycleBegin = i;
+      Value t = _values[i];
+      do {
+        final next = (i * columns) % last;
+        final tt = t;
+        t = _values[next];
+        _values[next] = tt;
+        moved[i] = true;
+        i = next;
+      } while (i != cycleBegin);
+      while (i < last && moved[i]) {
+        i++;
+      }
     }
   }
 }

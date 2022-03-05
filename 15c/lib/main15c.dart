@@ -309,7 +309,15 @@ class Operations15 extends Operations {
             })),
         KeyArg(key: Operations.n2, child: ArgDone((m) => throw "@@ TODO")),
         KeyArg(key: Operations.n3, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(key: Operations.n4, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(key: Operations.n4, child: ArgDone((m) {
+          final mat = m.x.asMatrix;
+          if (mat == null) {
+            throw CalculatorError(11);
+          }
+          final result = (m as Model15).matrices[m.resultMatrix];
+          result.copyFrom(m, m.matrices[mat]);
+          result.transpose();
+        })),
         KeyArg(key: Operations.n5, child: ArgDone((m) => throw "@@ TODO")),
         KeyArg(key: Operations.n6, child: ArgDone((m) => throw "@@ TODO")),
         KeyArg(key: Operations.n7, child: ArgDone((m) => throw "@@ TODO")),

@@ -34,7 +34,8 @@ import 'package:jrpn/m/model.dart';
 import 'matrix.dart';
 
 ///
-/// Do an LU decomposition with row permutations.  This is hoped to be
+/// Do an LU decomposition with row permutations, and with perturbations, if
+/// needed, to avoid a singular matrix.  This is hoped to be
 /// compatible with the 15C's LU decomposition using the Doolittle method,
 /// as mentioned in the HP 15C Advanced Functions book, page 83.  It's a
 /// port of la4j's RawLUCompositor.decompose() (in Java), cross-checked against
@@ -73,6 +74,24 @@ void decomposeLU(Matrix m) {
       }
     }
   }
+
+  // Avoid a singular matrix by perturbing the pivots, if needed, so they fall
+  // within the 15C's precision.  See Advanced Functions, 98-99.
+  double maxPivot = 0;
+  for(int i = 0; i < m.rows; i++) {
+    maxPivot = max(maxPivot, m.getF(i, i).abs());
+  }
+  final int minExp = max(-99, Value.fromDouble(maxPivot).exponent - 10);
+  for(int i = 0; i < m.rows; i++) {
+    final v = m.get(i, i);
+    if (v.exponent < minExp) {
+      if (v.asDouble < 0) {
+        m.setF(i, i, -pow(10.0, minExp).toDouble());
+      } else {
+        m.setF(i, i, pow(10.0, minExp).toDouble());
+      }
+    }
+  }
 }
 
 ///
@@ -86,18 +105,6 @@ void solve(Matrix a, AMatrix b, AMatrix x) {
   final int n = b.rows;
   if (x.rows != n || x.columns != b.columns || a.rows != n) {
     throw CalculatorError(11);
-  }
-
-  // Check for a singular matrix
-  for (int i = 0; i < n; i++) {
-    if (a.get(i, i) == Value.zero) {
-      for (int rCol = 0; rCol < x.columns; rCol++) {
-        for (int j = 0; j < n; j++) {
-          x.set(j, rCol, Value.fMaxValue);
-        }
-      }
-      throw MatrixOverflow();
-    }
   }
 
   for (int rCol = 0; rCol < x.columns; rCol++) {

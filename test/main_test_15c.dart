@@ -482,7 +482,7 @@ class MatrixTests {
     expect(mat2.getF(1, 0), -10);
     expect(mat2.getF(1, 1), 5);
     invert(mat2);
-    expect(mat2, mat2c);
+    expect(mat2.equivalent(mat2c), true);
 
     mat2.resize(model, 3, 3);
     mat2.setF(0, 0, 0.1);
@@ -731,24 +731,70 @@ class MatrixTests {
 
     mat.resize(model, 0, 0);
     mat2.resize(model, 0, 0);
-
-    /*
-    expect(result.get(0,0), Value.fromDouble(499999999));
-    expect(result.get(0,1), Value.fromDouble(1000000000));
-    expect(result.get(0,2), Value.fromDouble(-500000000.1));
-    expect(result.get(1,0), Value.fromDouble(999999999));
-    expect(result.get(1,1), Value.fromDouble(-2000000000));
-    expect(result.get(1,2), Value.fromDouble(1000000000));
-    expect(result.get(2,0), Value.fromDouble(-500000000));
-    expect(result.get(2,1), Value.fromDouble(1000000000));
-    expect(result.get(2,2), Value.fromDouble(-500000000));
-     */
   }
 
   void expectRounded(double epsilon, Value v, double expected) {
     if ((v.asDouble - expected).abs() > epsilon) {
       expect(false, '$v differs from $expected by more than $epsilon');
     }
+  }
+
+  void _singularMatrix() {
+    // Advanced functions page 98:  Singular matrix example.  Our LU
+    // perturbation to avoid zero pivots is unlikely to be identical to what
+    // the real 15C does, but it was chosen to work for this known example.
+    final mat = model.matrices[0];
+    mat.resize(model, 2, 2);
+    mat.setF(0, 0, 3);
+    mat.setF(0, 1, 3);
+    mat.setF(1, 0, 1);
+    mat.setF(1, 1, 1);
+    final mat2 = model.matrices[1];
+    mat2.resize(model, 2, 1);
+    mat2.setF(0, 0, 1);
+    mat2.setF(1, 0, 1);
+    final result = model.matrices[model.resultMatrix = 2];
+    controller.buttonDown(Operations15.rcl15);
+    controller.buttonDown(Operations15.matrix);
+    controller.buttonDown(Operations15.letterLabelB);
+    controller.buttonUp();
+    controller.buttonDown(Operations15.rcl15);
+    controller.buttonDown(Operations15.matrix);
+    controller.buttonDown(Operations15.letterLabelA);
+    controller.buttonUp();
+    controller.buttonDown(Operations15.div);
+    expect(mat.isLU, true);
+    expect(mat.get(0, 0), Value.fromDouble(3));
+    expect(mat.get(0, 1), Value.fromDouble(3));
+    expect(mat.get(1, 0), Value.fromDouble(1.0/3.0));
+    expect(mat.get(1, 1), Value.fromDouble(1e-10));
+    expect(result.get(0, 0), Value.fromDouble(-6666666667));
+    expect(result.get(1, 0), Value.fromDouble(6666666667));
+    model.matrices[0].resize(model, 0, 0);
+    model.matrices[1].resize(model, 0, 0);
+    model.matrices[2].resize(model, 0, 0);
+  }
+
+  void _transpose() {
+    final mat = model.matrices[model.resultMatrix = 1];
+    for (int rows = 1; rows <= 50; rows++) {
+      for (int cols = 1; cols <= 50 ~/ rows; cols++) {
+        mat.resize(model, rows, cols);
+        mat.visit((r, c) => mat.setF(r, c, 100.0*r + c));
+        final orig = CopyMatrix(mat);
+        controller.buttonDown(Operations15.rcl15);
+        controller.buttonDown(Operations15.matrix);
+        controller.buttonDown(Operations15.letterLabelB);
+        controller.buttonDown(Operations15.matrix);
+        controller.buttonDown(Operations.n4);
+        expect(mat.rows, orig.columns);
+        expect(mat.columns, orig.rows);
+        mat.visit((r, c) {
+          expect(mat.get(r, c), orig.get(c, r));
+        });
+      }
+    }
+    mat.resize(model, 0, 0);
   }
 
   Future<void> run() async {
@@ -758,6 +804,8 @@ class MatrixTests {
     _stoMatrixAndChs();
     _invertMatrix(true);
     _invertMatrix(false);
+    _singularMatrix();
+    _transpose();
   }
 
   void expectMatrix(AMatrix m, AMatrix expected, double epsilon) {
