@@ -174,6 +174,12 @@ class Matrix extends AMatrix {
     assert(isLU == v);
   }
 
+  List<int> cloneRowSwaps() {
+    assert(isLU);
+    final rs = _rowSwaps!;
+    return List.generate(rs.length, (i) => rs[i]);
+  }
+
   ///
   /// calculate this = this dot P.
   /// This is not to be confused with P dot this!
@@ -181,9 +187,7 @@ class Matrix extends AMatrix {
   void dotByP() {
     // This is equivalent to doing the inverse of swapping the columns according
     // to _rowSwaps
-    assert(isLU);
-    final rs = _rowSwaps!;
-    final swaps = List.generate(rs.length, (i) => rs[i]);
+    final swaps = cloneRowSwaps();
     for (int c = 0; c < columns;) {
       final sc = swaps[c];
       if (sc == c) {

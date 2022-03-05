@@ -78,11 +78,11 @@ void decomposeLU(Matrix m) {
   // Avoid a singular matrix by perturbing the pivots, if needed, so they fall
   // within the 15C's precision.  See Advanced Functions, 98-99.
   double maxPivot = 0;
-  for(int i = 0; i < m.rows; i++) {
+  for (int i = 0; i < m.rows; i++) {
     maxPivot = max(maxPivot, m.getF(i, i).abs());
   }
   final int minExp = max(-99, Value.fromDouble(maxPivot).exponent - 10);
-  for(int i = 0; i < m.rows; i++) {
+  for (int i = 0; i < m.rows; i++) {
     final v = m.get(i, i);
     if (v.exponent < minExp) {
       if (v.asDouble < 0) {
@@ -197,4 +197,29 @@ void invert(final Matrix m) {
   m.isLU = false;
 }
 
+double determinant(Matrix mat) {
+  if (!mat.isLU) {
+    decomposeLU(mat);
+  }
+  double result = 1;
+  final rs = mat.cloneRowSwaps();
+  // Figure out how many row swaps r there were
+  for (int c = 0; c < rs.length;) {
+    final sc = rs[c];
+    if (sc == c) {
+      c++;
+    } else {
+      rs[c] = rs[sc];
+      rs[sc] = sc;
+      result = -result;
+    }
+  }
+  // result is now -1^(number of row swaps)
+  for (int i = 0; i < mat.columns; i++) {
+    result *= mat.getF(i, i);
+  }
+  return result;
+}
+
+// @@ TODO:  Used?
 class MatrixOverflow {}

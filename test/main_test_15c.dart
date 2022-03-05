@@ -23,6 +23,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math_64.dart' as dart_mat;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/m/model.dart';
@@ -468,6 +469,7 @@ class MatrixTests {
         result.visit((r, c) => m.set(r, c, result.get(r, c)));
       }
     }
+
     final Matrix mat2 = model.matrices[4];
     final Matrix mat = model.matrices[3];
     mat2.resize(model, 2, 2);
@@ -723,6 +725,25 @@ class MatrixTests {
           mat.setF(r, c, random[pos++]);
           pos = pos % random.length;
         });
+        //
+        // While we're here, test the determinant
+        //
+        if (sz == 2) {
+          final dm = dart_mat.Matrix2.zero();
+          mat2.visit((r, c) => dm.setEntry(r, c, mat.getF(r, c)));
+          expectRounded(2e-9, Value.fromDouble(linalg.determinant(mat2)),
+              dm.determinant());
+        } else if (sz == 3) {
+          final dm = dart_mat.Matrix3.zero();
+          mat2.visit((r, c) => dm.setEntry(r, c, mat.getF(r, c)));
+          expectRounded(2e-9, Value.fromDouble(linalg.determinant(mat2)),
+              dm.determinant());
+        } else if (sz == 4) {
+          final dm = dart_mat.Matrix4.zero();
+          mat2.visit((r, c) => dm.setEntry(r, c, mat.getF(r, c)));
+          expectRounded(2e-9, Value.fromDouble(linalg.determinant(mat2)),
+              dm.determinant());
+        }
         invert(mat2);
         result.dot(mat, mat2);
         expectMatrix(result, identity, useInvert ? 5e-7 : 2e-6);
@@ -766,7 +787,7 @@ class MatrixTests {
     expect(mat.isLU, true);
     expect(mat.get(0, 0), Value.fromDouble(3));
     expect(mat.get(0, 1), Value.fromDouble(3));
-    expect(mat.get(1, 0), Value.fromDouble(1.0/3.0));
+    expect(mat.get(1, 0), Value.fromDouble(1.0 / 3.0));
     expect(mat.get(1, 1), Value.fromDouble(1e-10));
     expect(result.get(0, 0), Value.fromDouble(-6666666667));
     expect(result.get(1, 0), Value.fromDouble(6666666667));
@@ -780,7 +801,7 @@ class MatrixTests {
     for (int rows = 1; rows <= 50; rows++) {
       for (int cols = 1; cols <= 50 ~/ rows; cols++) {
         mat.resize(model, rows, cols);
-        mat.visit((r, c) => mat.setF(r, c, 100.0*r + c));
+        mat.visit((r, c) => mat.setF(r, c, 100.0 * r + c));
         final orig = CopyMatrix(mat);
         controller.buttonDown(Operations15.rcl15);
         controller.buttonDown(Operations15.matrix);
