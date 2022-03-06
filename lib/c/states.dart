@@ -206,12 +206,12 @@ class Resting extends ActiveState {
         arg.handleOpBeforeCalculate(model, () => op.beforeCalculate(this));
         f(model);
         model.display.displayX();
-      } on CalculatorError catch (e) {
-        controller.showCalculatorError(e);
+      } on CalculatorError catch (e, stack) {
+        controller.showCalculatorError(e, stack);
         // ignore: avoid_catches_without_on_clauses
       } catch (e, s) {
         debugPrint('Unexpected exception $e\n\n$s');
-        controller.showCalculatorError(CalculatorError(9));
+        controller.showCalculatorError(CalculatorError(9), s);
       }
       op.possiblyAlterStackLift(controller);
     }
@@ -338,8 +338,8 @@ class Resting extends ActiveState {
     try {
       model.memory.program.currentLine = value;
       model.display.displayX();
-    } on CalculatorError catch (e) {
-      controller.showCalculatorError(e);
+    } on CalculatorError catch (e, s) {
+      controller.showCalculatorError(e, s);
     }
   }
 
@@ -387,8 +387,8 @@ class Resting extends ActiveState {
     final gsb = controller.gsbOperation;
     try {
       program.gosub(operation.numericValue);
-    } on CalculatorError catch (e) {
-      controller.showCalculatorError(e);
+    } on CalculatorError catch (e, s) {
+      controller.showCalculatorError(e, s);
       return;
     }
     program.displayCurrent();
@@ -766,9 +766,9 @@ class GosubArgInputState extends ArgInputState {
     program.resetReturnStack(); // Since we're starting new program
     try {
       label.getCalculation(model, const _OperationSelector())!(model);
-    } on CalculatorError catch (e) {
+    } on CalculatorError catch (e, s) {
       changeState(lastState);
-      controller.showCalculatorError(e);
+      controller.showCalculatorError(e, s);
       return;
     }
     program.displayCurrent();
@@ -868,8 +868,8 @@ class ProgramEntry extends LimitedState {
     try {
       program.currentLine = value;
       program.displayCurrent();
-    } on CalculatorError catch (e) {
-      controller.showCalculatorError(e);
+    } on CalculatorError catch (e, s) {
+      controller.showCalculatorError(e, s);
     }
   }
 
@@ -1112,14 +1112,14 @@ class OnOffKeyPressed extends DoNothing {
           changeState(Resting(controller));
           model.display.show(model.selfTestContents());
           changeState(MessageShowing(Resting(controller)));
-        } on CalculatorError catch (e) {
+        } on CalculatorError catch (e, s) {
           changeState(Resting(controller));
-          controller.showCalculatorError(e);
+          controller.showCalculatorError(e, s);
           // ignore: avoid_catches_without_on_clauses
         } catch (e, s) {
           debugPrint('Unexpected exception $e\n\n$s');
           changeState(Resting(controller));
-          controller.showCalculatorError(CalculatorError(9));
+          controller.showCalculatorError(CalculatorError(9), s);
         }
       }
 
@@ -1270,7 +1270,7 @@ class Running extends ControllerState {
       model.display.current = ' ';
       changeState(Resting(controller));
       if (pendingError != null) {
-        controller.showCalculatorError(pendingError);
+        controller.showCalculatorError(pendingError, null);
       } else {
         model.display.update(); // Blank with no delay
         model.display.displayX();
@@ -1332,7 +1332,7 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
       model.displayDisabled = false;
       CalculatorError? pendingError = _fake.pendingError;
       if (pendingError != null) {
-        _fake.real.showCalculatorError(pendingError);
+        _fake.real.showCalculatorError(pendingError, null);
         _fake.returnToParent(Resting(_fake.real));
       } else {
         final DigitEntry? old = _fake.currentDigitEntryState;

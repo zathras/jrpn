@@ -221,5 +221,28 @@ double determinant(Matrix mat) {
   return result;
 }
 
+double rowNorm(AMatrix mat) {
+  double result = 0;
+  for (int r = 0; r < mat.rows; r++) {
+    double sum = 0;
+    for (int c = 0; c < mat.columns; c++) {
+      sum += mat.getF(r, c).abs();
+    }
+    result = max(result, sum);
+  }
+  return result;
+}
+
+double frobeniusNorm(AMatrix mat) {
+  double result = 0;
+  for (int r = 0; r < mat.rows; r++) {
+    for (int c = 0; c < mat.columns; c++) {
+      final v = mat.getF(r, c);
+      result += v * v;
+    }
+  }
+  return sqrt(result);
+}
+
 // @@ TODO:  Used?
 class MatrixOverflow {}

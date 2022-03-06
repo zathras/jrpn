@@ -94,75 +94,115 @@ class Operations15 extends Operations {
 
   static final NormalOperation div = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        if (!_matrixDiv(m as Model15)) {
+        _scalarOrMatrix(m, scalar: (x, y) {
           try {
-            m.popSetResultXF = m.yF / m.xF;
+            return y / x;
             // ignore: avoid_catches_without_on_clauses
           } catch (e) {
             throw CalculatorError(0);
           }
-        }
+        }, matrix: (m, x, y, r) {
+          if (x != r) {
+            r.resize(m, y.rows, y.columns);
+          }
+          try {
+            linalg.solve(x, y, r);
+          } on linalg.MatrixOverflow {
+            m.floatOverflow = true;
+          }
+        });
       },
       complexCalc: (Model m) {
-        m.popSetResultXC = m.xC / m.yC;
+        if (m.x.asMatrix != null || m.y.asMatrix != null) {
+          div.floatCalc!(m);
+        } else {
+          m.popSetResultXC = m.yC / m.xC;
+        }
       },
       name: '/');
 
-  static bool _matrixDiv(Model15 m) {
+  static void _scalarOrMatrix(Model m,
+      {required double Function(double, double) scalar,
+      required void Function(Model15 m, Matrix x, Matrix y, Matrix r) matrix}) {
+    m as Model15;
     final int? mx = m.x.asMatrix;
     final int? my = m.y.asMatrix;
-    if (mx == null) {
-      if (my == null) {
-        return false;
-      }
-      throw "@@ TODO";
+    if (mx == null && my == null) {
+      m.popSetResultXF = scalar(m.xF, m.yF);
     } else {
-      final matX = m.matrices[mx];
-      if (my == null) {
-        throw "@@ TODO";
+      final result = m.matrices[m.resultMatrix];
+      if (mx == null) {
+        final matY = m.matrices[my!];
+        final x = m.xF;
+        result.resize(m, matY.rows, matY.columns);
+        matY.visit((r, c) {
+          result.setF(r, c, scalar(x, matY.getF(r, c)));
+        });
+      } else if (my == null) {
+        final matX = m.matrices[mx];
+        final y = m.yF;
+        result.resize(m, matX.rows, matX.columns);
+        matX.visit((r, c) {
+          result.setF(r, c, scalar(matX.getF(r, c), y));
+        });
       } else {
+        final matX = m.matrices[mx];
         final matY = m.matrices[my];
         final result = m.matrices[m.resultMatrix];
-        // @@ TODO:  Matrix / Matrix, not just vector
-        if (matX != result) {
-          result.resize(m, matY.rows, matY.columns);
-        }
-        // @@ TODO:  Order of arg checks?
-        try {
-          linalg.solve(matX, matY, result);
-        } on linalg.MatrixOverflow {
-          m.floatOverflow = true;
-        }
-        m.popSetResultX = Value.fromMatrix(m.resultMatrix);
+        matrix(m, matX, matY, result);
       }
+      m.popSetResultX = Value.fromMatrix(m.resultMatrix);
     }
-    return true;
   }
 
   static final NormalOperation mult = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.popSetResultXF = m.xF * m.yF;
+        _scalarOrMatrix(m,
+            scalar: (x, y) => y * x,
+            matrix: (m, x, y, r) {
+              throw "@@ TODO";
+            });
       },
       complexCalc: (Model m) {
-        m.popSetResultXC = m.xC * m.yC;
+        if (m.x.asMatrix != null || m.y.asMatrix != null) {
+          mult.floatCalc!(m);
+        } else {
+          m.popSetResultXC = m.yC * m.xC;
+        }
       },
       name: '*');
 
   static final NormalOperation plus = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.popSetResultXF = m.yF + m.xF;
+        _scalarOrMatrix(m,
+            scalar: (x, y) => y + x,
+            matrix: (m, x, y, r) {
+              throw "@@ TODO";
+            });
       },
       complexCalc: (Model m) {
-        m.popSetResultXC = m.xC + m.yC;
+        if (m.x.asMatrix != null || m.y.asMatrix != null) {
+          plus.floatCalc!(m);
+        } else {
+          m.popSetResultXC = m.yC + m.xC;
+        }
       },
       name: '+');
 
   static final NormalOperation minus = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.popSetResultXF = m.yF - m.xF;
+        _scalarOrMatrix(m,
+            scalar: (x, y) => y - x,
+            matrix: (m, x, y, r) {
+              throw "@@ TODO";
+            });
       },
       complexCalc: (Model m) {
-        m.popSetResultXC = m.xC - m.yC;
+        if (m.x.asMatrix != null || m.y.asMatrix != null) {
+          minus.floatCalc!(m);
+        } else {
+          m.popSetResultXC = m.yC - m.xC;
+        }
       },
       name: '-');
 
@@ -277,6 +317,9 @@ class Operations15 extends Operations {
         }
       },
       complexCalc: (Model m) {
+        if (m.x.asMatrix != null) {
+          return reciprocal15.floatCalc!(m);
+        }
         final x = m.xC;
         if (x == Complex.zero) {
           throw CalculatorError(0);
@@ -322,8 +365,22 @@ class Operations15 extends Operations {
             })),
         KeyArg(key: Operations.n5, child: ArgDone((m) => throw "@@ TODO")),
         KeyArg(key: Operations.n6, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(key: Operations.n7, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(key: Operations.n8, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(
+            key: Operations.n7,
+            child: ArgDone((m) {
+              final mat = m.x.asMatrix;
+              if (mat != null) {
+                m.resultXF = linalg.rowNorm((m as Model15).matrices[mat]);
+              }
+            })),
+        KeyArg(
+            key: Operations.n8,
+            child: ArgDone((m) {
+              final mat = m.x.asMatrix;
+              if (mat != null) {
+                m.resultXF = linalg.frobeniusNorm((m as Model15).matrices[mat]);
+              }
+            })),
         KeyArg(
             key: Operations.n9,
             child: ArgDone((m) {

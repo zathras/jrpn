@@ -1000,5 +1000,5 @@ class ProgramListener {
   /// Called at the moment a calculator error is shown, whether a program is
   /// running or not.  If a program is running, this should be followed by
   /// onError().
-  void onErrorShown(CalculatorError err) {}
+  void onErrorShown(CalculatorError err, StackTrace? stack) {}
 }

@@ -23,6 +23,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:jrpn/c/controller.dart';
 import 'package:vector_math/vector_math_64.dart' as dart_mat;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/operations.dart';
@@ -520,11 +521,11 @@ class MatrixTests {
     mat2.setF(2, 0, 0.1);
     mat2.setF(2, 1, 0.5);
     mat2.setF(2, 2, 0.9);
+    final result = model.matrices[model.resultMatrix = 2];
     controller.buttonWidgetDown(layout.rcl);
     controller.buttonWidgetDown(layout.chs); // Matrix
     controller.buttonWidgetDown(layout.reciprocal); // E
     controller.buttonWidgetDown(layout.reciprocal); // 1/x
-    final result = model.matrices[2];
     {
       const epsilon = 1.1e-8;
       expectRounded(epsilon, result.get(0, 0), 5);
@@ -818,15 +819,114 @@ class MatrixTests {
     mat.resize(model, 0, 0);
   }
 
-  Future<void> run() async {
-    await _page139(asProgram: false);
-    await _page139(asProgram: true);
+  void _misc() {
+    final mat = model.matrices[model.resultMatrix = 1];
+    mat.resize(model, 5, 5);
+    final vals = [
+      <double>[1, 3, 29, 4.7, 16.8],
+      <double>[27, -3, 5, 24, 3.14],
+      <double>[99, 86, 8, 42, 6.66],
+      <double>[23, 6.022, 51, 52, 88],
+      <double>[210, -37, 5, 16, 7]
+    ];
+
+    mat.visit((r, c) => mat.setF(r, c, vals[r][c]));
+    controller.buttonDown(Operations15.rcl15);
+    controller.buttonDown(Operations15.matrix);
+    controller.buttonDown(Operations15.letterLabelB);
+    controller.buttonDown(Operations15.matrix);
+    controller.buttonDown(Operations.n7); // Row norm
+    expect(model.x, Value.fromDouble(275));
+
+    controller.buttonDown(Operations15.rcl15);
+    controller.buttonDown(Operations15.matrix);
+    controller.buttonDown(Operations15.letterLabelB);
+    controller.buttonDown(Operations15.matrix);
+    controller.buttonDown(Operations.n8); // Frobenius norm
+    expect(model.x, Value.fromDouble(284.5818154));
+
+    mat.transpose();
+
+    controller.buttonDown(Operations15.rcl15);
+    controller.buttonDown(Operations15.matrix);
+    controller.buttonDown(Operations15.letterLabelB);
+    controller.buttonDown(Operations15.matrix);
+    controller.buttonDown(Operations.n7); // Row norm
+    expect(model.x, Value.fromDouble(360));
+
+    controller.buttonDown(Operations15.rcl15);
+    controller.buttonDown(Operations15.matrix);
+    controller.buttonDown(Operations15.letterLabelB);
+    controller.buttonDown(Operations15.matrix);
+    controller.buttonDown(Operations.n8); // Frobenius norm
+    expect(model.x, Value.fromDouble(284.5818154));
+
+    mat.resize(model, 0, 0);
+  }
+
+  void _testScalar(NormalOperation op, double Function(double x, double y) f) {
+    final values = [
+      [1.1, -2.2, 3.3],
+      [4.4, 5.5, 6.6]
+    ];
+    final scalarValues = [327.1, -56.0, 1.99, 42.24];
+    final Matrix mat = model.matrices[0];
+    final Matrix result = model.matrices[model.resultMatrix = 1];
+    mat.resize(model, 2, 3);
+    for (final s in scalarValues) {
+      mat.visit((r, c) {
+        model.yF = values[r][c];
+        model.xF = s;
+        controller.buttonDown(op);
+        expect(Value.fromDouble(f(s, values[r][c])), model.x);
+        mat.setF(r, c, values[r][c]);
+      });
+    }
+    for (final s in scalarValues) {
+      model.xF = s;
+      model.y = Value.fromMatrix(0);
+      controller.buttonDown(op);
+      expect(model.x, Value.fromMatrix(1));
+      expect(2, result.rows);
+      expect(3, result.columns);
+      result.visit((r, c) {
+        expect(Value.fromDouble(f(s, values[r][c])), result.get(r, c));
+      });
+    }
+    for (final s in scalarValues) {
+      model.x = Value.fromMatrix(0);
+      model.yF = s;
+      controller.buttonDown(op);
+      expect(model.x, Value.fromMatrix(1));
+      expect(2, result.rows);
+      expect(3, result.columns);
+      result.visit((r, c) {
+        expect(Value.fromDouble(f(values[r][c], s)), result.get(r, c));
+      });
+    }
+  }
+
+  void runWithComplex(bool complex) {
+    model.isComplexMode = complex;
     _page146();
     _stoMatrixAndChs();
     _invertMatrix(true);
     _invertMatrix(false);
     _singularMatrix();
     _transpose();
+    _misc();
+    _testScalar(Operations15.div, (x, y) => y / x);
+    _testScalar(Operations15.mult, (x, y) => y * x);
+    _testScalar(Operations15.plus, (x, y) => y + x);
+    _testScalar(Operations15.minus, (x, y) => y - x);
+    model.isComplexMode = false;
+  }
+
+  Future<void> run() async {
+    await _page139(asProgram: false);
+    await _page139(asProgram: true);
+    runWithComplex(false);
+    runWithComplex(true);
   }
 
   void expectMatrix(AMatrix m, AMatrix expected, double epsilon) {

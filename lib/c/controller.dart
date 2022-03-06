@@ -118,9 +118,9 @@ abstract class Controller {
   void getArgsAndRun(Operation op, Arg arg, Resting fromState);
 
   /// Show an error on the LCD screen.
-  void showCalculatorError(CalculatorError e) {
+  void showCalculatorError(CalculatorError e, StackTrace? stack) {
     showMessage('  error ${getErrorNumber(e)}  ');
-    model.program.programListener.onErrorShown(e);
+    model.program.programListener.onErrorShown(e, stack);
   }
 
   int getErrorNumber(CalculatorError err);
@@ -256,12 +256,12 @@ abstract class RealController extends Controller {
       if (doDeferred()) {
         model.display.displayX();
       }
-    } on CalculatorError catch (e) {
-      showCalculatorError(e);
+    } on CalculatorError catch (e, s) {
+      showCalculatorError(e, s);
       // ignore: avoid_catches_without_on_clauses
     } catch (e, s) {
       debugPrint('Unexpected exception $e\n\n$s');
-      showCalculatorError(CalculatorError(9));
+      showCalculatorError(CalculatorError(9), s);
     }
     super.buttonUp();
   }
@@ -372,7 +372,8 @@ class RunningController extends Controller {
   bool _branchingOperationCalcDisabled() => false;
 
   @override
-  void showCalculatorError(CalculatorError e) => pendingError = e;
+  void showCalculatorError(CalculatorError e, StackTrace? stack) =>
+      pendingError = e;
 
   @override
   SelfTests newSelfTests({bool inCalculator = true}) =>

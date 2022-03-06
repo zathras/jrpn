@@ -420,9 +420,9 @@ class Operations16 extends Operations {
   static final NormalOperation mult = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
         m.floatOverflow = false;
-        m.popSetResultXF = m.xF * m.yF;
+        m.popSetResultXF = m.yF * m.xF;
       },
-      intCalc: (Model m) => _storeMultDiv(m.xI * m.yI, m),
+      intCalc: (Model m) => _storeMultDiv(m.yI * m.xI, m),
       name: '*');
 
   static final NormalOperation div = NormalOperation.differentFloatAndInt(

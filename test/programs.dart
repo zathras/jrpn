@@ -114,8 +114,9 @@ class TestCalculator implements ProgramListener {
   }
 
   @override
-  void onErrorShown(CalculatorError err) {
+  void onErrorShown(CalculatorError err, StackTrace? stack) {
     debugPrint('Calculator error shown:  $err');
+    debugPrint(stack?.toString());
   }
 }
 
