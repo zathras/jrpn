@@ -39,14 +39,29 @@ abstract class AMatrix {
   /// Computes this = a dot b.  r, a and b must already be properly dimensioned.
   ///
   void dot(AMatrix a, AMatrix b) {
-    if (a.columns != b.rows || rows != a.rows || columns != b.columns) {
-      throw CalculatorError(11);
-    }
+    assert(a.columns == b.rows && rows == a.rows && columns == b.columns);
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < columns; j++) {
         double v = 0;
         for (int k = 0; k < a.columns; k++) {
           v += a.getF(i, k) * b.getF(k, j);
+        }
+        setF(i, j, v);
+      }
+    }
+  }
+
+  ///
+  /// Computes this = this - a dot b.
+  /// r, a and b must already be properly dimensioned.
+  ///
+  void residual(AMatrix a, AMatrix b) {
+    assert(a.columns == b.rows && rows == a.rows && columns == b.columns);
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < columns; j++) {
+        double v = getF(i, j);
+        for (int k = 0; k < a.columns; k++) {
+          v -= a.getF(i, k) * b.getF(k, j);
         }
         setF(i, j, v);
       }
@@ -90,6 +105,17 @@ abstract class AMatrix {
     }
     sb.write(formatValueWith((v) => (const FixFloatFormatter(4)).format(v)));
     return sb.toString();
+  }
+
+  /// Make this the identity matrix
+  void identity() {
+    visit((r, c) {
+      if (r == c) {
+        setF(r, c, 1);
+      } else {
+        setF(r, c, 0);
+      }
+    });
   }
 
   bool equivalent(AMatrix other) {
@@ -388,17 +414,6 @@ class CopyMatrix extends AMatrix {
   void set(int row, int col, Value v) => _values[row * columns + col] = v;
   @override
   Value get(int row, int col) => _values[row * columns + col];
-
-  /// Make this the identity matrix
-  void identity() {
-    visit((r, c) {
-      if (r == c) {
-        setF(r, c, 1);
-      } else {
-        setF(r, c, 0);
-      }
-    });
-  }
 }
 
 ///
@@ -479,4 +494,25 @@ class LowerTriangular extends UpperOrLowerTriangular {
       return null;
     }
   }
+}
+
+///
+/// A transpose view of a matrix.
+///
+class TransposeMatrix extends AMatrix {
+  final AMatrix _m;
+
+  TransposeMatrix(this._m);
+
+  @override
+  int get rows => _m.columns;
+
+  @override
+  int get columns => _m.rows;
+
+  @override
+  Value get(int row, int col) => _m.get(col, row);
+
+  @override
+  void set(int row, int col, Value v) => _m.set(col, row, v);
 }

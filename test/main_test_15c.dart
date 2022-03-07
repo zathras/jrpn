@@ -24,6 +24,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:jrpn/c/controller.dart';
+import 'package:jrpn/v/buttons.dart';
 import 'package:vector_math/vector_math_64.dart' as dart_mat;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/operations.dart';
@@ -798,7 +799,7 @@ class MatrixTests {
   }
 
   void _transpose() {
-    final mat = model.matrices[model.resultMatrix = 1];
+    final mat = model.matrices[1];
     for (int rows = 1; rows <= 50; rows++) {
       for (int cols = 1; cols <= 50 ~/ rows; cols++) {
         mat.resize(model, rows, cols);
@@ -906,8 +907,176 @@ class MatrixTests {
     }
   }
 
+  void _play(List<CalculatorButton> script) {
+    for (final b in script) {
+      controller.buttonWidgetDown(b);
+      controller.buttonUp();
+    }
+  }
+
+  /// the main example that works through ch12, starting on page 144.
+  void _ch12() {
+    final l = layout;
+    final mA = model.matrices[0];
+    final mB = model.matrices[1];
+    final mC = model.matrices[2];
+    final mD = model.matrices[3];
+    model.userMode = false;
+    model.resultMatrix = 0;
+    _play([l.fShift, l.chs, l.n0]); // F matrix 0
+    _play([l.fShift, l.chs, l.n1]); // F matrix 1
+    _play([l.fShift, l.rcl]); // F user
+    _play([l.n2, l.enter, l.n3, l.fShift, l.sin, l.sqrt]); // 2, 3 f DIM A
+    for (final n in [l.n1, l.n2, l.n3, l.n4, l.n5, l.n6]) {
+      _play([n, l.sto, l.sqrt]); // n f STO A
+    }
+    expectMatrixVals(mA, [
+      [1, 2, 3],
+      [4, 5, 6]
+    ]);
+    _play([l.n2, l.sto, l.n0, l.n3, l.sto, l.n1, l.n9, l.sto, l.sqrt]);
+    expectMatrixVals(mA, [
+      [1, 2, 3],
+      [4, 5, 9]
+    ]);
+    _play([l.n2, l.enter, l.n1, l.rcl, l.gShift, l.sqrt]);
+    expect(model.x, Value.fromDouble(4));
+    _play([l.rcl, l.chs, l.sqrt, l.sto, l.chs, l.eX, l.rcl, l.chs, l.eX]);
+    _play([l.fShift, l.chs, l.n4]);
+    expect(model.x, Value.fromMatrix(1));
+    expectMatrixVals(mB, [
+      [1, 4],
+      [2, 5],
+      [3, 9]
+    ]);
+
+    // p. 152:
+    _play([l.fShift, l.eex, l.eX, l.rcl, l.chs, l.sqrt]); // result B, RCL mat A
+    _play([l.n2, l.mult]);
+    expect(model.x, Value.fromMatrix(1));
+    _play([l.n1, l.minus]);
+    expect(model.x, Value.fromMatrix(1));
+    expectMatrixVals(mB, [
+      [1, 3, 5],
+      [7, 9, 17]
+    ]);
+    _play([l.fShift, l.eex, l.tenX, l.rcl, l.chs, l.eX]); // result C, RCL mat B
+    _play([l.rcl, l.fShift, l.chs, l.sqrt, l.plus]); // Matrix add
+    expect(model.x, Value.fromMatrix(2));
+    expectMatrixVals(mC, [
+      [2, 5, 8],
+      [11, 14, 26]
+    ]);
+    _play([l.rcl, l.chs, l.eX]); // RCL mat B
+    _play([l.rcl, l.fShift, l.chs, l.sqrt, l.minus]); // matrix subtract
+    expect(model.x, Value.fromMatrix(2));
+    expectMatrixVals(mC, [
+      [0, 1, 2],
+      [3, 4, 8]
+    ]);
+
+    _play([l.n0, l.enter, l.fShift, l.sin, l.tenX]); // dim(C) = 0,0
+    expect(mC.length, 0);
+    // Calculate transpose(A) * B using transpose, *
+    _play([l.rcl, l.chs, l.sqrt, l.fShift, l.chs, l.n4]); // RCL A, transpose
+    expect(model.x, Value.fromMatrix(0));
+    _play([l.rcl, l.chs, l.eX, l.fShift, l.eex, l.tenX]); // RCL B, result C
+    _play([l.mult]);
+    expect(model.x, Value.fromMatrix(2));
+    const aTstarB = [
+      [29, 39, 73],
+      [37, 51, 95],
+      [66, 90, 168]
+    ];
+    expectMatrixVals(mC, aTstarB);
+    _play([l.rcl, l.chs, l.sqrt, l.fShift, l.chs, l.n4]); // RCL A, transpose
+
+    _play([l.n0, l.enter, l.fShift, l.sin, l.tenX]); // dim(C) = 0,0
+    expect(mC.length, 0);
+    // Calculate transpose(A) * B using matrix 5
+    _play([l.rcl, l.chs, l.sqrt]); // RCL A
+    expect(model.x, Value.fromMatrix(0));
+    _play([l.rcl, l.chs, l.eX, l.fShift, l.eex, l.tenX]); // RCL B, result C
+    _play([l.fShift, l.chs, l.n5]);
+    expect(model.x, Value.fromMatrix(2));
+    expectMatrixVals(mC, aTstarB);
+
+    // p. 157:
+    _play([l.n2, l.enter, l.fShift, l.sin, l.sqrt, l.fShift, l.chs, l.n1]);
+    _play([l.n1, l.sto, l.sqrt, l.sto, l.sqrt]);
+    _play([l.dot, l.n2, l.n4, l.sto, l.sqrt]);
+    _play([l.dot, l.n8, l.n6, l.sto, l.sqrt]);
+    _play([l.n2, l.enter, l.n3, l.fShift, l.sin, l.eX]);
+    _play([l.n2, l.n7, l.n4, l.sto, l.eX]);
+    _play([l.n2, l.n3, l.n3, l.sto, l.eX]);
+    _play([l.n3, l.n3, l.n1, l.sto, l.eX]);
+    _play([l.n1, l.n2, l.n0, l.dot, l.n3, l.n2, l.sto, l.eX]);
+    _play([l.n1, l.n1, l.n2, l.dot, l.n9, l.n6, l.sto, l.eX]);
+    _play([l.n1, l.n5, l.n1, l.dot, l.n3, l.n6, l.sto, l.eX]);
+    _play([l.fShift, l.eex, l.yX]);
+    _play([l.rcl, l.chs, l.eX, l.rcl, l.chs, l.sqrt]);
+    _play([l.div]);
+    _play([l.rcl, l.yX]);
+    expect(model.x, Value.fromDouble(186));
+    _play([l.rcl, l.yX]);
+    expect(model.x, Value.fromDouble(141));
+    _play([l.rcl, l.yX]);
+    expect(model.x, Value.fromDouble(215));
+    _play([l.rcl, l.yX]);
+    expect(model.x, Value.fromDouble(88));
+    _play([l.rcl, l.yX]);
+    expect(model.x, Value.fromDouble(92));
+    _play([l.rcl, l.yX]);
+    expect(model.x, Value.fromDouble(116));
+
+    // Residual, from advanced functions page 101
+    mA.resize(model, 3, 3);
+    final residO = [
+      [33, 16, 72],
+      [-24, -10, -57],
+      [-8, -4, -17]
+    ];
+    mA.visit((r, c) => mA.setF(r, c, residO[r][c].toDouble()));
+    mB.resize(model, 3, 3);
+    mB.identity();
+    _play([l.rcl, l.chs, l.sqrt, l.sto, l.chs, l.yX]); // RCL m A, STO m D
+    expect(model.x, Value.fromMatrix(0));
+    _play([l.rcl, l.chs, l.eX, l.rcl, l.chs, l.yX]); // RCL m b, RCL m D
+    expect(model.z, Value.fromMatrix(0));
+    expect(model.y, Value.fromMatrix(1));
+    expect(model.x, Value.fromMatrix(3));
+    _play([l.fShift, l.eex, l.tenX]);
+    expect(model.z, Value.fromMatrix(0));
+    expect(model.y, Value.fromMatrix(1));
+    expect(model.x, Value.fromMatrix(3));
+    _play([l.div]); // result C, divide
+    // print(mC.formatValueWith((v) => v.asDouble.toStringAsFixed(9)));
+    expect(model.y, Value.fromMatrix(0));
+    expect(model.x, Value.fromMatrix(2));
+    expectMatrixVals(
+        mC,
+        [
+          [-9.666666881, -2.666666726, -32.00000071],
+          [8.000000167, 2.500000046, 25.50000055],
+          [2.666666728, 0.6666666836, 9.000000203]
+        ],
+        0.000000015);
+    _play([l.fShift, l.eex, l.eX]); // result B
+    _play([l.fShift, l.chs, l.n6]); // Matrix 6 (residual)
+    _play([l.rcl, l.chs, l.yX, l.div]); // RCL mat D, divide
+    _play([l.rcl, l.chs, l.tenX, l.plus]); // RCL mat C, plus
+    expectMatrixVals(mB, [
+      [-9.666666667, -2.666666667, -32],
+      [8, 2.5, 25.5],
+      [2.666666667, 0.6666666667, 9]
+    ]);
+    model.userMode = false;
+    _play([l.fShift, l.chs, l.n0]); // F matrix 0
+  }
+
   void runWithComplex(bool complex) {
     model.isComplexMode = complex;
+    _ch12();
     _page146();
     _stoMatrixAndChs();
     _invertMatrix(true);
@@ -935,11 +1104,38 @@ class MatrixTests {
     m.visit((r, c) {
       if ((m.getF(r, c) - expected.getF(r, c)).abs() > epsilon) {
         print(
-            'Matrix value $r, $c differs by more than tolerance.  Matrix:  $m');
+            'Matrix value ($r,$c) differs by more than tolerance.  Matrix:  $m');
         print('Expected: $expected');
         expect(false, true);
       }
     });
+  }
+
+  void expectMatrixVals(AMatrix m, List<List<num>> expected,
+      [double epsilon = 0]) {
+    expect(m.rows, expected.length);
+    for (int r = 0; r < expected.length; r++) {
+      final row = expected[r];
+      expect(m.columns, row.length);
+      for (int c = 0; c < row.length; c++) {
+        bool bad = false;
+        if (epsilon == 0 &&
+            m.get(r, c) != Value.fromDouble(row[c].toDouble())) {
+          bad = true;
+        } else if (epsilon != 0 && (m.getF(r, c) - row[c]).abs() > epsilon) {
+          print('Value differs by ${(m.getF(r, c) - row[c]).abs()}');
+          print('    This is more than tolerance of $epsilon');
+          // print(m.getF(r, c).toStringAsFixed(10));
+          // print(row[c].toStringAsFixed(10));
+          bad = true;
+        }
+        if (bad) {
+          print('Matrix value ($r,$c) bad.  Matrix:  $m');
+          print('Expected:  $expected');
+          expect(bad, false);
+        }
+      }
+    }
   }
 }
 

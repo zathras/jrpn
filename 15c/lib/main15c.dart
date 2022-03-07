@@ -159,9 +159,7 @@ class Operations15 extends Operations {
       floatCalc: (Model m) {
         _scalarOrMatrix(m,
             scalar: (x, y) => y * x,
-            matrix: (m, x, y, r) {
-              throw "@@ TODO";
-            });
+            matrix: (m, x, y, r) => _matrixMultiply(m, x, y, r));
       },
       complexCalc: (Model m) {
         if (m.x.asMatrix != null || m.y.asMatrix != null) {
@@ -172,12 +170,24 @@ class Operations15 extends Operations {
       },
       name: '*');
 
+  /// Calculate result = y * x
+  static void _matrixMultiply(Model15 m, AMatrix x, AMatrix y, Matrix result) {
+    if (result == x || result == y) {
+      throw CalculatorError(11);
+    }
+    if (y.columns != x.rows) {
+      throw CalculatorError(11);
+    }
+    result.resize(m, y.rows, x.columns);
+    result.dot(y, x);
+  }
+
   static final NormalOperation plus = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         _scalarOrMatrix(m,
             scalar: (x, y) => y + x,
             matrix: (m, x, y, r) {
-              throw "@@ TODO";
+              _addOrSubtractMatricesXY((x, y) => y + x, m, x, y, r);
             });
       },
       complexCalc: (Model m) {
@@ -189,12 +199,21 @@ class Operations15 extends Operations {
       },
       name: '+');
 
+  static void _addOrSubtractMatricesXY(double Function(double, double) f,
+      Model15 m, Matrix x, Matrix y, Matrix result) {
+    if (x.rows != y.rows || x.columns != y.columns) {
+      throw CalculatorError(11);
+    }
+    result.resize(m, x.rows, x.columns);
+    result.visit((r, c) => result.setF(r, c, f(x.getF(r, c), y.getF(r, c))));
+  }
+
   static final NormalOperation minus = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         _scalarOrMatrix(m,
             scalar: (x, y) => y - x,
             matrix: (m, x, y, r) {
-              throw "@@ TODO";
+              _addOrSubtractMatricesXY((x, y) => y - x, m, x, y, r);
             });
       },
       complexCalc: (Model m) {
@@ -359,12 +378,36 @@ class Operations15 extends Operations {
               if (mat == null) {
                 throw CalculatorError(11);
               }
-              final result = (m as Model15).matrices[m.resultMatrix];
-              result.copyFrom(m, m.matrices[mat]);
-              result.transpose();
+              (m as Model15).matrices[mat].transpose();
             })),
-        KeyArg(key: Operations.n5, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(key: Operations.n6, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(
+            key: Operations.n5,
+            child: ArgDone((m) {
+              final result = (m as Model15).matrices[m.resultMatrix];
+              final x = _getMatrixFromValue(m, m.x);
+              final y = _getMatrixFromValue(m, m.y);
+              final yt = TransposeMatrix(y);
+              _matrixMultiply(m, x, yt, result);
+              m.popSetResultX = Value.fromMatrix(m.resultMatrix);
+            })),
+        KeyArg(
+            key: Operations.n6,
+            child: ArgDone((m) {
+              final result = (m as Model15).matrices[m.resultMatrix];
+              final x = _getMatrixFromValue(m, m.x);
+              final y = _getMatrixFromValue(m, m.y);
+              if (result == x || result == y) {
+                throw CalculatorError(11);
+              }
+              if (y.columns != x.rows) {
+                throw CalculatorError(11);
+              }
+              if (result.rows != y.rows || result.columns != x.columns) {
+                throw CalculatorError(11);
+              }
+              result.residual(y, x);
+              m.popSetResultX = Value.fromMatrix(m.resultMatrix);
+            })),
         KeyArg(
             key: Operations.n7,
             child: ArgDone((m) {
@@ -394,6 +437,15 @@ class Operations15 extends Operations {
             })),
       ]),
       name: 'MATRIX');
+
+  static Matrix _getMatrixFromValue(Model15 m, Value v) {
+    final vi = v.asMatrix;
+    if (vi == null) {
+      throw CalculatorError(11);
+    }
+    return m.matrices[vi];
+  }
+
   static final NormalArgOperation fix = NormalArgOperation(
       stackLift: StackLift.neutral,
       maxOneByteOpcodes: 0,
