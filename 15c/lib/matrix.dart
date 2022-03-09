@@ -368,17 +368,19 @@ class Matrix extends AMatrix {
     if (length <= 2) {
       return;
     }
-    final moved = List<bool>.filled(length, false);
     final last = length - 1;
-    moved[0] = true;
-    moved[last] = true;
+    _internalMove(1, last, (i) => i * columns % last);
+  }
+
+  void _internalMove(int i, final int last, int Function(int) nextF) {
+    final moved = List<bool>.filled(length, false);
     int i = 1;
     assert(!moved[i]);
     while (i < last) {
       final cycleBegin = i;
       Value t = _values[i];
       do {
-        final next = (i * columns) % last;
+        final next = nextF(i);
         final tt = t;
         t = _values[next];
         _values[next] = tt;
@@ -389,6 +391,125 @@ class Matrix extends AMatrix {
         i++;
       }
     }
+  }
+
+  ///
+  /// The P(x,y) function:  Convert a complex matrix from "complex-like" form
+  /// to partitioned form
+  ///
+  void convertToZP() {
+    isLU = false;
+    if (columns % 2 == 1) {
+      throw CalculatorError(11);
+    }
+    int _newHome(final int i) {
+      final r = i ~/ columns; // old row
+      final c = i % columns;
+      final rn = (c % 2 == 0) ? r : r + rows; // new row
+      final cn = c ~/ 2;
+      // @@ TODO rm print('($r,$c) ($rn, $cn)  $rows $columns');
+      return rn * (columns ~/ 2) + cn;
+    }
+
+    _internalMove(1, length - 1, _newHome);
+    _columns ~/= 2;
+  }
+
+  ///
+  /// The C(x,y) function:  Convert a complex matrix from partitioned to
+  /// "complex-like" form
+  ///
+  void convertToZC() {
+    isLU = false;
+    if (rows % 2 == 1) {
+      throw CalculatorError(11);
+    }
+    final newRows = rows ~/ 2;
+    final newColumns = columns * 2;
+    int _newHome(final int i) {
+      final r = i ~/ columns;
+      final c = i % columns;
+      final rn = r % newRows;
+      final cn = c * 2 + (r >= newRows ? 1 : 0);
+      return rn * newColumns + cn;
+    }
+
+    _internalMove(1, length - 1, _newHome);
+    _columns *= 2;
+  }
+
+  ///
+  /// Convert from ZP form to ZTilde, that is,
+  ///
+  ///     from:   X      to     X    -Y
+  ///             Y             Y     X
+  ///
+  void convertToZTilde(Model15 m) {
+    final rows = this.rows;
+    if (rows % 2 != 0) {
+      throw CalculatorError(11);
+    }
+    final oldColumns = this.columns;
+    final columns = oldColumns * 2;
+    resize(m, rows, columns);
+    isLU = false;
+    // Copy Y:
+    for (int r = rows ~/ 2; r < rows; r++) {
+      for (int c = 0; c < oldColumns; c++) {
+        final y = _values[r * oldColumns + c];
+        set(r, c, y);
+      }
+    }
+    // Copy X into both locations:
+    for (int r = rows ~/ 2 - 1; r >= 0; r--) {
+      for (int c = oldColumns - 1; c >= 0; c--) {
+        final x = _values[r * oldColumns + c];
+        set(r, c, x);
+        set(r + rows ~/ 2, c + columns ~/ 2, x);
+      }
+    }
+    // And finally, copy Y to -Y:
+    for (int r = rows ~/ 2; r < rows; r++) {
+      for (int c = 0; c < oldColumns; c++) {
+        final y = get(r, c);
+        set(r - rows ~/ 2, c + oldColumns, y.negateAsFloat());
+      }
+    }
+  }
+
+  ///
+  /// Convert from ZTilde to ZP
+  ///
+  ///    from:   X    -YC    to    X
+  ///            Y     XC          Y
+  ///
+  /// where XC and YC are ignored and discarded.
+  ///
+  void convertFromZTilde(Model15 m) {
+    final rows = this.rows;
+    final columns = this.columns;
+    if (rows % 2 != 0 || columns % 2 != 0) {
+      throw CalculatorError(11);
+    }
+    final newColumns = columns ~/ 2;
+    isLU = false;
+
+    // Copy X:
+    for (int r = 0; r < rows ~/ 2; r++) {
+      for (int c = 0; c < newColumns; c++) {
+        final x = get(r, c);
+        _values[r * newColumns + c] = x;
+      }
+    }
+    // Copy Y:
+    for (int r = rows ~/ 2; r < rows; r++) {
+      for (int c = 0; c < newColumns; c++) {
+        final y = get(r, c);
+        _values[r * newColumns + c] = y;
+      }
+    }
+
+    resize(m, rows, newColumns);
   }
 }
 

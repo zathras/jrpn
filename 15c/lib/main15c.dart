@@ -849,12 +849,22 @@ class Operations15 extends Operations {
       name: 'E-');
   static final NormalOperation pYX = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        final mx = m.x.asMatrix;
+        if (mx == null) {
+          throw "@@ TODO";
+        } else {
+          (m as Model15).matrices[mx].convertToZP();
+        }
       },
       name: 'Py,x');
   static final NormalOperation cYX = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        final mx = m.x.asMatrix;
+        if (mx == null) {
+          throw "@@ TODO";
+        } else {
+          (m as Model15).matrices[mx].convertToZC();
+        }
       },
       name: 'Cy,x');
 
@@ -866,6 +876,9 @@ class Operations15 extends Operations {
     int col = toI(1) - 1;
     _showMatrixR0R1(m, matrix);
     m.deferToButtonUp = DeferredFunction(m, () {
+      if (row == 1 && col == 1) {
+        matrix.isLU = false;
+      }
       matrix.set(row, col, m.x);
       if (increment) {
         _incrementR0R1(m, row, col, matrix);

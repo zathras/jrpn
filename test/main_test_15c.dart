@@ -820,6 +820,58 @@ class MatrixTests {
     mat.resize(model, 0, 0);
   }
 
+  void _complexMatrix() {
+    final numRegisters = model.memory.numRegisters;
+    model.memory.numRegisters = 2;
+    final mat = model.matrices[1];
+    for (int rows = 1; rows <= 50; rows++) {
+      for (int cols = 2; cols <= 50 ~/ rows; cols += 2) {
+        mat.resize(model, rows, cols);
+        mat.visit((r, c) => mat.setF(r, c, 100.0 * r + c));
+        final orig = CopyMatrix(mat);
+        controller.buttonDown(Operations15.rcl15);
+        controller.buttonDown(Operations15.matrix);
+        controller.buttonDown(Operations15.letterLabelB);
+        controller.buttonDown(Operations15.pYX);
+        expect(mat.rows, orig.rows * 2);
+        expect(mat.columns, orig.columns ~/ 2);
+        mat.visit((r, c) {
+          expect(mat.get(r, c),
+              orig.get(r % orig.rows, c * 2 + (r >= orig.rows ? 1 : 0)));
+        });
+        controller.buttonDown(Operations15.cYX);
+        expectMatrix(mat, orig);
+      }
+    }
+    for (int rows = 1; rows <= 12; rows++) {
+      for (int cols = 1; cols <= 12 ~/ rows; cols++) {
+        mat.resize(model, rows * 2, cols);
+        for (int r = 0; r < rows; r++) {
+          for (int c = 0; c < cols; c++) {
+            mat.setF(r, c, 1 + r + 100.0 * c);
+            mat.setF(r + rows, c, 1001 + r + 100.0 * c);
+          }
+        }
+        final copy = CopyMatrix(mat);
+        mat.convertToZTilde(model);
+        for (int r = 0; r < rows; r++) {
+          for (int c = 0; c < cols; c++) {
+            expect(mat.get(r, c), copy.get(r, c));
+            expect(mat.get(r + rows, c + cols), copy.get(r, c));
+            expect(mat.get(r + rows, c), copy.get(r + rows, c));
+            expect(mat.get(r, c + cols), copy.get(r + rows, c).negateAsFloat());
+            mat.set(r, c + cols, Value.zero);
+            mat.set(r + rows, c + cols, Value.zero);
+          }
+        }
+        mat.convertFromZTilde(model);
+        expectMatrix(mat, copy);
+      }
+    }
+    mat.resize(model, 0, 0);
+    model.memory.numRegisters = numRegisters;
+  }
+
   void _misc() {
     final mat = model.matrices[model.resultMatrix = 1];
     mat.resize(model, 5, 5);
@@ -920,7 +972,6 @@ class MatrixTests {
     final mA = model.matrices[0];
     final mB = model.matrices[1];
     final mC = model.matrices[2];
-    final mD = model.matrices[3];
     model.userMode = false;
     model.resultMatrix = 0;
     _play([l.fShift, l.chs, l.n0]); // F matrix 0
@@ -1070,6 +1121,39 @@ class MatrixTests {
       [8, 2.5, 25.5],
       [2.666666667, 0.6666666667, 9]
     ]);
+
+    // Complex matrices, page 163:
+    _play([l.fShift, l.chs, l.n0, l.n2, l.enter, l.n4]);
+    _play([l.fShift, l.sin, l.sqrt, l.fShift, l.chs, l.n1]);
+    _play([l.n4, l.sto, l.sqrt]);
+    _play([l.n3, l.sto, l.sqrt]);
+    _play([l.n7, l.sto, l.sqrt]);
+    _play([l.n2, l.chs, l.sto, l.sqrt]);
+    _play([l.n1, l.sto, l.sqrt]);
+    _play([l.n5, l.sto, l.sqrt]);
+    _play([l.n3, l.sto, l.sqrt]);
+    _play([l.n8, l.sto, l.sqrt]);
+    _play([l.rcl, l.chs, l.sqrt]);
+    _play([l.fShift, l.plus]); // Py,x
+    expectMatrixVals(mA, [
+      [4, 7],
+      [1, 3],
+      [3, -2],
+      [5, 8]
+    ]);
+    _play([l.gShift, l.plus]); // Cy,x
+    expectMatrixVals(mA, [
+      [4, 3, 7, -2],
+      [1, 5, 3, 8]
+    ]);
+    _play([l.fShift, l.plus]); // Py,x
+    expectMatrixVals(mA, [
+      [4, 7],
+      [1, 3],
+      [3, -2],
+      [5, 8]
+    ]);
+
     model.userMode = false;
     _play([l.fShift, l.chs, l.n0]); // F matrix 0
   }
@@ -1083,6 +1167,7 @@ class MatrixTests {
     _invertMatrix(false);
     _singularMatrix();
     _transpose();
+    _complexMatrix();
     _misc();
     _testScalar(Operations15.div, (x, y) => y / x);
     _testScalar(Operations15.mult, (x, y) => y * x);
@@ -1098,31 +1183,42 @@ class MatrixTests {
     runWithComplex(true);
   }
 
-  void expectMatrix(AMatrix m, AMatrix expected, double epsilon) {
+  void expectMatrix(AMatrix m, AMatrix expected, [double epsilon = 0]) {
     expect(m.rows, expected.rows);
     expect(m.columns, expected.columns);
     m.visit((r, c) {
-      if ((m.getF(r, c) - expected.getF(r, c)).abs() > epsilon) {
-        print(
-            'Matrix value ($r,$c) differs by more than tolerance.  Matrix:  $m');
+      bool bad = false;
+      if (epsilon == 0) {
+        if (m.get(r, c) != expected.get(r, c)) {
+          bad = true;
+        }
+      } else if ((m.getF(r, c) - expected.getF(r, c)).abs() > epsilon) {
+        print('Value differs by ${(m.getF(r, c) - expected.getF(r, c)).abs()}');
+        print('    This is more than tolerance of $epsilon');
         print('Expected: $expected');
-        expect(false, true);
+        bad = true;
+      }
+      if (bad) {
+        print('Matrix value ($r,$c) bad.  Matrix:  $m');
+        print('Expected:  $expected');
+        expect(bad, false);
       }
     });
   }
 
   void expectMatrixVals(AMatrix m, List<List<num>> expected,
-      [double epsilon = 0]) {
+      [final double epsilon = 0]) {
     expect(m.rows, expected.length);
     for (int r = 0; r < expected.length; r++) {
       final row = expected[r];
       expect(m.columns, row.length);
       for (int c = 0; c < row.length; c++) {
         bool bad = false;
-        if (epsilon == 0 &&
-            m.get(r, c) != Value.fromDouble(row[c].toDouble())) {
-          bad = true;
-        } else if (epsilon != 0 && (m.getF(r, c) - row[c]).abs() > epsilon) {
+        if (epsilon == 0) {
+          if (m.get(r, c) != Value.fromDouble(row[c].toDouble())) {
+            bad = true;
+          }
+        } else if ((m.getF(r, c) - row[c]).abs() > epsilon) {
           print('Value differs by ${(m.getF(r, c) - row[c]).abs()}');
           print('    This is more than tolerance of $epsilon');
           // print(m.getF(r, c).toStringAsFixed(10));
