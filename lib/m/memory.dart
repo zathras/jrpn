@@ -217,13 +217,7 @@ class Registers {
     _model.needsSave = true;
   }
 
-  Value get index {
-    final result = Value.fromInternal(_indexValue.internal & _model.wordMask);
-    if (_model.isFloatMode) {
-      result.asDouble; // Throw exception if not valid float
-    }
-    return result;
-  }
+  Value get index => Value.fromInternal(_indexValue.internal & _model.wordMask);
 
   set index(Value v) => _indexValue = helper68.signExtendFrom(v);
 
@@ -369,12 +363,15 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       _registerStorage.setUint8(a + 2 * needed, _registerStorage.getUint8(a));
     }
     final int opcode = instruction.opcode;
-    if (opcode & 0x100 != 0) {
+    if (opcode >= 0x100) {
+      assert(needed == 2);
       final int pageCode = (opcode >> 8) - 1 + _extendedOpcode;
       assert(pageCode >= _extendedOpcode && pageCode < 0x100);
       _registerStorage.setUint8(addr++, pageCode >> 4);
       _registerStorage.setUint8(addr++, pageCode & 0xf);
       _extendedLines++;
+    } else {
+      assert(needed == 1);
     }
     _registerStorage.setUint8(addr++, (opcode >> 4) & 0xf);
     _registerStorage.setUint8(addr++, opcode & 0xf);
@@ -727,7 +724,7 @@ abstract class ProgramInstruction<OT extends ProgramOperation> {
 
   ProgramInstruction(this.op, this.arg);
 
-  bool get isExtended => arg.opcode & 0x100 != 0;
+  bool get isExtended => arg.opcode >= 0x100;
 
   final _noWidth = RegExp('[,.]');
 

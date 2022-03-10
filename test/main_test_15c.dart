@@ -1154,6 +1154,107 @@ class MatrixTests {
       [5, 8]
     ]);
 
+    // Page 165:
+    _play([l.rcl, l.chs, l.sqrt, l.fShift, l.chs, l.n2]); // RCL A, -> Ztilde
+    _play([l.fShift, l.eex, l.eX, l.fShift, l.reciprocal]);
+    expect(model.x, Value.fromMatrix(1));
+    _play([l.fShift, l.chs, l.n3]);
+    expectMatrixVals(
+        mB,
+        [
+          [-0.02541436465, 0.2419889503],
+          [-0.01215469613, -0.1016574586],
+          [-0.2828729282, -0.002209944705],
+          [0.1690607735, -0.1314917127]
+        ],
+        1.5e-10);
+
+    // page 167:
+    _play([l.rcl, l.chs, l.sqrt, l.rcl, l.chs, l.eX]);
+    _play([l.fShift, l.eex, l.tenX, l.mult]);
+    expectMatrixVals(
+        mC,
+        [
+          [1, -2.85e-10],
+          [4e-11, 1],
+          [1e-11, 3.8e-10],
+          [1e-11, -1.05e-10]
+        ],
+        1.5e-9);
+
+    // page 170:
+    _play([l.fShift, l.chs, l.n0, l.fShift, l.chs, l.n1]);
+    _play([l.n4, l.enter, l.n2, l.fShift, l.sin, l.sqrt]);
+    _play([l.n1, l.n0, l.sto, l.sqrt]);
+    _play([l.n0, l.sto, l.sqrt, l.sto, l.sqrt, l.sto, l.sqrt]);
+    _play([l.n2, l.n0, l.n0, l.sto, l.sqrt]);
+    _play([l.chs, l.sto, l.sqrt, l.sto, l.sqrt]);
+    _play([l.n1, l.n7, l.n0, l.sto, l.sqrt]);
+    _play([l.n4, l.enter, l.n1, l.fShift, l.sin, l.eX]);
+    _play([l.n0, l.sto, l.chs, l.eX]);
+    _play([l.n5, l.enter, l.n1, l.enter, l.sto, l.gShift, l.eX]);
+    expect(model.memory.registers[0], Value.fromDouble(1));
+    expect(model.memory.registers[1], Value.fromDouble(1));
+    _play([l.rcl, l.chs, l.eX, l.rcl, l.chs, l.sqrt]);
+    expect(model.y, Value.fromMatrix(1));
+    expect(model.x, Value.fromMatrix(0));
+    _play([l.fShift, l.chs, l.n2, l.fShift, l.eex, l.tenX, l.div]);
+    expect(model.x, Value.fromMatrix(2));
+    _play([l.gShift, l.plus]);
+    expectMatrixVals(
+        mC,
+        [
+          [0.03715608128, 0.1311391104],
+          [0.04371303680, 0.1542813064]
+        ],
+        1.5e-10);
+
+    void testMatrixAccess(List<CalculatorButton> op, double val, double r,
+        [double? xr]) {
+      void forMatrix(CalculatorButton matButton, Matrix mat) {
+        model.userMode = false;
+        mat.resize(model, 2, 3);
+        model.memory.registers[0] = Value.fromDouble(2);
+        model.memory.registers[1] = Value.fromDouble(3);
+        mat.setF(1, 2, val);
+        _play(op);
+        controller.buttonWidgetDown(matButton);
+        controller.buttonUp();
+        expect(mat.get(1, 2), Value.fromDouble(r));
+        if (xr != null) {
+          expect(model.x, Value.fromDouble(xr));
+        }
+        mat.resize(model, 0, 0);
+      }
+
+      final x = model.x;
+      forMatrix(l.tenX, mC); // C
+      model.x = x;
+      model.memory.registers.index = Value.fromMatrix(1);
+      forMatrix(l.cos, mB); // (i)
+    }
+
+    model.xF = 1.2;
+    testMatrixAccess([l.sto, l.plus], 40.8, 42);
+    testMatrixAccess([l.sto, l.minus], 43.2, 42);
+    testMatrixAccess([l.sto, l.mult], 100, 120);
+    testMatrixAccess([l.sto, l.div], 120, 100);
+    testMatrixAccess([l.fShift, l.n4], 100, 1.2); // swap
+    testMatrixAccess([l.fShift, l.n4], -3.00104, 100); // swap
+    expect(model.x, Value.fromDouble(-3.00104));
+    testMatrixAccess([l.fShift, l.n6], -7.00402, -5.00402); // isg
+    testMatrixAccess([l.fShift, l.n5], 1.00204, -3.00204); // dse
+    model.xF = 1.2;
+    testMatrixAccess([l.rcl, l.plus], 40.8, 40.8, 42);
+    model.xF = 1.2;
+    testMatrixAccess([l.rcl, l.minus], 43.2, 43.2, -42);
+    model.xF = 1.2;
+    testMatrixAccess([l.rcl, l.mult], 42, 42, 50.4);
+    model.xF = -50.4;
+    testMatrixAccess([l.rcl, l.div], -1.2, -1.2, 42);
+
+    // @@ TODO:  Starting with p. 174, conditional tests
+
     model.userMode = false;
     _play([l.fShift, l.chs, l.n0]); // F matrix 0
   }

@@ -127,14 +127,6 @@ class Operations {
       },
       name: 'x<=>(i)');
 
-  static final NormalOperation xSwapI = NormalOperation(
-      calc: (Model m) {
-        Value tmp = m.x;
-        m.resultX = m.memory.registers.index;
-        m.memory.registers.index = tmp;
-      },
-      name: 'x<=>I');
-
   static final clearPrgm = NonProgrammableOperation(
       pressed: (LimitedState s) => s.handleClearProgram(), name: 'CLEAR PRGM');
 

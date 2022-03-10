@@ -82,7 +82,7 @@ class Model16 extends Model<Operation> {
     ],
     [
       MKey(Operations16.gsb, Operations.xSwapParenI, Operations.rtn),
-      MKey(Operations16.gto, Operations.xSwapI, Operations16.lbl),
+      MKey(Operations16.gto, Operations16.xSwapI, Operations16.lbl),
       MKey(Operations16.hex, Operations16.showHex, Operations16.dsz),
       MKey(Operations16.dec, Operations16.showDec, Operations16.isz),
       MKey(Operations16.oct, Operations16.showOct, Operations.sqrtOp),
@@ -278,7 +278,14 @@ class Operations16 extends Operations {
         s.liftStackIfEnabled();
         return StackLift.neutral;
       },
-      arg: RegisterReadArg(maxDigit: 31, f: (m, v) => m.x = v),
+      arg: RegisterReadArg(
+          maxDigit: 31,
+          f: (m, v) {
+            if (m.isFloatMode) {
+              v.asDouble; // Throw exception if not
+            }
+            m.x = v;
+          }),
       name: 'RCL');
 
   static final NormalOperation sl = NormalOperation.intOnly(
@@ -473,10 +480,25 @@ class Operations16 extends Operations {
   static final NormalOperation I = NormalOperation(
       pressed: (ActiveState s) => s.liftStackIfEnabled(),
       calc: (Model m) {
-        m.x = m.memory.registers.index;
+        final v = m.memory.registers.index;
+        if (m.isFloatMode) {
+          v.asDouble; // Throw CalculatorError if not
+        }
+        m.x = v;
         m.display.displayX();
       },
       name: 'I');
+
+  static final NormalOperation xSwapI = NormalOperation(
+      calc: (Model m) {
+        Value tmp = m.memory.registers.index;
+        if (m.isFloatMode) {
+          tmp.asDouble; // Throw CalculatorError if not
+        }
+        m.memory.registers.index = m.x;
+        m.resultX = tmp;
+      },
+      name: 'x<=>I');
 
   static final NormalArgOperation window = NormalArgOperation(
       arg: DigitArg(
@@ -750,7 +772,7 @@ class ButtonLayout16 extends ButtonLayout {
   CalculatorButton get gsb => CalculatorButton(factory, 'GSB', 'x\u2B0C(i)',
       'RTN', Operations16.gsb, Operations.xSwapParenI, Operations.rtn, 'U');
   CalculatorButton get gto => CalculatorButton(factory, 'GTO', 'x\u2B0CI',
-      'LBL', Operations16.gto, Operations.xSwapI, Operations16.lbl, 'T');
+      'LBL', Operations16.gto, Operations16.xSwapI, Operations16.lbl, 'T');
   CalculatorButton get hex => CalculatorButton(factory, 'HEX', '', 'DSZ',
       Operations16.hex, Operations16.showHex, Operations16.dsz, 'I');
   CalculatorButton get dec => CalculatorButton(factory, 'DEC', '', 'ISZ',

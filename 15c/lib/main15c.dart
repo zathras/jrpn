@@ -52,10 +52,7 @@ void runStaticInitialization15() {
   Arg.kDot = Operations.dot;
   Arg.fShift = Operations.fShift;
   Arg.gShift = Operations.gShift;
-  Arg.registerISynonyms = {
-    Operations.sst: Operations15.I15,
-    Operations.rs: Operations15.parenI15
-  };
+  Arg.registerISynonyms = Operations15._registerISynonyms;
   assert(Arg.assertStaticInitialized());
 }
 
@@ -71,6 +68,11 @@ class Operations15 extends Operations {
   static final letterLabelE = LetterLabel('E', 24);
   // The numeric values match the I register values for GSB I, as per the
   // table on page 107 of the 15C manual.
+
+  static final _registerISynonyms = {
+    Operations15.tan: Operations15.I15,
+    Operations15.cos: Operations15.parenI15
+  };
 
   static final _letterSynonyms = {
     Operations15.sqrtOp15: Operations15.letterLabelA,
@@ -333,6 +335,7 @@ class Operations15 extends Operations {
           final result = (m as Model15).matrices[m.resultMatrix];
           result.copyFrom(m, m.matrices[mat]);
           linalg.invert(result);
+          m.resultX = Value.fromMatrix(m.resultMatrix);
         }
       },
       complexCalc: (Model m) {
@@ -369,16 +372,23 @@ class Operations15 extends Operations {
               m.memory.registers[0] =
                   m.memory.registers[1] = Value.fromDouble(1);
             })),
-        KeyArg(key: Operations.n2, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(key: Operations.n3, child: ArgDone((m) => throw "@@ TODO")),
+        KeyArg(
+            key: Operations.n2,
+            child: ArgDone((m) {
+              final mat = _getMatrixFromValue(m as Model15, m.x);
+              mat.convertToZTilde(m);
+            })),
+        KeyArg(
+            key: Operations.n3,
+            child: ArgDone((m) {
+              final mat = _getMatrixFromValue(m as Model15, m.x);
+              mat.convertFromZTilde(m);
+            })),
         KeyArg(
             key: Operations.n4,
             child: ArgDone((m) {
-              final mat = m.x.asMatrix;
-              if (mat == null) {
-                throw CalculatorError(11);
-              }
-              (m as Model15).matrices[mat].transpose();
+              final mat = _getMatrixFromValue(m as Model15, m.x);
+              mat.transpose();
             })),
         KeyArg(
             key: Operations.n5,
@@ -697,22 +707,48 @@ class Operations15 extends Operations {
       name: 'PI');
   static final NormalArgOperation xExchange = NormalArgOperation(
       maxOneByteOpcodes: 4,
-      arg: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
-        KeyArg(key: Arg.kParenI, child: ArgDone((m) => throw "@@ TODO")),
-        KeyArg(key: Arg.kI, child: ArgDone((m) => throw "@@ TODO")),
-        DigitArg(max: 19, calc: (m, i) => throw "@@ TODO")
-      ]),
+      arg: RegisterWriteOpArg(
+          maxDigit: 19,
+          f: (m, reg, x) {
+            m.xF = reg;
+            return x;
+          }),
       name: 'x<->');
   static final NormalArgOperation dse = NormalArgOperation(
       maxOneByteOpcodes: 4,
       arg: RegisterWriteOpArg(
-          maxDigit: 19, f: (double r, double x) => throw "@@ TODO"),
+          maxDigit: 19,
+          f: (m, double r, double x) {
+            return _skipIf(m, r, (n, x) => n > x, (n, y) => n - y);
+          }),
       name: 'DSE');
   static final NormalArgOperation isg = NormalArgOperation(
       maxOneByteOpcodes: 4,
       arg: RegisterWriteOpArg(
-          maxDigit: 19, f: (double r, double x) => throw "@@ TODO"),
+          maxDigit: 19,
+          f: (m, double r, double x) {
+            return _skipIf(m, r, (n, x) => n <= x, (n, y) => n + y);
+          }),
       name: 'ISG');
+
+  static double _skipIf(Model m, double val,
+      bool Function(double n, int x) skip, double Function(double n, int y) f) {
+    double n = val.truncateToDouble();
+    final double fracD = (val - n).abs();
+    final int frac = (fracD * 100000).truncate();
+    final int x = frac ~/ 100;
+    final int y = frac % 100;
+    n = f(n, y);
+    if (skip(n, x)) {
+      m.program.incrementCurrentLine(); // Even if not running
+    }
+    if (n > 0) {
+      return n + fracD;
+    } else {
+      return n - fracD;
+    }
+  }
+
   static final NormalOperation integrate = NormalOperation.floatOnly(
       maxOneByteOpcodes: 0,
       floatCalc: (Model m) {
@@ -1008,19 +1044,19 @@ class Operations15 extends Operations {
         KeyArg(
             key: Operations15.plus,
             child: RegisterWriteOpArg(
-                maxDigit: 19, f: (double r, double x) => r + x)),
+                maxDigit: 19, f: (m, double r, double x) => r + x)),
         KeyArg(
             key: Operations15.minus,
             child: RegisterWriteOpArg(
-                maxDigit: 19, f: (double r, double x) => r - x)),
+                maxDigit: 19, f: (m, double r, double x) => r - x)),
         KeyArg(
             key: Operations15.mult,
             child: RegisterWriteOpArg(
-                maxDigit: 19, f: (double r, double x) => r * x)),
+                maxDigit: 19, f: (m, double r, double x) => r * x)),
         KeyArg(
             key: Operations15.div,
             child: RegisterWriteOpArg(
-                maxDigit: 19, f: (double r, double x) => r / x)),
+                maxDigit: 19, f: (m, double r, double x) => r / x)),
         KeyArg(
             key: Operations15.cosInverse, // That's g (i)
             child: ArgDone((m) => throw "@@ TODO"))
@@ -1149,6 +1185,144 @@ class Operations15 extends Operations {
       debugPrint('Converting $ex to CalculatorException($errNo)');
     }
     throw CalculatorError(errNo);
+  }
+}
+
+///
+/// The argument to the 15C's FIX, SCI and ENG keys
+///
+class PrecisionArg extends ArgAlternates {
+  final void Function(Model m, int v) f;
+
+  static int _translate(Model m, Value v) => min(9, max(0, m.xF)).floor();
+
+  PrecisionArg({required this.f})
+      : super(synonyms: Arg.registerISynonyms, children: [
+          DigitArg(max: 9, calc: (m, i) => f(m, i)),
+          KeyArg(
+              key: Arg.kI,
+              child: ArgDone(
+                  (m) => f(m, _translate(m, m.memory.registers.index)))),
+        ]);
+}
+
+class RegisterReadOpArg extends ArgAlternates {
+  final double Function(double, double) f;
+
+  RegisterReadOpArg({required int maxDigit, required this.f})
+      : super(synonyms: RegisterWriteOpArg.targetSynonyms, children: [
+          KeyArg(
+              key: Arg.kParenI,
+              child: ArgDone((m) {
+                final mi = m.memory.registers.index.asMatrix;
+                if (mi == null) {
+                  m.resultXF =
+                      f(m.xF, m.memory.registers.indirectIndex.asDouble);
+                } else {
+                  // See bottom of page 173
+                  _forMatrix(m as Model15, mi, f);
+                }
+              })),
+          KeyArg(
+              key: Arg.kI,
+              child: ArgDone((m) =>
+                  m.resultXF = f(m.xF, m.memory.registers.index.asDouble))),
+          DigitArg(
+              max: maxDigit,
+              calc: (m, i) =>
+                  m.resultXF = f(m.xF, m.memory.registers[i].asDouble)),
+          ...List.generate(
+              _letterLabelsList.length,
+              (i) => KeyArg(
+                  key: _letterLabelsList[i],
+                  child: ArgDone((m) {
+                    _forMatrix(m as Model15, i, f);
+                  }))),
+        ]);
+
+  static void _forMatrix(
+      Model15 m, int mi, final double Function(double, double) f) {
+    final mat = m.matrices[mi];
+    int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
+    int row = toI(0) - 1;
+    int col = toI(1) - 1;
+    m.resultXF = f(m.xF, mat.getF(row, col));
+  }
+}
+
+class RegisterWriteOpArg extends ArgAlternates {
+  final double Function(Model m, double reg, double x) f;
+  static final targetSynonyms = {
+    ...Operations15._registerISynonyms,
+    ...Operations15._letterSynonyms
+  };
+
+  RegisterWriteOpArg({required int maxDigit, required this.f})
+      : super(synonyms: targetSynonyms, children: [
+          KeyArg(
+              key: Arg.kParenI,
+              child: ArgDone((m) {
+                final mi = m.memory.registers.index.asMatrix;
+                if (mi == null) {
+                  m.memory.registers.indirectIndex = Value.fromDouble(
+                      f(m, m.memory.registers.indirectIndex.asDouble, m.xF));
+                } else {
+                  // See bottom of page 173
+                  _forMatrix(m as Model15, mi, f);
+                }
+              })),
+          KeyArg(
+              key: Arg.kI,
+              child: ArgDone((m) => m.memory.registers.index = Value.fromDouble(
+                  f(m, m.memory.registers.index.asDouble, m.xF)))),
+          DigitArg(
+              max: maxDigit,
+              calc: (m, i) => m.memory.registers[i] =
+                  Value.fromDouble(f(m, m.memory.registers[i].asDouble, m.xF))),
+          ...List.generate(
+              _letterLabelsList.length,
+              (i) => KeyArg(
+                  key: _letterLabelsList[i],
+                  child: ArgDone((m) {
+                    _forMatrix(m as Model15, i, f);
+                  }))),
+        ]);
+
+  static void _forMatrix(
+      Model15 m, int mi, final double Function(Model, double, double) f) {
+    final mat = m.matrices[mi];
+    int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
+    int row = toI(0) - 1;
+    int col = toI(1) - 1;
+    mat.setF(row, col, f(m, mat.getF(row, col), m.xF));
+  }
+}
+
+class UserArg extends Arg {
+  final bool userMode;
+  final Arg child;
+
+  UserArg({required this.userMode, required this.child});
+
+  @override
+  Arg? matches(ProgramOperation key, bool userMode) {
+    if (this.userMode == userMode) {
+      return child.matches(key, userMode);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  void init(int registerBase,
+      {required OpInitFunction f,
+      required ProgramOperation? shift,
+      required bool argDot,
+      required ProgramOperation? arg,
+      required bool userMode}) {
+    assert(!argDot);
+    child.init(registerBase,
+        f: f, shift: shift, argDot: argDot, arg: arg, userMode: this.userMode);
   }
 }
 
