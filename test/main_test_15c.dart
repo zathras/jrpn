@@ -1253,7 +1253,7 @@ class MatrixTests {
     model.xF = -50.4;
     testMatrixAccess([l.rcl, l.div], -1.2, -1.2, 42);
 
-    // @@ TODO:  Starting with p. 174, conditional tests
+    // @@ TODO:  Starting with p. 174, stack operation
 
     model.userMode = false;
     _play([l.fShift, l.chs, l.n0]); // F matrix 0
