@@ -92,9 +92,9 @@ BEGIN
             VALUE "CompanyName", "com.jovial" "\0"
             VALUE "FileDescription", "JRPN 16C" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "jrpn" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2021 com.jovial. All rights reserved." "\0"
-            VALUE "OriginalFilename", "jrpn.exe" "\0"
+            VALUE "InternalName", "jrpn16c" "\0"
+            VALUE "LegalCopyright", "Copyright (C) William Foote. All rights reserved." "\0"
+            VALUE "OriginalFilename", "jrpn16c.exe" "\0"
             VALUE "ProductName", "JRPN 16c" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END

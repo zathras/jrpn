@@ -24,7 +24,7 @@ import 'package:flutter/foundation.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/c/controller.dart';
 
-import 'main16c.dart';
+import 'main.dart';
 
 class SelfTests16 extends SelfTests {
   SelfTests16({bool inCalculator = true}) : super(inCalculator: inCalculator);

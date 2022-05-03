@@ -28,7 +28,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn15c/main15c.dart';
-import 'package:jrpn16c/main16c.dart';
+import 'package:jrpn16c/main.dart';
 
 class ProgramEvent {
   final int? errorNumber;

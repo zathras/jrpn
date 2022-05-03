@@ -10,7 +10,7 @@ environment:
 
 dependencies:
   jrpn: 
-    path: ../
+    path: ..
 
 dev_dependencies:
   flutter_launcher_icons: ^0.9.0

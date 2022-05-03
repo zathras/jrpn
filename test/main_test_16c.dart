@@ -25,7 +25,7 @@ import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/m/model.dart';
 
 import 'package:jrpn/generic_main.dart';
-import 'package:jrpn16c/main16c.dart';
+import 'package:jrpn16c/main.dart';
 import 'package:jrpn16c/tests16c.dart';
 import 'opcodes.dart';
 import 'programs.dart';
