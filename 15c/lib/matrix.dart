@@ -583,8 +583,9 @@ abstract class UpperOrLowerTriangular extends AMatrix {
     final f = getFixed(row, col);
     if (f == null) {
       _m.set(row, col, v);
-    } else if (v != f) {
-      print('Attempt to set fixed part of triangle to $v ($f expected)');
+    } else {
+      assert(
+          v == f, 'Attempt to set fixed part of triangle to $v ($f expected)');
     }
   }
 }

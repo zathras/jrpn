@@ -479,7 +479,7 @@ class DigitEntry extends ActiveState {
             sign = '';
           }
           if (ent.length < 10 && v.internal != big.internal) {
-            ent = '0' + ent;
+            ent = '0$ent';
           }
         }
       } else {

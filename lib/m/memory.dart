@@ -113,10 +113,10 @@ abstract class Memory<OT extends ProgramOperation> {
 
 /// A helper for the index register, which is always stored as a 68 bit
 /// quantity, regardless of the calculator mode.
-class _NumStatus68 implements NumStatus {
+class NumStatus68 implements NumStatus {
   final Model _model; // For the sign mode
 
-  _NumStatus68(this._model);
+  NumStatus68(this._model);
 
   @override
   bool cFlag = false;
@@ -170,12 +170,12 @@ class _NumStatus68 implements NumStatus {
 class Registers {
   final Memory _memory;
   // A helper for dealing with 68 bit values, like I
-  final _NumStatus68 helper68;
+  final NumStatus68 helper68;
 
   /// Value of the index register, I, always stored in 68 bits.
   Value _indexValue = Value.zero;
 
-  Registers(this._memory) : helper68 = _NumStatus68(_memory.model);
+  Registers(this._memory) : helper68 = NumStatus68(_memory.model);
 
   static final BigInt _maxI = BigInt.parse('fffffffffffffffff', radix: 16);
   // 16^17-1, that is, 2^68-1
@@ -948,11 +948,11 @@ class OperationMap<OT extends ProgramOperation> {
           as = arg.rcName;
           assert(as.length == 2, '$op:  $arg $as');
           if (arg == Arg.kI || arg == Arg.kParenI) {
-            las = ' ' + arg.name;
+            las = ' ${arg.name}';
           } else if (arg == Arg.kDot) {
             las = ' .'; // "FLOAT  ." is nicer than "FLOAT 48".
           } else {
-            las = ' ' + (arg.programListingArgName ?? as.trim());
+            las = ' ${(arg.programListingArgName ?? as.trim())}';
           }
         }
         if (shift == null) {

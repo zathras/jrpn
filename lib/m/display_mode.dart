@@ -544,7 +544,7 @@ abstract class FloatFormatter {
     if (i < 0) {
       return null;
     } else if (i == 0) {
-      mantissa = '0' + mantissa;
+      mantissa = '0$mantissa';
       i = 1;
     }
     String minus = v.mantissaDigit(-1) == 9 ? '-' : '';

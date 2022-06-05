@@ -747,8 +747,9 @@ Public License instead of this License.  But first, please read
 /// package_info doesn't exist for all platforms, so I'm doing it the old
 /// fashioned way.
 const applicationVersion = '2.0.1';
-const applicationWebAddress = 'https://jrpn.jovial.com';
-const applicationIssueAddress = 'https://github.com/zathras/jrpn/issues';
+final Uri applicationWebAddress = Uri.https('jrpn.jovial.com', '');
+final Uri applicationIssueAddress =
+    Uri.https('github.com', 'zathras/jrpn/issues');
 
 void genericMain(Jrpn calculator) async {
   // Get there first!
@@ -795,9 +796,9 @@ class Jrpn extends StatefulWidget {
 
   String _getJson({required bool comments}) {
     if (comments) {
-      return const JsonEncoder.withIndent('    ')
-              .convert(model.toJson(comments: true)) +
-          '\n';
+      final r = const JsonEncoder.withIndent('    ')
+          .convert(model.toJson(comments: true));
+      return '$r\n';
     } else {
       return json.encoder.convert(model.toJson());
     }
@@ -832,7 +833,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   @override
   void dispose() {
     super.dispose();
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     _disposed = true;
     _linksSubscription?.cancel();
   }
@@ -863,7 +864,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       return _showIncomingLink(link, context);
     }
     return RawKeyboardListener(
-        focusNode: keyboard, autofocus: true, child: MainScreen(widget, icon));
+        focusNode: keyboard, autofocus: true, child: MainScreen(this, icon));
   }
 
   Widget _showIncomingLink(String link, BuildContext context) {

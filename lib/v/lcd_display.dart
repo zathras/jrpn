@@ -61,7 +61,7 @@ class LcdDisplay extends StatefulWidget {
   const LcdDisplay(this.model, this.showMenu, {Key? key}) : super(key: key);
 
   @override
-  _LcdDisplayState createState() => _LcdDisplayState();
+  State<LcdDisplay> createState() => _LcdDisplayState();
 }
 
 class _LcdDisplayState extends State<LcdDisplay> {
@@ -113,13 +113,13 @@ class _DisplayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final _lcdFrame = Paint()
+    final lcdFrame = Paint()
       ..color = const Color(0xff908d88)
       ..style = PaintingStyle.fill;
-    final _outline = Paint()
+    final outline = Paint()
       ..color = Color(0xff000000 | (0x908d88 * 0.75).floor())
       ..style = PaintingStyle.fill;
-    final _lcdBase = Paint()
+    final lcdBase = Paint()
       ..color = const Color(0xff979980) // that's argb
       ..style = PaintingStyle.fill;
     // Note that, by default, we are not clipped to our size
@@ -127,16 +127,16 @@ class _DisplayPainter extends CustomPainter {
     final outlineH = size.height / 20;
     final outlineR = Radius.circular(size.height / 15);
     canvas.drawRRect(
-        RRect.fromLTRBR(0, 0, size.width, size.height, outlineR), _outline);
+        RRect.fromLTRBR(0, 0, size.width, size.height, outlineR), outline);
     final t = size.height / 250;
     canvas.drawRRect(
         RRect.fromLTRBR(
             t, t, size.width - 2 * t, size.height - 2 * t, outlineR),
-        _lcdFrame);
+        lcdFrame);
     canvas.drawRRect(
         RRect.fromLTRBR(outlineW, outlineH, size.width - outlineW,
             size.height - outlineH, outlineR),
-        _lcdBase);
+        lcdBase);
 
     if (contents.blank) {
       return;

@@ -12,20 +12,22 @@ dependencies:
   flutter:
     sdk: flutter
   shared_preferences: ^2.0.5
-  share_plus: ^2.0.2
+  meta: ^1.7.0
+  share_plus: ^4.0.6
   uni_links: ^0.5.1
   uni_links_web: ^0.1.0
   archive: ^3.1.2
   url_launcher: ^6.0.3
+  vector_math: ^2.1.0
   jovial_svg: ^1.0.2
 
 dev_dependencies:
   flutter_launcher_icons: ^0.9.0
-  flutter_lints: ^1.0.4
+  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
   test: ^1.16.5
-  msix: ^2.0.0
+  msix: ^3.6.2
   jrpn15c:
     path: '15c'
   jrpn16c:

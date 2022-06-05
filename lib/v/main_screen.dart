@@ -95,10 +95,13 @@ abstract class OrientedScreen extends StatelessWidget {
 /// [LcdDisplay] and [CalculatorButton].
 ///
 class MainScreen extends OrientedScreen {
+  final JrpnState jrpnState;
   final Jrpn app;
   final ScalableImage icon;
 
-  const MainScreen(this.app, this.icon, {Key? key}) : super(key: key);
+  MainScreen(this.jrpnState, this.icon, {Key? key})
+      : app = jrpnState.widget,
+        super(key: key);
 
   RealController get controller => app.controller;
   Model get model => app.model;
@@ -184,7 +187,7 @@ class MainScreen extends OrientedScreen {
                 Text('Paste from Clipboard')
               ])),
         ]);
-    if (f != null) {
+    if (f != null && jrpnState.mounted) {
       f(context);
     }
   }
@@ -203,13 +206,15 @@ class MainScreen extends OrientedScreen {
         return showErrorDialog(context, 'Error accessing clipboard', e);
       }
       if (cd == null || cd == '') {
-        return showErrorDialog(context, 'Empty clipboard', null);
-      }
-      if (model.displayDisabled) {
-        return showErrorDialog(
-            context, 'Program is running / display disabled', null);
-      }
-      if (!controller.pasteToX(cd)) {
+        if (jrpnState.mounted) {
+          return showErrorDialog(context, 'Empty clipboard', null);
+        }
+      } else if (model.displayDisabled) {
+        if (jrpnState.mounted) {
+          return showErrorDialog(
+              context, 'Program is running / display disabled', null);
+        }
+      } else if (!controller.pasteToX(cd) && jrpnState.mounted) {
         return showErrorDialog(context, 'Number format error', null);
       }
     }());
@@ -429,7 +434,7 @@ class MainMenu extends StatefulWidget {
   const MainMenu(this.main, this.screen, {Key? key}) : super(key: key);
 
   @override
-  _MainMenuState createState() => _MainMenuState();
+  State<MainMenu> createState() => _MainMenuState();
 }
 
 class _MainMenuState extends State<MainMenu> {
@@ -516,7 +521,7 @@ class _HelpMenu extends StatelessWidget {
         PopupMenuItem(
             value: () {
               Navigator.pop<void>(context);
-              launch(applicationIssueAddress);
+              launchUrl(applicationIssueAddress);
             },
             child: const Text('Submit Issue (Web)')),
         PopupMenuItem(
@@ -540,7 +545,8 @@ class _HelpMenu extends StatelessWidget {
                   children: [
                     const SizedBox(height: 40),
                     InkWell(
-                        onTap: () => unawaited(launch(applicationWebAddress)),
+                        onTap: () =>
+                            unawaited(launchUrl(applicationWebAddress)),
                         child: RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
@@ -549,7 +555,7 @@ class _HelpMenu extends StatelessWidget {
                                     color: Theme.of(context)
                                         .colorScheme
                                         .secondary),
-                                text: applicationWebAddress)))
+                                text: applicationWebAddress.toString())))
                   ]);
             },
             child: const Text('About')),
@@ -756,7 +762,9 @@ class __StateMenuState extends State<_StateMenu> {
       onSelected: (Future<void> Function() action) async {
         await action();
         setState(() {});
-        Navigator.pop(context, () {});
+        if (mounted) {
+          Navigator.pop(context, () {});
+        }
       },
       onCanceled: () => Navigator.pop(context),
       itemBuilder: (BuildContext context) => [
@@ -807,7 +815,9 @@ class __StateMenuState extends State<_StateMenu> {
       } catch (e, s) {
         debugPrint('\n\n$e\n\n$s');
         widget.app.controller.showMessage('bad c1ip ');
-        return showErrorDialog(context, 'Bad data in clipboard', e);
+        if (mounted) {
+          return showErrorDialog(context, 'Bad data in clipboard', e);
+        }
       }
     }
   }
@@ -834,7 +844,9 @@ class __ExportMenuState extends State<_ExportMenu> {
       onSelected: (Future<void> Function() action) async {
         await action();
         setState(() {});
-        Navigator.pop<Future<void> Function()>(context, () async {});
+        if (mounted) {
+          Navigator.pop<Future<void> Function()>(context, () async {});
+        }
       },
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(
