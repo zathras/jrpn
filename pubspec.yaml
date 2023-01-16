@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.0.5
   meta: ^1.7.0
-  share_plus: ^4.0.6
+  share_plus: ^6.3.0
   uni_links: ^0.5.1
   uni_links_web: ^0.1.0
   archive: ^3.1.2

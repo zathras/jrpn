@@ -141,7 +141,6 @@ void invert(final Matrix m) {
   }
 
   /// Now use A^-1 = U^-1 * l^-1 * P, as per HP 15C Advanced Functions p. 83
-  // @@ TODO:  Perturb matrix to avoid divide by zero
 
   // Calculate U^-1.  Adapted from dtri2.f in LAPACK from www.netlib.org.
   for (int j = 0; j < m.rows; j++) {
