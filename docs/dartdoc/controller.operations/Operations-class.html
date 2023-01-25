@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../static-assets/github.css">
-  <link rel="stylesheet" href="../static-assets/styles.css">
-  <link rel="icon" href="../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../"
-      data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -40,6 +40,642 @@
 
 <main>
 
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-class">Operations</span> class 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>The calculator operations.  This is split into its own library so that
+it's encapsulated from the controller internals.  This class is just
+a collecting place for the static final <a href="../controller/Operation-class.html">Operation</a> constants,
+and some lists of operations that are useful.</p>
+<p>See the <code>controller.operations</code> library-level documentation for an overview
+of the different <a href="../controller/Operation-class.html">Operation</a> types.</p>
+</section>
+
+
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+
+    <dl class="constructor-summary-list">
+        <dt id="Operations" class="callable">
+          <span class="name"><a href="../controller.operations/Operations/Operations.html">Operations</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          
+        </dd>
+    </dl>
+  </section>
+
+    <section class="summary offset-anchor inherited" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span> 
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a non-existent method or property is accessed.
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features">inherited</div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features">inherited</div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section class="summary offset-anchor" id="static-properties">
+    <h2>Static Properties</h2>
+
+    <dl class="properties">
+        <dt id="abs" class="property">
+  <span class="name"><a href="../controller.operations/Operations/abs.html">abs</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="bsp" class="property">
+  <span class="name"><a href="../controller.operations/Operations/bsp.html">bsp</a></span>
+  <span class="signature">&#8594; <a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="bst" class="property">
+  <span class="name"><a href="../controller.operations/Operations/bst.html">bst</a></span>
+  <span class="signature">&#8594; <a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="chs" class="property">
+  <span class="name"><a href="../controller.operations/Operations/chs.html">chs</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="clearPrefix" class="property">
+  <span class="name"><a href="../controller.operations/Operations/clearPrefix.html">clearPrefix</a></span>
+  <span class="signature">&#8594; <a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="clearPrgm" class="property">
+  <span class="name"><a href="../controller.operations/Operations/clearPrgm.html">clearPrgm</a></span>
+  <span class="signature">&#8594; <a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="clearReg" class="property">
+  <span class="name"><a href="../controller.operations/Operations/clearReg.html">clearReg</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="clx" class="property">
+  <span class="name"><a href="../controller.operations/Operations/clx.html">clx</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="dot" class="property">
+  <span class="name"><a href="../controller.operations/Operations/dot.html">dot</a></span>
+  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="eex" class="property">
+  <span class="name"><a href="../controller.operations/Operations/eex.html">eex</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="enter" class="property">
+  <span class="name"><a href="../controller.operations/Operations/enter.html">enter</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="fShift" class="property">
+  <span class="name"><a href="../controller.operations/Operations/fShift.html">fShift</a></span>
+  <span class="signature">&#8594; <a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="gShift" class="property">
+  <span class="name"><a href="../controller.operations/Operations/gShift.html">gShift</a></span>
+  <span class="signature">&#8594; <a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="lstx" class="property">
+  <span class="name"><a href="../controller.operations/Operations/lstx.html">lstx</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="mem" class="property">
+  <span class="name"><a href="../controller.operations/Operations/mem.html">mem</a></span>
+  <span class="signature">&#8594; <a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="n0" class="property">
+  <span class="name"><a href="../controller.operations/Operations/n0.html">n0</a></span>
+  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="n1" class="property">
+  <span class="name"><a href="../controller.operations/Operations/n1.html">n1</a></span>
+  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="n2" class="property">
+  <span class="name"><a href="../controller.operations/Operations/n2.html">n2</a></span>
+  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="n3" class="property">
+  <span class="name"><a href="../controller.operations/Operations/n3.html">n3</a></span>
+  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="n4" class="property">
+  <span class="name"><a href="../controller.operations/Operations/n4.html">n4</a></span>
+  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="n5" class="property">
+  <span class="name"><a href="../controller.operations/Operations/n5.html">n5</a></span>
+  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="n6" class="property">
+  <span class="name"><a href="../controller.operations/Operations/n6.html">n6</a></span>
+  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="n7" class="property">
+  <span class="name"><a href="../controller.operations/Operations/n7.html">n7</a></span>
+  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="n8" class="property">
+  <span class="name"><a href="../controller.operations/Operations/n8.html">n8</a></span>
+  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="n9" class="property">
+  <span class="name"><a href="../controller.operations/Operations/n9.html">n9</a></span>
+  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="onOff" class="property">
+  <span class="name"><a href="../controller.operations/Operations/onOff.html">onOff</a></span>
+  <span class="signature">&#8594; <a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="pr" class="property">
+  <span class="name"><a href="../controller.operations/Operations/pr.html">pr</a></span>
+  <span class="signature">&#8594; <a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="pse" class="property">
+  <span class="name"><a href="../controller.operations/Operations/pse.html">pse</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="rDown" class="property">
+  <span class="name"><a href="../controller.operations/Operations/rDown.html">rDown</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="rs" class="property">
+  <span class="name"><a href="../controller.operations/Operations/rs.html">rs</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="rtn" class="property">
+  <span class="name"><a href="../controller.operations/Operations/rtn.html">rtn</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="rUp" class="property">
+  <span class="name"><a href="../controller.operations/Operations/rUp.html">rUp</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="special" class="property">
+  <span class="name"><a href="../controller.operations/Operations/special.html">special</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../controller/Operation-class.html">Operation</a></span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Operations that can't be stored in memory
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="sqrtOp" class="property">
+  <span class="name"><a href="../controller.operations/Operations/sqrtOp.html">sqrtOp</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="sst" class="property">
+  <span class="name"><a href="../controller.operations/Operations/sst.html">sst</a></span>
+  <span class="signature">&#8594; <a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="status" class="property">
+  <span class="name"><a href="../controller.operations/Operations/status.html">status</a></span>
+  <span class="signature">&#8594; <a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="xEQ0" class="property">
+  <span class="name"><a href="../controller.operations/Operations/xEQ0.html">xEQ0</a></span>
+  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="xEQy" class="property">
+  <span class="name"><a href="../controller.operations/Operations/xEQy.html">xEQy</a></span>
+  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="xGT0" class="property">
+  <span class="name"><a href="../controller.operations/Operations/xGT0.html">xGT0</a></span>
+  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="xGTy" class="property">
+  <span class="name"><a href="../controller.operations/Operations/xGTy.html">xGTy</a></span>
+  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="xLEy" class="property">
+  <span class="name"><a href="../controller.operations/Operations/xLEy.html">xLEy</a></span>
+  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="xLT0" class="property">
+  <span class="name"><a href="../controller.operations/Operations/xLT0.html">xLT0</a></span>
+  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="xNE0" class="property">
+  <span class="name"><a href="../controller.operations/Operations/xNE0.html">xNE0</a></span>
+  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="xNEy" class="property">
+  <span class="name"><a href="../controller.operations/Operations/xNEy.html">xNEy</a></span>
+  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="xSwapParenI" class="property">
+  <span class="name"><a href="../controller.operations/Operations/xSwapParenI.html">xSwapParenI</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="xy" class="property">
+  <span class="name"><a href="../controller.operations/Operations/xy.html">xy</a></span>
+  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+
+
+  </div> <!-- /.main-content -->
 
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
@@ -71,1428 +707,11 @@
 
   </div>
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-class">Operations</span> class 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
- 
-</h1></div>
-
-    
-<section class="desc markdown">
-  <p>The calculator operations.  This is split into its own library so that
-it's encapsulated from the controller internals.  This class is just
-a collecting place for the static final <a href="../controller/Operation-class.html">Operation</a> constants,
-and some lists of operations that are useful.</p>
-<p>See the <code>controller.operations</code> library-level documentation for an overview
-of the different <a href="../controller/Operation-class.html">Operation</a> types.</p>
-</section>
-
-
-
-    <section class="summary offset-anchor" id="constructors">
-      <h2>Constructors</h2>
-
-      <dl class="constructor-summary-list">
-        <dt id="Operations" class="callable">
-          <span class="name"><a href="../controller.operations/Operations/Operations.html">Operations</a></span><span class="signature">()</span>
-        </dt>
-        <dd>
-           
-        </dd>
-      </dl>
-    </section>
-
-    <section class="summary offset-anchor inherited" id="instance-properties">
-      <h2>Properties</h2>
-
-      <dl class="properties">
-        <dt id="hashCode" class="property inherited">
-  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
-
-</dt>
-<dd class="inherited">
-  The hash code for this object. <a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">[...]</a>
-  <div class="features">read-only, inherited</div>
-
-</dd>
-
-        <dt id="runtimeType" class="property inherited">
-  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span> 
-
-</dt>
-<dd class="inherited">
-  A representation of the runtime type of the object. 
-  <div class="features">read-only, inherited</div>
-
-</dd>
-
-      </dl>
-    </section>
-
-    <section class="summary offset-anchor inherited" id="instance-methods">
-      <h2>Methods</h2>
-      <dl class="callables">
-        <dt id="noSuchMethod" class="callable inherited">
-  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
-    <span class="returntype parameter">&#8594; dynamic</span>
-  </span>
-  
-
-</dt>
-<dd class="inherited">
-  Invoked when a non-existent method or property is accessed. <a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">[...]</a>
-  <div class="features">inherited</div>
-
-</dd>
-
-        <dt id="toString" class="callable inherited">
-  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
-  </span>
-  
-
-</dt>
-<dd class="inherited">
-  A string representation of this object. <a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">[...]</a>
-  <div class="features">inherited</div>
-
-</dd>
-
-      </dl>
-    </section>
-
-    <section class="summary offset-anchor inherited" id="operators">
-      <h2>Operators</h2>
-      <dl class="callables">
-        <dt id="operator ==" class="callable inherited">
-  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
-  </span>
-  
-
-</dt>
-<dd class="inherited">
-  The equality operator. <a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">[...]</a>
-  <div class="features">inherited</div>
-
-</dd>
-
-      </dl>
-    </section>
-
-    <section class="summary offset-anchor" id="static-properties">
-      <h2>Static Properties</h2>
-
-      <dl class="properties">
-        <dt id="a" class="property">
-  <span class="name"><a href="../controller.operations/Operations/a.html">a</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="abs" class="property">
-  <span class="name"><a href="../controller.operations/Operations/abs.html">abs</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="and" class="property">
-  <span class="name"><a href="../controller.operations/Operations/and.html">and</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="argIops" class="property">
-  <span class="name"><a href="../controller.operations/Operations/argIops.html">argIops</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../controller/Operation-class.html">Operation</a></span>&gt;</span></span> 
-
-</dt>
-<dd>
-  Abbreviated key sequences for I used as an argument - cf. manual p. 68 
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="argParenIops" class="property">
-  <span class="name"><a href="../controller.operations/Operations/argParenIops.html">argParenIops</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../controller/Operation-class.html">Operation</a></span>&gt;</span></span> 
-
-</dt>
-<dd>
-  Abbreviated key sequences for (i) used as an argument - cf. manual p. 68 
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="asr" class="property">
-  <span class="name"><a href="../controller.operations/Operations/asr.html">asr</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="b" class="property">
-  <span class="name"><a href="../controller.operations/Operations/b.html">b</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="bin" class="property">
-  <span class="name"><a href="../controller.operations/Operations/bin.html">bin</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="bQuestion" class="property">
-  <span class="name"><a href="../controller.operations/Operations/bQuestion.html">bQuestion</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="bsp" class="property">
-  <span class="name"><a href="../controller.operations/Operations/bsp.html">bsp</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="bst" class="property">
-  <span class="name"><a href="../controller.operations/Operations/bst.html">bst</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="c" class="property">
-  <span class="name"><a href="../controller.operations/Operations/c.html">c</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="cb" class="property">
-  <span class="name"><a href="../controller.operations/Operations/cb.html">cb</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="cf" class="property">
-  <span class="name"><a href="../controller.operations/Operations/cf.html">cf</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="chs" class="property">
-  <span class="name"><a href="../controller.operations/Operations/chs.html">chs</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="clearPrefix" class="property">
-  <span class="name"><a href="../controller.operations/Operations/clearPrefix.html">clearPrefix</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="clearPrgm" class="property">
-  <span class="name"><a href="../controller.operations/Operations/clearPrgm.html">clearPrgm</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="clearReg" class="property">
-  <span class="name"><a href="../controller.operations/Operations/clearReg.html">clearReg</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="clx" class="property">
-  <span class="name"><a href="../controller.operations/Operations/clx.html">clx</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="d" class="property">
-  <span class="name"><a href="../controller.operations/Operations/d.html">d</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="dblDiv" class="property">
-  <span class="name"><a href="../controller.operations/Operations/dblDiv.html">dblDiv</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="dblr" class="property">
-  <span class="name"><a href="../controller.operations/Operations/dblr.html">dblr</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="dblx" class="property">
-  <span class="name"><a href="../controller.operations/Operations/dblx.html">dblx</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="dec" class="property">
-  <span class="name"><a href="../controller.operations/Operations/dec.html">dec</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="div" class="property">
-  <span class="name"><a href="../controller.operations/Operations/div.html">div</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="dot" class="property">
-  <span class="name"><a href="../controller.operations/Operations/dot.html">dot</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="dsz" class="property">
-  <span class="name"><a href="../controller.operations/Operations/dsz.html">dsz</a></span>
-  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="e" class="property">
-  <span class="name"><a href="../controller.operations/Operations/e.html">e</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="eex" class="property">
-  <span class="name"><a href="../controller.operations/Operations/eex.html">eex</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="enter" class="property">
-  <span class="name"><a href="../controller.operations/Operations/enter.html">enter</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="f" class="property">
-  <span class="name"><a href="../controller.operations/Operations/f.html">f</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="floatKey" class="property">
-  <span class="name"><a href="../controller.operations/Operations/floatKey.html">floatKey</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="fQuestion" class="property">
-  <span class="name"><a href="../controller.operations/Operations/fQuestion.html">fQuestion</a></span>
-  <span class="signature">&#8594; <a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="fShift" class="property">
-  <span class="name"><a href="../controller.operations/Operations/fShift.html">fShift</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="gsb" class="property">
-  <span class="name"><a href="../controller.operations/Operations/gsb.html">gsb</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="gShift" class="property">
-  <span class="name"><a href="../controller.operations/Operations/gShift.html">gShift</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="gto" class="property">
-  <span class="name"><a href="../controller.operations/Operations/gto.html">gto</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="hex" class="property">
-  <span class="name"><a href="../controller.operations/Operations/hex.html">hex</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="I" class="property">
-  <span class="name"><a href="../controller.operations/Operations/I.html">I</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="isz" class="property">
-  <span class="name"><a href="../controller.operations/Operations/isz.html">isz</a></span>
-  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="keys" class="property">
-  <span class="name"><a href="../controller.operations/Operations/keys.html">keys</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/Key-class.html">Key</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../controller/Operation-class.html">Operation</a></span>&gt;</span>?</span>&gt;</span></span>&gt;</span></span> 
-
-</dt>
-<dd>
-  The list of "logical" keys.  This has nothing to do with the UI;
-The order of the operations in this list determines the
-externalized form of the operations in the calculator's storage
-(the opcodes).  It also determines the displayed appearance of
-operation in program mode, whether the calculator is in portrait or
-landscape orientation. <a href="../controller.operations/Operations/keys.html">[...]</a>
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="lbl" class="property">
-  <span class="name"><a href="../controller.operations/Operations/lbl.html">lbl</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="lj" class="property">
-  <span class="name"><a href="../controller.operations/Operations/lj.html">lj</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="lstx" class="property">
-  <span class="name"><a href="../controller.operations/Operations/lstx.html">lstx</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="maskl" class="property">
-  <span class="name"><a href="../controller.operations/Operations/maskl.html">maskl</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="maskr" class="property">
-  <span class="name"><a href="../controller.operations/Operations/maskr.html">maskr</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="mem" class="property">
-  <span class="name"><a href="../controller.operations/Operations/mem.html">mem</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="minus" class="property">
-  <span class="name"><a href="../controller.operations/Operations/minus.html">minus</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="mult" class="property">
-  <span class="name"><a href="../controller.operations/Operations/mult.html">mult</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="n0" class="property">
-  <span class="name"><a href="../controller.operations/Operations/n0.html">n0</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="n1" class="property">
-  <span class="name"><a href="../controller.operations/Operations/n1.html">n1</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="n2" class="property">
-  <span class="name"><a href="../controller.operations/Operations/n2.html">n2</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="n3" class="property">
-  <span class="name"><a href="../controller.operations/Operations/n3.html">n3</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="n4" class="property">
-  <span class="name"><a href="../controller.operations/Operations/n4.html">n4</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="n5" class="property">
-  <span class="name"><a href="../controller.operations/Operations/n5.html">n5</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="n6" class="property">
-  <span class="name"><a href="../controller.operations/Operations/n6.html">n6</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="n7" class="property">
-  <span class="name"><a href="../controller.operations/Operations/n7.html">n7</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="n8" class="property">
-  <span class="name"><a href="../controller.operations/Operations/n8.html">n8</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="n9" class="property">
-  <span class="name"><a href="../controller.operations/Operations/n9.html">n9</a></span>
-  <span class="signature">&#8594; <a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="not" class="property">
-  <span class="name"><a href="../controller.operations/Operations/not.html">not</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="numbers" class="property">
-  <span class="name"><a href="../controller.operations/Operations/numbers.html">numbers</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../controller/NumberEntry-class.html">NumberEntry</a></span>&gt;</span></span> 
-
-</dt>
-<dd>
-  The numbers.  This must be in order. 
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="oct" class="property">
-  <span class="name"><a href="../controller.operations/Operations/oct.html">oct</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="onesCompl" class="property">
-  <span class="name"><a href="../controller.operations/Operations/onesCompl.html">onesCompl</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="onOff" class="property">
-  <span class="name"><a href="../controller.operations/Operations/onOff.html">onOff</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="or" class="property">
-  <span class="name"><a href="../controller.operations/Operations/or.html">or</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="parenI" class="property">
-  <span class="name"><a href="../controller.operations/Operations/parenI.html">parenI</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="plus" class="property">
-  <span class="name"><a href="../controller.operations/Operations/plus.html">plus</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="poundB" class="property">
-  <span class="name"><a href="../controller.operations/Operations/poundB.html">poundB</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="pr" class="property">
-  <span class="name"><a href="../controller.operations/Operations/pr.html">pr</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="pse" class="property">
-  <span class="name"><a href="../controller.operations/Operations/pse.html">pse</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rcl" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rcl.html">rcl</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rDown" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rDown.html">rDown</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="reciprocal" class="property">
-  <span class="name"><a href="../controller.operations/Operations/reciprocal.html">reciprocal</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rl" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rl.html">rl</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rlc" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rlc.html">rlc</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rlcn" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rlcn.html">rlcn</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rln" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rln.html">rln</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rmd" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rmd.html">rmd</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rr" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rr.html">rr</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rrc" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rrc.html">rrc</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rrcn" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rrcn.html">rrcn</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rrn" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rrn.html">rrn</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rs" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rs.html">rs</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rtn" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rtn.html">rtn</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="rUp" class="property">
-  <span class="name"><a href="../controller.operations/Operations/rUp.html">rUp</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="sb" class="property">
-  <span class="name"><a href="../controller.operations/Operations/sb.html">sb</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="sf" class="property">
-  <span class="name"><a href="../controller.operations/Operations/sf.html">sf</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="shortcuts" class="property">
-  <span class="name"><a href="../controller.operations/Operations/shortcuts.html">shortcuts</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../controller/NormalOperation-class.html">NormalOperation</a></span>, <span class="type-parameter"><a href="../model/ProgramInstruction-class.html">ProgramInstruction</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span>&gt;</span></span> 
-
-</dt>
-<dd>
-  Map from operation that is a short cut to what it's a shortcut for, with
-the key as an argument 
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="showBin" class="property">
-  <span class="name"><a href="../controller.operations/Operations/showBin.html">showBin</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="showDec" class="property">
-  <span class="name"><a href="../controller.operations/Operations/showDec.html">showDec</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="showHex" class="property">
-  <span class="name"><a href="../controller.operations/Operations/showHex.html">showHex</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="showOct" class="property">
-  <span class="name"><a href="../controller.operations/Operations/showOct.html">showOct</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="sl" class="property">
-  <span class="name"><a href="../controller.operations/Operations/sl.html">sl</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="special" class="property">
-  <span class="name"><a href="../controller.operations/Operations/special.html">special</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../controller/Operation-class.html">Operation</a></span>&gt;</span></span> 
-
-</dt>
-<dd>
-  Operations that can't be stored in memory 
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="sqrtOp" class="property">
-  <span class="name"><a href="../controller.operations/Operations/sqrtOp.html">sqrtOp</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="sr" class="property">
-  <span class="name"><a href="../controller.operations/Operations/sr.html">sr</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="sst" class="property">
-  <span class="name"><a href="../controller.operations/Operations/sst.html">sst</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="status" class="property">
-  <span class="name"><a href="../controller.operations/Operations/status.html">status</a></span>
-  <span class="signature">&#8594; <a href="../controller/LimitedOperation-class.html">LimitedOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="sto" class="property">
-  <span class="name"><a href="../controller.operations/Operations/sto.html">sto</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="twosCompl" class="property">
-  <span class="name"><a href="../controller.operations/Operations/twosCompl.html">twosCompl</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="unsign" class="property">
-  <span class="name"><a href="../controller.operations/Operations/unsign.html">unsign</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="window" class="property">
-  <span class="name"><a href="../controller.operations/Operations/window.html">window</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="windowLeft" class="property">
-  <span class="name"><a href="../controller.operations/Operations/windowLeft.html">windowLeft</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="windowRight" class="property">
-  <span class="name"><a href="../controller.operations/Operations/windowRight.html">windowRight</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-  Shown as blue "&lt;" on the keyboard - it shifts the number left,
-which means the window shifts right. 
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="wSize" class="property">
-  <span class="name"><a href="../controller.operations/Operations/wSize.html">wSize</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xEQ0" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xEQ0.html">xEQ0</a></span>
-  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xEQy" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xEQy.html">xEQy</a></span>
-  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xGT0" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xGT0.html">xGT0</a></span>
-  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xGTy" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xGTy.html">xGTy</a></span>
-  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xLEy" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xLEy.html">xLEy</a></span>
-  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xLT0" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xLT0.html">xLT0</a></span>
-  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xNE0" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xNE0.html">xNE0</a></span>
-  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xNEy" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xNEy.html">xNEy</a></span>
-  <span class="signature">&#8594; <a href="../controller/BranchingOperation-class.html">BranchingOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xor" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xor.html">xor</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xSwapI" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xSwapI.html">xSwapI</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xSwapParenI" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xSwapParenI.html">xSwapParenI</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-        <dt id="xy" class="property">
-  <span class="name"><a href="../controller.operations/Operations/xy.html">xy</a></span>
-  <span class="signature">&#8594; <a href="../controller/NormalOperation-class.html">NormalOperation</a></span> 
-
-</dt>
-<dd>
-   
-  <div class="features">final</div>
-
-</dd>
-
-      </dl>
-    </section>
-
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
     <ol>
 
-    <li class="section-title"><a href="../controller.operations/Operations-class.html#constructors">Constructors</a></li>
-    <li><a href="../controller.operations/Operations/Operations.html">Operations</a></li>
+        <li class="section-title"><a href="../controller.operations/Operations-class.html#constructors">Constructors</a></li>
+          <li><a href="../controller.operations/Operations/Operations.html">Operations</a></li>
 
 
     <li class="section-title inherited">
@@ -1509,124 +728,53 @@ which means the window shifts right.
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
 
 
-    <li class="section-title"><a href="../controller.operations/Operations-class.html#static-properties">Static properties</a></li>
-    <li><a href="../controller.operations/Operations/a.html">a</a></li>
-    <li><a href="../controller.operations/Operations/abs.html">abs</a></li>
-    <li><a href="../controller.operations/Operations/and.html">and</a></li>
-    <li><a href="../controller.operations/Operations/argIops.html">argIops</a></li>
-    <li><a href="../controller.operations/Operations/argParenIops.html">argParenIops</a></li>
-    <li><a href="../controller.operations/Operations/asr.html">asr</a></li>
-    <li><a href="../controller.operations/Operations/b.html">b</a></li>
-    <li><a href="../controller.operations/Operations/bin.html">bin</a></li>
-    <li><a href="../controller.operations/Operations/bQuestion.html">bQuestion</a></li>
-    <li><a href="../controller.operations/Operations/bsp.html">bsp</a></li>
-    <li><a href="../controller.operations/Operations/bst.html">bst</a></li>
-    <li><a href="../controller.operations/Operations/c.html">c</a></li>
-    <li><a href="../controller.operations/Operations/cb.html">cb</a></li>
-    <li><a href="../controller.operations/Operations/cf.html">cf</a></li>
-    <li><a href="../controller.operations/Operations/chs.html">chs</a></li>
-    <li><a href="../controller.operations/Operations/clearPrefix.html">clearPrefix</a></li>
-    <li><a href="../controller.operations/Operations/clearPrgm.html">clearPrgm</a></li>
-    <li><a href="../controller.operations/Operations/clearReg.html">clearReg</a></li>
-    <li><a href="../controller.operations/Operations/clx.html">clx</a></li>
-    <li><a href="../controller.operations/Operations/d.html">d</a></li>
-    <li><a href="../controller.operations/Operations/dblDiv.html">dblDiv</a></li>
-    <li><a href="../controller.operations/Operations/dblr.html">dblr</a></li>
-    <li><a href="../controller.operations/Operations/dblx.html">dblx</a></li>
-    <li><a href="../controller.operations/Operations/dec.html">dec</a></li>
-    <li><a href="../controller.operations/Operations/div.html">div</a></li>
-    <li><a href="../controller.operations/Operations/dot.html">dot</a></li>
-    <li><a href="../controller.operations/Operations/dsz.html">dsz</a></li>
-    <li><a href="../controller.operations/Operations/e.html">e</a></li>
-    <li><a href="../controller.operations/Operations/eex.html">eex</a></li>
-    <li><a href="../controller.operations/Operations/enter.html">enter</a></li>
-    <li><a href="../controller.operations/Operations/f.html">f</a></li>
-    <li><a href="../controller.operations/Operations/floatKey.html">floatKey</a></li>
-    <li><a href="../controller.operations/Operations/fQuestion.html">fQuestion</a></li>
-    <li><a href="../controller.operations/Operations/fShift.html">fShift</a></li>
-    <li><a href="../controller.operations/Operations/gsb.html">gsb</a></li>
-    <li><a href="../controller.operations/Operations/gShift.html">gShift</a></li>
-    <li><a href="../controller.operations/Operations/gto.html">gto</a></li>
-    <li><a href="../controller.operations/Operations/hex.html">hex</a></li>
-    <li><a href="../controller.operations/Operations/I.html">I</a></li>
-    <li><a href="../controller.operations/Operations/isz.html">isz</a></li>
-    <li><a href="../controller.operations/Operations/keys.html">keys</a></li>
-    <li><a href="../controller.operations/Operations/lbl.html">lbl</a></li>
-    <li><a href="../controller.operations/Operations/lj.html">lj</a></li>
-    <li><a href="../controller.operations/Operations/lstx.html">lstx</a></li>
-    <li><a href="../controller.operations/Operations/maskl.html">maskl</a></li>
-    <li><a href="../controller.operations/Operations/maskr.html">maskr</a></li>
-    <li><a href="../controller.operations/Operations/mem.html">mem</a></li>
-    <li><a href="../controller.operations/Operations/minus.html">minus</a></li>
-    <li><a href="../controller.operations/Operations/mult.html">mult</a></li>
-    <li><a href="../controller.operations/Operations/n0.html">n0</a></li>
-    <li><a href="../controller.operations/Operations/n1.html">n1</a></li>
-    <li><a href="../controller.operations/Operations/n2.html">n2</a></li>
-    <li><a href="../controller.operations/Operations/n3.html">n3</a></li>
-    <li><a href="../controller.operations/Operations/n4.html">n4</a></li>
-    <li><a href="../controller.operations/Operations/n5.html">n5</a></li>
-    <li><a href="../controller.operations/Operations/n6.html">n6</a></li>
-    <li><a href="../controller.operations/Operations/n7.html">n7</a></li>
-    <li><a href="../controller.operations/Operations/n8.html">n8</a></li>
-    <li><a href="../controller.operations/Operations/n9.html">n9</a></li>
-    <li><a href="../controller.operations/Operations/not.html">not</a></li>
-    <li><a href="../controller.operations/Operations/numbers.html">numbers</a></li>
-    <li><a href="../controller.operations/Operations/oct.html">oct</a></li>
-    <li><a href="../controller.operations/Operations/onesCompl.html">onesCompl</a></li>
-    <li><a href="../controller.operations/Operations/onOff.html">onOff</a></li>
-    <li><a href="../controller.operations/Operations/or.html">or</a></li>
-    <li><a href="../controller.operations/Operations/parenI.html">parenI</a></li>
-    <li><a href="../controller.operations/Operations/plus.html">plus</a></li>
-    <li><a href="../controller.operations/Operations/poundB.html">poundB</a></li>
-    <li><a href="../controller.operations/Operations/pr.html">pr</a></li>
-    <li><a href="../controller.operations/Operations/pse.html">pse</a></li>
-    <li><a href="../controller.operations/Operations/rcl.html">rcl</a></li>
-    <li><a href="../controller.operations/Operations/rDown.html">rDown</a></li>
-    <li><a href="../controller.operations/Operations/reciprocal.html">reciprocal</a></li>
-    <li><a href="../controller.operations/Operations/rl.html">rl</a></li>
-    <li><a href="../controller.operations/Operations/rlc.html">rlc</a></li>
-    <li><a href="../controller.operations/Operations/rlcn.html">rlcn</a></li>
-    <li><a href="../controller.operations/Operations/rln.html">rln</a></li>
-    <li><a href="../controller.operations/Operations/rmd.html">rmd</a></li>
-    <li><a href="../controller.operations/Operations/rr.html">rr</a></li>
-    <li><a href="../controller.operations/Operations/rrc.html">rrc</a></li>
-    <li><a href="../controller.operations/Operations/rrcn.html">rrcn</a></li>
-    <li><a href="../controller.operations/Operations/rrn.html">rrn</a></li>
-    <li><a href="../controller.operations/Operations/rs.html">rs</a></li>
-    <li><a href="../controller.operations/Operations/rtn.html">rtn</a></li>
-    <li><a href="../controller.operations/Operations/rUp.html">rUp</a></li>
-    <li><a href="../controller.operations/Operations/sb.html">sb</a></li>
-    <li><a href="../controller.operations/Operations/sf.html">sf</a></li>
-    <li><a href="../controller.operations/Operations/shortcuts.html">shortcuts</a></li>
-    <li><a href="../controller.operations/Operations/showBin.html">showBin</a></li>
-    <li><a href="../controller.operations/Operations/showDec.html">showDec</a></li>
-    <li><a href="../controller.operations/Operations/showHex.html">showHex</a></li>
-    <li><a href="../controller.operations/Operations/showOct.html">showOct</a></li>
-    <li><a href="../controller.operations/Operations/sl.html">sl</a></li>
-    <li><a href="../controller.operations/Operations/special.html">special</a></li>
-    <li><a href="../controller.operations/Operations/sqrtOp.html">sqrtOp</a></li>
-    <li><a href="../controller.operations/Operations/sr.html">sr</a></li>
-    <li><a href="../controller.operations/Operations/sst.html">sst</a></li>
-    <li><a href="../controller.operations/Operations/status.html">status</a></li>
-    <li><a href="../controller.operations/Operations/sto.html">sto</a></li>
-    <li><a href="../controller.operations/Operations/twosCompl.html">twosCompl</a></li>
-    <li><a href="../controller.operations/Operations/unsign.html">unsign</a></li>
-    <li><a href="../controller.operations/Operations/window.html">window</a></li>
-    <li><a href="../controller.operations/Operations/windowLeft.html">windowLeft</a></li>
-    <li><a href="../controller.operations/Operations/windowRight.html">windowRight</a></li>
-    <li><a href="../controller.operations/Operations/wSize.html">wSize</a></li>
-    <li><a href="../controller.operations/Operations/xEQ0.html">xEQ0</a></li>
-    <li><a href="../controller.operations/Operations/xEQy.html">xEQy</a></li>
-    <li><a href="../controller.operations/Operations/xGT0.html">xGT0</a></li>
-    <li><a href="../controller.operations/Operations/xGTy.html">xGTy</a></li>
-    <li><a href="../controller.operations/Operations/xLEy.html">xLEy</a></li>
-    <li><a href="../controller.operations/Operations/xLT0.html">xLT0</a></li>
-    <li><a href="../controller.operations/Operations/xNE0.html">xNE0</a></li>
-    <li><a href="../controller.operations/Operations/xNEy.html">xNEy</a></li>
-    <li><a href="../controller.operations/Operations/xor.html">xor</a></li>
-    <li><a href="../controller.operations/Operations/xSwapI.html">xSwapI</a></li>
-    <li><a href="../controller.operations/Operations/xSwapParenI.html">xSwapParenI</a></li>
-    <li><a href="../controller.operations/Operations/xy.html">xy</a></li>
+        <li class="section-title"><a href="../controller.operations/Operations-class.html#static-properties">Static properties</a></li>
+          <li><a href="../controller.operations/Operations/abs.html">abs</a></li>
+          <li><a href="../controller.operations/Operations/bsp.html">bsp</a></li>
+          <li><a href="../controller.operations/Operations/bst.html">bst</a></li>
+          <li><a href="../controller.operations/Operations/chs.html">chs</a></li>
+          <li><a href="../controller.operations/Operations/clearPrefix.html">clearPrefix</a></li>
+          <li><a href="../controller.operations/Operations/clearPrgm.html">clearPrgm</a></li>
+          <li><a href="../controller.operations/Operations/clearReg.html">clearReg</a></li>
+          <li><a href="../controller.operations/Operations/clx.html">clx</a></li>
+          <li><a href="../controller.operations/Operations/dot.html">dot</a></li>
+          <li><a href="../controller.operations/Operations/eex.html">eex</a></li>
+          <li><a href="../controller.operations/Operations/enter.html">enter</a></li>
+          <li><a href="../controller.operations/Operations/fShift.html">fShift</a></li>
+          <li><a href="../controller.operations/Operations/gShift.html">gShift</a></li>
+          <li><a href="../controller.operations/Operations/lstx.html">lstx</a></li>
+          <li><a href="../controller.operations/Operations/mem.html">mem</a></li>
+          <li><a href="../controller.operations/Operations/n0.html">n0</a></li>
+          <li><a href="../controller.operations/Operations/n1.html">n1</a></li>
+          <li><a href="../controller.operations/Operations/n2.html">n2</a></li>
+          <li><a href="../controller.operations/Operations/n3.html">n3</a></li>
+          <li><a href="../controller.operations/Operations/n4.html">n4</a></li>
+          <li><a href="../controller.operations/Operations/n5.html">n5</a></li>
+          <li><a href="../controller.operations/Operations/n6.html">n6</a></li>
+          <li><a href="../controller.operations/Operations/n7.html">n7</a></li>
+          <li><a href="../controller.operations/Operations/n8.html">n8</a></li>
+          <li><a href="../controller.operations/Operations/n9.html">n9</a></li>
+          <li><a href="../controller.operations/Operations/onOff.html">onOff</a></li>
+          <li><a href="../controller.operations/Operations/pr.html">pr</a></li>
+          <li><a href="../controller.operations/Operations/pse.html">pse</a></li>
+          <li><a href="../controller.operations/Operations/rDown.html">rDown</a></li>
+          <li><a href="../controller.operations/Operations/rs.html">rs</a></li>
+          <li><a href="../controller.operations/Operations/rtn.html">rtn</a></li>
+          <li><a href="../controller.operations/Operations/rUp.html">rUp</a></li>
+          <li><a href="../controller.operations/Operations/special.html">special</a></li>
+          <li><a href="../controller.operations/Operations/sqrtOp.html">sqrtOp</a></li>
+          <li><a href="../controller.operations/Operations/sst.html">sst</a></li>
+          <li><a href="../controller.operations/Operations/status.html">status</a></li>
+          <li><a href="../controller.operations/Operations/xEQ0.html">xEQ0</a></li>
+          <li><a href="../controller.operations/Operations/xEQy.html">xEQy</a></li>
+          <li><a href="../controller.operations/Operations/xGT0.html">xGT0</a></li>
+          <li><a href="../controller.operations/Operations/xGTy.html">xGTy</a></li>
+          <li><a href="../controller.operations/Operations/xLEy.html">xLEy</a></li>
+          <li><a href="../controller.operations/Operations/xLT0.html">xLT0</a></li>
+          <li><a href="../controller.operations/Operations/xNE0.html">xNE0</a></li>
+          <li><a href="../controller.operations/Operations/xNEy.html">xNEy</a></li>
+          <li><a href="../controller.operations/Operations/xSwapParenI.html">xSwapParenI</a></li>
+          <li><a href="../controller.operations/Operations/xy.html">xy</a></li>
 
 
 </ol>
@@ -1638,15 +786,16 @@ which means the window shifts right.
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../static-assets/highlight.pack.js"></script>
-<script src="../static-assets/script.js"></script>
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
 
 
 

@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,6 +42,42 @@
 <main>
 
 
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">gosubEntryDone</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<div>
+  <ol class="annotation-list">
+    <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
+  </ol>
+</div>
+
+<span class="returntype">void</span>
+<span class="name ">gosubEntryDone</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="gosubEntryDone-param-from"><span class="type-annotation"><a href="../../controller.states/GosubArgInputState-class.html">GosubArgInputState</a></span> <span class="parameter-name">from</span>, </span></li>
+<li><span class="parameter" id="gosubEntryDone-param-label"><span class="type-annotation"><a href="../../model/ArgDone-class.html">ArgDone</a></span> <span class="parameter-name">label</span></span></li>
+</ol>)
+
+      <div class="features">override</div>
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@override
+void gosubEntryDone(GosubArgInputState from, ArgDone label) =&gt;
+    changeState(Resting(controller)).gosubEntryDone(from, label);</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
   <form class="search-sidebar" role="search">
@@ -60,8 +96,8 @@
     <h5>DigitEntry class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../controller.states/DigitEntry-class.html#constructors">Constructors</a></li>
-    <li><a href="../../controller.states/DigitEntry/DigitEntry.html">DigitEntry</a></li>
+        <li class="section-title"><a href="../../controller.states/DigitEntry-class.html#constructors">Constructors</a></li>
+          <li><a href="../../controller.states/DigitEntry/DigitEntry.html">DigitEntry</a></li>
 
 
     <li class="section-title inherited">
@@ -78,6 +114,7 @@
     <li class="inherited"><a href="../../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
     <li class="inherited"><a href="../../controller.states/ControllerState/changeState.html">changeState</a></li>
     <li class="inherited"><a href="../../controller.states/LimitedState/getCalculation.html">getCalculation</a></li>
+    <li><a href="../../controller.states/DigitEntry/gosubDoneState.html">gosubDoneState</a></li>
     <li><a href="../../controller.states/DigitEntry/gosubEntryDone.html">gosubEntryDone</a></li>
     <li><a href="../../controller.states/DigitEntry/handleBackspace.html">handleBackspace</a></li>
     <li><a href="../../controller.states/DigitEntry/handleBST.html">handleBST</a></li>
@@ -87,6 +124,7 @@
     <li><a href="../../controller.states/DigitEntry/handleDecimalPoint.html">handleDecimalPoint</a></li>
     <li><a href="../../controller.states/DigitEntry/handleEEX.html">handleEEX</a></li>
     <li><a href="../../controller.states/DigitEntry/handleGotoDot.html">handleGotoDot</a></li>
+    <li><a href="../../controller.states/DigitEntry/handleLetterLabel.html">handleLetterLabel</a></li>
     <li><a href="../../controller.states/DigitEntry/handleNumberKey.html">handleNumberKey</a></li>
     <li><a href="../../controller.states/DigitEntry/handleOnOff.html">handleOnOff</a></li>
     <li><a href="../../controller.states/DigitEntry/handlePR.html">handlePR</a></li>
@@ -94,6 +132,7 @@
     <li><a href="../../controller.states/DigitEntry/handleRunStop.html">handleRunStop</a></li>
     <li><a href="../../controller.states/DigitEntry/handleShift.html">handleShift</a></li>
     <li><a href="../../controller.states/DigitEntry/handleShow.html">handleShow</a></li>
+    <li><a href="../../controller.states/DigitEntry/handleShowImaginary.html">handleShowImaginary</a></li>
     <li><a href="../../controller.states/DigitEntry/handleShowMem.html">handleShowMem</a></li>
     <li><a href="../../controller.states/DigitEntry/handleShowStatus.html">handleShowStatus</a></li>
     <li><a href="../../controller.states/DigitEntry/handleSST.html">handleSST</a></li>
@@ -102,6 +141,7 @@
     <li><a href="../../controller.states/DigitEntry/onArgComplete.html">onArgComplete</a></li>
     <li class="inherited"><a href="../../controller.states/ControllerState/onChangedTo.html">onChangedTo</a></li>
     <li><a href="../../controller.states/DigitEntry/takeOverFrom.html">takeOverFrom</a></li>
+    <li class="inherited"><a href="../../controller.states/LimitedState/terminateDigitEntry.html">terminateDigitEntry</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
     <li class="inherited"><a href="../../controller.states/ControllerState/unreachable.html">unreachable</a></li>
 
@@ -115,42 +155,6 @@
 
   </div><!--/.sidebar-offcanvas-->
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-method">gosubEntryDone</span> method 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-    <section class="multi-line-signature">
-      
-<div>
-  <ol class="annotation-list">
-    <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
-  </ol>
-</div>
-
-<span class="returntype">void</span>
-<span class="name ">gosubEntryDone</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="gosubEntryDone-param-from"><span class="type-annotation"><a href="../../controller.states/GosubArgInputState-class.html">GosubArgInputState</a></span> <span class="parameter-name">from</span>, </span></li>
-<li><span class="parameter" id="gosubEntryDone-param-label"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">label</span></span></li>
-</ol>)
-
-      <div class="features">override</div>
-
-    </section>
-    
-
-
-    
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">@override
-void gosubEntryDone(GosubArgInputState from, int label) =&gt;
-    changeState(Resting(controller)).gosubEntryDone(from, label);</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -159,15 +163,16 @@ void gosubEntryDone(GosubArgInputState from, int label) =&gt;
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

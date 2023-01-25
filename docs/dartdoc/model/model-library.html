@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../static-assets/github.css">
-  <link rel="stylesheet" href="../static-assets/styles.css">
-  <link rel="icon" href="../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../"
-      data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -39,36 +39,6 @@
 
 <main>
 
-
-  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
-    <header id="header-search-sidebar" class="hidden-l">
-  <form class="search-sidebar" role="search">
-    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
-  </form>
-</header>
-
-<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
-  <li><a href="../index.html">jrpn</a></li>
-  <li class="self-crumb">model library</li>
-</ol>
-
-
-    <h5><span class="package-name">jrpn</span> <span class="package-kind">package</span></h5>
-    <ol>
-      <li class="section-title">Libraries</li>
-      <li><a href="../controller/controller-library.html">controller</a></li>
-      <li><a href="../controller.operations/controller.operations-library.html">controller.operations</a></li>
-      <li><a href="../controller.states/controller.states-library.html">controller.states</a></li>
-      <li><a href="../generated_plugin_registrant/generated_plugin_registrant-library.html">generated_plugin_registrant</a></li>
-      <li><a href="../main/main-library.html">main</a></li>
-      <li><a href="../model/model-library.html">model</a></li>
-      <li><a href="../view.back_panel/view.back_panel-library.html">view.back_panel</a></li>
-      <li><a href="../view.buttons/view.buttons-library.html">view.buttons</a></li>
-      <li><a href="../view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
-      <li><a href="../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
-</ol>
-
-  </div>
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
@@ -99,13 +69,37 @@ coupled to the view, by making the display contents [Observable].
       <h2>Classes</h2>
 
       <dl>
+        <dt id="Arg">
+  <span class="name "><a href="../model/Arg-class.html">Arg</a></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+        <dt id="ArgAlternates">
+  <span class="name "><a href="../model/ArgAlternates-class.html">ArgAlternates</a></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+        <dt id="ArgDone">
+  <span class="name "><a href="../model/ArgDone-class.html">ArgDone</a></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
         <dt id="CalculatorError">
   <span class="name "><a href="../model/CalculatorError-class.html">CalculatorError</a></span> 
 
 </dt>
 <dd>
   An error that should result in "Error x" being displayed
-on the LCD Display 
+on the LCD Display
 </dd>
 
         <dt id="DebugLog">
@@ -115,7 +109,15 @@ on the LCD Display
 <dd>
   A memento of a calculator state, plus the keystrokes after the state
 was captured.  It's meant to be a
-tool to facilitate bug reports. 
+tool to facilitate bug reports.
+</dd>
+
+        <dt id="DigitArg">
+  <span class="name "><a href="../model/DigitArg-class.html">DigitArg</a></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
         <dt id="DisplayMode">
@@ -123,7 +125,10 @@ tool to facilitate bug reports.
 
 </dt>
 <dd>
-   
+  Display mode and a bit more.  This selects between number base, float versus
+integer, and complex versus normal.  The actual code is almost all
+concerned with formatting and display, but this is also a convenient place
+to select operations based on integer/float/complex mode.
 </dd>
 
         <dt id="DisplayModel">
@@ -133,7 +138,7 @@ tool to facilitate bug reports.
 <dd>
   A logical model of what's being displayed on the LCD display.
 Handles flashing and blinking, and delayed display (like when
-clear-prefix is released). 
+clear-prefix is released).
 </dd>
 
         <dt id="DisplayModeSelector">
@@ -144,7 +149,7 @@ clear-prefix is released).
   Helper to select something based on whether the calculator's display
 mode is one of the int modes, or float mode.  We
 use a factory template to pull off dependency inversion between the
-model (us) and the controller, for the sake of OO purity. <a href="../model/DisplayModeSelector-class.html">[...]</a>
+model (us) and the controller, for the sake of OO purity.
 </dd>
 
         <dt id="DoubleWordStatus">
@@ -153,7 +158,23 @@ model (us) and the controller, for the sake of OO purity. <a href="../model/Disp
 </dt>
 <dd>
   An object for helping with the "double" integer functions, double multiply,
-double divide and double remainder 
+double divide and double remainder
+</dd>
+
+        <dt id="FixFloatFormatter">
+  <span class="name "><a href="../model/FixFloatFormatter-class.html">FixFloatFormatter</a></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+        <dt id="FloatFormatter">
+  <span class="name "><a href="../model/FloatFormatter-class.html">FloatFormatter</a></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
         <dt id="IntegerDisplayMode">
@@ -161,7 +182,7 @@ double divide and double remainder
 
 </dt>
 <dd>
-   
+  
 </dd>
 
         <dt id="IntegerSignMode">
@@ -169,17 +190,31 @@ double divide and double remainder
 
 </dt>
 <dd>
-   
+  
 </dd>
 
-        <dt id="Key">
-  <span class="name "><a href="../model/Key-class.html">Key</a><span class="signature">&lt;<wbr><span class="type-parameter">OT extends <a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> 
+        <dt id="KeyArg">
+  <span class="name "><a href="../model/KeyArg-class.html">KeyArg</a></span> 
 
 </dt>
 <dd>
-  The model's view of a key on the keyboard.  The model needs to know where
-<a href="../model/ProgramOperation-class.html">ProgramOperation</a>s are on the portrait layout of the keyboard, because
-they are displayed on the LCD display as row-column numbers. 
+  
+</dd>
+
+        <dt id="KeysArg">
+  <span class="name "><a href="../model/KeysArg-class.html">KeysArg</a></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+        <dt id="LabelArg">
+  <span class="name "><a href="../model/LabelArg-class.html">LabelArg</a></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
         <dt id="LcdContents">
@@ -187,7 +222,7 @@ they are displayed on the LCD display as row-column numbers.
 
 </dt>
 <dd>
-  A comparable data holder for the contents of what is displayed on the LCD 
+  A comparable data holder for the contents of what is displayed on the LCD
 </dd>
 
         <dt id="Memory">
@@ -195,8 +230,34 @@ they are displayed on the LCD display as row-column numbers.
 
 </dt>
 <dd>
-  The calculator's 406 nybble internal memory that holds registers and
-programs. 
+  The calculator's internal memory that holds registers and
+programs.
+</dd>
+
+        <dt id="MemoryPolicy">
+  <span class="name "><a href="../model/MemoryPolicy-class.html">MemoryPolicy</a></span> 
+
+</dt>
+<dd>
+  Controls the policy around memory allocation
+</dd>
+
+        <dt id="MKey">
+  <span class="name "><a href="../model/MKey-class.html">MKey</a><span class="signature">&lt;<wbr><span class="type-parameter">OT extends <a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> 
+
+</dt>
+<dd>
+  The model's view of a key on the keyboard.  The model needs to know where
+<a href="../model/ProgramOperation-class.html">ProgramOperation</a>s are on the portrait layout of the keyboard, because
+they are displayed on the LCD display as row-column numbers.
+</dd>
+
+        <dt id="MKeyExtensionOp">
+  <span class="name "><a href="../model/MKeyExtensionOp-class.html">MKeyExtensionOp</a><span class="signature">&lt;<wbr><span class="type-parameter">OT extends <a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
         <dt id="Model">
@@ -206,7 +267,7 @@ programs.
 <dd>
   Our model, the main entry point to this module.  See the library-level
 documentation for a description, and an explanation of the model's
-structure. 
+structure.  Extended by Model15 and Model16.
 </dd>
 
         <dt id="NumStatus">
@@ -217,7 +278,16 @@ structure.
   A bit of interface segregation:  A reduced API of just the stuff
 int operations need from the model.  This comes in handy for the
 double operations, and for dealing with the I register.  I is always
-68 bits long, regardless of the calculator's current word size. 
+68 bits long, regardless of the calculator's current word size.
+</dd>
+
+        <dt id="NumStatus68">
+  <span class="name "><a href="../model/NumStatus68-class.html">NumStatus68</a></span> 
+
+</dt>
+<dd>
+  A helper for the index register, which is always stored as a 68 bit
+quantity, regardless of the calculator mode.
 </dd>
 
         <dt id="Observable">
@@ -226,7 +296,7 @@ double operations, and for dealing with the I register.  I is always
 </dt>
 <dd>
   A pretty bog-standard observable.  Odd that Dart doesn't have one in
-the core library. <a href="../model/Observable-class.html">[...]</a>
+the core library.
 </dd>
 
         <dt id="OperationMap">
@@ -235,7 +305,7 @@ the core library. <a href="../model/Observable-class.html">[...]</a>
 </dt>
 <dd>
   A representation of all of the operations.  This is used by the model
-to assign op codes and labels to <a href="../model/ProgramOperation-class.html">ProgramOperation</a>s. 
+to assign op codes and labels to <a href="../model/ProgramOperation-class.html">ProgramOperation</a>s.
 </dd>
 
         <dt id="ProgramInstruction">
@@ -243,8 +313,8 @@ to assign op codes and labels to <a href="../model/ProgramOperation-class.html">
 
 </dt>
 <dd>
-  An instruction in a program, consisting of a <a href="../model/ProgramOperation-class.html">ProgramOperation</a> and,
-sometimes, an argument value. 
+  An instruction in a program, consisting of a <a href="../model/ProgramOperation-class.html">ProgramOperation</a> and
+a keyboard argument value.
 </dd>
 
         <dt id="ProgramListener">
@@ -253,7 +323,7 @@ sometimes, an argument value.
 </dt>
 <dd>
   A listener that receives callbacks when a program delivers results
-to the user.  This is used for testing. 
+to the user.  This is used for testing.
 </dd>
 
         <dt id="ProgramMemory">
@@ -264,7 +334,7 @@ to the user.  This is used for testing.
   A representation of the calculator's 406 nybble data store as a list
 of program instructions.  ProgramMemory takes over space from register
 storage as needed.  We also keep the return stack for GSB instructions
-here, and the current program line. 
+here, and the current program line.
 </dd>
 
         <dt id="ProgramOperation">
@@ -272,7 +342,20 @@ here, and the current program line.
 
 </dt>
 <dd>
-  The model's view of an operation. 
+  The model's view of an operation.  This is extended by the controller's
+Operation class.  The parts of Operation that are relevant to the model
+are lifted into the model class ProgramOperation so that Model doesn't
+depend on a controller class.  Model is parameterized by ProgramOperation
+so that the controller can refer to members of Operation that are logically
+part of the controller.
+</dd>
+
+        <dt id="RegisterReadArg">
+  <span class="name "><a href="../model/RegisterReadArg-class.html">RegisterReadArg</a></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
         <dt id="Registers">
@@ -282,7 +365,23 @@ here, and the current program line.
 <dd>
   A representation of the available memory as registers.  "Available memory"
 is what's left over of the 406 nybble data store after the program's
-storage is deducted. 
+storage is deducted.
+</dd>
+
+        <dt id="RegisterWriteArg">
+  <span class="name "><a href="../model/RegisterWriteArg-class.html">RegisterWriteArg</a></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+        <dt id="SciFloatFormatter">
+  <span class="name "><a href="../model/SciFloatFormatter-class.html">SciFloatFormatter</a></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
         <dt id="Settings">
@@ -290,7 +389,7 @@ storage is deducted.
 
 </dt>
 <dd>
-  User settings that control the calculator's appearance or behavior 
+  User settings that control the calculator's appearance or behavior
 </dd>
 
         <dt id="ShiftKey">
@@ -298,7 +397,7 @@ storage is deducted.
 
 </dt>
 <dd>
-  The state of which shift key was last pressed, if any. 
+  The state of which shift key was last pressed, if any.
 </dd>
 
         <dt id="SignMode">
@@ -306,7 +405,15 @@ storage is deducted.
 
 </dt>
 <dd>
-   
+  
+</dd>
+
+        <dt id="TrigMode">
+  <span class="name "><a href="../model/TrigMode-class.html">TrigMode</a></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
         <dt id="Value">
@@ -314,7 +421,7 @@ storage is deducted.
 
 </dt>
 <dd>
-  Immutable calculator value <a href="../model/Value-class.html">[...]</a>
+  Immutable calculator value
 </dd>
 
       </dl>
@@ -332,7 +439,7 @@ storage is deducted.
   Superclass for things that can be selected based on whether the f or
 g key, or neither, has been pressed.  See ShiftKey.select.  It's a
 little like the Visitor pattern - a tyepsafe way of avoiding a switch
-statement on the shift key. 
+statement on the shift key.
 </dd>
 
       </dl>
@@ -342,38 +449,118 @@ statement on the shift key.
 
 
 
+    <section class="summary offset-anchor" id="enums">
+      <h2>Enums</h2>
 
+      <dl>
+        <dt id="OrientationSetting">
+  <span class="name "><a href="../model/OrientationSetting.html">OrientationSetting</a></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="typedefs">
+      <h2>Typedefs</h2>
+
+      <dl>
+          
+  <dt id="OpInitFunction" class="callable">
+    <span class="name"><a href="../model/OpInitFunction.html">OpInitFunction</a></span><span class="signature">
+      <span class="returntype parameter">= void Function<span class="signature">(<span class="parameter" id="param-resolved"><span class="type-annotation"><a href="../model/ArgDone-class.html">ArgDone</a></span> <span class="parameter-name">resolved</span>, </span><span class="parameter" id="param-arg">{<span>required</span> <span class="type-annotation"><a href="../model/ProgramOperation-class.html">ProgramOperation</a>?</span> <span class="parameter-name">arg</span>, </span><span class="parameter" id="param-argDot"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">argDot</span>, </span><span class="parameter" id="param-shift"><span>required</span> <span class="type-annotation"><a href="../model/ProgramOperation-class.html">ProgramOperation</a>?</span> <span class="parameter-name">shift</span>, </span><span class="parameter" id="param-userMode"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">userMode</span>}</span>)</span></span>
+    </span>
+    
+
+  </dt>
+  <dd>
+    
+    
+
+  </dd>
+
+      </dl>
+    </section>
 
 
   </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li class="self-crumb">model library</li>
+</ol>
+
+
+    <h5><span class="package-name">jrpn</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../m_complex/m_complex-library.html">complex</a></li>
+      <li><a href="../controller/controller-library.html">controller</a></li>
+      <li><a href="../controller.operations/controller.operations-library.html">controller.operations</a></li>
+      <li><a href="../controller.states/controller.states-library.html">controller.states</a></li>
+      <li><a href="../generic_main/generic_main-library.html">generic_main</a></li>
+      <li><a href="../model/model-library.html">model</a></li>
+      <li><a href="../view.back_panel/view.back_panel-library.html">view.back_panel</a></li>
+      <li><a href="../view.buttons/view.buttons-library.html">view.buttons</a></li>
+      <li><a href="../view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
+      <li><a href="../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
+</ol>
+
+  </div>
 
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
     <h5>model library</h5>
     <ol>
   <li class="section-title"><a href="../model/model-library.html#classes">Classes</a></li>
+  <li><a href="../model/Arg-class.html">Arg</a></li>
+  <li><a href="../model/ArgAlternates-class.html">ArgAlternates</a></li>
+  <li><a href="../model/ArgDone-class.html">ArgDone</a></li>
   <li><a href="../model/CalculatorError-class.html">CalculatorError</a></li>
   <li><a href="../model/DebugLog-class.html">DebugLog</a></li>
+  <li><a href="../model/DigitArg-class.html">DigitArg</a></li>
   <li><a href="../model/DisplayMode-class.html">DisplayMode</a></li>
   <li><a href="../model/DisplayModel-class.html">DisplayModel</a></li>
   <li><a href="../model/DisplayModeSelector-class.html">DisplayModeSelector</a></li>
   <li><a href="../model/DoubleWordStatus-class.html">DoubleWordStatus</a></li>
+  <li><a href="../model/FixFloatFormatter-class.html">FixFloatFormatter</a></li>
+  <li><a href="../model/FloatFormatter-class.html">FloatFormatter</a></li>
   <li><a href="../model/IntegerDisplayMode-class.html">IntegerDisplayMode</a></li>
   <li><a href="../model/IntegerSignMode-class.html">IntegerSignMode</a></li>
-  <li><a href="../model/Key-class.html">Key</a></li>
+  <li><a href="../model/KeyArg-class.html">KeyArg</a></li>
+  <li><a href="../model/KeysArg-class.html">KeysArg</a></li>
+  <li><a href="../model/LabelArg-class.html">LabelArg</a></li>
   <li><a href="../model/LcdContents-class.html">LcdContents</a></li>
   <li><a href="../model/Memory-class.html">Memory</a></li>
+  <li><a href="../model/MemoryPolicy-class.html">MemoryPolicy</a></li>
+  <li><a href="../model/MKey-class.html">MKey</a></li>
+  <li><a href="../model/MKeyExtensionOp-class.html">MKeyExtensionOp</a></li>
   <li><a href="../model/Model-class.html">Model</a></li>
   <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
+  <li><a href="../model/NumStatus68-class.html">NumStatus68</a></li>
   <li><a href="../model/Observable-class.html">Observable</a></li>
   <li><a href="../model/OperationMap-class.html">OperationMap</a></li>
   <li><a href="../model/ProgramInstruction-class.html">ProgramInstruction</a></li>
   <li><a href="../model/ProgramListener-class.html">ProgramListener</a></li>
   <li><a href="../model/ProgramMemory-class.html">ProgramMemory</a></li>
   <li><a href="../model/ProgramOperation-class.html">ProgramOperation</a></li>
+  <li><a href="../model/RegisterReadArg-class.html">RegisterReadArg</a></li>
   <li><a href="../model/Registers-class.html">Registers</a></li>
+  <li><a href="../model/RegisterWriteArg-class.html">RegisterWriteArg</a></li>
+  <li><a href="../model/SciFloatFormatter-class.html">SciFloatFormatter</a></li>
   <li><a href="../model/Settings-class.html">Settings</a></li>
   <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
   <li><a href="../model/SignMode-class.html">SignMode</a></li>
+  <li><a href="../model/TrigMode-class.html">TrigMode</a></li>
   <li><a href="../model/Value-class.html">Value</a></li>
 
 
@@ -383,7 +570,11 @@ statement on the shift key.
 
 
 
+  <li class="section-title"><a href="../model/model-library.html#enums">Enums</a></li>
+  <li><a href="../model/OrientationSetting.html">OrientationSetting</a></li>
 
+  <li class="section-title"><a href="../model/model-library.html#typedefs">Typedefs</a></li>
+  <li><a href="../model/OpInitFunction.html">OpInitFunction</a></li>
 
 </ol>
 
@@ -394,15 +585,16 @@ statement on the shift key.
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../static-assets/highlight.pack.js"></script>
-<script src="../static-assets/script.js"></script>
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
 
 
 

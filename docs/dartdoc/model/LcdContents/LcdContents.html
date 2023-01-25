@@ -4,24 +4,24 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the LcdContents constructor from the Class LcdContents class from the model library, for the Dart programming language.">
-  <title>LcdContents constructor - LcdContents class - model library - Dart API</title>
+  <meta name="description" content="API docs for the LcdContents constructor from Class LcdContents from the model library, for the Dart programming language.">
+  <title>LcdContents constructor - LcdContents - model library - Dart API</title>
 
 
   
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,6 +42,61 @@
 <main>
 
 
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-constructor">LcdContents</span> constructor 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      <span class="name ">LcdContents</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-mainText">{<span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">mainText</span>, </span></li>
+<li><span class="parameter" id="-param-shift"><span>required</span> <span class="type-annotation"><a href="../../model/ShiftKey-class.html">ShiftKey</a></span> <span class="parameter-name">shift</span>, </span></li>
+<li><span class="parameter" id="-param-sign"><span>required</span> <span class="type-annotation"><a href="../../model/SignMode-class.html">SignMode</a></span> <span class="parameter-name">sign</span>, </span></li>
+<li><span class="parameter" id="-param-bits"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">bits</span>, </span></li>
+<li><span class="parameter" id="-param-cFlag"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">cFlag</span>, </span></li>
+<li><span class="parameter" id="-param-complexFlag"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">complexFlag</span>, </span></li>
+<li><span class="parameter" id="-param-gFlag"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">gFlag</span>, </span></li>
+<li><span class="parameter" id="-param-prgmFlag"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">prgmFlag</span>, </span></li>
+<li><span class="parameter" id="-param-rightJustify"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">rightJustify</span>, </span></li>
+<li><span class="parameter" id="-param-windowEnabled"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">windowEnabled</span>, </span></li>
+<li><span class="parameter" id="-param-euroComma"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">euroComma</span>, </span></li>
+<li><span class="parameter" id="-param-hideComplement"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">hideComplement</span>, </span></li>
+<li><span class="parameter" id="-param-wordSize"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">wordSize</span>, </span></li>
+<li><span class="parameter" id="-param-trigMode"><span>required</span> <span class="type-annotation"><a href="../../model/TrigMode-class.html">TrigMode</a></span> <span class="parameter-name">trigMode</span>, </span></li>
+<li><span class="parameter" id="-param-userMode"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">userMode</span>, </span></li>
+<li><span class="parameter" id="-param-extraShift"><span class="type-annotation"><a href="../../model/ShiftKey-class.html">ShiftKey</a>?</span> <span class="parameter-name">extraShift</span>}</span></li>
+</ol>)
+    </section>
+
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">LcdContents(
+    {required this.mainText,
+    required this.shift,
+    required this.sign,
+    required this.bits,
+    required this.cFlag,
+    required this.complexFlag,
+    required this.gFlag,
+    required this.prgmFlag,
+    required this.rightJustify,
+    required this.windowEnabled,
+    required this.euroComma,
+    required this.hideComplement,
+    required this.wordSize,
+    required this.trigMode,
+    required this.userMode,
+    this.extraShift})
+    : blank = false;</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
   <form class="search-sidebar" role="search">
@@ -60,10 +115,10 @@
     <h5>LcdContents class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../model/LcdContents-class.html#constructors">Constructors</a></li>
-    <li><a href="../../model/LcdContents/LcdContents.html">LcdContents</a></li>
-    <li><a href="../../model/LcdContents/LcdContents.blank.html">blank</a></li>
-    <li><a href="../../model/LcdContents/LcdContents.powerOn.html">powerOn</a></li>
+        <li class="section-title"><a href="../../model/LcdContents-class.html#constructors">Constructors</a></li>
+          <li><a href="../../model/LcdContents/LcdContents.html">LcdContents</a></li>
+          <li><a href="../../model/LcdContents/LcdContents.blank.html">blank</a></li>
+          <li><a href="../../model/LcdContents/LcdContents.powerOn.html">powerOn</a></li>
 
 
     <li class="section-title">
@@ -72,6 +127,7 @@
     <li><a href="../../model/LcdContents/bits.html">bits</a></li>
     <li><a href="../../model/LcdContents/blank.html">blank</a></li>
     <li><a href="../../model/LcdContents/cFlag.html">cFlag</a></li>
+    <li><a href="../../model/LcdContents/complexFlag.html">complexFlag</a></li>
     <li><a href="../../model/LcdContents/euroComma.html">euroComma</a></li>
     <li><a href="../../model/LcdContents/extraShift.html">extraShift</a></li>
     <li><a href="../../model/LcdContents/gFlag.html">gFlag</a></li>
@@ -83,6 +139,8 @@
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
     <li><a href="../../model/LcdContents/shift.html">shift</a></li>
     <li><a href="../../model/LcdContents/sign.html">sign</a></li>
+    <li><a href="../../model/LcdContents/trigMode.html">trigMode</a></li>
+    <li><a href="../../model/LcdContents/userMode.html">userMode</a></li>
     <li><a href="../../model/LcdContents/windowEnabled.html">windowEnabled</a></li>
     <li><a href="../../model/LcdContents/wordSize.html">wordSize</a></li>
 
@@ -101,55 +159,6 @@
 
   </div><!--/.sidebar-offcanvas-left-->
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-constructor">LcdContents</span> constructor 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-    <section class="multi-line-signature">
-      <span class="name ">LcdContents</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-mainText">{<span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">mainText</span>, </span></li>
-<li><span class="parameter" id="-param-shift"><span>required</span> <span class="type-annotation"><a href="../../model/ShiftKey-class.html">ShiftKey</a></span> <span class="parameter-name">shift</span>, </span></li>
-<li><span class="parameter" id="-param-sign"><span>required</span> <span class="type-annotation"><a href="../../model/SignMode-class.html">SignMode</a></span> <span class="parameter-name">sign</span>, </span></li>
-<li><span class="parameter" id="-param-bits"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">bits</span>, </span></li>
-<li><span class="parameter" id="-param-cFlag"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">cFlag</span>, </span></li>
-<li><span class="parameter" id="-param-gFlag"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">gFlag</span>, </span></li>
-<li><span class="parameter" id="-param-prgmFlag"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">prgmFlag</span>, </span></li>
-<li><span class="parameter" id="-param-rightJustify"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">rightJustify</span>, </span></li>
-<li><span class="parameter" id="-param-windowEnabled"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">windowEnabled</span>, </span></li>
-<li><span class="parameter" id="-param-euroComma"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">euroComma</span>, </span></li>
-<li><span class="parameter" id="-param-hideComplement"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">hideComplement</span>, </span></li>
-<li><span class="parameter" id="-param-wordSize"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">wordSize</span>, </span></li>
-<li><span class="parameter" id="-param-extraShift"><span class="type-annotation"><a href="../../model/ShiftKey-class.html">ShiftKey</a>?</span> <span class="parameter-name">extraShift</span>}</span></li>
-</ol>)
-    </section>
-
-    
-
-
-    
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">LcdContents(
-    {required this.mainText,
-    required this.shift,
-    required this.sign,
-    required this.bits,
-    required this.cFlag,
-    required this.gFlag,
-    required this.prgmFlag,
-    required this.rightJustify,
-    required this.windowEnabled,
-    required this.euroComma,
-    required this.hideComplement,
-    required this.wordSize,
-    this.extraShift})
-    : blank = false;</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -158,15 +167,16 @@
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

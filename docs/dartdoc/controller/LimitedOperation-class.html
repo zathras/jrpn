@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../static-assets/github.css">
-  <link rel="stylesheet" href="../static-assets/styles.css">
-  <link rel="icon" href="../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../"
-      data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -40,52 +40,6 @@
 
 <main>
 
-
-  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
-    <header id="header-search-sidebar" class="hidden-l">
-  <form class="search-sidebar" role="search">
-    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
-  </form>
-</header>
-
-<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
-  <li><a href="../index.html">jrpn</a></li>
-  <li><a href="../controller/controller-library.html">controller</a></li>
-  <li class="self-crumb">LimitedOperation class</li>
-</ol>
-
-
-    <h5>controller library</h5>
-    <ol>
-  <li class="section-title"><a href="../controller/controller-library.html#classes">Classes</a></li>
-  <li><a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></li>
-  <li><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></li>
-  <li><a href="../controller/Controller-class.html">Controller</a></li>
-  <li><a href="../controller/FloatKeyArg-class.html">FloatKeyArg</a></li>
-  <li><a href="../controller/GosubOperationArg-class.html">GosubOperationArg</a></li>
-  <li><a href="../controller/KeyboardController-class.html">KeyboardController</a></li>
-  <li><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></li>
-  <li><a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></li>
-  <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
-  <li><a href="../controller/NumberEntry-class.html">NumberEntry</a></li>
-  <li><a href="../controller/Operation-class.html">Operation</a></li>
-  <li><a href="../controller/OperationArg-class.html">OperationArg</a></li>
-  <li><a href="../controller/RealController-class.html">RealController</a></li>
-  <li><a href="../controller/RunningController-class.html">RunningController</a></li>
-  <li><a href="../controller/SelfTests-class.html">SelfTests</a></li>
-  <li><a href="../controller/StackLift-class.html">StackLift</a></li>
-  <li><a href="../controller/StackLiftEnabledUser-class.html">StackLiftEnabledUser</a></li>
-
-
-
-
-
-
-
-
-</ol>
-
-  </div>
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
@@ -114,53 +68,98 @@ operations, in essence, take an operation as argument.</p>
 
     <section>
       <dl class="dl-horizontal">
-        <dt>Inheritance</dt>
-        <dd><ul class="gt-separated dark clazz-relationships">
-          <li><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></li>
-          <li><a href="../model/ProgramOperation-class.html">ProgramOperation</a></li>
-          <li><a href="../controller/Operation-class.html">Operation</a></li>
-          <li>LimitedOperation</li>
+        
+  <dt>Inheritance</dt>
+  <dd>
+    <ul class="gt-separated dark clazz-relationships">
+      <li><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></li>
+        <li><a href="../model/ProgramOperation-class.html">ProgramOperation</a></li>
+        <li><a href="../controller/Operation-class.html">Operation</a></li>
+        <li><a href="../controller/NoArgOperation-class.html">NoArgOperation</a></li>
+      <li>LimitedOperation</li>
+    </ul>
+  </dd>
+
+        
+  <dt>Implemented types</dt>
+  <dd>
+    <ul class="comma-separated clazz-relationships">
+        <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
+    </ul>
+  </dd>
+        
+
+        <dt>Implementers</dt>
+        <dd><ul class="comma-separated clazz-relationships">
+          <li><a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></li>
         </ul></dd>
 
-        <dt>Implemented types</dt>
-        <dd>
-          <ul class="comma-separated clazz-relationships">
-            <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
-          </ul>
-        </dd>
 
-
-
-
+        
       </dl>
     </section>
 
-    <section class="summary offset-anchor" id="constructors">
-      <h2>Constructors</h2>
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
 
-      <dl class="constructor-summary-list">
+    <dl class="constructor-summary-list">
         <dt id="LimitedOperation" class="callable">
-          <span class="name"><a href="../controller/LimitedOperation/LimitedOperation.html">LimitedOperation</a></span><span class="signature">(<span class="parameter" id="-param-pressed">{<span>required</span> <span class="type-annotation">void</span> <span class="parameter-name">pressed</span>(<span class="parameter" id="param-"><span class="type-annotation"><a href="../controller.states/LimitedState-class.html">LimitedState</a></span></span>), </span><span class="parameter" id="-param-name"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span>}</span>)</span>
+          <span class="name"><a href="../controller/LimitedOperation/LimitedOperation.html">LimitedOperation</a></span><span class="signature">(<span class="parameter" id="-param-pressed">{<span>required</span> <span class="type-annotation">void</span> <span class="parameter-name">pressed</span>(<span class="parameter" id="param-"><span class="type-annotation"><a href="../controller.states/LimitedState-class.html">LimitedState</a></span></span>), </span><span class="parameter" id="-param-name"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span>, </span><span class="parameter" id="-param-endsDigitEntry"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">endsDigitEntry</span> = <span class="default-value">true</span>}</span>)</span>
         </dt>
         <dd>
-           
+          
         </dd>
-      </dl>
-    </section>
+    </dl>
+  </section>
 
     <section class="summary offset-anchor" id="instance-properties">
       <h2>Properties</h2>
 
       <dl class="properties">
-        <dt id="arg" class="property">
-  <span class="name"><a href="../controller/LimitedOperation/arg.html">arg</a></span>
-  <span class="signature">&#8594; <a href="../controller/OperationArg-class.html">OperationArg</a>?</span> 
+        <dt id="arg" class="property inherited">
+  <span class="name"><a href="../controller/NoArgOperation/arg.html">arg</a></span>
+  <span class="signature">&#8594; <a href="../model/Arg-class.html">Arg</a></span> 
+
+</dt>
+<dd class="inherited">
+  A description of this arguments operation, or ArgDone if there is none.
+For example, the STO operation has an argument to indicate which register
+to store to.
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="complexCalc" class="property">
+  <span class="name"><a href="../controller/LimitedOperation/complexCalc.html">complexCalc</a></span>
+  <span class="signature">&#8594; (void Function?<span class="signature">(<span class="parameter" id="param-m"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">m</span></span>)</span>?)</span> 
 
 </dt>
 <dd>
-  A description of an argument, if there is one.  For example, the STO
-operation has an argument to indicate which register to store to. 
+  The calculation performed when the calculator is in complex mode.
   <div class="features">read-only, override</div>
+
+</dd>
+
+        <dt id="debugLogId" class="property inherited">
+  <span class="name"><a href="../model/ProgramOperation/debugLogId.html">debugLogId</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features">late, final, inherited</div>
+
+</dd>
+
+        <dt id="endsDigitEntry" class="property">
+  <span class="name"><a href="../controller/LimitedOperation/endsDigitEntry.html">endsDigitEntry</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features">final</div>
 
 </dd>
 
@@ -170,7 +169,7 @@ operation has an argument to indicate which register to store to.
 
 </dt>
 <dd>
-  The calculation performed when the calculator is in floating-point mode. 
+  The calculation performed when the calculator is in floating-point mode.
   <div class="features">read-only, override</div>
 
 </dd>
@@ -181,7 +180,7 @@ operation has an argument to indicate which register to store to.
 
 </dt>
 <dd class="inherited">
-  The hash code for this object. <a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">[...]</a>
+  The hash code for this object.
   <div class="features">read-only, inherited</div>
 
 </dd>
@@ -192,18 +191,18 @@ operation has an argument to indicate which register to store to.
 
 </dt>
 <dd>
-  The calculation performed when the calculator is in integer mode. 
+  The calculation performed when the calculator is in integer mode.
   <div class="features">read-only, override</div>
 
 </dd>
 
-        <dt id="maxArg" class="property inherited">
-  <span class="name"><a href="../controller/Operation/maxArg.html">maxArg</a></span>
+        <dt id="maxOneByteOpcodes" class="property inherited">
+  <span class="name"><a href="../model/ProgramOperation/maxOneByteOpcodes.html">maxOneByteOpcodes</a></span>
   <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
 
 </dt>
 <dd class="inherited">
-  0 if this operation doesn't take an argument 
+  
   <div class="features">read-only, inherited</div>
 
 </dd>
@@ -214,7 +213,7 @@ operation has an argument to indicate which register to store to.
 
 </dt>
 <dd class="inherited">
-   
+  Human-readable name for program listing
   <div class="features">final, inherited</div>
 
 </dd>
@@ -225,20 +224,66 @@ operation has an argument to indicate which register to store to.
 
 </dt>
 <dd class="inherited">
-  Give the numeric value of a number key.
-cf. tests.dart, SelfTests.testNumbers(). 
+  Give the numeric value of a number key, or one of the 15C's
+letters (which are 20..24).
+cf. tests.dart, SelfTests.testNumbers().
   <div class="features">read-only, inherited</div>
 
 </dd>
 
-        <dt id="programDisplay" class="property inherited">
-  <span class="name"><a href="../model/ProgramOperation/programDisplay.html">programDisplay</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> 
+        <dt id="opcode" class="property inherited">
+  <span class="name"><a href="../controller/NoArgOperation/opcode.html">opcode</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
 
 </dt>
 <dd class="inherited">
-   
+  
+  <div class="features">late, final, inherited</div>
+
+</dd>
+
+        <dt id="programDisplay" class="property inherited">
+  <span class="name"><a href="../controller/NoArgOperation/programDisplay.html">programDisplay</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> 
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features">late, final, inherited</div>
+
+</dd>
+
+        <dt id="programListing" class="property inherited">
+  <span class="name"><a href="../controller/NoArgOperation/programListing.html">programListing</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> 
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features">late, final, inherited</div>
+
+</dd>
+
+        <dt id="programListingArgName" class="property inherited">
+  <span class="name"><a href="../model/ProgramOperation/programListingArgName.html">programListingArgName</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> 
+
+</dt>
+<dd class="inherited">
+  Name for this key as an arg in the program listing, if other than the
+default.
   <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="rcName" class="property inherited">
+  <span class="name"><a href="../model/ProgramOperation/rcName.html">rcName</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> 
+
+</dt>
+<dd class="inherited">
+  The row/column "name", which for digits looks like " 1".
+  <div class="features">late, final, inherited</div>
 
 </dd>
 
@@ -248,7 +293,7 @@ cf. tests.dart, SelfTests.testNumbers().
 
 </dt>
 <dd class="inherited">
-  A representation of the runtime type of the object. 
+  A representation of the runtime type of the object.
   <div class="features">read-only, inherited</div>
 
 </dd>
@@ -256,19 +301,102 @@ cf. tests.dart, SelfTests.testNumbers().
       </dl>
     </section>
 
-    <section class="summary offset-anchor" id="instance-methods">
-      <h2>Methods</h2>
-      <dl class="callables">
-        <dt id="calcDefinedFor" class="callable inherited">
-  <span class="name"><a href="../controller/Operation/calcDefinedFor.html">calcDefinedFor</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="calcDefinedFor-param-controller"><span class="type-annotation"><a href="../controller/Controller-class.html">Controller</a></span> <span class="parameter-name">controller</span>, </span><span class="parameter" id="calcDefinedFor-param-calc"><span class="type-annotation">T?</span> <span class="parameter-name">calc</span></span>)
-    <span class="returntype parameter">&#8594; T?</span>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="beforeCalculate" class="callable inherited">
+  <span class="name"><a href="../controller/Operation/beforeCalculate.html">beforeCalculate</a></span><span class="signature">(<wbr><span class="parameter" id="beforeCalculate-param-resting"><span class="type-annotation"><a href="../controller.states/Resting-class.html">Resting</a></span> <span class="parameter-name">resting</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="calcDisabled" class="callable inherited">
+  <span class="name"><a href="../controller/Operation/calcDisabled.html">calcDisabled</a></span><span class="signature">(<wbr><span class="parameter" id="calcDisabled-param-controller"><span class="type-annotation"><a href="../controller/Controller-class.html">Controller</a></span> <span class="parameter-name">controller</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
   </span>
   
 
 </dt>
 <dd class="inherited">
   By default, operations, if present, work for all kinds of controllers,
-but cf. <a href="../controller/BranchingOperation-class.html">BranchingOperation</a> 
+but cf. <a href="../controller/BranchingOperation-class.html">BranchingOperation</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="getCalculation" class="callable">
+  <span class="name"><a href="../controller/LimitedOperation/getCalculation.html">getCalculation</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="getCalculation-param-m"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">m</span>, </span><span class="parameter" id="getCalculation-param-selector"><span class="type-annotation"><a href="../model/DisplayModeSelector-class.html">DisplayModeSelector</a><span class="signature">&lt;<wbr><span class="type-parameter">(void Function?<span class="signature">(<span class="parameter" id="param-"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span></span>)</span>?)</span>, <span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">selector</span></span>)
+    <span class="returntype parameter">&#8594; (void Function?<span class="signature">(<span class="parameter" id="param-"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span></span>)</span>?)</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features">override</div>
+
+</dd>
+
+        <dt id="handleOpBeforeCalculate" class="callable inherited">
+  <span class="name"><a href="../controller/NoArgOperation/handleOpBeforeCalculate.html">handleOpBeforeCalculate</a></span><span class="signature">(<wbr><span class="parameter" id="handleOpBeforeCalculate-param-m"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">m</span>, </span><span class="parameter" id="handleOpBeforeCalculate-param-opBeforeCalculate"><span class="type-annotation">void</span> <span class="parameter-name">opBeforeCalculate</span>()</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Execute the beforeCalculate function of the operation.  Normally it
+just executes, but some 15C operations can be deferred; this method
+can be overridden to do that.
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="init" class="callable inherited">
+  <span class="name"><a href="../controller/NoArgOperation/init.html">init</a></span><span class="signature">(<wbr><span class="parameter" id="init-param-registerBase"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">registerBase</span>, </span><span class="parameter" id="init-param-f">{<span>required</span> <span class="type-annotation"><a href="../model/OpInitFunction.html">OpInitFunction</a></span> <span class="parameter-name">f</span>, </span><span class="parameter" id="init-param-shift"><span>required</span> <span class="type-annotation"><a href="../model/ProgramOperation-class.html">ProgramOperation</a>?</span> <span class="parameter-name">shift</span>, </span><span class="parameter" id="init-param-argDot"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">argDot</span>, </span><span class="parameter" id="init-param-arg"><span>required</span> <span class="type-annotation"><a href="../model/ProgramOperation-class.html">ProgramOperation</a>?</span> <span class="parameter-name">arg</span>, </span><span class="parameter" id="init-param-userMode"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">userMode</span>}</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="makeInputState" class="callable inherited">
+  <span class="name"><a href="../controller/Operation/makeInputState.html">makeInputState</a></span><span class="signature">(<wbr><span class="parameter" id="makeInputState-param-arg"><span class="type-annotation"><a href="../model/Arg-class.html">Arg</a></span> <span class="parameter-name">arg</span>, </span><span class="parameter" id="makeInputState-param-c"><span class="type-annotation"><a href="../controller/Controller-class.html">Controller</a></span> <span class="parameter-name">c</span>, </span><span class="parameter" id="makeInputState-param-fromState"><span class="type-annotation"><a href="../controller.states/LimitedState-class.html">LimitedState</a></span> <span class="parameter-name">fromState</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../controller.states/ControllerState-class.html">ControllerState</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="matches" class="callable inherited">
+  <span class="name"><a href="../controller/NoArgOperation/matches.html">matches</a></span><span class="signature">(<wbr><span class="parameter" id="matches-param-key"><span class="type-annotation"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span> <span class="parameter-name">key</span>, </span><span class="parameter" id="matches-param-userMode"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">userMode</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../model/Arg-class.html">Arg</a>?</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
   <div class="features">inherited</div>
 
 </dd>
@@ -281,7 +409,7 @@ but cf. <a href="../controller/BranchingOperation-class.html">BranchingOperation
 
 </dt>
 <dd class="inherited">
-  Invoked when a non-existent method or property is accessed. <a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">[...]</a>
+  Invoked when a non-existent method or property is accessed.
   <div class="features">inherited</div>
 
 </dd>
@@ -297,7 +425,7 @@ but cf. <a href="../controller/BranchingOperation-class.html">BranchingOperation
   Either enable or disable stack lift, if appropriate, after this
 operation's calculation is done.  This will not be called if this
 operation doesn't have a calculation (intCalc or floatCalc on itself,
-or on its argument). 
+or on its argument).
   <div class="features">inherited</div>
 
 </dd>
@@ -310,7 +438,7 @@ or on its argument).
 
 </dt>
 <dd>
-  What to do when the key is pressed. 
+  What to do when the key is pressed.
   <div class="features">override</div>
 
 </dd>
@@ -323,17 +451,19 @@ or on its argument).
 
 </dt>
 <dd class="inherited">
-  A string representation of this object. <a href="../controller/Operation/toString.html">[...]</a>
+  A string representation of this object.
   <div class="features">inherited</div>
 
 </dd>
 
-      </dl>
-    </section>
-
-    <section class="summary offset-anchor inherited" id="operators">
-      <h2>Operators</h2>
-      <dl class="callables">
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
         <dt id="operator ==" class="callable inherited">
   <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
@@ -342,41 +472,104 @@ or on its argument).
 
 </dt>
 <dd class="inherited">
-  The equality operator. <a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">[...]</a>
+  The equality operator.
   <div class="features">inherited</div>
 
 </dd>
 
-      </dl>
-    </section>
-
-
+    </dl>
+  </section>
+    
+    
+    
 
 
   </div> <!-- /.main-content -->
 
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li><a href="../controller/controller-library.html">controller</a></li>
+  <li class="self-crumb">LimitedOperation class</li>
+</ol>
+
+
+    <h5>controller library</h5>
+    <ol>
+  <li class="section-title"><a href="../controller/controller-library.html#classes">Classes</a></li>
+  <li><a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></li>
+  <li><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></li>
+  <li><a href="../controller/Controller-class.html">Controller</a></li>
+  <li><a href="../controller/GosubOperation-class.html">GosubOperation</a></li>
+  <li><a href="../controller/KeyboardController-class.html">KeyboardController</a></li>
+  <li><a href="../controller/LetterLabel-class.html">LetterLabel</a></li>
+  <li><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></li>
+  <li><a href="../controller/NoArgOperation-class.html">NoArgOperation</a></li>
+  <li><a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></li>
+  <li><a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></li>
+  <li><a href="../controller/NormalArgOperationWithBeforeCalc-class.html">NormalArgOperationWithBeforeCalc</a></li>
+  <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
+  <li><a href="../controller/NormalOperationOrLetter-class.html">NormalOperationOrLetter</a></li>
+  <li><a href="../controller/NumberEntry-class.html">NumberEntry</a></li>
+  <li><a href="../controller/Operation-class.html">Operation</a></li>
+  <li><a href="../controller/RealController-class.html">RealController</a></li>
+  <li><a href="../controller/RunningController-class.html">RunningController</a></li>
+  <li><a href="../controller/SelfTests-class.html">SelfTests</a></li>
+  <li><a href="../controller/StackLift-class.html">StackLift</a></li>
+  <li><a href="../controller/StackLiftEnabledUser-class.html">StackLiftEnabledUser</a></li>
+
+
+
+
+
+
+
+
+</ol>
+
+  </div>
+
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
     <ol>
 
-    <li class="section-title"><a href="../controller/LimitedOperation-class.html#constructors">Constructors</a></li>
-    <li><a href="../controller/LimitedOperation/LimitedOperation.html">LimitedOperation</a></li>
+        <li class="section-title"><a href="../controller/LimitedOperation-class.html#constructors">Constructors</a></li>
+          <li><a href="../controller/LimitedOperation/LimitedOperation.html">LimitedOperation</a></li>
 
 
     <li class="section-title">
       <a href="../controller/LimitedOperation-class.html#instance-properties">Properties</a>
     </li>
-    <li><a href="../controller/LimitedOperation/arg.html">arg</a></li>
+    <li class="inherited"><a href="../controller/NoArgOperation/arg.html">arg</a></li>
+    <li><a href="../controller/LimitedOperation/complexCalc.html">complexCalc</a></li>
+    <li class="inherited"><a href="../model/ProgramOperation/debugLogId.html">debugLogId</a></li>
+    <li><a href="../controller/LimitedOperation/endsDigitEntry.html">endsDigitEntry</a></li>
     <li><a href="../controller/LimitedOperation/floatCalc.html">floatCalc</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
     <li><a href="../controller/LimitedOperation/intCalc.html">intCalc</a></li>
-    <li class="inherited"><a href="../controller/Operation/maxArg.html">maxArg</a></li>
+    <li class="inherited"><a href="../model/ProgramOperation/maxOneByteOpcodes.html">maxOneByteOpcodes</a></li>
     <li class="inherited"><a href="../controller/Operation/name.html">name</a></li>
     <li class="inherited"><a href="../model/ProgramOperation/numericValue.html">numericValue</a></li>
-    <li class="inherited"><a href="../model/ProgramOperation/programDisplay.html">programDisplay</a></li>
+    <li class="inherited"><a href="../controller/NoArgOperation/opcode.html">opcode</a></li>
+    <li class="inherited"><a href="../controller/NoArgOperation/programDisplay.html">programDisplay</a></li>
+    <li class="inherited"><a href="../controller/NoArgOperation/programListing.html">programListing</a></li>
+    <li class="inherited"><a href="../model/ProgramOperation/programListingArgName.html">programListingArgName</a></li>
+    <li class="inherited"><a href="../model/ProgramOperation/rcName.html">rcName</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../controller/LimitedOperation-class.html#instance-methods">Methods</a></li>
-    <li class="inherited"><a href="../controller/Operation/calcDefinedFor.html">calcDefinedFor</a></li>
+    <li class="inherited"><a href="../controller/Operation/beforeCalculate.html">beforeCalculate</a></li>
+    <li class="inherited"><a href="../controller/Operation/calcDisabled.html">calcDisabled</a></li>
+    <li><a href="../controller/LimitedOperation/getCalculation.html">getCalculation</a></li>
+    <li class="inherited"><a href="../controller/NoArgOperation/handleOpBeforeCalculate.html">handleOpBeforeCalculate</a></li>
+    <li class="inherited"><a href="../controller/NoArgOperation/init.html">init</a></li>
+    <li class="inherited"><a href="../controller/Operation/makeInputState.html">makeInputState</a></li>
+    <li class="inherited"><a href="../controller/NoArgOperation/matches.html">matches</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../controller/Operation/possiblyAlterStackLift.html">possiblyAlterStackLift</a></li>
     <li><a href="../controller/LimitedOperation/pressed.html">pressed</a></li>
@@ -397,15 +590,16 @@ or on its argument).
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../static-assets/highlight.pack.js"></script>
-<script src="../static-assets/script.js"></script>
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
 
 
 

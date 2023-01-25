@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,6 +42,64 @@
 <main>
 
 
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">buildButtons</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>&gt;</span></span>
+<span class="name ">buildButtons</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="buildButtons-param-pos"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Rect-class.html">Rect</a></span> <span class="parameter-name">pos</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">List&lt;Widget&gt; buildButtons(Rect pos) {
+  double y = pos.top;
+  final result = List&lt;Widget&gt;.empty(growable: true);
+  final double bw = pos.width *
+      (width &#47; (numColumns * width + (numColumns - 1) * padRight));
+  final double tw = bw * (width + padRight) &#47; width;
+  final double bh = bw * height &#47; width;
+  &#47;&#47; Total height for each button, including any label
+  final double th = totalButtonHeight(pos.height, bh);
+
+  &#47;&#47; Add the upper yellow labels
+  y += addUpperGoldLabels(result, pos, th: th, tw: tw, bh: bh, bw: bw);
+
+  final buttons = controller.getButtonLayout(this, th, bh);
+  final List&lt;List&lt;CalculatorButton?&gt;&gt; rc = buttonLayout(buttons);
+  for (int i = 0; i &lt; rc.length; i++) {
+    double x = pos.left;
+    for (int j = 0; j &lt; rc[i].length; j++) {
+      final b = rc[i][j];
+      if (b != null) {
+        result.add(screen.box(Rect.fromLTWH(x, y, bw, bh), b));
+      }
+      x += tw;
+    }
+    y += th;
+  }
+  result.add(screen.box(
+      enterPos(pos, th: th, tw: tw, bh: bh, bw: bw), buttons.enter));
+
+  return result;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
   <form class="search-sidebar" role="search">
@@ -60,8 +118,8 @@
     <h5>ButtonFactory class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../view.buttons/ButtonFactory-class.html#constructors">Constructors</a></li>
-    <li><a href="../../view.buttons/ButtonFactory/ButtonFactory.html">ButtonFactory</a></li>
+        <li class="section-title"><a href="../../view.buttons/ButtonFactory-class.html#constructors">Constructors</a></li>
+          <li><a href="../../view.buttons/ButtonFactory/ButtonFactory.html">ButtonFactory</a></li>
 
 
     <li class="section-title">
@@ -117,64 +175,6 @@
 
   </div><!--/.sidebar-offcanvas-->
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-method">buildButtons</span> method 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-    <section class="multi-line-signature">
-      
-
-<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>&gt;</span></span>
-<span class="name ">buildButtons</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="buildButtons-param-pos"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Rect-class.html">Rect</a></span> <span class="parameter-name">pos</span></span></li>
-</ol>)
-
-      
-
-    </section>
-    
-
-
-    
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">List&lt;Widget&gt; buildButtons(Rect pos) {
-  double y = pos.top;
-  final result = List&lt;Widget&gt;.empty(growable: true);
-  final double bw = pos.width *
-      (width &#47; (numColumns * width + (numColumns - 1) * padRight));
-  final double tw = bw * (width + padRight) &#47; width;
-  final double bh = bw * height &#47; width;
-  &#47;&#47; Total height for each button, including any label
-  final double th = totalButtonHeight(pos.height, bh);
-
-  &#47;&#47; Add the upper yellow labels
-  y += addUpperGoldLabels(result, pos, th: th, tw: tw, bh: bh, bw: bw);
-
-  final buttons = _Buttons(this, th, bh);
-  final List&lt;List&lt;CalculatorButton?&gt;&gt; rc = buttonLayout(buttons);
-  for (int i = 0; i &lt; rc.length; i++) {
-    double x = pos.left;
-    for (int j = 0; j &lt; rc[i].length; j++) {
-      final b = rc[i][j];
-      if (b != null) {
-        result.add(screen.box(Rect.fromLTWH(x, y, bw, bh), b));
-      }
-      x += tw;
-    }
-    y += th;
-  }
-  result.add(screen.box(
-      enterPos(pos, th: th, tw: tw, bh: bh, bw: bw), buttons.enter));
-
-  return result;
-}</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -183,15 +183,16 @@
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

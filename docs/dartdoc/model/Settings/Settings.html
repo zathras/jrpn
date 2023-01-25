@@ -4,24 +4,24 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the Settings constructor from the Class Settings class from the model library, for the Dart programming language.">
-  <title>Settings constructor - Settings class - model library - Dart API</title>
+  <meta name="description" content="API docs for the Settings constructor from Class Settings from the model library, for the Dart programming language.">
+  <title>Settings constructor - Settings - model library - Dart API</title>
 
 
   
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,6 +42,32 @@
 <main>
 
 
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-constructor">Settings</span> constructor 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      <span class="name ">Settings</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-_model"><span class="type-annotation"><a href="../../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">_model</span></span></li>
+</ol>)
+    </section>
+
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Settings(this._model) {
+  menuEnabled.addObserver((_) =&gt; _model.needsSave = true);
+  showAccelerators.addObserver((_) =&gt; _model.needsSave = true);
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
   <form class="search-sidebar" role="search">
@@ -60,8 +86,8 @@
     <h5>Settings class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../model/Settings-class.html#constructors">Constructors</a></li>
-    <li><a href="../../model/Settings/Settings.html">Settings</a></li>
+        <li class="section-title"><a href="../../model/Settings-class.html#constructors">Constructors</a></li>
+          <li><a href="../../model/Settings/Settings.html">Settings</a></li>
 
 
     <li class="section-title">
@@ -70,11 +96,14 @@
     <li><a href="../../model/Settings/euroComma.html">euroComma</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
     <li><a href="../../model/Settings/hideComplement.html">hideComplement</a></li>
+    <li><a href="../../model/Settings/isMobilePlatform.html">isMobilePlatform</a></li>
     <li><a href="../../model/Settings/menuEnabled.html">menuEnabled</a></li>
     <li><a href="../../model/Settings/msPerInstruction.html">msPerInstruction</a></li>
+    <li><a href="../../model/Settings/orientation.html">orientation</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
     <li><a href="../../model/Settings/showAccelerators.html">showAccelerators</a></li>
     <li><a href="../../model/Settings/showWordSize.html">showWordSize</a></li>
+    <li><a href="../../model/Settings/systemOverlaysDisabled.html">systemOverlaysDisabled</a></li>
     <li><a href="../../model/Settings/traceProgramToStdout.html">traceProgramToStdout</a></li>
     <li><a href="../../model/Settings/windowEnabled.html">windowEnabled</a></li>
 
@@ -94,32 +123,6 @@
 
   </div><!--/.sidebar-offcanvas-left-->
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-constructor">Settings</span> constructor 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-    <section class="multi-line-signature">
-      <span class="name ">Settings</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-_model"><span class="type-annotation"><a href="../../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">_model</span></span></li>
-</ol>)
-    </section>
-
-    
-
-
-    
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Settings(this._model) {
-  menuEnabled.addObserver((_) =&gt; _model._needsSave = true);
-  showAccelerators.addObserver((_) =&gt; _model._needsSave = true);
-}</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -128,15 +131,16 @@
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

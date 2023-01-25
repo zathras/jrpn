@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,6 +42,69 @@
 <main>
 
 
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">update</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype">void</span>
+<span class="name ">update</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="update-param-flash">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">flash</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="update-param-blink"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">blink</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="update-param-disableWindow"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disableWindow</span> = <span class="default-value">false</span>}</span></li>
+</ol>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">void update(
+    {bool flash = false, bool blink = false, bool disableWindow = false}) {
+  if (ignoreUpdates) {
+    return;
+  }
+  final LcdContents c = model._newLcdContents(disableWindow: disableWindow);
+  if (blink || model.errorBlink) {
+    bool on = true;
+    final blank = LcdContents.blank();
+    final Duration d;
+    if (blink) {
+      d = const Duration(milliseconds: 400);
+    } else {
+      d = const Duration(milliseconds: 200);
+    }
+
+    final t = Timer.periodic(d, (_) {
+      on = !on;
+      show(on ? c : blank);
+    });
+    c._myTimer = t;
+    blank._myTimer = t;
+    show(c);
+  } else if (flash) {
+    final t = Timer(const Duration(milliseconds: 40), () {
+      show(c);
+    });
+    c._myTimer = t;
+    show(LcdContents.blank().._myTimer = t);
+  } else {
+    c._myTimer = null;
+    show(c);
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
   <form class="search-sidebar" role="search">
@@ -60,8 +123,8 @@
     <h5>DisplayModel class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../model/DisplayModel-class.html#constructors">Constructors</a></li>
-    <li><a href="../../model/DisplayModel/DisplayModel.html">DisplayModel</a></li>
+        <li class="section-title"><a href="../../model/DisplayModel-class.html#constructors">Constructors</a></li>
+          <li><a href="../../model/DisplayModel/DisplayModel.html">DisplayModel</a></li>
 
 
     <li class="section-title">
@@ -95,62 +158,6 @@
 
   </div><!--/.sidebar-offcanvas-->
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-method">update</span> method 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-    <section class="multi-line-signature">
-      
-
-<span class="returntype">void</span>
-<span class="name ">update</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="update-param-flash">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">flash</span> = <span class="default-value">false</span>, </span></li>
-<li><span class="parameter" id="update-param-blink"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">blink</span> = <span class="default-value">false</span>, </span></li>
-<li><span class="parameter" id="update-param-disableWindow"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disableWindow</span> = <span class="default-value">false</span>}</span></li>
-</ol>)
-
-      
-
-    </section>
-    
-
-
-    
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void update(
-    {bool flash = false, bool blink = false, bool disableWindow = false}) {
-  if (ignoreUpdates) {
-    return;
-  }
-  final LcdContents c = model._newLcdContents(disableWindow: disableWindow);
-  if (flash) {
-    final t = Timer(Duration(milliseconds: 40), () {
-      show(c);
-    });
-    c._myTimer = t;
-    show(LcdContents.blank().._myTimer = t);
-  } else if (blink) {
-    bool on = true;
-    final blank = LcdContents.blank();
-    final t = Timer.periodic(Duration(milliseconds: 400), (_) {
-      on = !on;
-      show(on ? c : blank);
-    });
-    c._myTimer = t;
-    blank._myTimer = t;
-    show(c);
-  } else {
-    c._myTimer = null;
-    show(c);
-  }
-}</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -159,15 +166,16 @@
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

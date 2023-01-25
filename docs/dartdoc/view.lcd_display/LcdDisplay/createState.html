@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,6 +42,54 @@
 <main>
 
 
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">createState</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<div>
+  <ol class="annotation-list">
+    <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
+  </ol>
+</div>
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/widgets/State-class.html">State</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../view.lcd_display/LcdDisplay-class.html">LcdDisplay</a></span>&gt;</span></span>
+<span class="name ">createState</span>(<wbr>)
+
+      <div class="features">override</div>
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Creates the mutable state for this widget at a given location in the tree.</p>
+<p>Subclasses should override this method to return a newly created
+instance of their associated <a href="https://api.flutter.dev/flutter/widgets/State-class.html">State</a> subclass:</p>
+<pre class="language-dart"><code class="language-dart">@override
+State&lt;MyWidget&gt; createState() =&gt; _MyWidgetState();
+</code></pre>
+<p>The framework can call this method multiple times over the lifetime of
+a <code>StatefulWidget</code>. For example, if the widget is inserted into the tree
+in multiple locations, the framework will create a separate <a href="https://api.flutter.dev/flutter/widgets/State-class.html">State</a> object
+for each location. Similarly, if the widget is removed from the tree and
+later inserted into the tree again, the framework will call <a href="../../view.lcd_display/LcdDisplay/createState.html">createState</a>
+again to create a fresh <a href="https://api.flutter.dev/flutter/widgets/State-class.html">State</a> object, simplifying the lifecycle of
+<a href="https://api.flutter.dev/flutter/widgets/State-class.html">State</a> objects.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@override
+State&lt;LcdDisplay&gt; createState() =&gt; _LcdDisplayState();</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
   <form class="search-sidebar" role="search">
@@ -60,8 +108,8 @@
     <h5>LcdDisplay class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../view.lcd_display/LcdDisplay-class.html#constructors">Constructors</a></li>
-    <li><a href="../../view.lcd_display/LcdDisplay/LcdDisplay.html">LcdDisplay</a></li>
+        <li class="section-title"><a href="../../view.lcd_display/LcdDisplay-class.html#constructors">Constructors</a></li>
+          <li><a href="../../view.lcd_display/LcdDisplay/LcdDisplay.html">LcdDisplay</a></li>
 
 
     <li class="section-title">
@@ -91,59 +139,11 @@
 
 
 
-    <li class="section-title"><a href="../../view.lcd_display/LcdDisplay-class.html#constants">Constants</a></li>
-    <li><a href="../../view.lcd_display/LcdDisplay/heightTweak-constant.html">heightTweak</a></li>
+        <li class="section-title"><a href="../../view.lcd_display/LcdDisplay-class.html#constants">Constants</a></li>
+          <li><a href="../../view.lcd_display/LcdDisplay/heightTweak-constant.html">heightTweak</a></li>
 </ol>
 
   </div><!--/.sidebar-offcanvas-->
-
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-method">createState</span> method 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-    <section class="multi-line-signature">
-      
-<div>
-  <ol class="annotation-list">
-    <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
-  </ol>
-</div>
-
-<span class="returntype">_LcdDisplayState</span>
-<span class="name ">createState</span>(<wbr>)
-
-      <div class="features">override</div>
-
-    </section>
-    
-<section class="desc markdown">
-  <p>Creates the mutable state for this widget at a given location in the tree.</p>
-<p>Subclasses should override this method to return a newly created
-instance of their associated <a href="https://api.flutter.dev/flutter/widgets/State-class.html">State</a> subclass:</p>
-<pre class="language-dart"><code class="language-dart">@override
-_MyState createState() =&gt; _MyState();
-</code></pre>
-<p>The framework can call this method multiple times over the lifetime of
-a <a href="https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html">StatefulWidget</a>. For example, if the widget is inserted into the tree
-in multiple locations, the framework will create a separate <a href="https://api.flutter.dev/flutter/widgets/State-class.html">State</a> object
-for each location. Similarly, if the widget is removed from the tree and
-later inserted into the tree again, the framework will call <a href="../../view.lcd_display/LcdDisplay/createState.html">createState</a>
-again to create a fresh <a href="https://api.flutter.dev/flutter/widgets/State-class.html">State</a> object, simplifying the lifecycle of
-<a href="https://api.flutter.dev/flutter/widgets/State-class.html">State</a> objects.</p>
-</section>
-
-
-    
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">@override
-_LcdDisplayState createState() =&gt; _LcdDisplayState();</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
 
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
@@ -153,15 +153,16 @@ _LcdDisplayState createState() =&gt; _LcdDisplayState();</code></pre>
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

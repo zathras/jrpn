@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,6 +42,105 @@
 <main>
 
 
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">onKey</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/widgets/KeyEventResult.html">KeyEventResult</a></span>
+<span class="name ">onKey</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="onKey-param-e"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/services/RawKeyEvent-class.html">RawKeyEvent</a></span> <span class="parameter-name">e</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">KeyEventResult onKey(RawKeyEvent e) {
+  if (e is! RawKeyDownEvent) {
+    if (e is RawKeyUpEvent &amp;&amp; e.physicalKey == _physicalKeyThatIsDown) {
+      releasePressedButton();
+      _physicalKeyThatIsDown = null;
+    }
+    return KeyEventResult.ignored;
+  }
+  final now = DateTime.now();
+  if (e.physicalKey == _physicalKeyThatIsDown &amp;&amp;
+      now.difference(lastKeyDown).inMilliseconds &lt; 2000) {
+    &#47;&#47; Effectively, disable autorepeat.
+    lastKeyDown = now;
+    return KeyEventResult.handled;
+  }
+  final Characters ch;
+  if (e.physicalKey == PhysicalKeyboardKey.enter ||
+      e.physicalKey == PhysicalKeyboardKey.numpadEnter) {
+    &#47;&#47; Bizarrely, on the web we get &#39;E&#39; as the character in this case!
+    &#47;&#47; https:&#47;&#47;github.com&#47;flutter&#47;flutter&#47;issues&#47;82065
+    ch = Characters(&#39;\n&#39;);
+  } else if (e.physicalKey == PhysicalKeyboardKey.delete ||
+      e.physicalKey == PhysicalKeyboardKey.backspace) {
+    ch = Characters(&#39;\u0008&#39;);
+  } else if (_ignored.contains(e.physicalKey)) {
+    &#47;&#47; Other keys give weird results on the web, alas.  Like, control
+    &#47;&#47; gives &quot;C&quot;.  I didn&#39;t file a bug, but I may post a flaming screed
+    &#47;&#47; to alt.javascript.die.die.die
+    return KeyEventResult.ignored;
+  } else {
+    String? sch = e.character;
+    if (sch == null) {
+      return KeyEventResult.ignored;
+    }
+    if (e.isControlPressed &amp;&amp; (sch == &#39;f&#39; || sch == &#39;F&#39;)) {
+      &#47;&#47; Yes, JavaScript really does suck.  In case you were wondering.
+      ch = Characters(&#39;\u0006&#39;);
+    } else if (e.isControlPressed &amp;&amp; (sch == &#39;g&#39; || sch == &#39;G&#39;)) {
+      ch = Characters(&#39;\u0007&#39;);
+    } else {
+      ch = Characters(sch).toUpperCase();
+    }
+    if (ch.isEmpty) {
+      return KeyEventResult.ignored;
+    }
+  }
+  final CalculatorButtonState? b = button[ch.first];
+  if (b != null) {
+    releasePressedButton(); &#47;&#47; Just in case, probably does nothing
+    if (e.character == &#39;&lt;&#39; || e.character == &#39;&gt;&#39;) {
+      final gShift = button[&#39;G&#39;];
+      assert(gShift != null);
+      if (gShift != null) {
+        &#47;&#47; Shut up analyzer
+        gShift.keyPressed();
+        _extraShiftThatIsDown = gShift;
+      }
+    }
+    b.keyPressed();
+    _buttonThatIsDown = b;
+    _physicalKeyThatIsDown = e.physicalKey;
+    lastKeyDown = now;
+    return KeyEventResult.handled;
+  } else if (e.character == &#39;?&#39;) {
+    controller.model.settings.showAccelerators.value =
+        !controller.model.settings.showAccelerators.value;
+    _physicalKeyThatIsDown = e.physicalKey;
+    lastKeyDown = now;
+    return KeyEventResult.handled;
+  }
+  return KeyEventResult.ignored;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
   <form class="search-sidebar" role="search">
@@ -60,8 +159,8 @@
     <h5>KeyboardController class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../controller/KeyboardController-class.html#constructors">Constructors</a></li>
-    <li><a href="../../controller/KeyboardController/KeyboardController.html">KeyboardController</a></li>
+        <li class="section-title"><a href="../../controller/KeyboardController-class.html#constructors">Constructors</a></li>
+          <li><a href="../../controller/KeyboardController/KeyboardController.html">KeyboardController</a></li>
 
 
     <li class="section-title">
@@ -91,95 +190,6 @@
 
   </div><!--/.sidebar-offcanvas-->
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-method">onKey</span> method 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-    <section class="multi-line-signature">
-      
-
-<span class="returntype"><a href="https://api.flutter.dev/flutter/widgets/KeyEventResult-class.html">KeyEventResult</a></span>
-<span class="name ">onKey</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="onKey-param-e"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/services/RawKeyEvent-class.html">RawKeyEvent</a></span> <span class="parameter-name">e</span></span></li>
-</ol>)
-
-      
-
-    </section>
-    
-
-
-    
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">KeyEventResult onKey(RawKeyEvent e) {
-  if (!(e is RawKeyDownEvent)) {
-    if (e is RawKeyUpEvent &amp;&amp; e.physicalKey == _physicalKeyThatIsDown) {
-      releasePressedButton();
-      _physicalKeyThatIsDown = null;
-    }
-    return KeyEventResult.ignored;
-  }
-  final now = DateTime.now();
-  if (e.physicalKey == _physicalKeyThatIsDown &amp;&amp;
-      now.difference(lastKeyDown).inMilliseconds &lt; 2000) {
-    &#47;&#47; Effectively, disable autorepeat.
-    lastKeyDown = now;
-    return KeyEventResult.handled;
-  }
-  final Characters ch;
-  if (e.physicalKey == PhysicalKeyboardKey.enter ||
-      e.physicalKey == PhysicalKeyboardKey.numpadEnter) {
-    &#47;&#47; Bizarrely, on the web we get &#39;E&#39; as the character in this case!
-    &#47;&#47; https:&#47;&#47;github.com&#47;flutter&#47;flutter&#47;issues&#47;82065
-    ch = Characters(&#39;\n&#39;);
-  } else if (e.physicalKey == PhysicalKeyboardKey.delete || e.physicalKey == PhysicalKeyboardKey.backspace) {
-    ch = Characters(&#39;\u0008&#39;);
-  } else if (_ignored.contains(e.physicalKey)) {
-    &#47;&#47; Other keys give weird results on the web, alas.  Like, control
-    &#47;&#47; gives &quot;C&quot;.  I didn&#39;t file a bug, but I may post a flaming screed
-    &#47;&#47; to alt.javascript.die.die.die
-    return KeyEventResult.ignored;
-  } else {
-    String? sch = e.character;
-    if (sch == null) {
-      return KeyEventResult.ignored;
-    }
-    if (e.isControlPressed &amp;&amp; (sch == &#39;f&#39; || sch == &#39;F&#39;)) {
-      &#47;&#47; Yes, JavaScript really does suck.  In case you were wondering.
-      ch = Characters(&#39;\u0006&#39;);
-    } else if (e.isControlPressed &amp;&amp; (sch == &#39;g&#39; || sch == &#39;G&#39;)) {
-      ch = Characters(&#39;\u0007&#39;);
-    } else {
-      ch = Characters(sch).toUpperCase();
-    }
-    if (ch.isEmpty) {
-      return KeyEventResult.ignored;
-    }
-  }
-  final CalculatorButtonState? b = button[ch.first];
-  if (b != null) {
-    releasePressedButton(); &#47;&#47; Just in case, probably does nothing
-    b.keyPressed();
-    _buttonThatIsDown = b;
-    _physicalKeyThatIsDown = e.physicalKey;
-    lastKeyDown = now;
-    return KeyEventResult.handled;
-  } else if (e.character == &#39;?&#39;) {
-    controller.model.settings.showAccelerators.value =
-        !controller.model.settings.showAccelerators.value;
-    _physicalKeyThatIsDown = e.physicalKey;
-    lastKeyDown = now;
-    return KeyEventResult.handled;
-  }
-  return KeyEventResult.ignored;
-}</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -188,15 +198,16 @@
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

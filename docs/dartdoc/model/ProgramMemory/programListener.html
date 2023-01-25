@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,6 +42,35 @@
 <main>
 
 
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-property">programListener</span> property 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+        <section class="multi-line-signature">
+          <a href="../../model/ProgramListener-class.html">ProgramListener</a>
+          <span class="name ">programListener</span>
+          <div class="features">read / write</div>
+
+        </section>
+        
+<section class="desc markdown">
+  <p>This is a testing hook; tests can override this to tweak behaviors
+and detect events.</p>
+</section>
+
+        
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">ProgramListener programListener = ProgramListener();
+
+</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
   <form class="search-sidebar" role="search">
@@ -60,8 +89,8 @@
     <h5>ProgramMemory class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../model/ProgramMemory-class.html#constructors">Constructors</a></li>
-    <li><a href="../../model/ProgramMemory/ProgramMemory.html">ProgramMemory</a></li>
+        <li class="section-title"><a href="../../model/ProgramMemory-class.html#constructors">Constructors</a></li>
+          <li><a href="../../model/ProgramMemory/ProgramMemory.html">ProgramMemory</a></li>
 
 
     <li class="section-title">
@@ -69,9 +98,12 @@
     </li>
     <li><a href="../../model/ProgramMemory/bytesToNextAllocation.html">bytesToNextAllocation</a></li>
     <li><a href="../../model/ProgramMemory/currentLine.html">currentLine</a></li>
+    <li><a href="../../model/ProgramMemory/hasExtended.html">hasExtended</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li><a href="../../model/ProgramMemory/isRunning.html">isRunning</a></li>
     <li><a href="../../model/ProgramMemory/lines.html">lines</a></li>
     <li><a href="../../model/ProgramMemory/listing.html">listing</a></li>
+    <li><a href="../../model/ProgramMemory/memory.html">memory</a></li>
     <li><a href="../../model/ProgramMemory/programBytes.html">programBytes</a></li>
     <li><a href="../../model/ProgramMemory/programListener.html">programListener</a></li>
     <li><a href="../../model/ProgramMemory/returnStackUnderflow.html">returnStackUnderflow</a></li>
@@ -85,6 +117,7 @@
     <li><a href="../../model/ProgramMemory/getCurrent.html">getCurrent</a></li>
     <li><a href="../../model/ProgramMemory/gosub.html">gosub</a></li>
     <li><a href="../../model/ProgramMemory/goto.html">goto</a></li>
+    <li><a href="../../model/ProgramMemory/gotoOpCode.html">gotoOpCode</a></li>
     <li><a href="../../model/ProgramMemory/handleRunStopKepyress.html">handleRunStopKepyress</a></li>
     <li><a href="../../model/ProgramMemory/incrementCurrentLine.html">incrementCurrentLine</a></li>
     <li><a href="../../model/ProgramMemory/insert.html">insert</a></li>
@@ -93,6 +126,7 @@
     <li><a href="../../model/ProgramMemory/popReturnStack.html">popReturnStack</a></li>
     <li><a href="../../model/ProgramMemory/reset.html">reset</a></li>
     <li><a href="../../model/ProgramMemory/resetReturnStack.html">resetReturnStack</a></li>
+    <li><a href="../../model/ProgramMemory/skipIfRunning.html">skipIfRunning</a></li>
     <li><a href="../../model/ProgramMemory/stepCurrentLine.html">stepCurrentLine</a></li>
     <li><a href="../../model/ProgramMemory/toJson.html">toJson</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
@@ -108,34 +142,6 @@
 
   </div><!--/.sidebar-offcanvas-->
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-property">programListener</span> property 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-        <section class="multi-line-signature">
-          <a href="../../model/ProgramListener-class.html">ProgramListener</a>
-          <span class="name ">programListener</span>
-          <div class="features">read / write</div>
-
-        </section>
-        
-<section class="desc markdown">
-  <p>This is a testing hook.  In normal operation, it's always null.</p>
-</section>
-
-        
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">ProgramListener programListener = ProgramListener();
-
-</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -144,15 +150,16 @@
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

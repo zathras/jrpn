@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,6 +42,58 @@
 <main>
 
 
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">displayX</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype">void</span>
+<span class="name ">displayX</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="displayX-param-flash">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">flash</span> = <span class="default-value">true</span>, </span></li>
+<li><span class="parameter" id="displayX-param-delayed"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">delayed</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="displayX-param-disableWindow"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disableWindow</span> = <span class="default-value">false</span>}</span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Display the value of X.
+disableWindow applies to the first display of X.  If there's a delayed
+value, it reverts to disableWindow being false.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">void displayX(
+    {bool flash = true, bool delayed = false, bool disableWindow = false}) {
+  final String newNumber = model.formatValue(model.x);
+  if (delayed) {
+    final initial = model._newLcdContents(disableWindow: disableWindow);
+    currentWithWindow = newNumber;
+    final delayed = model._newLcdContents(disableWindow: false);
+    final t = Timer(const Duration(milliseconds: 1400), () {
+      show(delayed);
+    });
+    delayed._myTimer = t;
+    initial._myTimer = t;
+    show(initial);
+  } else {
+    currentWithWindow = newNumber;
+    update(flash: flash, disableWindow: disableWindow);
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
   <form class="search-sidebar" role="search">
@@ -60,8 +112,8 @@
     <h5>DisplayModel class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../model/DisplayModel-class.html#constructors">Constructors</a></li>
-    <li><a href="../../model/DisplayModel/DisplayModel.html">DisplayModel</a></li>
+        <li class="section-title"><a href="../../model/DisplayModel-class.html#constructors">Constructors</a></li>
+          <li><a href="../../model/DisplayModel/DisplayModel.html">DisplayModel</a></li>
 
 
     <li class="section-title">
@@ -95,58 +147,6 @@
 
   </div><!--/.sidebar-offcanvas-->
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-method">displayX</span> method 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-    <section class="multi-line-signature">
-      
-
-<span class="returntype">void</span>
-<span class="name ">displayX</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="displayX-param-flash">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">flash</span> = <span class="default-value">true</span>, </span></li>
-<li><span class="parameter" id="displayX-param-delayed"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">delayed</span> = <span class="default-value">false</span>, </span></li>
-<li><span class="parameter" id="displayX-param-disableWindow"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disableWindow</span> = <span class="default-value">false</span>}</span></li>
-</ol>)
-
-      
-
-    </section>
-    
-<section class="desc markdown">
-  <p>Display the value of X.
-disableWindow applies to the first display of X.  If there's a delayed
-value, it reverts to disableWindow being false.</p>
-</section>
-
-
-    
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void displayX(
-    {bool flash = true, bool delayed = false, bool disableWindow = false}) {
-  final newNumber = model.displayMode.format(model.x, model);
-  if (delayed) {
-    final initial = model._newLcdContents(disableWindow: disableWindow);
-    currentWithWindow = newNumber;
-    final delayed = model._newLcdContents(disableWindow: false);
-    final t = Timer(Duration(milliseconds: 1400), () {
-      show(delayed);
-    });
-    delayed._myTimer = t;
-    initial._myTimer = t;
-    show(initial);
-  } else {
-    currentWithWindow = newNumber;
-    update(flash: flash, disableWindow: disableWindow);
-  }
-}</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -155,15 +155,16 @@ value, it reverts to disableWindow being false.</p>
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

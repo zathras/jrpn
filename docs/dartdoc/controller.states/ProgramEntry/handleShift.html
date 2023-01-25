@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,6 +42,40 @@
 <main>
 
 
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">handleShift</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<div>
+  <ol class="annotation-list">
+    <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
+  </ol>
+</div>
+
+<span class="returntype">void</span>
+<span class="name ">handleShift</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="handleShift-param-k"><span class="type-annotation"><a href="../../model/ShiftKey-class.html">ShiftKey</a></span> <span class="parameter-name">k</span></span></li>
+</ol>)
+
+      <div class="features">override</div>
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@override
+void handleShift(ShiftKey k) =&gt; model.shift = k;</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
   <form class="search-sidebar" role="search">
@@ -60,8 +94,8 @@
     <h5>ProgramEntry class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../controller.states/ProgramEntry-class.html#constructors">Constructors</a></li>
-    <li><a href="../../controller.states/ProgramEntry/ProgramEntry.html">ProgramEntry</a></li>
+        <li class="section-title"><a href="../../controller.states/ProgramEntry-class.html#constructors">Constructors</a></li>
+          <li><a href="../../controller.states/ProgramEntry/ProgramEntry.html">ProgramEntry</a></li>
 
 
     <li class="section-title">
@@ -78,6 +112,7 @@
     <li><a href="../../controller.states/ProgramEntry/buttonUp.html">buttonUp</a></li>
     <li class="inherited"><a href="../../controller.states/ControllerState/changeState.html">changeState</a></li>
     <li class="inherited"><a href="../../controller.states/LimitedState/getCalculation.html">getCalculation</a></li>
+    <li><a href="../../controller.states/ProgramEntry/gosubDoneState.html">gosubDoneState</a></li>
     <li><a href="../../controller.states/ProgramEntry/gosubEntryDone.html">gosubEntryDone</a></li>
     <li><a href="../../controller.states/ProgramEntry/handleBackspace.html">handleBackspace</a></li>
     <li><a href="../../controller.states/ProgramEntry/handleBST.html">handleBST</a></li>
@@ -88,12 +123,14 @@
     <li><a href="../../controller.states/ProgramEntry/handleOnOff.html">handleOnOff</a></li>
     <li><a href="../../controller.states/ProgramEntry/handlePR.html">handlePR</a></li>
     <li><a href="../../controller.states/ProgramEntry/handleShift.html">handleShift</a></li>
+    <li><a href="../../controller.states/ProgramEntry/handleShowImaginary.html">handleShowImaginary</a></li>
     <li><a href="../../controller.states/ProgramEntry/handleShowMem.html">handleShowMem</a></li>
     <li><a href="../../controller.states/ProgramEntry/handleShowStatus.html">handleShowStatus</a></li>
     <li><a href="../../controller.states/ProgramEntry/handleSST.html">handleSST</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../controller.states/ProgramEntry/onArgComplete.html">onArgComplete</a></li>
     <li><a href="../../controller.states/ProgramEntry/onChangedTo.html">onChangedTo</a></li>
+    <li class="inherited"><a href="../../controller.states/LimitedState/terminateDigitEntry.html">terminateDigitEntry</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
     <li class="inherited"><a href="../../controller.states/ControllerState/unreachable.html">unreachable</a></li>
 
@@ -107,40 +144,6 @@
 
   </div><!--/.sidebar-offcanvas-->
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-method">handleShift</span> method 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-    <section class="multi-line-signature">
-      
-<div>
-  <ol class="annotation-list">
-    <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
-  </ol>
-</div>
-
-<span class="returntype">void</span>
-<span class="name ">handleShift</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="handleShift-param-sk"><span class="type-annotation"><a href="../../model/ShiftKey-class.html">ShiftKey</a></span> <span class="parameter-name">sk</span></span></li>
-</ol>)
-
-      <div class="features">override</div>
-
-    </section>
-    
-
-
-    
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">@override
-void handleShift(ShiftKey sk) =&gt; model.shift = sk;</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -149,15 +152,16 @@ void handleShift(ShiftKey sk) =&gt; model.shift = sk;</code></pre>
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

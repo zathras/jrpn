@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -41,57 +41,6 @@
 
 <main>
 
-
-  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
-    <header id="header-search-sidebar" class="hidden-l">
-  <form class="search-sidebar" role="search">
-    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
-  </form>
-</header>
-
-<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
-  <li><a href="../../index.html">jrpn</a></li>
-  <li><a href="../../controller.states/controller.states-library.html">controller.states</a></li>
-  <li><a href="../../controller.states/SingleStepping-class.html">SingleStepping</a></li>
-  <li class="self-crumb">buttonUp method</li>
-</ol>
-
-
-    <h5>SingleStepping class</h5>
-    <ol>
-
-    <li class="section-title"><a href="../../controller.states/SingleStepping-class.html#constructors">Constructors</a></li>
-    <li><a href="../../controller.states/SingleStepping/SingleStepping.html">SingleStepping</a></li>
-
-
-    <li class="section-title">
-      <a href="../../controller.states/SingleStepping-class.html#instance-properties">Properties</a>
-    </li>
-    <li class="inherited"><a href="../../controller.states/ControllerState/controller.html">controller</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
-    <li class="inherited"><a href="../../controller.states/ControllerState/model.html">model</a></li>
-    <li><a href="../../controller.states/SingleStepping/program.html">program</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
-    <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
-
-    <li class="section-title"><a href="../../controller.states/SingleStepping-class.html#instance-methods">Methods</a></li>
-    <li><a href="../../controller.states/SingleStepping/buttonDown.html">buttonDown</a></li>
-    <li><a href="../../controller.states/SingleStepping/buttonUp.html">buttonUp</a></li>
-    <li class="inherited"><a href="../../controller.states/ControllerState/changeState.html">changeState</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../../controller.states/SingleStepping/onChangedTo.html">onChangedTo</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
-    <li class="inherited"><a href="../../controller.states/ControllerState/unreachable.html">unreachable</a></li>
-
-    <li class="section-title inherited"><a href="../../controller.states/SingleStepping-class.html#operators">Operators</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
-
-
-
-
-</ol>
-
-  </div><!--/.sidebar-offcanvas-->
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
@@ -127,30 +76,31 @@ void buttonUp(Operation key) {
       ProgramInstruction&lt;Operation&gt; instr = program[program.currentLine];
       program.currentLine = (program.currentLine + 1) % (program.lines + 1);
       &#47;&#47; That&#39;s what my 15C does
-      final OperationArg? arg = instr.op.arg;
-      if (arg != null) {
-        _fake.argValue = instr.argValue;
-      } else {
-        _fake.argValue = null;
-      }
       if (instr.op == Operations.rs) {
         stackLiftEnabled = true;
       } else {
-        _fake.buttonDown(instr.op);
+        model.memory.program.isRunning = true;
+        try {
+          _fake.setArg(instr.arg);
+          _fake.buttonDown(instr.op);
+          _fake.buttonUp();
+        } finally {
+          model.memory.program.isRunning = false;
+        }
       }
     }
   } finally {
-    model.isRunningProgram = false;
+    model.displayDisabled = false;
     CalculatorError? pendingError = _fake.pendingError;
     if (pendingError != null) {
-      _fake.real.showCalculatorError(pendingError);
+      _fake.real.showCalculatorError(pendingError, null);
       _fake.returnToParent(Resting(_fake.real));
     } else {
       final DigitEntry? old = _fake.currentDigitEntryState;
       if (old != null) {
         final replacement = DigitEntry(_fake.real);
         replacement.takeOverFrom(old);
-        &#47;&#47; We came from DigitEntryState in our parent.  If and we&#39;re
+        &#47;&#47; We came from DigitEntryState in our parent.  If we&#39;re
         &#47;&#47; still in DigitEntryState in the program, stay in digit entry
         &#47;&#47; state, with whatever changes have been made.
         _fake.returnToParent(replacement);
@@ -166,6 +116,57 @@ void buttonUp(Operation key) {
 
   </div> <!-- /.main-content -->
 
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">jrpn</a></li>
+  <li><a href="../../controller.states/controller.states-library.html">controller.states</a></li>
+  <li><a href="../../controller.states/SingleStepping-class.html">SingleStepping</a></li>
+  <li class="self-crumb">buttonUp method</li>
+</ol>
+
+
+    <h5>SingleStepping class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../controller.states/SingleStepping-class.html#constructors">Constructors</a></li>
+          <li><a href="../../controller.states/SingleStepping/SingleStepping.html">SingleStepping</a></li>
+
+
+    <li class="section-title">
+      <a href="../../controller.states/SingleStepping-class.html#instance-properties">Properties</a>
+    </li>
+    <li class="inherited"><a href="../../controller.states/ControllerState/controller.html">controller</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="../../controller.states/ControllerState/model.html">model</a></li>
+    <li><a href="../../controller.states/SingleStepping/program.html">program</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+    <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
+
+    <li class="section-title"><a href="../../controller.states/SingleStepping-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../controller.states/SingleStepping/buttonDown.html">buttonDown</a></li>
+    <li><a href="../../controller.states/SingleStepping/buttonUp.html">buttonUp</a></li>
+    <li class="inherited"><a href="../../controller.states/ControllerState/changeState.html">changeState</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../../controller.states/SingleStepping/onChangedTo.html">onChangedTo</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+    <li class="inherited"><a href="../../controller.states/ControllerState/unreachable.html">unreachable</a></li>
+
+    <li class="section-title inherited"><a href="../../controller.states/SingleStepping-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -174,15 +175,16 @@ void buttonUp(Operation key) {
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

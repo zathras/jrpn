@@ -6,12 +6,11 @@
 # reading the source in an IDE can easily find the images.
 #
 
-pub global activate dartdoc
 cd `dirname $0`
 OUTPUT=`pwd`/docs/dartdoc
 rm -rf $OUTPUT
-echo "dartdoc --pretty-index-json --output $OUTPUT"
-dartdoc --pretty-index-json --output $OUTPUT
+echo "dart doc --output $OUTPUT"
+dart doc --output $OUTPUT
 cd lib
 for f in `find . -name 'dartdoc' -print` ; do
     for g in $f/*; do

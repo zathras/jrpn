@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../static-assets/github.css">
-  <link rel="stylesheet" href="../static-assets/styles.css">
-  <link rel="icon" href="../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../"
-      data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -39,36 +39,6 @@
 
 <main>
 
-
-  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
-    <header id="header-search-sidebar" class="hidden-l">
-  <form class="search-sidebar" role="search">
-    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
-  </form>
-</header>
-
-<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
-  <li><a href="../index.html">jrpn</a></li>
-  <li class="self-crumb">controller.states library</li>
-</ol>
-
-
-    <h5><span class="package-name">jrpn</span> <span class="package-kind">package</span></h5>
-    <ol>
-      <li class="section-title">Libraries</li>
-      <li><a href="../controller/controller-library.html">controller</a></li>
-      <li><a href="../controller.operations/controller.operations-library.html">controller.operations</a></li>
-      <li><a href="../controller.states/controller.states-library.html">controller.states</a></li>
-      <li><a href="../generated_plugin_registrant/generated_plugin_registrant-library.html">generated_plugin_registrant</a></li>
-      <li><a href="../main/main-library.html">main</a></li>
-      <li><a href="../model/model-library.html">model</a></li>
-      <li><a href="../view.back_panel/view.back_panel-library.html">view.back_panel</a></li>
-      <li><a href="../view.buttons/view.buttons-library.html">view.buttons</a></li>
-      <li><a href="../view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
-      <li><a href="../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
-</ol>
-
-  </div>
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
@@ -116,7 +86,7 @@ a potential source of bugs.</p>
 functions for <a href="../controller/NormalOperation-class.html">NormalOperation</a>s.  This is where stack lift
 is exposed, because usually stack lift is enabled after performing
 a calculation on the model.  It is performed when entering digits,
-or recalling a value from a register or lastX. 
+or recalling a value from a register or lastX.
 </dd>
 
         <dt id="ArgInputState">
@@ -127,7 +97,7 @@ or recalling a value from a register or lastX.
   Inputting an argument.  Generally, the calculator silently waits for
 keypresses giving the argument value.  For example, when recalling
 register 1c, the user presses "RCL . c"; the calculator is in this
-state while waiting for the ". c" to be pressed. 
+state while waiting for the ". c" to be pressed.
 </dd>
 
         <dt id="CalculatorOff">
@@ -139,7 +109,7 @@ state while waiting for the ". c" to be pressed.
 screen is dismissed, but that's awkward on the web, especially if the
 calculator is embedded in a page.  So, in the web case, we turn off the
 LCD display, and wait in this state to see if the user presses ON at
-some point. 
+some point.
 </dd>
 
         <dt id="ControllerState">
@@ -149,7 +119,7 @@ some point.
 <dd>
   Superclass for all states of a <a href="../controller/Controller-class.html">Controller</a>.  See the
 <code>controller.states</code> library documentation for an overview, including
-a diagram. 
+a diagram.
 </dd>
 
         <dt id="DigitEntry">
@@ -157,7 +127,7 @@ a diagram.
 
 </dt>
 <dd>
-  The state the calculator's in while entering digits. 
+  The state the calculator's in while entering digits.
 </dd>
 
         <dt id="DoNothing">
@@ -166,18 +136,7 @@ a diagram.
 </dt>
 <dd>
   State where we ignore keypresses, because the calculator is off or
-running self-tests. 
-</dd>
-
-        <dt id="FloatKeyArgInputState">
-  <span class="name "><a href="../controller.states/FloatKeyArgInputState-class.html">FloatKeyArgInputState</a></span> 
-
-</dt>
-<dd>
-  Inputting the argument for the FLOAT key.  This is a little different
-than a normal <a href="../controller.states/ArgInputState-class.html">ArgInputState</a> in that the "." key, by itself, means
-"go to scientific display," which we model as ten digits after the
-decimal point (which doesn't fit on the LCD display). 
+running self-tests.
 </dd>
 
         <dt id="GosubArgInputState">
@@ -185,7 +144,7 @@ decimal point (which doesn't fit on the LCD display).
 
 </dt>
 <dd>
-  Inputting the argument for GSB.  See <a href="../controller.states/GosubArgInputState/handleGosubEntryDone.html">handleGosubEntryDone</a>. 
+  Inputting the argument for GSB.  See <a href="../controller.states/GosubArgInputState/handleGosubEntryDone.html">handleGosubEntryDone</a>.
 </dd>
 
         <dt id="LimitedState">
@@ -198,7 +157,7 @@ from <a href="../controller/LimitedOperation-class.html">LimitedOperation</a>s (
 This is the contravariant typing relationship mentioned in our
 library overview.  cf. the controller.operations library's class
 diagram, notably the dashed subtype line from <a href="../controller/LimitedOperation-class.html">LimitedOperation</a>
-to <a href="../controller/NormalOperation-class.html">NormalOperation</a>. 
+to <a href="../controller/NormalOperation-class.html">NormalOperation</a>.
 </dd>
 
         <dt id="MessageShowing">
@@ -206,7 +165,7 @@ to <a href="../controller/NormalOperation-class.html">NormalOperation</a>.
 
 </dt>
 <dd>
-  State while a message is showing, like "Error 2." 
+  State while a message is showing, like "Error 2."
 </dd>
 
         <dt id="OnOffKeyPressed">
@@ -216,7 +175,7 @@ to <a href="../controller/NormalOperation-class.html">NormalOperation</a>.
 <dd>
   State for after the ON key is pressed, while we're waiting to see if they
 pick a special function, or maybe press the ON key again to turn the
-calculator off. 
+calculator off.
 </dd>
 
         <dt id="ProgramEntry">
@@ -224,7 +183,7 @@ calculator off.
 
 </dt>
 <dd>
-  State while entering a program. 
+  State while entering a program.
 </dd>
 
         <dt id="Resting">
@@ -233,7 +192,7 @@ calculator off.
 </dt>
 <dd>
   The initial state of the calculator, when it's waiting for input telling
-it to do something. 
+it to do something.
 </dd>
 
         <dt id="Running">
@@ -243,7 +202,7 @@ it to do something.
 <dd>
   State while we're running a program.  While we're in this state, our
 <a href="../controller/Controller-class.html">Controller</a> stays in <a href="../controller.states/Running-class.html">Running</a>, but we create a <a href="../controller/RunningController-class.html">RunningController</a>
-that has its own <a href="../controller.states/ControllerState-class.html">ControllerState</a>. 
+that has its own <a href="../controller.states/ControllerState-class.html">ControllerState</a>.
 </dd>
 
         <dt id="ShowState">
@@ -252,7 +211,7 @@ that has its own <a href="../controller.states/ControllerState-class.html">Contr
 </dt>
 <dd>
   State while we're temporarily showing something, while a button is still
-pressed.  For example "f show Hex" lands us in this state. 
+pressed.  For example "f show Hex" lands us in this state.
 </dd>
 
         <dt id="SingleStepping">
@@ -261,7 +220,7 @@ pressed.  For example "f show Hex" lands us in this state.
 </dt>
 <dd>
   State while single-stepping through a program.  Like <a href="../controller.states/Running-class.html">Running</a>, this state
-creates a <a href="../controller/RunningController-class.html">RunningController</a> that has its own <a href="../controller.states/ControllerState-class.html">ControllerState</a>. 
+creates a <a href="../controller/RunningController-class.html">RunningController</a> that has its own <a href="../controller.states/ControllerState-class.html">ControllerState</a>.
 </dd>
 
         <dt id="WaitingForGotoDot">
@@ -272,7 +231,7 @@ creates a <a href="../controller/RunningController-class.html">RunningController
   State after the GTO key is pressed, when we don't know if the user
 will press "." (meaning navigate to a specific line number), or a
 label.  In the spirit of Beckett, we do hope one arrives before
-too long. 
+too long.
 </dd>
 
         <dt id="WaitingForGotoDotLines">
@@ -281,7 +240,7 @@ too long.
 </dt>
 <dd>
   After "GTO ." is pressed, we're in this state collecting the
-three-digit line number. 
+three-digit line number.
 </dd>
 
       </dl>
@@ -297,6 +256,36 @@ three-digit line number.
 
   </div> <!-- /.main-content -->
 
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li class="self-crumb">controller.states library</li>
+</ol>
+
+
+    <h5><span class="package-name">jrpn</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../m_complex/m_complex-library.html">complex</a></li>
+      <li><a href="../controller/controller-library.html">controller</a></li>
+      <li><a href="../controller.operations/controller.operations-library.html">controller.operations</a></li>
+      <li><a href="../controller.states/controller.states-library.html">controller.states</a></li>
+      <li><a href="../generic_main/generic_main-library.html">generic_main</a></li>
+      <li><a href="../model/model-library.html">model</a></li>
+      <li><a href="../view.back_panel/view.back_panel-library.html">view.back_panel</a></li>
+      <li><a href="../view.buttons/view.buttons-library.html">view.buttons</a></li>
+      <li><a href="../view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
+      <li><a href="../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
+</ol>
+
+  </div>
+
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
     <h5>controller.states library</h5>
     <ol>
@@ -307,7 +296,6 @@ three-digit line number.
   <li><a href="../controller.states/ControllerState-class.html">ControllerState</a></li>
   <li><a href="../controller.states/DigitEntry-class.html">DigitEntry</a></li>
   <li><a href="../controller.states/DoNothing-class.html">DoNothing</a></li>
-  <li><a href="../controller.states/FloatKeyArgInputState-class.html">FloatKeyArgInputState</a></li>
   <li><a href="../controller.states/GosubArgInputState-class.html">GosubArgInputState</a></li>
   <li><a href="../controller.states/LimitedState-class.html">LimitedState</a></li>
   <li><a href="../controller.states/MessageShowing-class.html">MessageShowing</a></li>
@@ -336,15 +324,16 @@ three-digit line number.
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../static-assets/highlight.pack.js"></script>
-<script src="../static-assets/script.js"></script>
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
 
 
 

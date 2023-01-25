@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,56 +42,6 @@
 <main>
 
 
-  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
-    <header id="header-search-sidebar" class="hidden-l">
-  <form class="search-sidebar" role="search">
-    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
-  </form>
-</header>
-
-<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
-  <li><a href="../../index.html">jrpn</a></li>
-  <li><a href="../../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
-  <li><a href="../../view.main_screen/DrawnBackground-class.html">DrawnBackground</a></li>
-  <li class="self-crumb">paint method</li>
-</ol>
-
-
-    <h5>DrawnBackground class</h5>
-    <ol>
-
-    <li class="section-title"><a href="../../view.main_screen/DrawnBackground-class.html#constructors">Constructors</a></li>
-    <li><a href="../../view.main_screen/DrawnBackground/DrawnBackground.html">DrawnBackground</a></li>
-
-
-    <li class="section-title">
-      <a href="../../view.main_screen/DrawnBackground-class.html#instance-properties">Properties</a>
-    </li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
-    <li><a href="../../view.main_screen/DrawnBackground/screen.html">screen</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/semanticsBuilder.html">semanticsBuilder</a></li>
-
-    <li class="section-title"><a href="../../view.main_screen/DrawnBackground-class.html#instance-methods">Methods</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/addListener.html">addListener</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/hitTest.html">hitTest</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../../view.main_screen/DrawnBackground/paint.html">paint</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/removeListener.html">removeListener</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/shouldRebuildSemantics.html">shouldRebuildSemantics</a></li>
-    <li><a href="../../view.main_screen/DrawnBackground/shouldRepaint.html">shouldRepaint</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/toString.html">toString</a></li>
-
-    <li class="section-title inherited"><a href="../../view.main_screen/DrawnBackground-class.html#operators">Operators</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
-
-
-
-
-</ol>
-
-  </div><!--/.sidebar-offcanvas-->
-
   <div id="dartdoc-main-content" class="main-content">
       <div>
 <h1><span class="kind-method">paint</span> method 
@@ -107,7 +57,7 @@
 </div>
 
 <span class="returntype">void</span>
-<span class="name ">paint</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="paint-param-c"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Canvas-class.html">Canvas</a></span> <span class="parameter-name">c</span>, </span></li>
+<span class="name ">paint</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="paint-param-canvas"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Canvas-class.html">Canvas</a></span> <span class="parameter-name">canvas</span>, </span></li>
 <li><span class="parameter" id="paint-param-size"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Size-class.html">Size</a></span> <span class="parameter-name">size</span></span></li>
 </ol>)
 
@@ -156,7 +106,7 @@ obtain the correct rendering size.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
-void paint(Canvas c, Size size) {
+void paint(Canvas canvas, Size size) {
   &#47;&#47; conversion factor from cm to the coordinate system of the Canvas
   final double cm = size.width &#47; screen.width;
 
@@ -164,24 +114,25 @@ void paint(Canvas c, Size size) {
   final p = Paint()
     ..color = const Color(0xff4b4b50)
     ..style = PaintingStyle.fill;
-  c.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), p);
+  canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), p);
 
   double x = 0.27 * cm;
   double y = 2.5 * cm;
 
   &#47;&#47; Silver along top:
   p.color = _topSilverColor;
-  c.drawRect(Rect.fromLTRB(x, 0, size.width - x, y), p);
+  canvas.drawRect(Rect.fromLTRB(x, 0, size.width - x, y), p);
   &#47;&#47; Darker silver along very top edge:
   p.color = const Color(0xff7c7c7c);
-  c.drawRect(Rect.fromLTRB(x, 0, size.width - x, 0.2 * cm), p);
+  canvas.drawRect(Rect.fromLTRB(x, 0, size.width - x, 0.2 * cm), p);
 
   &#47;&#47; Darker on top and bottom of raised frame
   p.color = const Color(0xff2b2b2f);
-  c.drawRect(Rect.fromLTRB(0, 0, x, 0.2 * cm), p);
-  c.drawRect(Rect.fromLTRB(size.width - x, 0, size.width, 0.2 * cm), p);
-  c.drawRect(Rect.fromLTRB(0, size.height - 0.15 * cm, x, size.height), p);
-  c.drawRect(
+  canvas.drawRect(Rect.fromLTRB(0, 0, x, 0.2 * cm), p);
+  canvas.drawRect(Rect.fromLTRB(size.width - x, 0, size.width, 0.2 * cm), p);
+  canvas.drawRect(
+      Rect.fromLTRB(0, size.height - 0.15 * cm, x, size.height), p);
+  canvas.drawRect(
       Rect.fromLTRB(
           size.width - x, size.height - 0.15 * cm, size.width, size.height),
       p);
@@ -190,13 +141,13 @@ void paint(Canvas c, Size size) {
   p.color = MainScreen.keyboardBaseColor;
   y += 0.1 * cm;
   double bottom = size.height - 0.05 * cm;
-  c.drawRect(Rect.fromLTRB(x, y, size.width - x, bottom), p);
+  canvas.drawRect(Rect.fromLTRB(x, y, size.width - x, bottom), p);
 
   x += 0.05 * cm;
   y += 0.05 * cm;
   bottom -= 0.05 * cm;
   p.color = MainScreen.keyFrameSilver;
-  c.drawRRect(
+  canvas.drawRRect(
       RRect.fromLTRBR(
           x, y, size.width - x, bottom, Radius.circular(0.1 * cm)),
       p);
@@ -204,7 +155,7 @@ void paint(Canvas c, Size size) {
   y += 0.07 * cm;
   bottom -= 0.2 * cm;
   p.color = MainScreen.keyboardBaseColor;
-  c.drawRRect(
+  canvas.drawRRect(
       RRect.fromLTRBR(
           x, y, size.width - x, bottom, Radius.circular(0.05 * cm)),
       p);
@@ -223,16 +174,66 @@ void paint(Canvas c, Size size) {
       textDirection: TextDirection.ltr);
   tp.layout();
   &#47;&#47; Background for the text, in keyboardBase
-  c.drawRect(
+  canvas.drawRect(
       Rect.fromLTRB(x + 0.3 * cm, bottom - 1, x + 0.7 * cm + tp.width,
           bottom + 0.2 * cm + 1),
       p);
-  tp.paint(c, Offset(x + 0.5 * cm, bottom - 0.06 * cm));
+  tp.paint(canvas, Offset(x + 0.5 * cm, bottom - 0.06 * cm));
 }</code></pre>
 </section>
 
 
   </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">jrpn</a></li>
+  <li><a href="../../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
+  <li><a href="../../view.main_screen/DrawnBackground-class.html">DrawnBackground</a></li>
+  <li class="self-crumb">paint method</li>
+</ol>
+
+
+    <h5>DrawnBackground class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../view.main_screen/DrawnBackground-class.html#constructors">Constructors</a></li>
+          <li><a href="../../view.main_screen/DrawnBackground/DrawnBackground.html">DrawnBackground</a></li>
+
+
+    <li class="section-title">
+      <a href="../../view.main_screen/DrawnBackground-class.html#instance-properties">Properties</a>
+    </li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+    <li><a href="../../view.main_screen/DrawnBackground/screen.html">screen</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/semanticsBuilder.html">semanticsBuilder</a></li>
+
+    <li class="section-title"><a href="../../view.main_screen/DrawnBackground-class.html#instance-methods">Methods</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/addListener.html">addListener</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/hitTest.html">hitTest</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../../view.main_screen/DrawnBackground/paint.html">paint</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/removeListener.html">removeListener</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/shouldRebuildSemantics.html">shouldRebuildSemantics</a></li>
+    <li><a href="../../view.main_screen/DrawnBackground/shouldRepaint.html">shouldRepaint</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../../view.main_screen/DrawnBackground-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
 
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
@@ -242,15 +243,16 @@ void paint(Canvas c, Size size) {
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

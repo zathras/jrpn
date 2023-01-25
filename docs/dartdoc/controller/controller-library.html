@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../static-assets/github.css">
-  <link rel="stylesheet" href="../static-assets/styles.css">
-  <link rel="icon" href="../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../"
-      data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -39,36 +39,6 @@
 
 <main>
 
-
-  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
-    <header id="header-search-sidebar" class="hidden-l">
-  <form class="search-sidebar" role="search">
-    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
-  </form>
-</header>
-
-<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
-  <li><a href="../index.html">jrpn</a></li>
-  <li class="self-crumb">controller library</li>
-</ol>
-
-
-    <h5><span class="package-name">jrpn</span> <span class="package-kind">package</span></h5>
-    <ol>
-      <li class="section-title">Libraries</li>
-      <li><a href="../controller/controller-library.html">controller</a></li>
-      <li><a href="../controller.operations/controller.operations-library.html">controller.operations</a></li>
-      <li><a href="../controller.states/controller.states-library.html">controller.states</a></li>
-      <li><a href="../generated_plugin_registrant/generated_plugin_registrant-library.html">generated_plugin_registrant</a></li>
-      <li><a href="../main/main-library.html">main</a></li>
-      <li><a href="../model/model-library.html">model</a></li>
-      <li><a href="../view.back_panel/view.back_panel-library.html">view.back_panel</a></li>
-      <li><a href="../view.buttons/view.buttons-library.html">view.buttons</a></li>
-      <li><a href="../view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
-      <li><a href="../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
-</ol>
-
-  </div>
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
@@ -107,7 +77,7 @@ of the operation type hierarchy.
 
 </dt>
 <dd>
-  A <a href="../controller/BranchingOperation-class.html">BranchingOperation</a> that takes an argument, namely B? (bit test) 
+  A <a href="../controller/BranchingOperation-class.html">BranchingOperation</a> that takes an argument, namely B? (bit test)
 </dd>
 
         <dt id="BranchingOperation">
@@ -117,7 +87,7 @@ of the operation type hierarchy.
 <dd>
   A program branching operation.  These operations only function when running
 a program.  They represent a condition.  If that condition is true, the next
-instruction executes normally; otherwise, it is skipped. 
+instruction executes normally; otherwise, it is skipped.
 </dd>
 
         <dt id="Controller">
@@ -126,28 +96,16 @@ instruction executes normally; otherwise, it is skipped.
 </dt>
 <dd>
   The main controller for the application.  This abstract class is implemented
-by a <a href="../controller/RealController-class.html">RealController</a> for normal calculator, and by by <a href="../controller/RunningController-class.html">RunningController</a>,
-which manages a running calculator program. 
+by a <a href="../controller/RealController-class.html">RealController</a> for normal calculator, and by <a href="../controller/RunningController-class.html">RunningController</a>,
+which manages a running calculator program.
 </dd>
 
-        <dt id="FloatKeyArg">
-  <span class="name "><a href="../controller/FloatKeyArg-class.html">FloatKeyArg</a></span> 
+        <dt id="GosubOperation">
+  <span class="name "><a href="../controller/GosubOperation-class.html">GosubOperation</a></span> 
 
 </dt>
 <dd>
-  The description of an argument for the float mode key.  It's special
-because stack lift is enabled when going from int mode to float mode,
-but it's stack neutral if staying in float mode. 
-</dd>
-
-        <dt id="GosubOperationArg">
-  <span class="name "><a href="../controller/GosubOperationArg-class.html">GosubOperationArg</a></span> 
-
-</dt>
-<dd>
-  The description of an argument for GSB, which requires a special state
-for inputting the argument to preview the instruction that's about to
-be executed. 
+  
 </dd>
 
         <dt id="KeyboardController">
@@ -155,7 +113,15 @@ be executed.
 
 </dt>
 <dd>
-   
+  
+</dd>
+
+        <dt id="LetterLabel">
+  <span class="name "><a href="../controller/LetterLabel-class.html">LetterLabel</a></span> 
+
+</dt>
+<dd>
+  One of the 15C's letter keys, from A to E.
 </dd>
 
         <dt id="LimitedOperation">
@@ -166,7 +132,23 @@ be executed.
   Operations that do something when the key is pressed, even when the
 calculator is in program entry state.  They're called "limited," because
 the set of handleXXX() calls is limited to those supported by
-<a href="../controller.states/ProgramEntry-class.html">ProgramEntry</a>. <a href="../controller/LimitedOperation-class.html">[...]</a>
+<a href="../controller.states/ProgramEntry-class.html">ProgramEntry</a>.
+</dd>
+
+        <dt id="NoArgOperation">
+  <span class="name "><a href="../controller/NoArgOperation-class.html">NoArgOperation</a></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+        <dt id="NonProgrammableOperation">
+  <span class="name "><a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
         <dt id="NormalArgOperation">
@@ -174,8 +156,16 @@ the set of handleXXX() calls is limited to those supported by
 
 </dt>
 <dd>
-  A <a href="../controller/NormalOperation-class.html">NormalOperation</a> that takes an argument.  For example, the RCL and STO
-operations take an argument, giving the register to store to or recall from. 
+  An <a href="../controller/Operation-class.html">Operation</a> that takes an argument.  For example, the RCL and STO
+operations take an argument, giving the register to store to or recall from.
+</dd>
+
+        <dt id="NormalArgOperationWithBeforeCalc">
+  <span class="name "><a href="../controller/NormalArgOperationWithBeforeCalc-class.html">NormalArgOperationWithBeforeCalc</a></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
         <dt id="NormalOperation">
@@ -183,8 +173,19 @@ operations take an argument, giving the register to store to or recall from.
 
 </dt>
 <dd>
-  A "normal" calculator operation.  Generally, they perform some kind of
-calculation, or otherwise manipulate the model. 
+  A "normal" calculator operation that doesn't take any keyboard arguments.
+Generally, they perform some kind of
+calculation, or otherwise manipulate the model.
+</dd>
+
+        <dt id="NormalOperationOrLetter">
+  <span class="name "><a href="../controller/NormalOperationOrLetter-class.html">NormalOperationOrLetter</a></span> 
+
+</dt>
+<dd>
+  A <a href="../controller/NormalOperation-class.html">NormalOperation</a> that doubles as a letter (A-F) on the 15C, as the
+argument to LBL, GTO or GSB.  The letters on the 16C are unshifted, so
+this doesn't come up there.
 </dd>
 
         <dt id="NumberEntry">
@@ -192,7 +193,7 @@ calculation, or otherwise manipulate the model.
 
 </dt>
 <dd>
-  One of the number keys, from 0 to f. 
+  One of the number keys, from 0 to f.
 </dd>
 
         <dt id="Operation">
@@ -201,17 +202,7 @@ calculation, or otherwise manipulate the model.
 </dt>
 <dd>
   An operation, triggered by a key on the calculator keyboard, or executed
-as part of a program. 
-</dd>
-
-        <dt id="OperationArg">
-  <span class="name "><a href="../controller/OperationArg-class.html">OperationArg</a></span> 
-
-</dt>
-<dd>
-  A description of the argument for a <a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a> or a
-<a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a>.  This includes the calculation that is to be
-performed when the argument value is available. 
+as part of a program.
 </dd>
 
         <dt id="RealController">
@@ -221,7 +212,7 @@ performed when the argument value is available.
 <dd>
   A controller for normal calculator operation.  When a program is
 running, the real controller continues to exist, for when the program
-stops. 
+stops.
 </dd>
 
         <dt id="RunningController">
@@ -229,7 +220,7 @@ stops.
 
 </dt>
 <dd>
-  A controller for when a program is running. 
+  A controller for when a program is running.
 </dd>
 
         <dt id="SelfTests">
@@ -242,7 +233,7 @@ stops.
 a way of easily running some of the tests involving integer and floating
 point behavior in different browsers. This might be a bit of a pain point
 for Dart, since the numeric types behave differently given JavaScript's
-deficiencies in ths regard. <a href="../controller/SelfTests-class.html">[...]</a>
+deficiencies in ths regard.
 </dd>
 
         <dt id="StackLift">
@@ -253,7 +244,7 @@ deficiencies in ths regard. <a href="../controller/SelfTests-class.html">[...]</
   A declarative description of an <a href="../controller/Operation-class.html">Operation</a>'s effect on stack lift, when
 its calculation has been performed.  This covers the most common effects
 that operations can have on stack lift.  See Page 99, "Operations Affecting
-Stack Lift" in Appendix B of the 16C's manual. 
+Stack Lift" in Appendix B of the 16C's manual.
 </dd>
 
         <dt id="StackLiftEnabledUser">
@@ -263,7 +254,7 @@ Stack Lift" in Appendix B of the 16C's manual.
 <dd>
   A type that can be used by states to access the library-private
 <a href="../controller/RealController-class.html">RealController</a> <code>_stackLiftEnabled</code> flag.  This provides enhanced
-encapsulation, by explicitly marking states that do this. 
+encapsulation, by explicitly marking states that do this.
 </dd>
 
       </dl>
@@ -279,6 +270,36 @@ encapsulation, by explicitly marking states that do this.
 
   </div> <!-- /.main-content -->
 
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li class="self-crumb">controller library</li>
+</ol>
+
+
+    <h5><span class="package-name">jrpn</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../m_complex/m_complex-library.html">complex</a></li>
+      <li><a href="../controller/controller-library.html">controller</a></li>
+      <li><a href="../controller.operations/controller.operations-library.html">controller.operations</a></li>
+      <li><a href="../controller.states/controller.states-library.html">controller.states</a></li>
+      <li><a href="../generic_main/generic_main-library.html">generic_main</a></li>
+      <li><a href="../model/model-library.html">model</a></li>
+      <li><a href="../view.back_panel/view.back_panel-library.html">view.back_panel</a></li>
+      <li><a href="../view.buttons/view.buttons-library.html">view.buttons</a></li>
+      <li><a href="../view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
+      <li><a href="../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
+</ol>
+
+  </div>
+
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
     <h5>controller library</h5>
     <ol>
@@ -286,15 +307,18 @@ encapsulation, by explicitly marking states that do this.
   <li><a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></li>
   <li><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></li>
   <li><a href="../controller/Controller-class.html">Controller</a></li>
-  <li><a href="../controller/FloatKeyArg-class.html">FloatKeyArg</a></li>
-  <li><a href="../controller/GosubOperationArg-class.html">GosubOperationArg</a></li>
+  <li><a href="../controller/GosubOperation-class.html">GosubOperation</a></li>
   <li><a href="../controller/KeyboardController-class.html">KeyboardController</a></li>
+  <li><a href="../controller/LetterLabel-class.html">LetterLabel</a></li>
   <li><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></li>
+  <li><a href="../controller/NoArgOperation-class.html">NoArgOperation</a></li>
+  <li><a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></li>
   <li><a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></li>
+  <li><a href="../controller/NormalArgOperationWithBeforeCalc-class.html">NormalArgOperationWithBeforeCalc</a></li>
   <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
+  <li><a href="../controller/NormalOperationOrLetter-class.html">NormalOperationOrLetter</a></li>
   <li><a href="../controller/NumberEntry-class.html">NumberEntry</a></li>
   <li><a href="../controller/Operation-class.html">Operation</a></li>
-  <li><a href="../controller/OperationArg-class.html">OperationArg</a></li>
   <li><a href="../controller/RealController-class.html">RealController</a></li>
   <li><a href="../controller/RunningController-class.html">RunningController</a></li>
   <li><a href="../controller/SelfTests-class.html">SelfTests</a></li>
@@ -317,15 +341,16 @@ encapsulation, by explicitly marking states that do this.
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../static-assets/highlight.pack.js"></script>
-<script src="../static-assets/script.js"></script>
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
 
 
 

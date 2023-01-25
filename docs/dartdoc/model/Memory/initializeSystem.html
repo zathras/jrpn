@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -31,7 +31,7 @@
     <li><a href="../../index.html">jrpn</a></li>
     <li><a href="../../model/model-library.html">model</a></li>
     <li><a href="../../model/Memory-class.html">Memory<span class="signature">&lt;<wbr><span class="type-parameter">OT extends ProgramOperation</span>&gt;</span></a></li>
-    <li class="self-crumb">initializeSystem method</li>
+    <li class="self-crumb">initializeSystem abstract method</li>
   </ol>
   <div class="self-name">initializeSystem</div>
   <form class="search navbar-right" role="search">
@@ -41,6 +41,39 @@
 
 <main>
 
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">initializeSystem</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype">void</span>
+<span class="name ">initializeSystem</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="initializeSystem-param-layout"><span class="type-annotation"><a href="../../model/OperationMap-class.html">OperationMap</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span> <span class="parameter-name">layout</span>, </span></li>
+<li><span class="parameter" id="initializeSystem-param-lbl"><span class="type-annotation">OT</span> <span class="parameter-name">lbl</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Called by our controller, which necessarily happens after the Model
+exists.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">void initializeSystem(OperationMap&lt;OT&gt; layout, OT lbl);</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
 
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
@@ -53,24 +86,29 @@
   <li><a href="../../index.html">jrpn</a></li>
   <li><a href="../../model/model-library.html">model</a></li>
   <li><a href="../../model/Memory-class.html">Memory<span class="signature">&lt;<wbr><span class="type-parameter">OT extends ProgramOperation</span>&gt;</span></a></li>
-  <li class="self-crumb">initializeSystem method</li>
+  <li class="self-crumb">initializeSystem abstract method</li>
 </ol>
 
 
     <h5>Memory class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../model/Memory-class.html#constructors">Constructors</a></li>
-    <li><a href="../../model/Memory/Memory.html">Memory</a></li>
+        <li class="section-title"><a href="../../model/Memory-class.html#constructors">Constructors</a></li>
+          <li><a href="../../model/Memory/Memory.html">Memory</a></li>
 
 
     <li class="section-title">
       <a href="../../model/Memory-class.html#instance-properties">Properties</a>
     </li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li><a href="../../model/Memory/model.html">model</a></li>
+    <li><a href="../../model/Memory/policy.html">policy</a></li>
     <li><a href="../../model/Memory/program.html">program</a></li>
+    <li><a href="../../model/Memory/programNybbles.html">programNybbles</a></li>
     <li><a href="../../model/Memory/registers.html">registers</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+    <li><a href="../../model/Memory/storage.html">storage</a></li>
+    <li><a href="../../model/Memory/totalNybbles.html">totalNybbles</a></li>
 
     <li class="section-title"><a href="../../model/Memory-class.html#instance-methods">Methods</a></li>
     <li><a href="../../model/Memory/decodeJson.html">decodeJson</a></li>
@@ -90,52 +128,6 @@
 
   </div><!--/.sidebar-offcanvas-->
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-method">initializeSystem</span> method 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-    <section class="multi-line-signature">
-      
-
-<span class="returntype">void</span>
-<span class="name ">initializeSystem</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="initializeSystem-param-layout"><span class="type-annotation"><a href="../../model/OperationMap-class.html">OperationMap</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span> <span class="parameter-name">layout</span></span></li>
-</ol>)
-
-      
-
-    </section>
-    
-<section class="desc markdown">
-  <p>Called by our controller, which necessarily happens after the Model
-exists.</p>
-</section>
-
-
-    
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void initializeSystem(OperationMap&lt;OT&gt; layout) {
-  program = ProgramMemory&lt;OT&gt;(this, _storage, layout._operationTable);
-
-  &#47;&#47; We rely on our Controller to give us an OperationMap with the
-  &#47;&#47; layout information that tells us the row&#47;column positions of the various
-  &#47;&#47; operations.  Those positions are how the 16C displays program
-  &#47;&#47; instructions, and it&#39;s also how we externalize them in our JSON
-  &#47;&#47; state file.
-  &#47;&#47;
-  &#47;&#47; We don&#39;t need to retain the layout, but we do need to ensure that
-  &#47;&#47; one is created.  The OperationMap constructor has the side effect
-  &#47;&#47; of initializing late final fields that we depend on.  Admittedly, this
-  &#47;&#47; is a little tricky - making initialization happen while keeping modules
-  &#47;&#47; decoupled sometimes is.
-}</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -144,15 +136,16 @@ exists.</p>
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 

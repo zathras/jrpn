@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the drawText method from the CalculatorButton class, for the Dart programming language.">
+  <title>drawText method - CalculatorButton class - view.buttons library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../" data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jrpn</a></li>
+    <li><a href="../../view.buttons/view.buttons-library.html">view.buttons</a></li>
+    <li><a href="../../view.buttons/CalculatorButton-class.html">CalculatorButton</a></li>
+    <li class="self-crumb">drawText method</li>
+  </ol>
+  <div class="self-name">drawText</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">drawText</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype">void</span>
+<span class="name ">drawText</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="drawText-param-canvas"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Canvas-class.html">Canvas</a></span> <span class="parameter-name">canvas</span>, </span></li>
+<li><span class="parameter" id="drawText-param-style"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/painting/TextStyle-class.html">TextStyle</a></span> <span class="parameter-name">style</span>, </span></li>
+<li><span class="parameter" id="drawText-param-text"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">text</span>, </span></li>
+<li><span class="parameter" id="drawText-param-w"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">w</span>, </span></li>
+<li><span class="parameter" id="drawText-param-offset"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Offset-class.html">Offset</a></span> <span class="parameter-name">offset</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">void drawText(
+    Canvas canvas, TextStyle style, String text, double w, Offset offset) {
+  final String normal;
+  final String? superscript;
+  final String? subscript;
+  final caret = text.indexOf(&#39;^&#39;);
+  if (caret == -1) {
+    normal = text;
+    superscript = subscript = null;
+  } else {
+    normal = text.substring(0, caret);
+    final remain = text.substring(caret + 1);
+    final caret2 = remain.indexOf(&#39;^&#39;);
+    if (caret2 == -1) {
+      superscript = remain;
+      subscript = null;
+    } else {
+      superscript = remain.substring(0, caret2);
+      subscript = remain.substring(caret2 + 1);
+    }
+  }
+  TextSpan span = TextSpan(style: style, text: normal);
+  TextPainter tp = TextPainter(
+      text: span,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr);
+  if (superscript == null &amp;&amp; subscript == null) {
+    tp.layout(minWidth: w);
+    tp.paint(canvas, offset);
+  } else {
+    const scale = 0.75;
+    tp.layout();
+    double width = tp.width;
+    final TextPainter? tpSup;
+    final TextPainter? tpSub;
+    if (superscript == null) {
+      tpSup = null;
+    } else {
+      tpSup = TextPainter(
+          text: TextSpan(style: style, text: superscript),
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr);
+      tpSup.layout();
+      width += tpSup.width * scale;
+    }
+    if (subscript == null) {
+      tpSub = null;
+    } else {
+      tpSub = TextPainter(
+          text: TextSpan(style: style, text: subscript),
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr);
+      tpSub.layout();
+      if (tpSup != null) {
+        final extra = tpSub.width - tpSup.width;
+        if (extra &gt; 0) {
+          width += extra * scale;
+        }
+      } else {
+        width += tpSub.width * scale;
+      }
+    }
+    canvas.save();
+    canvas.translate(offset.dx + (w - width) &#47; 2, offset.dy);
+    final integralCheat = normal == &#39;\u222b&#39;;
+    if (integralCheat) {
+      canvas.translate(0, -5);
+    }
+    tp.paint(canvas, const Offset(0, 0));
+    if (integralCheat) {
+      canvas.translate(0, -6);
+    }
+    canvas.translate(tp.width, 30 - tp.height);
+    canvas.scale(scale);
+    tpSup?.paint(canvas, const Offset(0, 0));
+    canvas.translate(0, 22);
+    tpSub?.paint(canvas, const Offset(0, 0));
+    canvas.restore();
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">jrpn</a></li>
+  <li><a href="../../view.buttons/view.buttons-library.html">view.buttons</a></li>
+  <li><a href="../../view.buttons/CalculatorButton-class.html">CalculatorButton</a></li>
+  <li class="self-crumb">drawText method</li>
+</ol>
+
+
+    <h5>CalculatorButton class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../view.buttons/CalculatorButton-class.html#constructors">Constructors</a></li>
+          <li><a href="../../view.buttons/CalculatorButton/CalculatorButton.html">CalculatorButton</a></li>
+
+
+    <li class="section-title">
+      <a href="../../view.buttons/CalculatorButton-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="../../view.buttons/CalculatorButton/acceleratorKey.html">acceleratorKey</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/acceleratorLabel.html">acceleratorLabel</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/bFactory.html">bFactory</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/fKey.html">fKey</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/fText.html">fText</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/gKey.html">gKey</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/gText.html">gText</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/gTextOffset.html">gTextOffset</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/hashCode.html">hashCode</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/height.html">height</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/innerBorder.html">innerBorder</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/innerBorderColor.html">innerBorderColor</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/key.html">key</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/keyTextOffset.html">keyTextOffset</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/keyTextStyle.html">keyTextStyle</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/lowerSurface.html">lowerSurface</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/lowerSurfaceColor.html">lowerSurfaceColor</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/lowerSurfaceColorPressed.html">lowerSurfaceColorPressed</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/outerBorder.html">outerBorder</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/outerBorderPressedScale.html">outerBorderPressedScale</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/uKey.html">uKey</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/upperSurface.html">upperSurface</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/upperSurfaceColor.html">upperSurfaceColor</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/upperSurfaceColorPressed.html">upperSurfaceColorPressed</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/uText.html">uText</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/width.html">width</a></li>
+
+    <li class="section-title"><a href="../../view.buttons/CalculatorButton-class.html#instance-methods">Methods</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/StatefulWidget/createElement.html">createElement</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/createState.html">createState</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/debugDescribeChildren.html">debugDescribeChildren</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/drawBlueText.html">drawBlueText</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/drawGoldText.html">drawGoldText</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/drawKeyboardAccelerator.html">drawKeyboardAccelerator</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/drawText.html">drawText</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/drawWhiteText.html">drawWhiteText</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../../view.buttons/CalculatorButton/paintForPainter.html">paintForPainter</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toDiagnosticsNode.html">toDiagnosticsNode</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable/toString.html">toString</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringDeep.html">toStringDeep</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringShallow.html">toStringShallow</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/toStringShort.html">toStringShort</a></li>
+
+    <li class="section-title inherited"><a href="../../view.buttons/CalculatorButton-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      2.0.1+6
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

@@ -12,16 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="../../static-assets/github.css">
-  <link rel="stylesheet" href="../../static-assets/styles.css">
-  <link rel="icon" href="../../static-assets/favicon.png">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
 
   
 </head>
 
 
-<body data-base-href="../../"
-      data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -42,6 +42,47 @@
 <main>
 
 
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">singleStep</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<div>
+  <ol class="annotation-list">
+    <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
+  </ol>
+</div>
+
+<span class="returntype">void</span>
+<span class="name ">singleStep</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="singleStep-param-digitEntryStateFrom"><span class="type-annotation"><a href="../../controller.states/DigitEntry-class.html">DigitEntry</a>?</span> <span class="parameter-name">digitEntryStateFrom</span></span></li>
+</ol>)
+
+      <div class="features">override</div>
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Perform a single step action by running one instruction, and then
+returning to an appropriate state (DigitEntry or Running, as
+determined by the executed instruction).</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@override
+void singleStep(DigitEntry? digitEntryStateFrom) {
+  assert(false);
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
   <form class="search-sidebar" role="search">
@@ -60,18 +101,24 @@
     <h5>RunningController class</h5>
     <ol>
 
-    <li class="section-title"><a href="../../controller/RunningController-class.html#constructors">Constructors</a></li>
-    <li><a href="../../controller/RunningController/RunningController.html">RunningController</a></li>
+        <li class="section-title"><a href="../../controller/RunningController-class.html#constructors">Constructors</a></li>
+          <li><a href="../../controller/RunningController/RunningController.html">RunningController</a></li>
 
 
     <li class="section-title">
       <a href="../../controller/RunningController-class.html#instance-properties">Properties</a>
     </li>
-    <li><a href="../../controller/RunningController/argValue.html">argValue</a></li>
+    <li><a href="../../controller/RunningController/argBase.html">argBase</a></li>
     <li><a href="../../controller/RunningController/currentDigitEntryState.html">currentDigitEntryState</a></li>
+    <li><a href="../../controller/RunningController/gotoLineNumberKey.html">gotoLineNumberKey</a></li>
+    <li><a href="../../controller/RunningController/gsbOperation.html">gsbOperation</a></li>
+    <li><a href="../../controller/RunningController/gtoOperation.html">gtoOperation</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
     <li><a href="../../controller/RunningController/keyboard.html">keyboard</a></li>
-    <li class="inherited"><a href="../../controller/Controller/model.html">model</a></li>
+    <li class="inherited"><a href="../../controller/Controller/lastKey.html">lastKey</a></li>
+    <li><a href="../../controller/RunningController/minusOp.html">minusOp</a></li>
+    <li><a href="../../controller/RunningController/model.html">model</a></li>
+    <li><a href="../../controller/RunningController/multOp.html">multOp</a></li>
     <li><a href="../../controller/RunningController/pause.html">pause</a></li>
     <li><a href="../../controller/RunningController/pendingError.html">pendingError</a></li>
     <li><a href="../../controller/RunningController/real.html">real</a></li>
@@ -81,13 +128,17 @@
     <li class="section-title"><a href="../../controller/RunningController-class.html#instance-methods">Methods</a></li>
     <li class="inherited"><a href="../../controller/Controller/buttonDown.html">buttonDown</a></li>
     <li><a href="../../controller/RunningController/buttonUp.html">buttonUp</a></li>
+    <li class="inherited"><a href="../../controller/Controller/buttonWidgetDown.html">buttonWidgetDown</a></li>
+    <li><a href="../../controller/RunningController/getArgsAndRun.html">getArgsAndRun</a></li>
+    <li><a href="../../controller/RunningController/getErrorNumber.html">getErrorNumber</a></li>
     <li><a href="../../controller/RunningController/handlePSE.html">handlePSE</a></li>
+    <li><a href="../../controller/RunningController/newSelfTests.html">newSelfTests</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
     <li class="inherited"><a href="../../controller/Controller/pasteToX.html">pasteToX</a></li>
     <li class="inherited"><a href="../../controller/Controller/reset.html">reset</a></li>
     <li class="inherited"><a href="../../controller/Controller/resetAll.html">resetAll</a></li>
     <li><a href="../../controller/RunningController/returnToParent.html">returnToParent</a></li>
-    <li><a href="../../controller/RunningController/runWithArg.html">runWithArg</a></li>
+    <li><a href="../../controller/RunningController/setArg.html">setArg</a></li>
     <li><a href="../../controller/RunningController/showCalculatorError.html">showCalculatorError</a></li>
     <li class="inherited"><a href="../../controller/Controller/showMessage.html">showMessage</a></li>
     <li><a href="../../controller/RunningController/singleStep.html">singleStep</a></li>
@@ -103,47 +154,6 @@
 
   </div><!--/.sidebar-offcanvas-->
 
-  <div id="dartdoc-main-content" class="main-content">
-      <div>
-<h1><span class="kind-method">singleStep</span> method 
-    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
-</h1></div>
-
-    <section class="multi-line-signature">
-      
-<div>
-  <ol class="annotation-list">
-    <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
-  </ol>
-</div>
-
-<span class="returntype">void</span>
-<span class="name ">singleStep</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="singleStep-param-currentState"><span class="type-annotation"><a href="../../controller.states/DigitEntry-class.html">DigitEntry</a>?</span> <span class="parameter-name">currentState</span></span></li>
-</ol>)
-
-      <div class="features">override</div>
-
-    </section>
-    
-<section class="desc markdown">
-  <p>Perform a single step action by running one instruction, and then
-returning to an appropriate state (DigitEntry or Running, as
-determined by the executed instruction).</p>
-</section>
-
-
-    
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">@override
-void singleStep(DigitEntry? currentState) {
-  assert(false);
-}</code></pre>
-</section>
-
-
-  </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
 
@@ -152,15 +162,16 @@ void singleStep(DigitEntry? currentState) {
 <footer>
   <span class="no-break">
     jrpn
-      2.0.0+3
+      2.0.1+6
   </span>
 
   
 </footer>
 
 
-<script src="../../static-assets/highlight.pack.js"></script>
-<script src="../../static-assets/script.js"></script>
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
 
 
 
