@@ -1,6 +1,6 @@
 # JRPN
 
-![](docs/screen_shot.png)
+![](dartdoc/screenshot.png)
 
 JRPN is a clean-room calculator simulator inspired by the HP-16C.
 It uses a simulated seven-segment LCD for display, and
@@ -51,6 +51,13 @@ The calculator has some interesting features:
 The design is a pretty has a pretty strict MVC separation.
 Notably, the model doesn't have API dependencies on the
 view or the controller.
+
+![](dartdoc/mvc.png)
+
+There are even top-level classes called `m.Model` and `c.Controller`.
+They're abstract; for the 16C the concrete subclasses are `Model16`
+and `Controller16`.  The top-level widget is `Jrpn`, but the real
+top-level view class is called `MainScreen`. 
 
 The state model of the 16C is pretty complicated -- they really
 made the most out of a small package!  This complexity is managed
