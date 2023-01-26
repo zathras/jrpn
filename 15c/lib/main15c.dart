@@ -320,36 +320,37 @@ class Operations15 extends Operations {
       },
       name: '%');
 
-  static final reciprocal15 = NormalOperationOrLetter.floatOnly(
-      letter: letterLabelE,
-      floatCalc: (Model m) {
-        final mat = m.x.asMatrix;
-        if (mat == null) {
-          double x = m.xF;
-          if (x == 0.0) {
-            throw CalculatorError(0);
-          } else {
-            m.resultXF = 1.0 / x;
-          }
-        } else {
-          final result = (m as Model15).matrices[m.resultMatrix];
-          result.copyFrom(m, m.matrices[mat]);
-          linalg.invert(result);
-          m.resultX = Value.fromMatrix(m.resultMatrix);
-        }
-      },
-      complexCalc: (Model m) {
-        if (m.x.asMatrix != null) {
-          return reciprocal15.floatCalc!(m);
-        }
-        final x = m.xC;
-        if (x == Complex.zero) {
-          throw CalculatorError(0);
-        } else {
-          m.resultXC = const Complex(1, 0) / x;
-        }
-      },
-      name: '1/x');
+  static final NormalOperationOrLetter reciprocal15 =
+      NormalOperationOrLetter.floatOnly(
+          letter: letterLabelE,
+          floatCalc: (Model m) {
+            final mat = m.x.asMatrix;
+            if (mat == null) {
+              double x = m.xF;
+              if (x == 0.0) {
+                throw CalculatorError(0);
+              } else {
+                m.resultXF = 1.0 / x;
+              }
+            } else {
+              final result = (m as Model15).matrices[m.resultMatrix];
+              result.copyFrom(m, m.matrices[mat]);
+              linalg.invert(result);
+              m.resultX = Value.fromMatrix(m.resultMatrix);
+            }
+          },
+          complexCalc: (Model m) {
+            if (m.x.asMatrix != null) {
+              return reciprocal15.floatCalc!(m);
+            }
+            final x = m.xC;
+            if (x == Complex.zero) {
+              throw CalculatorError(0);
+            } else {
+              m.resultXC = const Complex(1, 0) / x;
+            }
+          },
+          name: '1/x');
 
   static final NormalOperation deltaPercent = NormalOperation.floatOnly(
       floatCalc: (Model m) {
