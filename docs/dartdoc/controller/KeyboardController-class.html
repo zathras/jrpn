@@ -11,7 +11,7 @@
   
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
   
   <link rel="stylesheet" href="../static-assets/github.css?v1">
   <link rel="stylesheet" href="../static-assets/styles.css?v1">
@@ -21,12 +21,12 @@
 </head>
 
 
-<body data-base-href="../" data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
 
 <div id="overlay-under-drawer"></div>
 
 <header id="title">
-  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">jrpn</a></li>
     <li><a href="../controller/controller-library.html">controller</a></li>
@@ -36,10 +36,16 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
 </header>
-
 <main>
-
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
@@ -77,7 +83,7 @@
 </dt>
 <dd>
   
-  <div class="features">final</div>
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
@@ -88,7 +94,7 @@
 </dt>
 <dd>
   
-  <div class="features">late, final</div>
+  <div class="features"><span class="feature">late</span><span class="feature">final</span></div>
 
 </dd>
 
@@ -99,7 +105,7 @@
 </dt>
 <dd class="inherited">
   The hash code for this object.
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -110,7 +116,7 @@
 </dt>
 <dd>
   
-  <div class="features">read / write</div>
+  <div class="features"><span class="feature">read / write</span></div>
 
 </dd>
 
@@ -121,7 +127,7 @@
 </dt>
 <dd class="inherited">
   A representation of the runtime type of the object.
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -156,7 +162,7 @@
 </dt>
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -208,7 +214,7 @@
 </dt>
 <dd class="inherited">
   A string representation of this object.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -229,7 +235,7 @@
 </dt>
 <dd class="inherited">
   The equality operator.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -258,27 +264,27 @@
 
     <h5>controller library</h5>
     <ol>
-  <li class="section-title"><a href="../controller/controller-library.html#classes">Classes</a></li>
-  <li><a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></li>
-  <li><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></li>
-  <li><a href="../controller/Controller-class.html">Controller</a></li>
-  <li><a href="../controller/GosubOperation-class.html">GosubOperation</a></li>
-  <li><a href="../controller/KeyboardController-class.html">KeyboardController</a></li>
-  <li><a href="../controller/LetterLabel-class.html">LetterLabel</a></li>
-  <li><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></li>
-  <li><a href="../controller/NoArgOperation-class.html">NoArgOperation</a></li>
-  <li><a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></li>
-  <li><a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></li>
-  <li><a href="../controller/NormalArgOperationWithBeforeCalc-class.html">NormalArgOperationWithBeforeCalc</a></li>
-  <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
-  <li><a href="../controller/NormalOperationOrLetter-class.html">NormalOperationOrLetter</a></li>
-  <li><a href="../controller/NumberEntry-class.html">NumberEntry</a></li>
-  <li><a href="../controller/Operation-class.html">Operation</a></li>
-  <li><a href="../controller/RealController-class.html">RealController</a></li>
-  <li><a href="../controller/RunningController-class.html">RunningController</a></li>
-  <li><a href="../controller/SelfTests-class.html">SelfTests</a></li>
-  <li><a href="../controller/StackLift-class.html">StackLift</a></li>
-  <li><a href="../controller/StackLiftEnabledUser-class.html">StackLiftEnabledUser</a></li>
+      <li class="section-title"><a href="../controller/controller-library.html#classes">Classes</a></li>
+        <li><a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></li>
+        <li><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></li>
+        <li><a href="../controller/Controller-class.html">Controller</a></li>
+        <li><a href="../controller/GosubOperation-class.html">GosubOperation</a></li>
+        <li><a href="../controller/KeyboardController-class.html">KeyboardController</a></li>
+        <li><a href="../controller/LetterLabel-class.html">LetterLabel</a></li>
+        <li><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></li>
+        <li><a href="../controller/NoArgOperation-class.html">NoArgOperation</a></li>
+        <li><a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></li>
+        <li><a href="../controller/NormalArgOperation-class.html">NormalArgOperation</a></li>
+        <li><a href="../controller/NormalArgOperationWithBeforeCalc-class.html">NormalArgOperationWithBeforeCalc</a></li>
+        <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
+        <li><a href="../controller/NormalOperationOrLetter-class.html">NormalOperationOrLetter</a></li>
+        <li><a href="../controller/NumberEntry-class.html">NumberEntry</a></li>
+        <li><a href="../controller/Operation-class.html">Operation</a></li>
+        <li><a href="../controller/RealController-class.html">RealController</a></li>
+        <li><a href="../controller/RunningController-class.html">RunningController</a></li>
+        <li><a href="../controller/SelfTests-class.html">SelfTests</a></li>
+        <li><a href="../controller/StackLift-class.html">StackLift</a></li>
+        <li><a href="../controller/StackLiftEnabledUser-class.html">StackLiftEnabledUser</a></li>
 
 
 
@@ -298,25 +304,25 @@
           <li><a href="../controller/KeyboardController/KeyboardController.html">KeyboardController</a></li>
 
 
-    <li class="section-title">
-      <a href="../controller/KeyboardController-class.html#instance-properties">Properties</a>
-    </li>
-    <li><a href="../controller/KeyboardController/button.html">button</a></li>
-    <li><a href="../controller/KeyboardController/controller.html">controller</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
-    <li><a href="../controller/KeyboardController/lastKeyDown.html">lastKeyDown</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+        <li class="section-title">
+          <a href="../controller/KeyboardController-class.html#instance-properties">Properties</a>
+        </li>
+          <li><a href="../controller/KeyboardController/button.html">button</a></li>
+          <li><a href="../controller/KeyboardController/controller.html">controller</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li><a href="../controller/KeyboardController/lastKeyDown.html">lastKeyDown</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
 
-    <li class="section-title"><a href="../controller/KeyboardController-class.html#instance-methods">Methods</a></li>
-    <li><a href="../controller/KeyboardController/deregister.html">deregister</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../controller/KeyboardController/onKey.html">onKey</a></li>
-    <li><a href="../controller/KeyboardController/register.html">register</a></li>
-    <li><a href="../controller/KeyboardController/releasePressedButton.html">releasePressedButton</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+        <li class="section-title"><a href="../controller/KeyboardController-class.html#instance-methods">Methods</a></li>
+          <li><a href="../controller/KeyboardController/deregister.html">deregister</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../controller/KeyboardController/onKey.html">onKey</a></li>
+          <li><a href="../controller/KeyboardController/register.html">register</a></li>
+          <li><a href="../controller/KeyboardController/releasePressedButton.html">releasePressedButton</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
 
-    <li class="section-title inherited"><a href="../controller/KeyboardController-class.html#operators">Operators</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+        <li class="section-title inherited"><a href="../controller/KeyboardController-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
 
 
 

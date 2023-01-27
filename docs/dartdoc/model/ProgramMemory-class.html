@@ -11,7 +11,7 @@
   
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
   
   <link rel="stylesheet" href="../static-assets/github.css?v1">
   <link rel="stylesheet" href="../static-assets/styles.css?v1">
@@ -21,12 +21,12 @@
 </head>
 
 
-<body data-base-href="../" data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
 
 <div id="overlay-under-drawer"></div>
 
 <header id="title">
-  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">jrpn</a></li>
     <li><a href="../model/model-library.html">model</a></li>
@@ -36,10 +36,16 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
 </header>
-
 <main>
-
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
@@ -86,7 +92,7 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 </dt>
 <dd>
   
-  <div class="features">read-only</div>
+  <div class="features"><span class="feature">read-only</span></div>
 
 </dd>
 
@@ -97,7 +103,7 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 </dt>
 <dd>
   
-  <div class="features">read / write</div>
+  <div class="features"><span class="feature">read / write</span></div>
 
 </dd>
 
@@ -108,7 +114,7 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 </dt>
 <dd>
   
-  <div class="features">read-only</div>
+  <div class="features"><span class="feature">read-only</span></div>
 
 </dd>
 
@@ -119,7 +125,7 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 </dt>
 <dd class="inherited">
   The hash code for this object.
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -130,7 +136,7 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 </dt>
 <dd>
   
-  <div class="features">read / write</div>
+  <div class="features"><span class="feature">read / write</span></div>
 
 </dd>
 
@@ -141,7 +147,7 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 </dt>
 <dd>
   Number of lines in the program
-  <div class="features">read-only</div>
+  <div class="features"><span class="feature">read-only</span></div>
 
 </dd>
 
@@ -152,7 +158,7 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 </dt>
 <dd>
   
-  <div class="features">read-only</div>
+  <div class="features"><span class="feature">read-only</span></div>
 
 </dd>
 
@@ -163,7 +169,7 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 </dt>
 <dd>
   
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/protected-constant.html">protected</a>, final</div>
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
@@ -174,7 +180,7 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 </dt>
 <dd>
   
-  <div class="features">read-only</div>
+  <div class="features"><span class="feature">read-only</span></div>
 
 </dd>
 
@@ -186,7 +192,7 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 <dd>
   This is a testing hook; tests can override this to tweak behaviors
 and detect events.
-  <div class="features">read / write</div>
+  <div class="features"><span class="feature">read / write</span></div>
 
 </dd>
 
@@ -197,7 +203,7 @@ and detect events.
 </dt>
 <dd>
   
-  <div class="features">read-only</div>
+  <div class="features"><span class="feature">read-only</span></div>
 
 </dd>
 
@@ -208,7 +214,7 @@ and detect events.
 </dt>
 <dd class="inherited">
   A representation of the runtime type of the object.
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -322,7 +328,7 @@ stray data will be properly zeroed out.
 </dt>
 <dd>
   
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/protected-constant.html">protected</a></div>
+  
 
 </dd>
 
@@ -377,7 +383,7 @@ To be clear, there are lines+1 possible values.
 </dt>
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -481,7 +487,7 @@ To be clear, there are lines+1 possible values.
 </dt>
 <dd class="inherited">
   A string representation of this object.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -502,7 +508,7 @@ To be clear, there are lines+1 possible values.
 </dt>
 <dd class="inherited">
   The equality operator.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -544,60 +550,60 @@ To be clear, there are lines+1 possible values.
 
     <h5>model library</h5>
     <ol>
-  <li class="section-title"><a href="../model/model-library.html#classes">Classes</a></li>
-  <li><a href="../model/Arg-class.html">Arg</a></li>
-  <li><a href="../model/ArgAlternates-class.html">ArgAlternates</a></li>
-  <li><a href="../model/ArgDone-class.html">ArgDone</a></li>
-  <li><a href="../model/CalculatorError-class.html">CalculatorError</a></li>
-  <li><a href="../model/DebugLog-class.html">DebugLog</a></li>
-  <li><a href="../model/DigitArg-class.html">DigitArg</a></li>
-  <li><a href="../model/DisplayMode-class.html">DisplayMode</a></li>
-  <li><a href="../model/DisplayModel-class.html">DisplayModel</a></li>
-  <li><a href="../model/DisplayModeSelector-class.html">DisplayModeSelector</a></li>
-  <li><a href="../model/DoubleWordStatus-class.html">DoubleWordStatus</a></li>
-  <li><a href="../model/FixFloatFormatter-class.html">FixFloatFormatter</a></li>
-  <li><a href="../model/FloatFormatter-class.html">FloatFormatter</a></li>
-  <li><a href="../model/IntegerDisplayMode-class.html">IntegerDisplayMode</a></li>
-  <li><a href="../model/IntegerSignMode-class.html">IntegerSignMode</a></li>
-  <li><a href="../model/KeyArg-class.html">KeyArg</a></li>
-  <li><a href="../model/KeysArg-class.html">KeysArg</a></li>
-  <li><a href="../model/LabelArg-class.html">LabelArg</a></li>
-  <li><a href="../model/LcdContents-class.html">LcdContents</a></li>
-  <li><a href="../model/Memory-class.html">Memory</a></li>
-  <li><a href="../model/MemoryPolicy-class.html">MemoryPolicy</a></li>
-  <li><a href="../model/MKey-class.html">MKey</a></li>
-  <li><a href="../model/MKeyExtensionOp-class.html">MKeyExtensionOp</a></li>
-  <li><a href="../model/Model-class.html">Model</a></li>
-  <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
-  <li><a href="../model/NumStatus68-class.html">NumStatus68</a></li>
-  <li><a href="../model/Observable-class.html">Observable</a></li>
-  <li><a href="../model/OperationMap-class.html">OperationMap</a></li>
-  <li><a href="../model/ProgramInstruction-class.html">ProgramInstruction</a></li>
-  <li><a href="../model/ProgramListener-class.html">ProgramListener</a></li>
-  <li><a href="../model/ProgramMemory-class.html">ProgramMemory</a></li>
-  <li><a href="../model/ProgramOperation-class.html">ProgramOperation</a></li>
-  <li><a href="../model/RegisterReadArg-class.html">RegisterReadArg</a></li>
-  <li><a href="../model/Registers-class.html">Registers</a></li>
-  <li><a href="../model/RegisterWriteArg-class.html">RegisterWriteArg</a></li>
-  <li><a href="../model/SciFloatFormatter-class.html">SciFloatFormatter</a></li>
-  <li><a href="../model/Settings-class.html">Settings</a></li>
-  <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
-  <li><a href="../model/SignMode-class.html">SignMode</a></li>
-  <li><a href="../model/TrigMode-class.html">TrigMode</a></li>
-  <li><a href="../model/Value-class.html">Value</a></li>
+      <li class="section-title"><a href="../model/model-library.html#classes">Classes</a></li>
+        <li><a href="../model/Arg-class.html">Arg</a></li>
+        <li><a href="../model/ArgAlternates-class.html">ArgAlternates</a></li>
+        <li><a href="../model/ArgDone-class.html">ArgDone</a></li>
+        <li><a href="../model/CalculatorError-class.html">CalculatorError</a></li>
+        <li><a href="../model/DebugLog-class.html">DebugLog</a></li>
+        <li><a href="../model/DigitArg-class.html">DigitArg</a></li>
+        <li><a href="../model/DisplayMode-class.html">DisplayMode</a></li>
+        <li><a href="../model/DisplayModel-class.html">DisplayModel</a></li>
+        <li><a href="../model/DisplayModeSelector-class.html">DisplayModeSelector</a></li>
+        <li><a href="../model/DoubleWordStatus-class.html">DoubleWordStatus</a></li>
+        <li><a href="../model/FixFloatFormatter-class.html">FixFloatFormatter</a></li>
+        <li><a href="../model/FloatFormatter-class.html">FloatFormatter</a></li>
+        <li><a href="../model/IntegerDisplayMode-class.html">IntegerDisplayMode</a></li>
+        <li><a href="../model/IntegerSignMode-class.html">IntegerSignMode</a></li>
+        <li><a href="../model/KeyArg-class.html">KeyArg</a></li>
+        <li><a href="../model/KeysArg-class.html">KeysArg</a></li>
+        <li><a href="../model/LabelArg-class.html">LabelArg</a></li>
+        <li><a href="../model/LcdContents-class.html">LcdContents</a></li>
+        <li><a href="../model/Memory-class.html">Memory</a></li>
+        <li><a href="../model/MemoryPolicy-class.html">MemoryPolicy</a></li>
+        <li><a href="../model/MKey-class.html">MKey</a></li>
+        <li><a href="../model/MKeyExtensionOp-class.html">MKeyExtensionOp</a></li>
+        <li><a href="../model/Model-class.html">Model</a></li>
+        <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
+        <li><a href="../model/NumStatus68-class.html">NumStatus68</a></li>
+        <li><a href="../model/Observable-class.html">Observable</a></li>
+        <li><a href="../model/OperationMap-class.html">OperationMap</a></li>
+        <li><a href="../model/ProgramInstruction-class.html">ProgramInstruction</a></li>
+        <li><a href="../model/ProgramListener-class.html">ProgramListener</a></li>
+        <li><a href="../model/ProgramMemory-class.html">ProgramMemory</a></li>
+        <li><a href="../model/ProgramOperation-class.html">ProgramOperation</a></li>
+        <li><a href="../model/RegisterReadArg-class.html">RegisterReadArg</a></li>
+        <li><a href="../model/Registers-class.html">Registers</a></li>
+        <li><a href="../model/RegisterWriteArg-class.html">RegisterWriteArg</a></li>
+        <li><a href="../model/SciFloatFormatter-class.html">SciFloatFormatter</a></li>
+        <li><a href="../model/Settings-class.html">Settings</a></li>
+        <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
+        <li><a href="../model/SignMode-class.html">SignMode</a></li>
+        <li><a href="../model/TrigMode-class.html">TrigMode</a></li>
+        <li><a href="../model/Value-class.html">Value</a></li>
 
 
-  <li class="section-title"><a href="../model/model-library.html#mixins">Mixins</a></li>
-  <li><a href="../model/ShiftKeySelected-mixin.html">ShiftKeySelected</a></li>
+      <li class="section-title"><a href="../model/model-library.html#mixins">Mixins</a></li>
+        <li><a href="../model/ShiftKeySelected-mixin.html">ShiftKeySelected</a></li>
 
 
 
 
-  <li class="section-title"><a href="../model/model-library.html#enums">Enums</a></li>
-  <li><a href="../model/OrientationSetting.html">OrientationSetting</a></li>
+      <li class="section-title"><a href="../model/model-library.html#enums">Enums</a></li>
+        <li><a href="../model/OrientationSetting.html">OrientationSetting</a></li>
 
-  <li class="section-title"><a href="../model/model-library.html#typedefs">Typedefs</a></li>
-  <li><a href="../model/OpInitFunction.html">OpInitFunction</a></li>
+      <li class="section-title"><a href="../model/model-library.html#typedefs">Typedefs</a></li>
+        <li><a href="../model/OpInitFunction.html">OpInitFunction</a></li>
 
 </ol>
 
@@ -610,47 +616,47 @@ To be clear, there are lines+1 possible values.
           <li><a href="../model/ProgramMemory/ProgramMemory.html">ProgramMemory</a></li>
 
 
-    <li class="section-title">
-      <a href="../model/ProgramMemory-class.html#instance-properties">Properties</a>
-    </li>
-    <li><a href="../model/ProgramMemory/bytesToNextAllocation.html">bytesToNextAllocation</a></li>
-    <li><a href="../model/ProgramMemory/currentLine.html">currentLine</a></li>
-    <li><a href="../model/ProgramMemory/hasExtended.html">hasExtended</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
-    <li><a href="../model/ProgramMemory/isRunning.html">isRunning</a></li>
-    <li><a href="../model/ProgramMemory/lines.html">lines</a></li>
-    <li><a href="../model/ProgramMemory/listing.html">listing</a></li>
-    <li><a href="../model/ProgramMemory/memory.html">memory</a></li>
-    <li><a href="../model/ProgramMemory/programBytes.html">programBytes</a></li>
-    <li><a href="../model/ProgramMemory/programListener.html">programListener</a></li>
-    <li><a href="../model/ProgramMemory/returnStackUnderflow.html">returnStackUnderflow</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+        <li class="section-title">
+          <a href="../model/ProgramMemory-class.html#instance-properties">Properties</a>
+        </li>
+          <li><a href="../model/ProgramMemory/bytesToNextAllocation.html">bytesToNextAllocation</a></li>
+          <li><a href="../model/ProgramMemory/currentLine.html">currentLine</a></li>
+          <li><a href="../model/ProgramMemory/hasExtended.html">hasExtended</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li><a href="../model/ProgramMemory/isRunning.html">isRunning</a></li>
+          <li><a href="../model/ProgramMemory/lines.html">lines</a></li>
+          <li><a href="../model/ProgramMemory/listing.html">listing</a></li>
+          <li><a href="../model/ProgramMemory/memory.html">memory</a></li>
+          <li><a href="../model/ProgramMemory/programBytes.html">programBytes</a></li>
+          <li><a href="../model/ProgramMemory/programListener.html">programListener</a></li>
+          <li><a href="../model/ProgramMemory/returnStackUnderflow.html">returnStackUnderflow</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
 
-    <li class="section-title"><a href="../model/ProgramMemory-class.html#instance-methods">Methods</a></li>
-    <li><a href="../model/ProgramMemory/decodeJson.html">decodeJson</a></li>
-    <li><a href="../model/ProgramMemory/deleteCurrent.html">deleteCurrent</a></li>
-    <li><a href="../model/ProgramMemory/displayCurrent.html">displayCurrent</a></li>
-    <li><a href="../model/ProgramMemory/doNextIf.html">doNextIf</a></li>
-    <li><a href="../model/ProgramMemory/getCurrent.html">getCurrent</a></li>
-    <li><a href="../model/ProgramMemory/gosub.html">gosub</a></li>
-    <li><a href="../model/ProgramMemory/goto.html">goto</a></li>
-    <li><a href="../model/ProgramMemory/gotoOpCode.html">gotoOpCode</a></li>
-    <li><a href="../model/ProgramMemory/handleRunStopKepyress.html">handleRunStopKepyress</a></li>
-    <li><a href="../model/ProgramMemory/incrementCurrentLine.html">incrementCurrentLine</a></li>
-    <li><a href="../model/ProgramMemory/insert.html">insert</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../model/ProgramMemory/opcodeAt.html">opcodeAt</a></li>
-    <li><a href="../model/ProgramMemory/popReturnStack.html">popReturnStack</a></li>
-    <li><a href="../model/ProgramMemory/reset.html">reset</a></li>
-    <li><a href="../model/ProgramMemory/resetReturnStack.html">resetReturnStack</a></li>
-    <li><a href="../model/ProgramMemory/skipIfRunning.html">skipIfRunning</a></li>
-    <li><a href="../model/ProgramMemory/stepCurrentLine.html">stepCurrentLine</a></li>
-    <li><a href="../model/ProgramMemory/toJson.html">toJson</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+        <li class="section-title"><a href="../model/ProgramMemory-class.html#instance-methods">Methods</a></li>
+          <li><a href="../model/ProgramMemory/decodeJson.html">decodeJson</a></li>
+          <li><a href="../model/ProgramMemory/deleteCurrent.html">deleteCurrent</a></li>
+          <li><a href="../model/ProgramMemory/displayCurrent.html">displayCurrent</a></li>
+          <li><a href="../model/ProgramMemory/doNextIf.html">doNextIf</a></li>
+          <li><a href="../model/ProgramMemory/getCurrent.html">getCurrent</a></li>
+          <li><a href="../model/ProgramMemory/gosub.html">gosub</a></li>
+          <li><a href="../model/ProgramMemory/goto.html">goto</a></li>
+          <li><a href="../model/ProgramMemory/gotoOpCode.html">gotoOpCode</a></li>
+          <li><a href="../model/ProgramMemory/handleRunStopKepyress.html">handleRunStopKepyress</a></li>
+          <li><a href="../model/ProgramMemory/incrementCurrentLine.html">incrementCurrentLine</a></li>
+          <li><a href="../model/ProgramMemory/insert.html">insert</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../model/ProgramMemory/opcodeAt.html">opcodeAt</a></li>
+          <li><a href="../model/ProgramMemory/popReturnStack.html">popReturnStack</a></li>
+          <li><a href="../model/ProgramMemory/reset.html">reset</a></li>
+          <li><a href="../model/ProgramMemory/resetReturnStack.html">resetReturnStack</a></li>
+          <li><a href="../model/ProgramMemory/skipIfRunning.html">skipIfRunning</a></li>
+          <li><a href="../model/ProgramMemory/stepCurrentLine.html">stepCurrentLine</a></li>
+          <li><a href="../model/ProgramMemory/toJson.html">toJson</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
 
-    <li class="section-title"><a href="../model/ProgramMemory-class.html#operators">Operators</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
-    <li><a href="../model/ProgramMemory/operator_get.html">operator []</a></li>
+        <li class="section-title"><a href="../model/ProgramMemory-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+          <li><a href="../model/ProgramMemory/operator_get.html">operator []</a></li>
 
 
 

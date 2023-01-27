@@ -11,7 +11,7 @@
   
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
   
   <link rel="stylesheet" href="../static-assets/github.css?v1">
   <link rel="stylesheet" href="../static-assets/styles.css?v1">
@@ -21,12 +21,12 @@
 </head>
 
 
-<body data-base-href="../" data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
 
 <div id="overlay-under-drawer"></div>
 
 <header id="title">
-  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">jrpn</a></li>
     <li><a href="../controller.states/controller.states-library.html">controller.states</a></li>
@@ -36,10 +36,16 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
 </header>
-
 <main>
-
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
@@ -74,6 +80,8 @@
 
 
         
+
+
       </dl>
     </section>
 
@@ -102,7 +110,7 @@
 </dt>
 <dd class="inherited">
   
-  <div class="features">final, inherited</div>
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -113,7 +121,7 @@
 </dt>
 <dd class="inherited">
   The hash code for this object.
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -124,7 +132,7 @@
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -135,7 +143,7 @@
 </dt>
 <dd class="inherited">
   A representation of the runtime type of the object.
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -150,7 +158,7 @@ controller's state, but note that the status from a running program
 reflects back to when a program isn't running.  This is important
 for proper functioning of the R/S key, and SST.  The value comes
 from the <a href="../controller/RealController-class.html">RealController</a>.
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/protected-constant.html">protected</a>, @<a href="https://pub.dev/documentation/meta/1.8.0/meta/protected-constant.html">protected</a>, read / write, inherited</div>
+  <div class="features"><span class="feature">read / write</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -172,7 +180,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -185,7 +193,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd class="inherited">
   
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -198,20 +206,20 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd class="inherited">
   
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/protected-constant.html">protected</a>, inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
         <dt id="getCalculation" class="callable inherited">
   <span class="name"><a href="../controller.states/LimitedState/getCalculation.html">getCalculation</a></span><span class="signature">(<wbr><span class="parameter" id="getCalculation-param-ad"><span class="type-annotation"><a href="../model/ArgDone-class.html">ArgDone</a></span> <span class="parameter-name">ad</span></span>)
-    <span class="returntype parameter">&#8594; (void Function?<span class="signature">(<span class="parameter" id="param-"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../controller/Operation-class.html">Operation</a></span>&gt;</span></span></span>)</span>?)</span>
+    <span class="returntype parameter">&#8594; (void Function<span class="signature">(<span class="parameter" id="param-"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../controller/Operation-class.html">Operation</a></span>&gt;</span></span></span>)</span>?)</span>
   </span>
   
 
 </dt>
 <dd class="inherited">
   
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/protected-constant.html">protected</a>, inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -224,7 +232,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -237,7 +245,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -250,7 +258,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -263,7 +271,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -276,7 +284,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -289,7 +297,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -302,7 +310,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -315,7 +323,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -328,7 +336,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -341,7 +349,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -354,7 +362,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -367,7 +375,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -380,7 +388,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -393,7 +401,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -406,7 +414,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd class="inherited">
   
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -419,7 +427,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -432,7 +440,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -445,7 +453,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -458,7 +466,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -471,7 +479,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -484,7 +492,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -497,7 +505,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -510,7 +518,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd class="inherited">
   
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -523,7 +531,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 </dt>
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -537,7 +545,7 @@ from the <a href="../controller/RealController-class.html">RealController</a>.
 <dd>
   Process an <a href="../controller/Operation-class.html">Operation</a> with the argument <a href="../model/ArgDone-class.html">ArgDone</a>, once the
 argument value is available.
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -550,7 +558,7 @@ argument value is available.
 </dt>
 <dd class="inherited">
   Called by the controller when this state is changed to
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -576,7 +584,7 @@ argument value is available.
 </dt>
 <dd class="inherited">
   
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -589,7 +597,7 @@ argument value is available.
 </dt>
 <dd class="inherited">
   A string representation of this object.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -602,7 +610,7 @@ argument value is available.
 </dt>
 <dd class="inherited">
   Convenience method to call from an unreachable operation on a state
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/protected-constant.html">protected</a>, inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -623,7 +631,7 @@ argument value is available.
 </dt>
 <dd class="inherited">
   The equality operator.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -652,24 +660,24 @@ argument value is available.
 
     <h5>controller.states library</h5>
     <ol>
-  <li class="section-title"><a href="../controller.states/controller.states-library.html#classes">Classes</a></li>
-  <li><a href="../controller.states/ActiveState-class.html">ActiveState</a></li>
-  <li><a href="../controller.states/ArgInputState-class.html">ArgInputState</a></li>
-  <li><a href="../controller.states/CalculatorOff-class.html">CalculatorOff</a></li>
-  <li><a href="../controller.states/ControllerState-class.html">ControllerState</a></li>
-  <li><a href="../controller.states/DigitEntry-class.html">DigitEntry</a></li>
-  <li><a href="../controller.states/DoNothing-class.html">DoNothing</a></li>
-  <li><a href="../controller.states/GosubArgInputState-class.html">GosubArgInputState</a></li>
-  <li><a href="../controller.states/LimitedState-class.html">LimitedState</a></li>
-  <li><a href="../controller.states/MessageShowing-class.html">MessageShowing</a></li>
-  <li><a href="../controller.states/OnOffKeyPressed-class.html">OnOffKeyPressed</a></li>
-  <li><a href="../controller.states/ProgramEntry-class.html">ProgramEntry</a></li>
-  <li><a href="../controller.states/Resting-class.html">Resting</a></li>
-  <li><a href="../controller.states/Running-class.html">Running</a></li>
-  <li><a href="../controller.states/ShowState-class.html">ShowState</a></li>
-  <li><a href="../controller.states/SingleStepping-class.html">SingleStepping</a></li>
-  <li><a href="../controller.states/WaitingForGotoDot-class.html">WaitingForGotoDot</a></li>
-  <li><a href="../controller.states/WaitingForGotoDotLines-class.html">WaitingForGotoDotLines</a></li>
+      <li class="section-title"><a href="../controller.states/controller.states-library.html#classes">Classes</a></li>
+        <li><a href="../controller.states/ActiveState-class.html">ActiveState</a></li>
+        <li><a href="../controller.states/ArgInputState-class.html">ArgInputState</a></li>
+        <li><a href="../controller.states/CalculatorOff-class.html">CalculatorOff</a></li>
+        <li><a href="../controller.states/ControllerState-class.html">ControllerState</a></li>
+        <li><a href="../controller.states/DigitEntry-class.html">DigitEntry</a></li>
+        <li><a href="../controller.states/DoNothing-class.html">DoNothing</a></li>
+        <li><a href="../controller.states/GosubArgInputState-class.html">GosubArgInputState</a></li>
+        <li><a href="../controller.states/LimitedState-class.html">LimitedState</a></li>
+        <li><a href="../controller.states/MessageShowing-class.html">MessageShowing</a></li>
+        <li><a href="../controller.states/OnOffKeyPressed-class.html">OnOffKeyPressed</a></li>
+        <li><a href="../controller.states/ProgramEntry-class.html">ProgramEntry</a></li>
+        <li><a href="../controller.states/Resting-class.html">Resting</a></li>
+        <li><a href="../controller.states/Running-class.html">Running</a></li>
+        <li><a href="../controller.states/ShowState-class.html">ShowState</a></li>
+        <li><a href="../controller.states/SingleStepping-class.html">SingleStepping</a></li>
+        <li><a href="../controller.states/WaitingForGotoDot-class.html">WaitingForGotoDot</a></li>
+        <li><a href="../controller.states/WaitingForGotoDotLines-class.html">WaitingForGotoDotLines</a></li>
 
 
 
@@ -689,53 +697,53 @@ argument value is available.
           <li><a href="../controller.states/DigitEntry/DigitEntry.html">DigitEntry</a></li>
 
 
-    <li class="section-title inherited">
-      <a href="../controller.states/DigitEntry-class.html#instance-properties">Properties</a>
-    </li>
-    <li class="inherited"><a href="../controller.states/ControllerState/controller.html">controller</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
-    <li class="inherited"><a href="../controller.states/ControllerState/model.html">model</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
-    <li class="inherited"><a href="../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
+        <li class="section-title inherited">
+          <a href="../controller.states/DigitEntry-class.html#instance-properties">Properties</a>
+        </li>
+          <li class="inherited"><a href="../controller.states/ControllerState/controller.html">controller</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="../controller.states/ControllerState/model.html">model</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+          <li class="inherited"><a href="../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
 
-    <li class="section-title"><a href="../controller.states/DigitEntry-class.html#instance-methods">Methods</a></li>
-    <li><a href="../controller.states/DigitEntry/buttonDown.html">buttonDown</a></li>
-    <li class="inherited"><a href="../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
-    <li class="inherited"><a href="../controller.states/ControllerState/changeState.html">changeState</a></li>
-    <li class="inherited"><a href="../controller.states/LimitedState/getCalculation.html">getCalculation</a></li>
-    <li><a href="../controller.states/DigitEntry/gosubDoneState.html">gosubDoneState</a></li>
-    <li><a href="../controller.states/DigitEntry/gosubEntryDone.html">gosubEntryDone</a></li>
-    <li><a href="../controller.states/DigitEntry/handleBackspace.html">handleBackspace</a></li>
-    <li><a href="../controller.states/DigitEntry/handleBST.html">handleBST</a></li>
-    <li><a href="../controller.states/DigitEntry/handleCHS.html">handleCHS</a></li>
-    <li><a href="../controller.states/DigitEntry/handleClearPrefix.html">handleClearPrefix</a></li>
-    <li><a href="../controller.states/DigitEntry/handleClearProgram.html">handleClearProgram</a></li>
-    <li><a href="../controller.states/DigitEntry/handleDecimalPoint.html">handleDecimalPoint</a></li>
-    <li><a href="../controller.states/DigitEntry/handleEEX.html">handleEEX</a></li>
-    <li><a href="../controller.states/DigitEntry/handleGotoDot.html">handleGotoDot</a></li>
-    <li><a href="../controller.states/DigitEntry/handleLetterLabel.html">handleLetterLabel</a></li>
-    <li><a href="../controller.states/DigitEntry/handleNumberKey.html">handleNumberKey</a></li>
-    <li><a href="../controller.states/DigitEntry/handleOnOff.html">handleOnOff</a></li>
-    <li><a href="../controller.states/DigitEntry/handlePR.html">handlePR</a></li>
-    <li class="inherited"><a href="../controller.states/ActiveState/handlePSE.html">handlePSE</a></li>
-    <li><a href="../controller.states/DigitEntry/handleRunStop.html">handleRunStop</a></li>
-    <li><a href="../controller.states/DigitEntry/handleShift.html">handleShift</a></li>
-    <li><a href="../controller.states/DigitEntry/handleShow.html">handleShow</a></li>
-    <li><a href="../controller.states/DigitEntry/handleShowImaginary.html">handleShowImaginary</a></li>
-    <li><a href="../controller.states/DigitEntry/handleShowMem.html">handleShowMem</a></li>
-    <li><a href="../controller.states/DigitEntry/handleShowStatus.html">handleShowStatus</a></li>
-    <li><a href="../controller.states/DigitEntry/handleSST.html">handleSST</a></li>
-    <li class="inherited"><a href="../controller.states/ActiveState/liftStackIfEnabled.html">liftStackIfEnabled</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../controller.states/DigitEntry/onArgComplete.html">onArgComplete</a></li>
-    <li class="inherited"><a href="../controller.states/ControllerState/onChangedTo.html">onChangedTo</a></li>
-    <li><a href="../controller.states/DigitEntry/takeOverFrom.html">takeOverFrom</a></li>
-    <li class="inherited"><a href="../controller.states/LimitedState/terminateDigitEntry.html">terminateDigitEntry</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
-    <li class="inherited"><a href="../controller.states/ControllerState/unreachable.html">unreachable</a></li>
+        <li class="section-title"><a href="../controller.states/DigitEntry-class.html#instance-methods">Methods</a></li>
+          <li><a href="../controller.states/DigitEntry/buttonDown.html">buttonDown</a></li>
+          <li class="inherited"><a href="../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
+          <li class="inherited"><a href="../controller.states/ControllerState/changeState.html">changeState</a></li>
+          <li class="inherited"><a href="../controller.states/LimitedState/getCalculation.html">getCalculation</a></li>
+          <li><a href="../controller.states/DigitEntry/gosubDoneState.html">gosubDoneState</a></li>
+          <li><a href="../controller.states/DigitEntry/gosubEntryDone.html">gosubEntryDone</a></li>
+          <li><a href="../controller.states/DigitEntry/handleBackspace.html">handleBackspace</a></li>
+          <li><a href="../controller.states/DigitEntry/handleBST.html">handleBST</a></li>
+          <li><a href="../controller.states/DigitEntry/handleCHS.html">handleCHS</a></li>
+          <li><a href="../controller.states/DigitEntry/handleClearPrefix.html">handleClearPrefix</a></li>
+          <li><a href="../controller.states/DigitEntry/handleClearProgram.html">handleClearProgram</a></li>
+          <li><a href="../controller.states/DigitEntry/handleDecimalPoint.html">handleDecimalPoint</a></li>
+          <li><a href="../controller.states/DigitEntry/handleEEX.html">handleEEX</a></li>
+          <li><a href="../controller.states/DigitEntry/handleGotoDot.html">handleGotoDot</a></li>
+          <li><a href="../controller.states/DigitEntry/handleLetterLabel.html">handleLetterLabel</a></li>
+          <li><a href="../controller.states/DigitEntry/handleNumberKey.html">handleNumberKey</a></li>
+          <li><a href="../controller.states/DigitEntry/handleOnOff.html">handleOnOff</a></li>
+          <li><a href="../controller.states/DigitEntry/handlePR.html">handlePR</a></li>
+          <li class="inherited"><a href="../controller.states/ActiveState/handlePSE.html">handlePSE</a></li>
+          <li><a href="../controller.states/DigitEntry/handleRunStop.html">handleRunStop</a></li>
+          <li><a href="../controller.states/DigitEntry/handleShift.html">handleShift</a></li>
+          <li><a href="../controller.states/DigitEntry/handleShow.html">handleShow</a></li>
+          <li><a href="../controller.states/DigitEntry/handleShowImaginary.html">handleShowImaginary</a></li>
+          <li><a href="../controller.states/DigitEntry/handleShowMem.html">handleShowMem</a></li>
+          <li><a href="../controller.states/DigitEntry/handleShowStatus.html">handleShowStatus</a></li>
+          <li><a href="../controller.states/DigitEntry/handleSST.html">handleSST</a></li>
+          <li class="inherited"><a href="../controller.states/ActiveState/liftStackIfEnabled.html">liftStackIfEnabled</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../controller.states/DigitEntry/onArgComplete.html">onArgComplete</a></li>
+          <li class="inherited"><a href="../controller.states/ControllerState/onChangedTo.html">onChangedTo</a></li>
+          <li><a href="../controller.states/DigitEntry/takeOverFrom.html">takeOverFrom</a></li>
+          <li class="inherited"><a href="../controller.states/LimitedState/terminateDigitEntry.html">terminateDigitEntry</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+          <li class="inherited"><a href="../controller.states/ControllerState/unreachable.html">unreachable</a></li>
 
-    <li class="section-title inherited"><a href="../controller.states/DigitEntry-class.html#operators">Operators</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+        <li class="section-title inherited"><a href="../controller.states/DigitEntry-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
 
 
 

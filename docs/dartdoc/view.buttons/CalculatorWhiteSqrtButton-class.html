@@ -11,7 +11,7 @@
   
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
   
   <link rel="stylesheet" href="../static-assets/github.css?v1">
   <link rel="stylesheet" href="../static-assets/styles.css?v1">
@@ -21,12 +21,12 @@
 </head>
 
 
-<body data-base-href="../" data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
 
 <div id="overlay-under-drawer"></div>
 
 <header id="title">
-  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">jrpn</a></li>
     <li><a href="../view.buttons/view.buttons-library.html">view.buttons</a></li>
@@ -36,10 +36,16 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
 </header>
-
 <main>
-
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
@@ -77,6 +83,8 @@ up depends on the specific font, which is bundled with the app.</p>
 
 
         
+
+
       </dl>
     </section>
 
@@ -105,7 +113,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   Key (or keys) to generate a press of this button
-  <div class="features">final, inherited</div>
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -116,7 +124,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -127,7 +135,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">final, inherited</div>
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -138,7 +146,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">final, inherited</div>
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -149,7 +157,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">final, inherited</div>
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -160,7 +168,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">final, inherited</div>
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -171,7 +179,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">final, inherited</div>
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -182,7 +190,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -193,7 +201,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   The hash code for this object.
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/nonVirtual-constant.html">nonVirtual</a>, read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -204,7 +212,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -215,7 +223,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -226,7 +234,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -237,7 +245,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   Controls how one widget replaces another widget in the tree.
-  <div class="features">final, inherited</div>
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -248,7 +256,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -259,7 +267,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -270,7 +278,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -281,7 +289,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -292,7 +300,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -303,7 +311,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -314,7 +322,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -325,7 +333,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   A representation of the runtime type of the object.
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -336,7 +344,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">final, inherited</div>
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -347,7 +355,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -358,7 +366,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -369,7 +377,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -380,7 +388,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">final, inherited</div>
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -391,7 +399,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -413,7 +421,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   Creates a <a href="https://api.flutter.dev/flutter/widgets/StatefulElement-class.html">StatefulElement</a> to manage this widget's location in the tree.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -426,7 +434,7 @@ up depends on the specific font, which is bundled with the app.</p>
 </dt>
 <dd class="inherited">
   Creates the mutable state for this widget at a given location in the tree.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -440,7 +448,7 @@ up depends on the specific font, which is bundled with the app.</p>
 <dd class="inherited">
   Returns a list of <code>DiagnosticsNode</code> objects describing this node's
 children.
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/protected-constant.html">protected</a>, inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -453,7 +461,7 @@ children.
 </dt>
 <dd class="inherited">
   Add additional properties associated with the node.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -466,7 +474,7 @@ children.
 </dt>
 <dd class="inherited">
   
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -479,7 +487,7 @@ children.
 </dt>
 <dd class="inherited">
   
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -492,7 +500,7 @@ children.
 </dt>
 <dd class="inherited">
   
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -505,7 +513,7 @@ children.
 </dt>
 <dd class="inherited">
   
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -518,7 +526,7 @@ children.
 </dt>
 <dd>
   
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -531,7 +539,7 @@ children.
 </dt>
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -544,7 +552,7 @@ children.
 </dt>
 <dd class="inherited">
   
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -558,7 +566,7 @@ children.
 <dd class="inherited">
   Returns a debug representation of the object that is used by debugging
 tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode/toStringDeep.html">DiagnosticsNode.toStringDeep</a>.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -571,7 +579,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 </dt>
 <dd class="inherited">
   A string representation of this object.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -584,7 +592,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 </dt>
 <dd class="inherited">
   Returns a string representation of this node and its descendants.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -597,7 +605,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 </dt>
 <dd class="inherited">
   Returns a one-line detailed description of the object.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -610,7 +618,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 </dt>
 <dd class="inherited">
   A short, textual description of this widget.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -631,7 +639,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 </dt>
 <dd class="inherited">
   The equality operator.
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/nonVirtual-constant.html">nonVirtual</a>, inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -660,23 +668,23 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 
     <h5>view.buttons library</h5>
     <ol>
-  <li class="section-title"><a href="../view.buttons/view.buttons-library.html#classes">Classes</a></li>
-  <li><a href="../view.buttons/ButtonFactory-class.html">ButtonFactory</a></li>
-  <li><a href="../view.buttons/ButtonLayout-class.html">ButtonLayout</a></li>
-  <li><a href="../view.buttons/CalculatorBlueSqrtButton-class.html">CalculatorBlueSqrtButton</a></li>
-  <li><a href="../view.buttons/CalculatorButton-class.html">CalculatorButton</a></li>
-  <li><a href="../view.buttons/CalculatorButtonState-class.html">CalculatorButtonState</a></li>
-  <li><a href="../view.buttons/CalculatorButtonWithLJ-class.html">CalculatorButtonWithLJ</a></li>
-  <li><a href="../view.buttons/CalculatorEnterButton-class.html">CalculatorEnterButton</a></li>
-  <li><a href="../view.buttons/CalculatorFButton-class.html">CalculatorFButton</a></li>
-  <li><a href="../view.buttons/CalculatorGButton-class.html">CalculatorGButton</a></li>
-  <li><a href="../view.buttons/CalculatorOnButton-class.html">CalculatorOnButton</a></li>
-  <li><a href="../view.buttons/CalculatorOnSpecialButton-class.html">CalculatorOnSpecialButton</a></li>
-  <li><a href="../view.buttons/CalculatorShiftButton-class.html">CalculatorShiftButton</a></li>
-  <li><a href="../view.buttons/CalculatorWhiteSqrtButton-class.html">CalculatorWhiteSqrtButton</a></li>
-  <li><a href="../view.buttons/LandscapeButtonFactory-class.html">LandscapeButtonFactory</a></li>
-  <li><a href="../view.buttons/PortraitButtonFactory-class.html">PortraitButtonFactory</a></li>
-  <li><a href="../view.buttons/UpperLabel-class.html">UpperLabel</a></li>
+      <li class="section-title"><a href="../view.buttons/view.buttons-library.html#classes">Classes</a></li>
+        <li><a href="../view.buttons/ButtonFactory-class.html">ButtonFactory</a></li>
+        <li><a href="../view.buttons/ButtonLayout-class.html">ButtonLayout</a></li>
+        <li><a href="../view.buttons/CalculatorBlueSqrtButton-class.html">CalculatorBlueSqrtButton</a></li>
+        <li><a href="../view.buttons/CalculatorButton-class.html">CalculatorButton</a></li>
+        <li><a href="../view.buttons/CalculatorButtonState-class.html">CalculatorButtonState</a></li>
+        <li><a href="../view.buttons/CalculatorButtonWithLJ-class.html">CalculatorButtonWithLJ</a></li>
+        <li><a href="../view.buttons/CalculatorEnterButton-class.html">CalculatorEnterButton</a></li>
+        <li><a href="../view.buttons/CalculatorFButton-class.html">CalculatorFButton</a></li>
+        <li><a href="../view.buttons/CalculatorGButton-class.html">CalculatorGButton</a></li>
+        <li><a href="../view.buttons/CalculatorOnButton-class.html">CalculatorOnButton</a></li>
+        <li><a href="../view.buttons/CalculatorOnSpecialButton-class.html">CalculatorOnSpecialButton</a></li>
+        <li><a href="../view.buttons/CalculatorShiftButton-class.html">CalculatorShiftButton</a></li>
+        <li><a href="../view.buttons/CalculatorWhiteSqrtButton-class.html">CalculatorWhiteSqrtButton</a></li>
+        <li><a href="../view.buttons/LandscapeButtonFactory-class.html">LandscapeButtonFactory</a></li>
+        <li><a href="../view.buttons/PortraitButtonFactory-class.html">PortraitButtonFactory</a></li>
+        <li><a href="../view.buttons/UpperLabel-class.html">UpperLabel</a></li>
 
 
 
@@ -696,57 +704,57 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
           <li><a href="../view.buttons/CalculatorWhiteSqrtButton/CalculatorWhiteSqrtButton.html">CalculatorWhiteSqrtButton</a></li>
 
 
-    <li class="section-title inherited">
-      <a href="../view.buttons/CalculatorWhiteSqrtButton-class.html#instance-properties">Properties</a>
-    </li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/acceleratorKey.html">acceleratorKey</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/acceleratorLabel.html">acceleratorLabel</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/bFactory.html">bFactory</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/fKey.html">fKey</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/fText.html">fText</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/gKey.html">gKey</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/gText.html">gText</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/gTextOffset.html">gTextOffset</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/hashCode.html">hashCode</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/height.html">height</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/innerBorder.html">innerBorder</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/innerBorderColor.html">innerBorderColor</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/key.html">key</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/keyTextOffset.html">keyTextOffset</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/keyTextStyle.html">keyTextStyle</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/lowerSurface.html">lowerSurface</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/lowerSurfaceColor.html">lowerSurfaceColor</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/lowerSurfaceColorPressed.html">lowerSurfaceColorPressed</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/outerBorder.html">outerBorder</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/outerBorderPressedScale.html">outerBorderPressedScale</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/uKey.html">uKey</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/upperSurface.html">upperSurface</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/upperSurfaceColor.html">upperSurfaceColor</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/upperSurfaceColorPressed.html">upperSurfaceColorPressed</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/uText.html">uText</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/width.html">width</a></li>
+        <li class="section-title inherited">
+          <a href="../view.buttons/CalculatorWhiteSqrtButton-class.html#instance-properties">Properties</a>
+        </li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/acceleratorKey.html">acceleratorKey</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/acceleratorLabel.html">acceleratorLabel</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/bFactory.html">bFactory</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/fKey.html">fKey</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/fText.html">fText</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/gKey.html">gKey</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/gText.html">gText</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/gTextOffset.html">gTextOffset</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/height.html">height</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/innerBorder.html">innerBorder</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/innerBorderColor.html">innerBorderColor</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/key.html">key</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/keyTextOffset.html">keyTextOffset</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/keyTextStyle.html">keyTextStyle</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/lowerSurface.html">lowerSurface</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/lowerSurfaceColor.html">lowerSurfaceColor</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/lowerSurfaceColorPressed.html">lowerSurfaceColorPressed</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/outerBorder.html">outerBorder</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/outerBorderPressedScale.html">outerBorderPressedScale</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/uKey.html">uKey</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/upperSurface.html">upperSurface</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/upperSurfaceColor.html">upperSurfaceColor</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/upperSurfaceColorPressed.html">upperSurfaceColorPressed</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/uText.html">uText</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/width.html">width</a></li>
 
-    <li class="section-title"><a href="../view.buttons/CalculatorWhiteSqrtButton-class.html#instance-methods">Methods</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/StatefulWidget/createElement.html">createElement</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/createState.html">createState</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/debugDescribeChildren.html">debugDescribeChildren</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/drawBlueText.html">drawBlueText</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/drawGoldText.html">drawGoldText</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/drawKeyboardAccelerator.html">drawKeyboardAccelerator</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/drawText.html">drawText</a></li>
-    <li><a href="../view.buttons/CalculatorWhiteSqrtButton/drawWhiteText.html">drawWhiteText</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
-    <li class="inherited"><a href="../view.buttons/CalculatorButton/paintForPainter.html">paintForPainter</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toDiagnosticsNode.html">toDiagnosticsNode</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable/toString.html">toString</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringDeep.html">toStringDeep</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringShallow.html">toStringShallow</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/toStringShort.html">toStringShort</a></li>
+        <li class="section-title"><a href="../view.buttons/CalculatorWhiteSqrtButton-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/StatefulWidget/createElement.html">createElement</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/createState.html">createState</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/debugDescribeChildren.html">debugDescribeChildren</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/drawBlueText.html">drawBlueText</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/drawGoldText.html">drawGoldText</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/drawKeyboardAccelerator.html">drawKeyboardAccelerator</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/drawText.html">drawText</a></li>
+          <li><a href="../view.buttons/CalculatorWhiteSqrtButton/drawWhiteText.html">drawWhiteText</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li class="inherited"><a href="../view.buttons/CalculatorButton/paintForPainter.html">paintForPainter</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toDiagnosticsNode.html">toDiagnosticsNode</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable/toString.html">toString</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringDeep.html">toStringDeep</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringShallow.html">toStringShallow</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/toStringShort.html">toStringShort</a></li>
 
-    <li class="section-title inherited"><a href="../view.buttons/CalculatorWhiteSqrtButton-class.html#operators">Operators</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/operator_equals.html">operator ==</a></li>
+        <li class="section-title inherited"><a href="../view.buttons/CalculatorWhiteSqrtButton-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/operator_equals.html">operator ==</a></li>
 
 
 

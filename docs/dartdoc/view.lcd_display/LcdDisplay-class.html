@@ -11,7 +11,7 @@
   
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
   
   <link rel="stylesheet" href="../static-assets/github.css?v1">
   <link rel="stylesheet" href="../static-assets/styles.css?v1">
@@ -21,12 +21,12 @@
 </head>
 
 
-<body data-base-href="../" data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
 
 <div id="overlay-under-drawer"></div>
 
 <header id="title">
-  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">jrpn</a></li>
     <li><a href="../view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
@@ -36,10 +36,16 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
 </header>
-
 <main>
-
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
@@ -76,6 +82,8 @@ instances.  LcdDisplay listens to events from <a href="../model/Model/display.ht
 
 
         
+
+
       </dl>
     </section>
 
@@ -105,7 +113,7 @@ instances.  LcdDisplay listens to events from <a href="../model/Model/display.ht
 </dt>
 <dd class="inherited">
   The hash code for this object.
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/nonVirtual-constant.html">nonVirtual</a>, read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -116,7 +124,7 @@ instances.  LcdDisplay listens to events from <a href="../model/Model/display.ht
 </dt>
 <dd class="inherited">
   Controls how one widget replaces another widget in the tree.
-  <div class="features">final, inherited</div>
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -127,7 +135,7 @@ instances.  LcdDisplay listens to events from <a href="../model/Model/display.ht
 </dt>
 <dd>
   
-  <div class="features">final</div>
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
@@ -138,7 +146,7 @@ instances.  LcdDisplay listens to events from <a href="../model/Model/display.ht
 </dt>
 <dd class="inherited">
   A representation of the runtime type of the object.
-  <div class="features">read-only, inherited</div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -149,7 +157,7 @@ instances.  LcdDisplay listens to events from <a href="../model/Model/display.ht
 </dt>
 <dd>
   
-  <div class="features">final</div>
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
@@ -171,7 +179,7 @@ instances.  LcdDisplay listens to events from <a href="../model/Model/display.ht
 </dt>
 <dd class="inherited">
   Creates a <a href="https://api.flutter.dev/flutter/widgets/StatefulElement-class.html">StatefulElement</a> to manage this widget's location in the tree.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -184,7 +192,7 @@ instances.  LcdDisplay listens to events from <a href="../model/Model/display.ht
 </dt>
 <dd>
   Creates the mutable state for this widget at a given location in the tree.
-  <div class="features">override</div>
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -198,7 +206,7 @@ instances.  LcdDisplay listens to events from <a href="../model/Model/display.ht
 <dd class="inherited">
   Returns a list of <code>DiagnosticsNode</code> objects describing this node's
 children.
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/protected-constant.html">protected</a>, inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -211,7 +219,7 @@ children.
 </dt>
 <dd class="inherited">
   Add additional properties associated with the node.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -224,7 +232,7 @@ children.
 </dt>
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -238,7 +246,7 @@ children.
 <dd class="inherited">
   Returns a debug representation of the object that is used by debugging
 tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode/toStringDeep.html">DiagnosticsNode.toStringDeep</a>.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -251,7 +259,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 </dt>
 <dd class="inherited">
   A string representation of this object.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -264,7 +272,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 </dt>
 <dd class="inherited">
   Returns a string representation of this node and its descendants.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -277,7 +285,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 </dt>
 <dd class="inherited">
   Returns a one-line detailed description of the object.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -290,7 +298,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 </dt>
 <dd class="inherited">
   A short, textual description of this widget.
-  <div class="features">inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -311,7 +319,7 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 </dt>
 <dd class="inherited">
   The equality operator.
-  <div class="features">@<a href="https://pub.dev/documentation/meta/1.8.0/meta/nonVirtual-constant.html">nonVirtual</a>, inherited</div>
+  <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -335,9 +343,9 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
   
   
 
-  <div>
-    <span class="signature"><code>0.90</code></span>
-  </div>
+    <div>
+      <span class="signature"><code>0.90</code></span>
+    </div>
 </dd>
 
     </dl>
@@ -361,10 +369,10 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
 
     <h5>view.lcd_display library</h5>
     <ol>
-  <li class="section-title"><a href="../view.lcd_display/view.lcd_display-library.html#classes">Classes</a></li>
-  <li><a href="../view.lcd_display/Digit-class.html">Digit</a></li>
-  <li><a href="../view.lcd_display/LcdDisplay-class.html">LcdDisplay</a></li>
-  <li><a href="../view.lcd_display/Segments-class.html">Segments</a></li>
+      <li class="section-title"><a href="../view.lcd_display/view.lcd_display-library.html#classes">Classes</a></li>
+        <li><a href="../view.lcd_display/Digit-class.html">Digit</a></li>
+        <li><a href="../view.lcd_display/LcdDisplay-class.html">LcdDisplay</a></li>
+        <li><a href="../view.lcd_display/Segments-class.html">Segments</a></li>
 
 
 
@@ -384,29 +392,29 @@ tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode
           <li><a href="../view.lcd_display/LcdDisplay/LcdDisplay.html">LcdDisplay</a></li>
 
 
-    <li class="section-title">
-      <a href="../view.lcd_display/LcdDisplay-class.html#instance-properties">Properties</a>
-    </li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/hashCode.html">hashCode</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/key.html">key</a></li>
-    <li><a href="../view.lcd_display/LcdDisplay/model.html">model</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
-    <li><a href="../view.lcd_display/LcdDisplay/showMenu.html">showMenu</a></li>
+        <li class="section-title">
+          <a href="../view.lcd_display/LcdDisplay-class.html#instance-properties">Properties</a>
+        </li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/key.html">key</a></li>
+          <li><a href="../view.lcd_display/LcdDisplay/model.html">model</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+          <li><a href="../view.lcd_display/LcdDisplay/showMenu.html">showMenu</a></li>
 
-    <li class="section-title"><a href="../view.lcd_display/LcdDisplay-class.html#instance-methods">Methods</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/StatefulWidget/createElement.html">createElement</a></li>
-    <li><a href="../view.lcd_display/LcdDisplay/createState.html">createState</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/debugDescribeChildren.html">debugDescribeChildren</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toDiagnosticsNode.html">toDiagnosticsNode</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable/toString.html">toString</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringDeep.html">toStringDeep</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringShallow.html">toStringShallow</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/toStringShort.html">toStringShort</a></li>
+        <li class="section-title"><a href="../view.lcd_display/LcdDisplay-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/StatefulWidget/createElement.html">createElement</a></li>
+          <li><a href="../view.lcd_display/LcdDisplay/createState.html">createState</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/debugDescribeChildren.html">debugDescribeChildren</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toDiagnosticsNode.html">toDiagnosticsNode</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable/toString.html">toString</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringDeep.html">toStringDeep</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringShallow.html">toStringShallow</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/toStringShort.html">toStringShort</a></li>
 
-    <li class="section-title inherited"><a href="../view.lcd_display/LcdDisplay-class.html#operators">Operators</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/operator_equals.html">operator ==</a></li>
+        <li class="section-title inherited"><a href="../view.lcd_display/LcdDisplay-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/operator_equals.html">operator ==</a></li>
 
 
 

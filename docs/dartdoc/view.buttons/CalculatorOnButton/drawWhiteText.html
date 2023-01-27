@@ -11,7 +11,7 @@
   
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
   
   <link rel="stylesheet" href="../../static-assets/github.css?v1">
   <link rel="stylesheet" href="../../static-assets/styles.css?v1">
@@ -21,12 +21,12 @@
 </head>
 
 
-<body data-base-href="../../" data-using-base-href="false">
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
 
 <div id="overlay-under-drawer"></div>
 
 <header id="title">
-  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">jrpn</a></li>
     <li><a href="../../view.buttons/view.buttons-library.html">view.buttons</a></li>
@@ -37,10 +37,16 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
 </header>
-
 <main>
-
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
@@ -50,11 +56,11 @@
 
     <section class="multi-line-signature">
       
-<div>
-  <ol class="annotation-list">
-    <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
-  </ol>
-</div>
+  <div>
+    <ol class="annotation-list">
+        <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
+    </ol>
+  </div>
 
 <span class="returntype">void</span>
 <span class="name ">drawWhiteText</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="drawWhiteText-param-canvas"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Canvas-class.html">Canvas</a></span> <span class="parameter-name">canvas</span>, </span></li>
@@ -63,7 +69,7 @@
 <li><span class="parameter" id="drawWhiteText-param-w"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">w</span></span></li>
 </ol>)
 
-      <div class="features">override</div>
+      <div class="features"><span class="feature">override</span></div>
 
     </section>
     
@@ -117,59 +123,59 @@ void drawWhiteText(Canvas canvas, TextStyle style, String text, double w) {
           <li><a href="../../view.buttons/CalculatorOnButton/CalculatorOnButton.html">CalculatorOnButton</a></li>
 
 
-    <li class="section-title">
-      <a href="../../view.buttons/CalculatorOnButton-class.html#instance-properties">Properties</a>
-    </li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/acceleratorKey.html">acceleratorKey</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/acceleratorLabel.html">acceleratorLabel</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/bFactory.html">bFactory</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/fKey.html">fKey</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/fText.html">fText</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/gKey.html">gKey</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/gText.html">gText</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/gTextOffset.html">gTextOffset</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/hashCode.html">hashCode</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/height.html">height</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/innerBorder.html">innerBorder</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/innerBorderColor.html">innerBorderColor</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/key.html">key</a></li>
-    <li><a href="../../view.buttons/CalculatorOnButton/keyTextOffset.html">keyTextOffset</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/keyTextStyle.html">keyTextStyle</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/lowerSurface.html">lowerSurface</a></li>
-    <li><a href="../../view.buttons/CalculatorOnButton/lowerSurfaceColor.html">lowerSurfaceColor</a></li>
-    <li><a href="../../view.buttons/CalculatorOnButton/lowerSurfaceColorPressed.html">lowerSurfaceColorPressed</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/outerBorder.html">outerBorder</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/outerBorderPressedScale.html">outerBorderPressedScale</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorOnSpecialButton/specialText.html">specialText</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/uKey.html">uKey</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/upperSurface.html">upperSurface</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorOnSpecialButton/upperSurfaceColor.html">upperSurfaceColor</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/upperSurfaceColorPressed.html">upperSurfaceColorPressed</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/uText.html">uText</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/width.html">width</a></li>
+        <li class="section-title">
+          <a href="../../view.buttons/CalculatorOnButton-class.html#instance-properties">Properties</a>
+        </li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/acceleratorKey.html">acceleratorKey</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/acceleratorLabel.html">acceleratorLabel</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/bFactory.html">bFactory</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/fKey.html">fKey</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/fText.html">fText</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/gKey.html">gKey</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/gText.html">gText</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/gTextOffset.html">gTextOffset</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/height.html">height</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/innerBorder.html">innerBorder</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/innerBorderColor.html">innerBorderColor</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/key.html">key</a></li>
+          <li><a href="../../view.buttons/CalculatorOnButton/keyTextOffset.html">keyTextOffset</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/keyTextStyle.html">keyTextStyle</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/lowerSurface.html">lowerSurface</a></li>
+          <li><a href="../../view.buttons/CalculatorOnButton/lowerSurfaceColor.html">lowerSurfaceColor</a></li>
+          <li><a href="../../view.buttons/CalculatorOnButton/lowerSurfaceColorPressed.html">lowerSurfaceColorPressed</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/outerBorder.html">outerBorder</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/outerBorderPressedScale.html">outerBorderPressedScale</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorOnSpecialButton/specialText.html">specialText</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/uKey.html">uKey</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/upperSurface.html">upperSurface</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorOnSpecialButton/upperSurfaceColor.html">upperSurfaceColor</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/upperSurfaceColorPressed.html">upperSurfaceColorPressed</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/uText.html">uText</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/width.html">width</a></li>
 
-    <li class="section-title"><a href="../../view.buttons/CalculatorOnButton-class.html#instance-methods">Methods</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/StatefulWidget/createElement.html">createElement</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorOnSpecialButton/createState.html">createState</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/debugDescribeChildren.html">debugDescribeChildren</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/drawBlueText.html">drawBlueText</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorOnSpecialButton/drawCustomWhiteText.html">drawCustomWhiteText</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/drawGoldText.html">drawGoldText</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/drawKeyboardAccelerator.html">drawKeyboardAccelerator</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/drawText.html">drawText</a></li>
-    <li><a href="../../view.buttons/CalculatorOnButton/drawWhiteText.html">drawWhiteText</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
-    <li class="inherited"><a href="../../view.buttons/CalculatorButton/paintForPainter.html">paintForPainter</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toDiagnosticsNode.html">toDiagnosticsNode</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable/toString.html">toString</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringDeep.html">toStringDeep</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringShallow.html">toStringShallow</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/toStringShort.html">toStringShort</a></li>
+        <li class="section-title"><a href="../../view.buttons/CalculatorOnButton-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/StatefulWidget/createElement.html">createElement</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorOnSpecialButton/createState.html">createState</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/debugDescribeChildren.html">debugDescribeChildren</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/drawBlueText.html">drawBlueText</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorOnSpecialButton/drawCustomWhiteText.html">drawCustomWhiteText</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/drawGoldText.html">drawGoldText</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/drawKeyboardAccelerator.html">drawKeyboardAccelerator</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/drawText.html">drawText</a></li>
+          <li><a href="../../view.buttons/CalculatorOnButton/drawWhiteText.html">drawWhiteText</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorButton/paintForPainter.html">paintForPainter</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toDiagnosticsNode.html">toDiagnosticsNode</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable/toString.html">toString</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringDeep.html">toStringDeep</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringShallow.html">toStringShallow</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/toStringShort.html">toStringShort</a></li>
 
-    <li class="section-title inherited"><a href="../../view.buttons/CalculatorOnButton-class.html#operators">Operators</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/operator_equals.html">operator ==</a></li>
+        <li class="section-title inherited"><a href="../../view.buttons/CalculatorOnButton-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/operator_equals.html">operator ==</a></li>
 
 
 

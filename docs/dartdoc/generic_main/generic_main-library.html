@@ -11,7 +11,7 @@
   
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
   
   <link rel="stylesheet" href="../static-assets/github.css?v1">
   <link rel="stylesheet" href="../static-assets/styles.css?v1">
@@ -21,12 +21,12 @@
 </head>
 
 
-<body data-base-href="../" data-using-base-href="false">
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
 
 <div id="overlay-under-drawer"></div>
 
 <header id="title">
-  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">jrpn</a></li>
     <li class="self-crumb">generic_main library</li>
@@ -35,12 +35,19 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
 </header>
-
 <main>
 
-
   <div id="dartdoc-main-content" class="main-content">
+    
       <div>
 <h1><span class="kind-library">generic_main</span> library 
     <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
@@ -90,9 +97,9 @@
 fashioned way.
   
 
-  <div>
-    <span class="signature"><code>&#39;2.0.1&#39;</code></span>
-  </div>
+    <div>
+      <span class="signature"><code>&#39;2.0.1&#39;</code></span>
+    </div>
 </dd>
 
         <dt id="gnuLicense" class="constant">
@@ -105,14 +112,14 @@ fashioned way.
   
   
 
-  <div>
-    <span class="signature"><code>&#39;&#39;&#39;
+    <div>
+      <span class="signature"><code>&#39;&#39;&#39;
 Copyright (c) 2021,2022 William Foote
 
 Program includes portions derived from other sources, as specified
 in the relevant source files.  Source is available in the repository
 at https:…</code></span>
-  </div>
+    </div>
 </dd>
 
         <dt id="nonWarranty" class="constant">
@@ -125,12 +132,12 @@ at https:…</code></span>
   
   
 
-  <div>
-    <span class="signature"><code>&#39;&#39;&#39;
+    <div>
+      <span class="signature"><code>&#39;&#39;&#39;
 THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR P…</code></span>
-  </div>
+    </div>
 </dd>
 
       </dl>
@@ -147,7 +154,7 @@ FITNESS FOR A PARTICULAR P…</code></span>
 </dt>
 <dd>
   
-  <div class="features">final</div>
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
@@ -158,7 +165,7 @@ FITNESS FOR A PARTICULAR P…</code></span>
 </dt>
 <dd>
   
-  <div class="features">final</div>
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
@@ -223,23 +230,23 @@ FITNESS FOR A PARTICULAR P…</code></span>
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
     <h5>generic_main library</h5>
     <ol>
-  <li class="section-title"><a href="../generic_main/generic_main-library.html#classes">Classes</a></li>
-  <li><a href="../generic_main/Jrpn-class.html">Jrpn</a></li>
-  <li><a href="../generic_main/JrpnState-class.html">JrpnState</a></li>
+      <li class="section-title"><a href="../generic_main/generic_main-library.html#classes">Classes</a></li>
+        <li><a href="../generic_main/Jrpn-class.html">Jrpn</a></li>
+        <li><a href="../generic_main/JrpnState-class.html">JrpnState</a></li>
 
 
 
-  <li class="section-title"><a href="../generic_main/generic_main-library.html#constants">Constants</a></li>
-  <li><a href="../generic_main/applicationVersion-constant.html">applicationVersion</a></li>
-  <li><a href="../generic_main/gnuLicense-constant.html">gnuLicense</a></li>
-  <li><a href="../generic_main/nonWarranty-constant.html">nonWarranty</a></li>
+      <li class="section-title"><a href="../generic_main/generic_main-library.html#constants">Constants</a></li>
+        <li><a href="../generic_main/applicationVersion-constant.html">applicationVersion</a></li>
+        <li><a href="../generic_main/gnuLicense-constant.html">gnuLicense</a></li>
+        <li><a href="../generic_main/nonWarranty-constant.html">nonWarranty</a></li>
 
-  <li class="section-title"><a href="../generic_main/generic_main-library.html#properties">Properties</a></li>
-  <li><a href="../generic_main/applicationIssueAddress.html">applicationIssueAddress</a></li>
-  <li><a href="../generic_main/applicationWebAddress.html">applicationWebAddress</a></li>
+      <li class="section-title"><a href="../generic_main/generic_main-library.html#properties">Properties</a></li>
+        <li><a href="../generic_main/applicationIssueAddress.html">applicationIssueAddress</a></li>
+        <li><a href="../generic_main/applicationWebAddress.html">applicationWebAddress</a></li>
 
-  <li class="section-title"><a href="../generic_main/generic_main-library.html#functions">Functions</a></li>
-  <li><a href="../generic_main/genericMain.html">genericMain</a></li>
+      <li class="section-title"><a href="../generic_main/generic_main-library.html#functions">Functions</a></li>
+        <li><a href="../generic_main/genericMain.html">genericMain</a></li>
 
 
 

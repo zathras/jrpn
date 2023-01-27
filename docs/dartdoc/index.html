@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="generator" content="made with love by dartdoc 6.0.0">
+  <meta name="generator" content="made with love by dartdoc 6.1.5">
   <meta name="description" content="jrpn API docs, for the Dart programming language.">
   <title>jrpn - Dart API docs</title>
 
@@ -12,7 +12,7 @@
   
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
   
   <link rel="stylesheet" href="static-assets/github.css?v1">
   <link rel="stylesheet" href="static-assets/styles.css?v1">
@@ -22,12 +22,12 @@
 </head>
 
 
-<body data-base-href="" data-using-base-href="false">
+<body data-base-href="" data-using-base-href="false" class="light-theme">
 
 <div id="overlay-under-drawer"></div>
 
 <header id="title">
-  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li class="self-crumb">jrpn package</li>
   </ol>
@@ -35,10 +35,16 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
 </header>
-
 <main>
-
 
   <div id="dartdoc-main-content" class="main-content">
       
@@ -100,12 +106,16 @@ words about that implementation.</p>
 </ul>
 <p>The design is a pretty has a pretty strict MVC separation.
 Notably, the model doesn't have API dependencies on the
-view or the controller.</p>
+view or the controller.  It uses the classical MVC structure,
+often imprecisely pictured like this:</p>
 <p><img src="dartdoc/mvc.png" alt=""></p>
 <p>There are even top-level classes called <code>m.Model</code> and <code>c.Controller</code>.
 They're abstract; for the 16C the concrete subclasses are <code>Model16</code>
 and <code>Controller16</code>.  The top-level widget is <code>Jrpn</code>, but the real
-top-level view class is called <code>MainScreen</code>.</p>
+top-level view class is called <code>MainScreen</code>.  <code>c.Controller</code> does
+<em>not</em> update the view directly.  A more precise top-level structure
+in UML is as follows:</p>
+<p><img src="dartdoc/toplevel.svg" alt=""></p>
 <p>The state model of the 16C is pretty complicated -- they really
 made the most out of a small package!  This complexity is managed
 though extensive use of the GoF state pattern, especially in
@@ -122,9 +132,9 @@ It's a good size for that:  At about 10K LOC it's big enough to
 have an interesting design, but not so big as to be overwhelming.
 It ends up using a fair number of OO design idioms, and it's pretty
 faithful to the standard GoF patterns.</p>
-<p>This app pushes the Dart type system a bit -- Dart's (mostly) 
-sound static typing was a big help in getting the code right, 
-but it did expose one place where Dart's unsound covariance 
+<p>This app pushes the Dart type system a bit -- Dart's (mostly)
+sound static typing was a big help in getting the code right,
+but it did expose one place where Dart's unsound covariance
 rules hurt a bit.  See <code>DisplayModeSelector</code> under <code>model</code>
 for more details on that.</p>
 </section>
