@@ -1253,7 +1253,59 @@ class MatrixTests {
     model.xF = -50.4;
     testMatrixAccess([l.rcl, l.div], -1.2, -1.2, 42);
 
-    // @@ TODO:  Starting with p. 174, stack operation
+    // Matrix stack operations, p. 174-175
+    model.userMode = true;
+    _play([l.fShift, l.chs, l.n0]); // F matrix 0
+    // Dim A and B to 2x2, and store 1 2 3 4 in A, 5 6 7 8 in B
+    _play([l.n2, l.enter, l.fShift, l.sin, l.sqrt, l.fShift, l.sin, l.eX]);
+    _play([l.fShift, l.chs, l.n1]);
+    _play([l.n1, l.sto, l.sqrt]);
+    _play([l.n2, l.sto, l.sqrt]);
+    _play([l.n3, l.sto, l.sqrt]);
+    _play([l.n4, l.sto, l.sqrt]);
+    _play([l.n5, l.sto, l.eX]);
+    _play([l.n6, l.sto, l.eX]);
+    _play([l.n7, l.sto, l.eX]);
+    _play([l.n8, l.sto, l.eX]);
+    _play([l.fShift, l.eex, l.tenX]);  // Result C
+    _play([l.n6, l.enter, l.n5, l.enter, l.n4, l.enter]);
+    _play([l.rcl, l.chs, l.sqrt]);  // rcl matrix a
+    _play([l.fShift, l.reciprocal]);
+    expect(model.x, Value.fromMatrix(2));
+    expect(model.y, Value.fromDouble(4));
+    expect(model.z, Value.fromDouble(5));
+    expect(model.getStackByIndex(3), Value.fromDouble(6));
+    expect(model.lastX, Value.fromMatrix(0));
+
+    _play([l.n6, l.enter, l.n5, l.enter, l.n4, l.enter]);
+    _play([l.rcl, l.chs, l.eX, l.rcl, l.chs, l.sqrt]);  // rcl matrix a, b
+    _play([l.mult]);
+    expect(model.x, Value.fromMatrix(2));
+    expect(model.y, Value.fromDouble(4));
+    expect(model.z, Value.fromDouble(5));
+    expect(model.getStackByIndex(3), Value.fromDouble(5));
+    expect(model.lastX, Value.fromMatrix(0));
+
+    // p. 176
+    model.lastX = Value.fromDouble(1234);
+    _play([l.n4, l.enter, l.n4, l.n2, l.enter, l.n1, l.enter, l.n2]);
+    _play([l.sto, l.gShift, l.sqrt]);;
+    expect(model.x, Value.fromDouble(42));
+    expect(model.y, Value.fromDouble(4));
+    expect(model.z, Value.fromDouble(4));
+    expect(model.getStackByIndex(3), Value.fromDouble(4));
+    expect(model.lastX, Value.fromDouble(1234));
+
+    _play([l.n5, l.enter, l.n4, l.enter, l.n1, l.enter, l.n2]);
+    _play([l.rcl, l.gShift, l.sqrt]);
+    expect(model.x, Value.fromDouble(42));
+    expect(model.y, Value.fromDouble(4));
+    expect(model.z, Value.fromDouble(5));
+    expect(model.getStackByIndex(3), Value.fromDouble(5));
+    expect(model.lastX, Value.fromDouble(1234));
+
+    // @@ TODO:  Starting with p. 176, matrix in program
+
 
     model.userMode = false;
     _play([l.fShift, l.chs, l.n0]); // F matrix 0

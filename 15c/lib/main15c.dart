@@ -1090,7 +1090,7 @@ class Operations15 extends Operations {
                   final int row = m.yF.truncate().abs() - 1;
                   final int col = m.xF.truncate().abs() - 1;
                   m.popStack();
-                  m.popSetResultX = matrix.get(row, col);
+                  m.x = matrix.get(row, col);
                 })),
         KeyArg(
             key: Operations15.dim,
