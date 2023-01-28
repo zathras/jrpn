@@ -86,5 +86,5 @@ faithful to the standard GoF patterns.
 This app pushes the Dart type system a bit -- Dart's (mostly) 
 sound static typing was a big help in getting the code right, 
 but it did expose one place where Dart's unsound covariance 
-rules hurt a bit.  See `DisplayModeSelector` under `model`
+rules hurt some.  See `DisplayModeSelector` under `model`
 for more details on that.
