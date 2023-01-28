@@ -52,8 +52,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>30</x>
-      <y>310</y>
+      <x>20</x>
+      <y>390</y>
       <w>100</w>
       <h>30</h>
     </coordinates>
@@ -108,13 +108,13 @@ notifies v</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>120</x>
-      <y>310</y>
-      <w>60</w>
+      <x>110</x>
+      <y>390</y>
+      <w>70</w>
       <h>30</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;50.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -142,13 +142,13 @@ notifies v</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>60</x>
-      <y>330</y>
+      <y>360</y>
       <w>420</w>
-      <h>140</h>
+      <h>110</h>
     </coordinates>
     <panel_attributes>lt=-
 sends widget events &gt;</panel_attributes>
-    <additional_attributes>400.0;40.0;400.0;120.0;10.0;120.0;10.0;10.0</additional_attributes>
+    <additional_attributes>400.0;10.0;400.0;90.0;10.0;90.0;10.0;60.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
