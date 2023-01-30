@@ -482,6 +482,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   DoubleWordStatus? _doubleWordStatus; // for double divide, multiply
   Memory<OT> get memory;
   final Observable<bool> onIsPressed = Observable(false);
+
   /// Are we entering a program?
   bool prgmFlag = false;
   DebugLog? _debugLog;

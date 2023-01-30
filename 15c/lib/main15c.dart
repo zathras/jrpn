@@ -1022,7 +1022,8 @@ class Operations15 extends Operations {
         // Not user mode, A..E, (i)
         UserArg(
             userMode: false,
-            child: ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
+            child:
+                ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
               KeysArg(
                   keys: _letterLabels,
                   generator: (i) =>
@@ -1104,7 +1105,8 @@ class Operations15 extends Operations {
                 })),
         KeyArg(
             key: Operations15.dim,
-            child: ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
+            child:
+                ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
               KeysArg(
                   keys: _letterLabels,
                   generator: (i) => ArgDone((m) => throw "@@ TODO")),
@@ -1126,7 +1128,8 @@ class Operations15 extends Operations {
                     ArgDone((m) => m.resultX = Value.fromMatrix(i)))),
         UserArg(
             userMode: false,
-            child: ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
+            child:
+                ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
               KeysArg(
                   keys: _letterLabels,
                   generator: (i) => DeferredRclArg(
@@ -1140,7 +1143,8 @@ class Operations15 extends Operations {
             ])),
         UserArg(
             userMode: true,
-            child: ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
+            child:
+                ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
               KeysArg(
                   keys: _letterLabels,
                   generator: (i) => DeferredRclArg(
