@@ -967,11 +967,12 @@ class MatrixTests {
   }
 
   /// the main example that works through ch12, starting on page 144.
-  void _ch12() {
+  Future<void> _ch12() async {
     final l = layout;
     final mA = model.matrices[0];
     final mB = model.matrices[1];
     final mC = model.matrices[2];
+    final mD = model.matrices[3];
     model.userMode = false;
     model.resultMatrix = 0;
     _play([l.fShift, l.chs, l.n0]); // F matrix 0
@@ -1289,7 +1290,7 @@ class MatrixTests {
     // p. 176
     model.lastX = Value.fromDouble(1234);
     _play([l.n4, l.enter, l.n4, l.n2, l.enter, l.n1, l.enter, l.n2]);
-    _play([l.sto, l.gShift, l.sqrt]);;
+    _play([l.sto, l.gShift, l.sqrt]);
     expect(model.x, Value.fromDouble(42));
     expect(model.y, Value.fromDouble(4));
     expect(model.z, Value.fromDouble(4));
@@ -1304,16 +1305,73 @@ class MatrixTests {
     expect(model.getStackByIndex(3), Value.fromDouble(5));
     expect(model.lastX, Value.fromDouble(1234));
 
-    // @@ TODO:  Starting with p. 176, matrix in program
+    // p. 177
+    model.userMode = true;
+    _play([l.fShift, l.chs, l.n1]); // Matrix 1
+    _play([l.n2, l.enter, l.fShift, l.sin, l.yX]);  // dim D to 2x2
+    for (final n in [l.n3, l.n5, l.n7, l.n2]) {
+      _play([n, l.sto, l.yX]);  // sto D
+    }
+    model.userMode = false;
+    _play([l.gShift, l.rs, l.fShift, l.rdown, l.fShift, l.sst, l.sqrt]);
+    // Program mode, clear program, label A
+    _play([l.fShift, l.chs, l.n1]); // Matrix 1
+    _play([l.fShift, l.sst, l.n4]);  // label 4
+    _play([l.rcl, l.yX, l.gShift, l.sqrt]);  // rcl D, x^2
+    _play([l.fShift, l.rcl]);  // toggle user mode
+    _play([l.sto, l.yX]); // sto D
+    _play([l.fShift, l.rcl]);  // toggle user mode
+    _play([l.gto, l.n4]);
+    _play([l.gShift, l.rs]);   // P/R
+    expectMatrixVals(mD, [[3, 5], [7, 2]]);
+    _play([l.gsb, l.sqrt]);  // GSB A
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expectMatrixVals(mD, [[3*3, 5*5], [7*7, 2*2]]);
+    // Check that row-norm and Frobenius norm act as conditional branch
+    for (final asProgram in [true, false]) {
+      for (final test in [l.n7, l.n8]) {
+        for (final mat in [true, false]) {
+          if (asProgram) {
+            _play([l.gShift, l.rs, l.fShift, l.rdown, l.fShift, l.sst, l.sqrt]);
+          } else {
+            model.program.currentLine = 3; // A known value
+          }
+          if (mat) {
+            _play([l.rcl, l.chs, l.yX]); // rcl matrix D
+          } else {
+            _play([l.n7]);
+          }
+          _play([l.fShift, l.chs, test]);  // f matrix test
+          _play([l.n4, l.n2, l.enter]);
+          if (asProgram) {
+            _play([l.gShift, l.rs]);   // P/R
+            _play([l.gsb, l.sqrt]);  // GSB A
+            expect(await out.moveNext(), true);
+            expect(out.current, ProgramEvent.done);
+            if (mat) {
+              expect(model.xF, 42); // skip
+            } else {
+              expect(model.xF, 2); // skip
+            }
+          }  else {
+            expect(model.xF, 42); // no skip
+            expect(model.program.currentLine, 3);
+          }
+        }
+      }
+
+      // @@ TODO:  Starting with p. 177, Summary of matrix functions
+    }
 
 
     model.userMode = false;
     _play([l.fShift, l.chs, l.n0]); // F matrix 0
   }
 
-  void runWithComplex(bool complex) {
+  Future<void> runWithComplex(bool complex) async {
     model.isComplexMode = complex;
-    _ch12();
+    await _ch12();
     _page146();
     _stoMatrixAndChs();
     _invertMatrix(true);
@@ -1332,8 +1390,8 @@ class MatrixTests {
   Future<void> run() async {
     await _page139(asProgram: false);
     await _page139(asProgram: true);
-    runWithComplex(false);
-    runWithComplex(true);
+    await runWithComplex(false);
+    await runWithComplex(true);
   }
 
   void expectMatrix(AMatrix m, AMatrix expected, [double epsilon = 0]) {

@@ -543,10 +543,10 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   }
 
   void skipIfRunning() {
-    // @@ TODO:  This is different than incrementCurrentLine.  Make sure
-    // @@ that's really how the 15C behaves.
-    if (isRunning && currentLine < lines) {
-      currentLine++;
+    if (isRunning) {
+      incrementCurrentLine();
+      // This wraps if we're at the end of program memory.  I tested, and
+      // the 15C behaves this way.
     }
   }
 

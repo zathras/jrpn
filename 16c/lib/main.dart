@@ -47,7 +47,7 @@ void runStaticInitialization16() {
   Arg.kDot = Operations.dot;
   Arg.fShift = Operations.fShift;
   Arg.gShift = Operations.gShift;
-  Arg.registerISynonyms = {
+  Arg.gsbLabelSynonyms = Arg.registerISynonyms = {
     Operations.sst: Operations16.I,
     Operations.rs: Operations16.parenI
   };

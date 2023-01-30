@@ -53,6 +53,7 @@ void runStaticInitialization15() {
   Arg.fShift = Operations.fShift;
   Arg.gShift = Operations.gShift;
   Arg.registerISynonyms = Operations15._registerISynonyms;
+  Arg.gsbLabelSynonyms = Operations15._letterAndRegisterISynonyms;
   assert(Arg.assertStaticInitialized());
 }
 
@@ -80,6 +81,11 @@ class Operations15 extends Operations {
     Operations15.tenX15: Operations15.letterLabelC,
     Operations15.yX15: Operations15.letterLabelD,
     Operations15.reciprocal15: Operations15.letterLabelE
+  };
+
+  static final _letterAndRegisterISynonyms = {
+    ..._letterSynonyms,
+    ..._registerISynonyms
   };
 
   static final NormalArgOperation lbl15 = NormalArgOperation(
@@ -425,6 +431,8 @@ class Operations15 extends Operations {
               final mat = m.x.asMatrix;
               if (mat != null) {
                 m.resultXF = linalg.rowNorm((m as Model15).matrices[mat]);
+              } else {
+                m.program.skipIfRunning();
               }
             })),
         KeyArg(
@@ -433,6 +441,8 @@ class Operations15 extends Operations {
               final mat = m.x.asMatrix;
               if (mat != null) {
                 m.resultXF = linalg.frobeniusNorm((m as Model15).matrices[mat]);
+              } else {
+                m.program.skipIfRunning();
               }
             })),
         KeyArg(
@@ -1012,7 +1022,7 @@ class Operations15 extends Operations {
         // Not user mode, A..E, (i)
         UserArg(
             userMode: false,
-            child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
+            child: ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
               KeysArg(
                   keys: _letterLabels,
                   generator: (i) =>
@@ -1024,7 +1034,7 @@ class Operations15 extends Operations {
         UserArg(
             userMode: true,
             child: ArgAlternates(
-              synonyms: Arg.registerISynonyms,
+              synonyms: _letterAndRegisterISynonyms,
               children: [
                 KeysArg(
                     keys: _letterLabels,
@@ -1094,7 +1104,7 @@ class Operations15 extends Operations {
                 })),
         KeyArg(
             key: Operations15.dim,
-            child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
+            child: ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
               KeysArg(
                   keys: _letterLabels,
                   generator: (i) => ArgDone((m) => throw "@@ TODO")),
@@ -1116,7 +1126,7 @@ class Operations15 extends Operations {
                     ArgDone((m) => m.resultX = Value.fromMatrix(i)))),
         UserArg(
             userMode: false,
-            child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
+            child: ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
               KeysArg(
                   keys: _letterLabels,
                   generator: (i) => DeferredRclArg(
@@ -1130,7 +1140,7 @@ class Operations15 extends Operations {
             ])),
         UserArg(
             userMode: true,
-            child: ArgAlternates(synonyms: Arg.registerISynonyms, children: [
+            child: ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
               KeysArg(
                   keys: _letterLabels,
                   generator: (i) => DeferredRclArg(
@@ -1211,7 +1221,7 @@ class RegisterReadOpArg extends ArgAlternates {
   final double Function(double, double) f;
 
   RegisterReadOpArg({required int maxDigit, required this.f})
-      : super(synonyms: RegisterWriteOpArg.targetSynonyms, children: [
+      : super(synonyms: Operations15._letterAndRegisterISynonyms, children: [
           KeyArg(
               key: Arg.kParenI,
               child: ArgDone((m) {
@@ -1253,13 +1263,9 @@ class RegisterReadOpArg extends ArgAlternates {
 
 class RegisterWriteOpArg extends ArgAlternates {
   final double Function(Model m, double reg, double x) f;
-  static final targetSynonyms = {
-    ...Operations15._registerISynonyms,
-    ...Operations15._letterSynonyms
-  };
 
   RegisterWriteOpArg({required int maxDigit, required this.f})
-      : super(synonyms: targetSynonyms, children: [
+      : super(synonyms: Operations15._letterAndRegisterISynonyms, children: [
           KeyArg(
               key: Arg.kParenI,
               child: ArgDone((m) {

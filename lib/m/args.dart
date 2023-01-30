@@ -33,6 +33,7 @@ abstract class Arg {
   static late final ProgramOperation fShift;
   static late final ProgramOperation gShift;
   static late final Map<ProgramOperation, ProgramOperation> registerISynonyms;
+  static late final Map<ProgramOperation, ProgramOperation> gsbLabelSynonyms;
 
   static bool assertStaticInitialized() {
     // Assert that these values are initialized, by using them in a logical
@@ -40,7 +41,8 @@ abstract class Arg {
     assert(kDigits[0] != kI &&
         kParenI != kDot &&
         fShift != gShift &&
-        registerISynonyms[kI] == null);
+        registerISynonyms[kI] == null &&
+        gsbLabelSynonyms[kI] == null);
     return true;
   }
 
@@ -297,7 +299,7 @@ class LabelArg extends ArgAlternates {
       bool indirect = false,
       bool iFirst = false})
       : super(
-            synonyms: Arg.registerISynonyms,
+            synonyms: Arg.gsbLabelSynonyms,
             children: _makeChildren(maxDigit, indirect, iFirst, letters, f));
 
   static List<Arg> _makeChildren(int maxDigit, bool indirect, bool iFirst,

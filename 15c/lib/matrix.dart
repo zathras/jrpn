@@ -402,16 +402,15 @@ class Matrix extends AMatrix {
     if (columns % 2 == 1) {
       throw CalculatorError(11);
     }
-    int _newHome(final int i) {
+    int newHome(final int i) {
       final r = i ~/ columns; // old row
       final c = i % columns;
       final rn = (c % 2 == 0) ? r : r + rows; // new row
       final cn = c ~/ 2;
-      // @@ TODO rm print('($r,$c) ($rn, $cn)  $rows $columns');
       return rn * (columns ~/ 2) + cn;
     }
 
-    _internalMove(1, length - 1, _newHome);
+    _internalMove(1, length - 1, newHome);
     _columns ~/= 2;
   }
 
@@ -426,7 +425,7 @@ class Matrix extends AMatrix {
     }
     final newRows = rows ~/ 2;
     final newColumns = columns * 2;
-    int _newHome(final int i) {
+    int newHome(final int i) {
       final r = i ~/ columns;
       final c = i % columns;
       final rn = r % newRows;
@@ -434,7 +433,7 @@ class Matrix extends AMatrix {
       return rn * newColumns + cn;
     }
 
-    _internalMove(1, length - 1, _newHome);
+    _internalMove(1, length - 1, newHome);
     _columns *= 2;
   }
 
