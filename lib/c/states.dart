@@ -1213,20 +1213,18 @@ class Running extends ControllerState {
           out.write(' ');
           out.write(instr.programListing.padRight(14));
           out.write('xyzt:');
-          if (!model.isFloatMode) {
-            out.write('0x');
-          }
           for (int i = 0; i < 4; i++) {
             out.write('  ');
             final Value v = model.getStackByIndex(i);
             final int? vm = v.asMatrix;
             if (vm != null) {
-              out.write(v.internal.toRadixString(16));
+              out.write('${String.fromCharCodes([('A'.codeUnitAt(0) + vm)])}');
             } else if (model.isComplexMode) {
               out.write(model.getStackByIndexC(i));
             } else if (model.isFloatMode) {
-              out.write(v);
+              out.write(v.asDouble);
             } else {
+              out.write('0x');
               out.write(v.internal.toRadixString(16));
             }
           }

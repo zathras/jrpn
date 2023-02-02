@@ -21,6 +21,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 */
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:jrpn/c/controller.dart';
@@ -1254,6 +1255,33 @@ class MatrixTests {
     model.xF = -50.4;
     testMatrixAccess([l.rcl, l.div], -1.2, -1.2, 42);
 
+    print("\n\n\n@@@ start");
+    // Conditional tests on matrix descriptors, p. 174
+    _play([l.gShift, l.rs, l.fShift, l.rdown, l.fShift, l.sst, l.sqrt]);
+    // Program mode, clear program, label A
+    _play([l.rcl, l.chs, l.reciprocal, l.gShift, l.mult]); // E = 0
+    _play([l.n2, l.n1, l.sto, l.n0]); // (skip 2)1 sto 0
+    _play([l.rcl, l.chs, l.reciprocal, l.gShift, l.minus, l.n0]); // E != 0
+    _play([l.n4, l.n2, l.sto, l.plus, l.n0]); // (4)2 sto + 0
+    _play([l.rcl, l.chs, l.reciprocal, l.enter, l.gShift, l.minus, l.n5]);
+    // E = E
+    _play([l.n5, l.n5, l.sto, l.plus, l.n0]); // (5)5 sto + 0
+    _play([l.rcl, l.chs, l.reciprocal, l.rcl, l.chs, l.yX]);
+    _play([l.gShift, l.minus, l.n5]); // E = D
+    _play([l.n2, l.n1, l.sto, l.n1]); // (skip 2)1 sto 1
+    _play([l.rcl, l.chs, l.reciprocal, l.n0, l.gShift, l.minus, l.n6]);
+    // E != 0
+    _play([l.n4, l.n2, l.sto, l.plus, l.n1]); // (4)2 sto + 1
+    _play([l.rcl, l.n0, l.rcl, l.n1]);
+    _play([l.gShift, l.rs]); // P/R
+    print("@@@ listing:  ${json.encode(model.memory.toJson(comments: true))}");
+    _play([l.gsb, l.sqrt]); // GSB A
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect(model.yF, 98);
+    expect(model.xF, 43);
+    print("@@@ yay");
+
     // Matrix stack operations, p. 174-175
     model.userMode = true;
     _play([l.fShift, l.chs, l.n0]); // F matrix 0
@@ -1308,7 +1336,9 @@ class MatrixTests {
     // p. 177
     model.userMode = true;
     _play([l.fShift, l.chs, l.n1]); // Matrix 1
-    _play([l.n2, l.enter, l.fShift, l.sin, l.yX]); // dim D to 2x2
+    _play([l.rcl, l.chs, l.yX, l.sto, l.tan]); // Store "D" to I
+    _play([l.n2, l.enter, l.fShift, l.sin, l.tan]); // dim D to 2x2
+    // That tested f-DIM-I
     for (final n in [l.n3, l.n5, l.n7, l.n2]) {
       _play([n, l.sto, l.yX]); // sto D
     }
@@ -1367,7 +1397,31 @@ class MatrixTests {
         }
       }
 
-      // @@ TODO:  Starting with p. 177, Summary of matrix functions
+      setMatrix(model, mD, [
+        [1, 2.7, -3],
+        [5, 24, 0.33]
+      ]);
+      _play([l.rcl, l.chs, l.yX]);
+      expect(model.x, Value.fromMatrix(3));
+      _play([l.chs]); // rcl mat D, chs
+      expect(model.x, Value.fromMatrix(3));
+      expectMatrixVals(mD, [
+        [-1, -2.7, 3],
+        [-5, -24, -0.33]
+      ]);
+
+      setMatrix(model, mD, [
+        [1, 2.7, -3],
+        [5, 24, 0.33],
+        [-31, 3.14, -6.22]
+      ]);
+      _play([l.rcl, l.chs, l.yX, l.fShift, l.chs, l.n7]); // mat 7 on D
+      expect(model.xF, 40.36);
+      _play([l.rcl, l.chs, l.yX, l.fShift, l.chs, l.n8]); // mat 8 on D
+      expect(model.xF, 40.34782398);
+      _play([l.rcl, l.chs, l.yX, l.fShift, l.chs, l.n9]); // mat 9 on D
+      expect(model.xF, -2373.067200);
+      // @@ TODO:  Up through p. 178, Py,x
     }
 
     model.userMode = false;
@@ -1448,6 +1502,15 @@ class MatrixTests {
         }
       }
     }
+  }
+
+  void setMatrix(Model15 model, Matrix m, List<List<num>> val) {
+    if (val.length == 0) {
+      m.resize(model, 0, 0);
+    } else {
+      m.resize(model, val.length, val[0].length);
+    }
+    m.visit((r, c) => m.setF(r, c, val[r][c].toDouble()));
   }
 }
 

@@ -90,7 +90,7 @@ abstract class Memory<OT extends ProgramOperation> {
     }
     final r = <String, Object>{
       'storage': st.toString(),
-      'program': program,
+      'program': program.toJson(),
       'I': registers._indexValue.toJson()
     };
     if (comments) {
@@ -686,6 +686,9 @@ abstract class ProgramOperation {
   /// Name for this key as an arg in the program listing, if other than the
   /// default.
   String? get programListingArgName => null;
+
+  /// Is this the f or g shift key?
+  bool get isShift => false;
 }
 
 ///
@@ -919,27 +922,29 @@ class OperationMap<OT extends ProgramOperation> {
       } else {
         r.opcode = 0x100 + _nextExtendedOpcode++;
       }
+      if (r.opcode == 436) {
+        print("@@@@ here!");
+      }
       _operationTable[r.opcode] = op;
       _argValues[r.opcode] = r;
       final String dash = userMode ? 'u' : '-';
-      final String pd;
-      final String las;
+      final String pd, pl;
       if (secondShift != null) {
         assert(shift != null);
         assert(arg == null);
         pd = '${shift!.rcName},${secondShift.rcName}${op.rcName}';
-        las = '';
+        pl = op.name;
       } else if (shift == null && arg == null) {
         assert(!argDot);
         pd = '    ${op.rcName}';
-        las = '';
+        pl = op.name;
       } else if (arg == null) {
         assert(!argDot);
         pd = ' ${shift!.rcName} ${op.rcName}';
-        las = '';
+        pl = op.name;
       } else {
         // arg != null
-        final String as;
+        final String as, las;
         if (argDot) {
           as = ' .${arg.rcName.trim()}';
           assert(as.length == 3);
@@ -957,12 +962,18 @@ class OperationMap<OT extends ProgramOperation> {
         }
         if (shift == null) {
           pd = ' ${op.rcName} $as';
-        } else {
+          pl = '${op.name}$las';
+        } else if (shift.isShift) {
           pd = '${shift.rcName},${op.rcName},$as';
+          pl = '${shift.name} ${op.name}$las';
+        } else {
+          // Shift is an operation, like + in like "STO + 0"
+          pd = '${op.rcName},${shift.rcName},$as';
+          pl = '${op.name} ${shift.name}$las';
         }
       }
       r.programDisplay = '$dash$pd';
-      r.programListing = '${op.name}$las';
+      r.programListing = pl;
       assert(r.programDisplay.length < 20, '$op');
     });
   }

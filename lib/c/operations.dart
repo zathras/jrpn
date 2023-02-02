@@ -100,10 +100,10 @@ class Operations {
   static final onOff = NonProgrammableOperation(
       pressed: (LimitedState s) => s.handleOnOff(), name: 'ON');
 
-  static final fShift = NonProgrammableOperation(
+  static final fShift = ShiftOperation(
       pressed: (LimitedState c) => c.handleShift(ShiftKey.f), name: 'f');
 
-  static final gShift = NonProgrammableOperation(
+  static final gShift = ShiftOperation(
       pressed: (LimitedState c) => c.handleShift(ShiftKey.g), name: 'g');
 
   static final n0 = NumberEntry('0', 0);

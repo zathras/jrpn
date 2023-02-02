@@ -793,6 +793,15 @@ class NonProgrammableOperation extends LimitedOperation implements ArgDone {
       : super(pressed: pressed, name: name, endsDigitEntry: endsDigitEntry);
 }
 
+class ShiftOperation extends NonProgrammableOperation {
+  ShiftOperation(
+      {required String name, required void Function(LimitedState) pressed})
+      : super(name: name, pressed: pressed);
+
+  @override
+  bool get isShift => true;
+}
+
 ///
 /// A declarative description of an [Operation]'s effect on stack lift, when
 /// its calculation has been performed.  This covers the most common effects

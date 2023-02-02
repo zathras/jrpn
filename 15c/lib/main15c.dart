@@ -685,7 +685,7 @@ class Operations15 extends Operations {
   }
 
   static final NormalArgOperation dim = NormalArgOperation(
-      arg: ArgAlternates(synonyms: _letterSynonyms, children: [
+      arg: ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
         ...List.generate(
             _letterLabelsList.length,
             (i) => KeyArg(
@@ -833,8 +833,68 @@ class Operations15 extends Operations {
       },
       name: 'Re<=>Im');
 
+  static final BranchingOperation xEQ0_15 = BranchingOperation(
+      name: 'x==0',
+      calc: (Model m) {
+        if (m.x.asMatrix != null) {
+          m.program.doNextIf(false);
+        } else if (m.isComplexMode) {
+          m.program.doNextIf(m.xC == Complex.zero);
+        } else {
+          m.program.doNextIf(m.xF == 0.0);
+        }
+      });
+
   static void _testOp(Model m, int arg) {
-    throw "@@ TODO";
+    switch (arg) {
+      case 0: // x != 0
+        if (m.x.asMatrix != null) {
+          m.program.doNextIf(true);
+        } else if (m.isComplexMode) {
+          m.program.doNextIf(m.xC != Complex.zero);
+        } else {
+          m.program.doNextIf(m.xF != 0.0);
+        }
+        break;
+      case 1: // x > 0
+        m.program.doNextIf(m.xF > 0.0); // Error 1 if matrix, ignores imaginary
+        break;
+      case 2: // x < 0
+        m.program.doNextIf(m.xF < 0.0);
+        break;
+      case 3: // x >= 0
+        m.program.doNextIf(m.xF >= 0.0);
+        break;
+      case 4: // x <= 0
+        m.program.doNextIf(m.xF <= 0.0);
+        break;
+      case 5: // x = y (matrices OK)
+        if (m.isComplexMode && m.x.asMatrix == null && m.y.asMatrix == null) {
+          m.program.doNextIf(m.xC == m.yC);
+        } else {
+          m.program.doNextIf(m.x == m.y);
+        }
+        break;
+      case 6: // x != y
+        if (m.isComplexMode && m.x.asMatrix == null && m.y.asMatrix == null) {
+          m.program.doNextIf(m.xC != m.yC);
+          // != is the same as !(==) in Dart:  Dart lang spec. v. 2.10 s. 17.26
+        } else {
+          m.program.doNextIf(m.x != m.y);
+        }
+        break;
+      case 7: // x > y
+        m.program.doNextIf(m.xF > m.yF);
+        break;
+      case 8: // x < y
+        m.program.doNextIf(m.xF < m.yF);
+        break;
+      case 9: // x >= y
+        m.program.doNextIf(m.xF >= m.yF);
+        break;
+      default:
+        throw ArgumentError('Internal error $arg');
+    }
   }
 
   static final NormalArgOperation testOp =
@@ -1481,7 +1541,7 @@ class ButtonLayout15 extends ButtonLayout {
       'x=0',
       Operations15.mult,
       Operations15.integrate,
-      Operations.xEQ0,
+      Operations15.xEQ0_15,
       'X*',
       'TST',
       acceleratorLabel: '*\u00d7');
@@ -1867,7 +1927,7 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
     MKey(Operations.n4, Operations15.xExchange, Operations15.sf),
     MKey(Operations.n5, Operations15.dse, Operations15.cf),
     MKey(Operations.n6, Operations15.isg, Operations15.fQuestion),
-    MKey(Operations15.mult, Operations15.integrate, Operations.xEQ0),
+    MKey(Operations15.mult, Operations15.integrate, Operations15.xEQ0_15),
   ],
   [
     MKey(Operations.rs, Operations.pse, Operations.pr),
