@@ -1431,28 +1431,28 @@ class MatrixTests {
         [-310, 0.314, -6.22222],
         [22.1, 22.2, 22.3]
       ]);
-      _play([l.rcl, l.chs, l.tenX, l.sto, l.tan]);  // I := mC
+      _play([l.rcl, l.chs, l.tenX, l.sto, l.tan]); // I := mC
       _play([l.n2, l.sto, l.n0, l.n3, l.sto, l.n1]); // r = 2, c = 3
       _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.rcl, l.cos]);   // rcl (i), that is, C
+      _play([l.rcl, l.cos]); // rcl (i), that is, C
       expect(model.xF, 2.33);
-      _play([l.rcl, l.tenX]);   // rcl C
+      _play([l.rcl, l.tenX]); // rcl C
       expect(model.xF, 2.33);
-      _play([l.rcl, l.yX]);   // rcl D
+      _play([l.rcl, l.yX]); // rcl D
       expect(model.xF, 0.33);
       _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.n7, l.enter, l.n3, l.enter, l.n1]);  // z = 7, y/r = 3, x/c = 1
-      _play([l.rcl, l.gShift, l.cos]);   // rcl g (i), that is, C
+      _play([l.n7, l.enter, l.n3, l.enter, l.n1]); // z = 7, y/r = 3, x/c = 1
+      _play([l.rcl, l.gShift, l.cos]); // rcl g (i), that is, C
       expect(model.xF, -310);
       expect(model.yF, 7);
       _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.n7, l.enter, l.n3, l.enter, l.n1]);  // z = 7, y/r = 3, x/c = 1
-      _play([l.rcl, l.gShift, l.tenX]);   // rcl g C
+      _play([l.n7, l.enter, l.n3, l.enter, l.n1]); // z = 7, y/r = 3, x/c = 1
+      _play([l.rcl, l.gShift, l.tenX]); // rcl g C
       expect(model.xF, -310);
       expect(model.yF, 7);
       _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.n7, l.enter, l.n3, l.enter, l.n1]);  // z = 7, y/r = 3, x/c = 1
-      _play([l.rcl, l.gShift, l.yX]);   // rcl g D
+      _play([l.n7, l.enter, l.n3, l.enter, l.n1]); // z = 7, y/r = 3, x/c = 1
+      _play([l.rcl, l.gShift, l.yX]); // rcl g D
       expect(model.xF, -31);
       expect(model.yF, 7);
 

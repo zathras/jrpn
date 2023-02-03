@@ -1419,12 +1419,6 @@ class DeferredRclArg extends ArgDone {
   final bool noStackLift;
   final int matrixNumber;
 
-  ///
-  /// Our superclasses calculate function is a NOP, because we defer the
-  /// real calculation.  We need a non-null NOP there, however, so that the
-  /// state machine will call our beforeCalculate().  It's a little tangled,
-  /// but the 15C has a really complicated state machine!
-  ///
   final void Function(Model, Matrix) pressed;
   final void Function(Model, Matrix) released;
 
@@ -1434,6 +1428,10 @@ class DeferredRclArg extends ArgDone {
       required this.matrixNumber,
       this.noStackLift = false})
       : super((_) {});
+  // Our superclass's calculate function is a NOP, because we defer the
+  // real calculation.  We need a non-null NOP there, however, so that the
+  // state machine will call our beforeCalculate().  It's a little tangled,
+  // but the 15C has a really complicated state machine!
 
   ///
   /// For many of the RCL operations on matrices, we need to take over
@@ -1465,7 +1463,7 @@ class DeferredRclArg extends ArgDone {
 /// When I contains a matrix descriptor, it behaves like a matrix:  It shows
 /// the matrix row/column, with a timeout, and only completes the recall
 /// operation if the button is released before the timeout expires.  So, when
-/// I contains a matrix descriptor, it behaves like [DeferredRclArg], below.
+/// I contains a matrix descriptor, it behaves like [DeferredRclArg], above.
 ///
 /// And they did all this in a tiny, power-efficient form factor with a 4 bit
 /// processor, and (I assume) pushing the limits of their small ROM capacity.
@@ -1473,12 +1471,6 @@ class DeferredRclArg extends ArgDone {
 class RclIndirectArg extends ArgDone {
   final bool noStackLift;
 
-  ///
-  /// Our superclasses calculate function is a NOP, because we defer the
-  /// real calculation.  We need a non-null NOP there, however, so that the
-  /// state machine will call our beforeCalculate().  It's a little tangled,
-  /// but the 15C has a really complicated state machine!
-  ///
   final void Function(Model, Matrix) matPressed;
   final void Function(Model, Matrix) matReleased;
 
