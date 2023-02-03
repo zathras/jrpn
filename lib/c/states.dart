@@ -1218,7 +1218,7 @@ class Running extends ControllerState {
             final Value v = model.getStackByIndex(i);
             final int? vm = v.asMatrix;
             if (vm != null) {
-              out.write('${String.fromCharCodes([('A'.codeUnitAt(0) + vm)])}');
+              out.write(String.fromCharCodes([('A'.codeUnitAt(0) + vm)]));
             } else if (model.isComplexMode) {
               out.write(model.getStackByIndexC(i));
             } else if (model.isFloatMode) {

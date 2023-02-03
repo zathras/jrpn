@@ -1032,7 +1032,7 @@ class Operations15 extends Operations {
   }
 
   static void _showMatrix(Model m, Matrix matrix, int row, int col) {
-    m.display.current = '${matrix.name}  $row,$col';
+    m.display.current = '${matrix.name}  ${row + 1},${col + 1}';
     m.display.update(flash: false);
   }
 
@@ -1199,7 +1199,10 @@ class Operations15 extends Operations {
                           _recallFromMatrix(m, matrix, false))),
               KeyArg(
                   key: Operations15.parenI15,
-                  child: ArgDone((m) => throw "@@ TODO"))
+                  child: RclIndirectArg(
+                      matPressed: _showMatrixR0R1,
+                      matReleased: (m, matrix) =>
+                          _recallFromMatrix(m, matrix, false))),
             ])),
         UserArg(
             userMode: true,
@@ -1214,7 +1217,10 @@ class Operations15 extends Operations {
                           _recallFromMatrix(m, matrix, true))),
               KeyArg(
                   key: Operations15.parenI15,
-                  child: ArgDone((m) => throw "@@ TODO"))
+                  child: RclIndirectArg(
+                      matPressed: _showMatrixR0R1,
+                      matReleased: (m, matrix) =>
+                          _recallFromMatrix(m, matrix, true))),
             ])),
         KeyArg(
             key: Operations15.plus,
@@ -1234,7 +1240,19 @@ class Operations15 extends Operations {
                 maxDigit: 19, f: (double r, double x) => r / x)),
         KeyArg(
             key: Operations15.cosInverse, // That's g (i)
-            child: ArgDone((m) => throw "@@ TODO"))
+            child: RclIndirectArg(
+                noStackLift: true,
+                matPressed: (m, matrix) {
+                  final int row = m.yF.truncate().abs() - 1;
+                  final int col = m.xF.truncate().abs() - 1;
+                  _showMatrix(m, matrix, row, col);
+                },
+                matReleased: (m, matrix) {
+                  final int row = m.yF.truncate().abs() - 1;
+                  final int col = m.xF.truncate().abs() - 1;
+                  m.popStack();
+                  m.x = matrix.get(row, col);
+                })),
       ]),
       name: 'RCL');
 
@@ -1428,10 +1446,71 @@ class DeferredRclArg extends ArgDone {
     pressed(m, matrix);
     m.deferToButtonUp = DeferredFunction(m, () {
       if (!noStackLift) {
+        // For RCL g <mat>, the column number is in X.  It might have come
+        // from pressing a number key (and NOT enter), or it might have come
+        // from some other operation.  We're about to consume the x and y
+        // registers.  For RCL g <mat>, we should not do stack lift.
         opBeforeCalculate();
       }
       released(m, matrix);
     }).run;
+  }
+}
+
+///
+/// This is where the HP 15C shows its evil genius.  RCL (i), when I contains
+/// a number, immediately recalls the register whose number is given in I
+/// (converted to an integer), so it behaves like [ArgDone].
+///
+/// When I contains a matrix descriptor, it behaves like a matrix:  It shows
+/// the matrix row/column, with a timeout, and only completes the recall
+/// operation if the button is released before the timeout expires.  So, when
+/// I contains a matrix descriptor, it behaves like [DeferredRclArg], below.
+///
+/// And they did all this in a tiny, power-efficient form factor with a 4 bit
+/// processor, and (I assume) pushing the limits of their small ROM capacity.
+///
+class RclIndirectArg extends ArgDone {
+  final bool noStackLift;
+
+  ///
+  /// Our superclasses calculate function is a NOP, because we defer the
+  /// real calculation.  We need a non-null NOP there, however, so that the
+  /// state machine will call our beforeCalculate().  It's a little tangled,
+  /// but the 15C has a really complicated state machine!
+  ///
+  final void Function(Model, Matrix) matPressed;
+  final void Function(Model, Matrix) matReleased;
+
+  RclIndirectArg(
+      {required this.matPressed,
+      required this.matReleased,
+      this.noStackLift = false})
+      : super((_) {});
+
+  ///
+  /// For many of the RCL operations on matrices, we need to take over
+  /// stack lift, so we do the deferral on beforeCalculate rather than
+  /// calc.
+  ///
+  @override
+  void handleOpBeforeCalculate(Model m, void Function() opBeforeCalculate) {
+    final Value iv = m.memory.registers.index;
+    final int? miv = iv.asMatrix;
+    if (miv == null) {
+      opBeforeCalculate(); // noStackLift only relevant if I is a matrix
+      final int reg = iv.asDouble.floor().abs();
+      m.resultX = m.memory.registers[reg]; // Index exception becomes Error 3
+    } else {
+      final matrix = (m as Model15).matrices[miv];
+      matPressed(m, matrix);
+      m.deferToButtonUp = DeferredFunction(m, () {
+        if (!noStackLift) {
+          opBeforeCalculate();
+        }
+        matReleased(m, matrix);
+      }).run;
+    }
   }
 }
 

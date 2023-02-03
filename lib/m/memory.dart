@@ -922,9 +922,6 @@ class OperationMap<OT extends ProgramOperation> {
       } else {
         r.opcode = 0x100 + _nextExtendedOpcode++;
       }
-      if (r.opcode == 436) {
-        print("@@@@ here!");
-      }
       _operationTable[r.opcode] = op;
       _argValues[r.opcode] = r;
       final String dash = userMode ? 'u' : '-';

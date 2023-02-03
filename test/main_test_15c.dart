@@ -1255,7 +1255,6 @@ class MatrixTests {
     model.xF = -50.4;
     testMatrixAccess([l.rcl, l.div], -1.2, -1.2, 42);
 
-    print("\n\n\n@@@ start");
     // Conditional tests on matrix descriptors, p. 174
     _play([l.gShift, l.rs, l.fShift, l.rdown, l.fShift, l.sst, l.sqrt]);
     // Program mode, clear program, label A
@@ -1274,13 +1273,11 @@ class MatrixTests {
     _play([l.n4, l.n2, l.sto, l.plus, l.n1]); // (4)2 sto + 1
     _play([l.rcl, l.n0, l.rcl, l.n1]);
     _play([l.gShift, l.rs]); // P/R
-    print("@@@ listing:  ${json.encode(model.memory.toJson(comments: true))}");
     _play([l.gsb, l.sqrt]); // GSB A
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
     expect(model.yF, 98);
     expect(model.xF, 43);
-    print("@@@ yay");
 
     // Matrix stack operations, p. 174-175
     model.userMode = true;
@@ -1421,6 +1418,44 @@ class MatrixTests {
       expect(model.xF, 40.34782398);
       _play([l.rcl, l.chs, l.yX, l.fShift, l.chs, l.n9]); // mat 9 on D
       expect(model.xF, -2373.067200);
+
+      // p. 178, misc. matrix addressing:
+      setMatrix(model, mD, [
+        [1, 2.7, -3],
+        [5, 24, 0.33],
+        [-31, 3.14, -6.22]
+      ]);
+      setMatrix(model, mC, [
+        [19, 20.7, -73],
+        [19, 27, 2.33],
+        [-310, 0.314, -6.22222],
+        [22.1, 22.2, 22.3]
+      ]);
+      _play([l.rcl, l.chs, l.tenX, l.sto, l.tan]);  // I := mC
+      _play([l.n2, l.sto, l.n0, l.n3, l.sto, l.n1]); // r = 2, c = 3
+      _play([l.n0, l.enter, l.enter, l.enter]);
+      _play([l.rcl, l.cos]);   // rcl (i), that is, C
+      expect(model.xF, 2.33);
+      _play([l.rcl, l.tenX]);   // rcl C
+      expect(model.xF, 2.33);
+      _play([l.rcl, l.yX]);   // rcl D
+      expect(model.xF, 0.33);
+      _play([l.n0, l.enter, l.enter, l.enter]);
+      _play([l.n7, l.enter, l.n3, l.enter, l.n1]);  // z = 7, y/r = 3, x/c = 1
+      _play([l.rcl, l.gShift, l.cos]);   // rcl g (i), that is, C
+      expect(model.xF, -310);
+      expect(model.yF, 7);
+      _play([l.n0, l.enter, l.enter, l.enter]);
+      _play([l.n7, l.enter, l.n3, l.enter, l.n1]);  // z = 7, y/r = 3, x/c = 1
+      _play([l.rcl, l.gShift, l.tenX]);   // rcl g C
+      expect(model.xF, -310);
+      expect(model.yF, 7);
+      _play([l.n0, l.enter, l.enter, l.enter]);
+      _play([l.n7, l.enter, l.n3, l.enter, l.n1]);  // z = 7, y/r = 3, x/c = 1
+      _play([l.rcl, l.gShift, l.yX]);   // rcl g D
+      expect(model.xF, -31);
+      expect(model.yF, 7);
+
       // @@ TODO:  Up through p. 178, Py,x
     }
 
@@ -1431,6 +1466,7 @@ class MatrixTests {
   Future<void> runWithComplex(bool complex) async {
     model.isComplexMode = complex;
     await _ch12();
+    // print("listing:  ${JsonEncoder.withIndent('  ').convert(model.memory.toJson(comments: true))}");
     _page146();
     _stoMatrixAndChs();
     _invertMatrix(true);
