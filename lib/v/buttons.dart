@@ -964,6 +964,7 @@ class CalculatorButtonState extends State<CalculatorButton> {
           factory.controller.buttonUp();
         },
         onTapDown: (TapDownDetails details) {
+          Feedback.forTap(context);
           setState(() {
             _pressed = true;
           });
