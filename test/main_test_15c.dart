@@ -1457,15 +1457,72 @@ class MatrixTests {
       expect(model.yF, 7);
 
       _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.rcl, l.sin, l.yX]);   // rcl dim D
+      _play([l.rcl, l.sin, l.yX]); // rcl dim D
       expect(model.xF, 3);
       expect(model.yF, 3);
       _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.rcl, l.sin, l.tan]);   // rcl dim I, that is, C
+      _play([l.rcl, l.sin, l.tan]); // rcl dim I, that is, C
       expect(model.xF, 3);
       expect(model.yF, 4);
 
-      // @@ TODO:  Up through p. 178, Py,x
+      _play([l.rcl, l.chs, l.eX, l.sto, l.eex]); // rcl mat B, sto result
+      _play([l.n0, l.enter, l.enter, l.enter]);
+      _play([l.rcl, l.eex]); // rcl result
+      expect(model.x, Value.fromMatrix(1));
+      _play([l.fShift, l.eex, l.yX]); // f result D
+      _play([l.rcl, l.eex]); // rcl result
+      expect(model.x, Value.fromMatrix(3));
+
+      model.userMode = false;
+      setMatrix(model, mD, [
+        [1.1, 2.2]
+      ]);
+      _play([l.rcl, l.chs, l.yX, l.sto, l.tan]); // I := D
+      _play([l.fShift, l.chs, l.n1]); // F matrix 1
+      _play([l.n3, l.sto, l.yX]);
+      expectMatrixVals(mD, [
+        [3, 2.2]
+      ]);
+      _play([l.fShift, l.rcl]); // toggle user mode
+      _play([l.n4, l.sto, l.cos]);
+      _play([l.n5, l.sto, l.yX, l.n6, l.sto, l.cos]);
+      expectMatrixVals(mD, [
+        [6, 5]
+      ]);
+      _play([l.fShift, l.rcl]); // toggle user (to off)
+      setMatrix(model, mD, [
+        [1.1, 2.2],
+        [3.1, 4.2],
+        [5.1, 6.2]
+      ]);
+      _play([l.n1, l.enter, l.n3, l.enter, l.n2, l.sto, l.gShift, l.yX]);
+      expectMatrixVals(mD, [
+        [1.1, 2.2],
+        [3.1, 4.2],
+        [5.1, 1]
+      ]);
+      _play(
+          [l.n2, l.chs, l.enter, l.n2, l.enter, l.n1, l.sto, l.gShift, l.cos]);
+      expectMatrixVals(mD, [
+        [1.1, 2.2],
+        [-2, 4.2],
+        [5.1, 1]
+      ]);
+
+      _play([l.rcl, l.chs, l.yX, l.sto, l.chs, l.sqrt]); // A := D
+      expectMatrixVals(mA, [
+        [1.1, 2.2],
+        [-2, 4.2],
+        [5.1, 1]
+      ]);
+      _play([l.n9, l.chs, l.sto, l.chs, l.sqrt]); // A := 9
+      expectMatrixVals(mA, [
+        [-9, -9],
+        [-9, -9],
+        [-9, -9]
+      ]);
+
+      // @@ TODO:  Up through end of p. 178
     }
 
     model.userMode = false;

@@ -195,7 +195,7 @@ class Settings {
   bool _showWordSize = false;
   final Observable<bool> showAccelerators = Observable(false);
   double? _msPerInstruction;
-  bool _traceProgramToStdout = true; // @@@@
+  bool _traceProgramToStdout = false; // @@@@
   static const double _msPerInstructionDefault = 50;
   // My 15C does about 100 add instructions in ten seconds, which would be
   // 100ms per instruction.  Going about double that speed gives pleasing

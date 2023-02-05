@@ -975,12 +975,30 @@ class Operations15 extends Operations {
       },
       name: 'Cy,x');
 
-  static void _storeToMatrix(Model m, bool increment, int matrixNumber) {
-    final matrix = (m as Model15).matrices[matrixNumber];
-    int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
+  static void _storeToParenI(Model m, bool incrementMatrix) {
+    final Value iv = m.memory.registers.index;
+    final int? miv = iv.asMatrix;
+    if (miv != null) {
+      _storeToMatrix(m, incrementMatrix, miv);
+    } else {
+      final int reg = iv.asDouble.floor().abs();
+      m.memory.registers[reg] = m.x;
+      // Index exception becomes Error 3
+    }
+  }
 
-    int row = toI(0) - 1;
-    int col = toI(1) - 1;
+  static void _storeToMatrix(Model m, bool increment, int matrixNumber) {
+    final regs = m.memory.registers;
+    _storeToMatrixRC(m, matrixNumber, regs[0], regs[1], increment: increment);
+  }
+
+  static void _storeToMatrixRC(Model m, int matrixNumber, Value r, Value c,
+      {bool increment = false}) {
+    final matrix = (m as Model15).matrices[matrixNumber];
+    int toI(Value v) => v.asDouble.truncate().abs();
+
+    int row = toI(r) - 1;
+    int col = toI(c) - 1;
     _showMatrixR0R1(m, matrix);
     m.deferToButtonUp = DeferredFunction(m, () {
       if (row == 1 && col == 1) {
@@ -1090,7 +1108,7 @@ class Operations15 extends Operations {
                       ArgDone((m) => _storeToMatrix(m, false, i))),
               KeyArg(
                   key: Operations15.parenI15,
-                  child: ArgDone((m) => throw "@@ TODO"))
+                  child: ArgDone((m) => _storeToParenI(m, false)))
             ])),
         UserArg(
             userMode: true,
@@ -1103,7 +1121,7 @@ class Operations15 extends Operations {
                         ArgDone((m) => _storeToMatrix(m, true, i))),
                 KeyArg(
                     key: Operations15.parenI15,
-                    child: ArgDone((m) => throw "@@ TODO"))
+                    child: ArgDone((m) => _storeToParenI(m, true)))
               ],
             )),
         KeyArg(
@@ -1131,7 +1149,20 @@ class Operations15 extends Operations {
                 maxDigit: 19, f: (m, double r, double x) => r / x)),
         KeyArg(
             key: Operations15.cosInverse, // That's g (i)
-            child: ArgDone((m) => throw "@@ TODO"))
+            child: ArgDone((m) {
+              final Value iv = m.memory.registers.index;
+              final int? miv = iv.asMatrix;
+              if (miv != null) {
+                _storeToMatrixRC(m, miv, m.y, m.x);
+              } else {
+                final int reg = iv.asDouble.floor().abs();
+                m.memory.registers[reg] = m.z;
+              }
+              // I checked on a real 15C:  Even when I is a register,
+              // it stores value in z, and pops stack twice.
+              m.popStack();
+              m.popStack();
+            }))
       ]),
       name: 'STO');
 
@@ -1173,11 +1204,11 @@ class Operations15 extends Operations {
               KeysArg(
                   keys: _letterLabels,
                   generator: (i) => ArgDone((m) {
-                    final mat = (m as Model15).matrices[i];
-                    m.resultXF = mat.rows.toDouble();
-                    m.pushStack();
-                    m.resultXF = mat.columns.toDouble();
-                  })),
+                        final mat = (m as Model15).matrices[i];
+                        m.resultXF = mat.rows.toDouble();
+                        m.pushStack();
+                        m.resultXF = mat.columns.toDouble();
+                      })),
               KeyArg(
                   key: Operations15.I15,
                   child: ArgDone((m) {
