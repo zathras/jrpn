@@ -1456,6 +1456,15 @@ class MatrixTests {
       expect(model.xF, -31);
       expect(model.yF, 7);
 
+      _play([l.n0, l.enter, l.enter, l.enter]);
+      _play([l.rcl, l.sin, l.yX]);   // rcl dim D
+      expect(model.xF, 3);
+      expect(model.yF, 3);
+      _play([l.n0, l.enter, l.enter, l.enter]);
+      _play([l.rcl, l.sin, l.tan]);   // rcl dim I, that is, C
+      expect(model.xF, 3);
+      expect(model.yF, 4);
+
       // @@ TODO:  Up through p. 178, Py,x
     }
 

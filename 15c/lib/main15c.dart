@@ -1143,7 +1143,10 @@ class Operations15 extends Operations {
         s.liftStackIfEnabled();
         return StackLift.neutral;
       },
-      arg: ArgAlternates(synonyms: _matrixSynonyms, children: [
+      arg: ArgAlternates(synonyms: {
+        ..._matrixSynonyms,
+        Operations15.sin: Operations15.dim
+      }, children: [
         RegisterReadArg(
             maxDigit: 19, noParenI: true, f: (m, v) => m.resultX = v),
         // g A..E
@@ -1169,10 +1172,24 @@ class Operations15 extends Operations {
                 ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
               KeysArg(
                   keys: _letterLabels,
-                  generator: (i) => ArgDone((m) => throw "@@ TODO")),
+                  generator: (i) => ArgDone((m) {
+                    final mat = (m as Model15).matrices[i];
+                    m.resultXF = mat.rows.toDouble();
+                    m.pushStack();
+                    m.resultXF = mat.columns.toDouble();
+                  })),
               KeyArg(
-                  key: Operations15.parenI15,
-                  child: ArgDone((m) => throw "@@ TODO"))
+                  key: Operations15.I15,
+                  child: ArgDone((m) {
+                    final int? miv = m.memory.registers.index.asMatrix;
+                    if (miv == null) {
+                      throw CalculatorError(11);
+                    }
+                    final mat = (m as Model15).matrices[miv];
+                    m.resultXF = mat.rows.toDouble();
+                    m.pushStack();
+                    m.resultXF = mat.columns.toDouble();
+                  }))
             ])),
         KeyArg(
             key: Operations15.resultOp,
