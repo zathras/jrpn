@@ -102,23 +102,35 @@ class Operations15 extends Operations {
 
   static final NormalOperation div = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        _scalarOrMatrix(m, scalar: (x, y) {
-          try {
-            return y / x;
-            // ignore: avoid_catches_without_on_clauses
-          } catch (e) {
-            throw CalculatorError(0);
-          }
-        }, matrix: (m, x, y, r) {
-          if (x != r) {
-            r.resize(m, y.rows, y.columns);
-          }
-          try {
-            linalg.solve(x, y, r);
-          } on linalg.MatrixOverflow {
-            m.floatOverflow = true;
-          }
-        });
+        final matX = m.x.asMatrix;
+        if (matX != null && m.y.asMatrix == null) {
+          // Page 179:  x is matrix, y is scalar
+          final result = (m as Model15).matrices[m.resultMatrix];
+          result.copyFrom(m, m.matrices[matX]);
+          linalg.invert(result);
+          final y = m.yF;
+          result.visit((final int r, c) {
+            result.setF(r, c, result.getF(r, c) * y);
+          });
+        } else {
+          _scalarOrMatrix(m, scalar: (x, y) {
+            try {
+              return y / x;
+              // ignore: avoid_catches_without_on_clauses
+            } catch (e) {
+              throw CalculatorError(0);
+            }
+          }, matrix: (m, x, y, r) {
+            if (x != r) {
+              r.resize(m, y.rows, y.columns);
+            }
+            try {
+              linalg.solve(x, y, r);
+            } on linalg.MatrixOverflow {
+              m.floatOverflow = true;
+            }
+          });
+        }
       },
       complexCalc: (Model m) {
         if (m.x.asMatrix != null || m.y.asMatrix != null) {
@@ -1001,6 +1013,7 @@ class Operations15 extends Operations {
     int col = toI(c) - 1;
     _showMatrixR0R1(m, matrix);
     m.deferToButtonUp = DeferredFunction(m, () {
+      m.xF; // Throws exception if matrix
       if (row == 1 && col == 1) {
         matrix.isLU = false;
       }

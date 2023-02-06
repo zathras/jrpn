@@ -1393,136 +1393,221 @@ class MatrixTests {
           }
         }
       }
+    }
 
-      setMatrix(model, mD, [
-        [1, 2.7, -3],
-        [5, 24, 0.33]
-      ]);
-      _play([l.rcl, l.chs, l.yX]);
-      expect(model.x, Value.fromMatrix(3));
-      _play([l.chs]); // rcl mat D, chs
-      expect(model.x, Value.fromMatrix(3));
-      expectMatrixVals(mD, [
-        [-1, -2.7, 3],
-        [-5, -24, -0.33]
-      ]);
+    setMatrix(model, mD, [
+      [1, 2.7, -3],
+      [5, 24, 0.33]
+    ]);
+    _play([l.rcl, l.chs, l.yX]);
+    expect(model.x, Value.fromMatrix(3));
+    _play([l.chs]); // rcl mat D, chs
+    expect(model.x, Value.fromMatrix(3));
+    expectMatrixVals(mD, [
+      [-1, -2.7, 3],
+      [-5, -24, -0.33]
+    ]);
 
-      setMatrix(model, mD, [
-        [1, 2.7, -3],
-        [5, 24, 0.33],
-        [-31, 3.14, -6.22]
-      ]);
-      _play([l.rcl, l.chs, l.yX, l.fShift, l.chs, l.n7]); // mat 7 on D
-      expect(model.xF, 40.36);
-      _play([l.rcl, l.chs, l.yX, l.fShift, l.chs, l.n8]); // mat 8 on D
-      expect(model.xF, 40.34782398);
-      _play([l.rcl, l.chs, l.yX, l.fShift, l.chs, l.n9]); // mat 9 on D
-      expect(model.xF, -2373.067200);
+    setMatrix(model, mD, [
+      [1, 2.7, -3],
+      [5, 24, 0.33],
+      [-31, 3.14, -6.22]
+    ]);
+    _play([l.rcl, l.chs, l.yX, l.fShift, l.chs, l.n7]); // mat 7 on D
+    expect(model.xF, 40.36);
+    _play([l.rcl, l.chs, l.yX, l.fShift, l.chs, l.n8]); // mat 8 on D
+    expect(model.xF, 40.34782398);
+    _play([l.rcl, l.chs, l.yX, l.fShift, l.chs, l.n9]); // mat 9 on D
+    expect(model.xF, -2373.067200);
 
-      // p. 178, misc. matrix addressing:
-      setMatrix(model, mD, [
-        [1, 2.7, -3],
-        [5, 24, 0.33],
-        [-31, 3.14, -6.22]
-      ]);
-      setMatrix(model, mC, [
-        [19, 20.7, -73],
-        [19, 27, 2.33],
-        [-310, 0.314, -6.22222],
-        [22.1, 22.2, 22.3]
-      ]);
-      _play([l.rcl, l.chs, l.tenX, l.sto, l.tan]); // I := mC
-      _play([l.n2, l.sto, l.n0, l.n3, l.sto, l.n1]); // r = 2, c = 3
-      _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.rcl, l.cos]); // rcl (i), that is, C
-      expect(model.xF, 2.33);
-      _play([l.rcl, l.tenX]); // rcl C
-      expect(model.xF, 2.33);
-      _play([l.rcl, l.yX]); // rcl D
-      expect(model.xF, 0.33);
-      _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.n7, l.enter, l.n3, l.enter, l.n1]); // z = 7, y/r = 3, x/c = 1
-      _play([l.rcl, l.gShift, l.cos]); // rcl g (i), that is, C
-      expect(model.xF, -310);
-      expect(model.yF, 7);
-      _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.n7, l.enter, l.n3, l.enter, l.n1]); // z = 7, y/r = 3, x/c = 1
-      _play([l.rcl, l.gShift, l.tenX]); // rcl g C
-      expect(model.xF, -310);
-      expect(model.yF, 7);
-      _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.n7, l.enter, l.n3, l.enter, l.n1]); // z = 7, y/r = 3, x/c = 1
-      _play([l.rcl, l.gShift, l.yX]); // rcl g D
-      expect(model.xF, -31);
-      expect(model.yF, 7);
+    // p. 178, misc. matrix addressing:
+    setMatrix(model, mD, [
+      [1, 2.7, -3],
+      [5, 24, 0.33],
+      [-31, 3.14, -6.22]
+    ]);
+    setMatrix(model, mC, [
+      [19, 20.7, -73],
+      [19, 27, 2.33],
+      [-310, 0.314, -6.22222],
+      [22.1, 22.2, 22.3]
+    ]);
+    _play([l.rcl, l.chs, l.tenX, l.sto, l.tan]); // I := mC
+    _play([l.n2, l.sto, l.n0, l.n3, l.sto, l.n1]); // r = 2, c = 3
+    _play([l.n0, l.enter, l.enter, l.enter]);
+    _play([l.rcl, l.cos]); // rcl (i), that is, C
+    expect(model.xF, 2.33);
+    _play([l.rcl, l.tenX]); // rcl C
+    expect(model.xF, 2.33);
+    _play([l.rcl, l.yX]); // rcl D
+    expect(model.xF, 0.33);
+    _play([l.n0, l.enter, l.enter, l.enter]);
+    _play([l.n7, l.enter, l.n3, l.enter, l.n1]); // z = 7, y/r = 3, x/c = 1
+    _play([l.rcl, l.gShift, l.cos]); // rcl g (i), that is, C
+    expect(model.xF, -310);
+    expect(model.yF, 7);
+    _play([l.n0, l.enter, l.enter, l.enter]);
+    _play([l.n7, l.enter, l.n3, l.enter, l.n1]); // z = 7, y/r = 3, x/c = 1
+    _play([l.rcl, l.gShift, l.tenX]); // rcl g C
+    expect(model.xF, -310);
+    expect(model.yF, 7);
+    _play([l.n0, l.enter, l.enter, l.enter]);
+    _play([l.n7, l.enter, l.n3, l.enter, l.n1]); // z = 7, y/r = 3, x/c = 1
+    _play([l.rcl, l.gShift, l.yX]); // rcl g D
+    expect(model.xF, -31);
+    expect(model.yF, 7);
 
-      _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.rcl, l.sin, l.yX]); // rcl dim D
-      expect(model.xF, 3);
-      expect(model.yF, 3);
-      _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.rcl, l.sin, l.tan]); // rcl dim I, that is, C
-      expect(model.xF, 3);
-      expect(model.yF, 4);
+    _play([l.n0, l.enter, l.enter, l.enter]);
+    _play([l.rcl, l.sin, l.yX]); // rcl dim D
+    expect(model.xF, 3);
+    expect(model.yF, 3);
+    _play([l.n0, l.enter, l.enter, l.enter]);
+    _play([l.rcl, l.sin, l.tan]); // rcl dim I, that is, C
+    expect(model.xF, 3);
+    expect(model.yF, 4);
 
-      _play([l.rcl, l.chs, l.eX, l.sto, l.eex]); // rcl mat B, sto result
-      _play([l.n0, l.enter, l.enter, l.enter]);
-      _play([l.rcl, l.eex]); // rcl result
-      expect(model.x, Value.fromMatrix(1));
-      _play([l.fShift, l.eex, l.yX]); // f result D
-      _play([l.rcl, l.eex]); // rcl result
-      expect(model.x, Value.fromMatrix(3));
+    _play([l.rcl, l.chs, l.eX, l.sto, l.eex]); // rcl mat B, sto result
+    _play([l.n0, l.enter, l.enter, l.enter]);
+    _play([l.rcl, l.eex]); // rcl result
+    expect(model.x, Value.fromMatrix(1));
+    _play([l.fShift, l.eex, l.yX]); // f result D
+    _play([l.rcl, l.eex]); // rcl result
+    expect(model.x, Value.fromMatrix(3));
 
-      model.userMode = false;
-      setMatrix(model, mD, [
-        [1.1, 2.2]
-      ]);
-      _play([l.rcl, l.chs, l.yX, l.sto, l.tan]); // I := D
-      _play([l.fShift, l.chs, l.n1]); // F matrix 1
-      _play([l.n3, l.sto, l.yX]);
-      expectMatrixVals(mD, [
-        [3, 2.2]
-      ]);
-      _play([l.fShift, l.rcl]); // toggle user mode
-      _play([l.n4, l.sto, l.cos]);
-      _play([l.n5, l.sto, l.yX, l.n6, l.sto, l.cos]);
-      expectMatrixVals(mD, [
-        [6, 5]
-      ]);
-      _play([l.fShift, l.rcl]); // toggle user (to off)
-      setMatrix(model, mD, [
-        [1.1, 2.2],
-        [3.1, 4.2],
-        [5.1, 6.2]
-      ]);
-      _play([l.n1, l.enter, l.n3, l.enter, l.n2, l.sto, l.gShift, l.yX]);
-      expectMatrixVals(mD, [
-        [1.1, 2.2],
-        [3.1, 4.2],
-        [5.1, 1]
-      ]);
-      _play(
-          [l.n2, l.chs, l.enter, l.n2, l.enter, l.n1, l.sto, l.gShift, l.cos]);
-      expectMatrixVals(mD, [
-        [1.1, 2.2],
-        [-2, 4.2],
-        [5.1, 1]
-      ]);
+    model.userMode = false;
+    setMatrix(model, mD, [
+      [1.1, 2.2]
+    ]);
+    _play([l.rcl, l.chs, l.yX, l.sto, l.tan]); // I := D
+    _play([l.fShift, l.chs, l.n1]); // F matrix 1
+    _play([l.n3, l.sto, l.yX]);
+    expectMatrixVals(mD, [
+      [3, 2.2]
+    ]);
+    _play([l.fShift, l.rcl]); // toggle user mode
+    _play([l.n4, l.sto, l.cos]);
+    _play([l.n5, l.sto, l.yX, l.n6, l.sto, l.cos]);
+    expectMatrixVals(mD, [
+      [6, 5]
+    ]);
+    _play([l.fShift, l.rcl]); // toggle user (to off)
+    setMatrix(model, mD, [
+      [1.1, 2.2],
+      [3.1, 4.2],
+      [5.1, 6.2]
+    ]);
+    _play([l.n1, l.enter, l.n3, l.enter, l.n2, l.sto, l.gShift, l.yX]);
+    expectMatrixVals(mD, [
+      [1.1, 2.2],
+      [3.1, 4.2],
+      [5.1, 1]
+    ]);
+    _play([l.n2, l.chs, l.enter, l.n2, l.enter, l.n1, l.sto, l.gShift, l.cos]);
+    expectMatrixVals(mD, [
+      [1.1, 2.2],
+      [-2, 4.2],
+      [5.1, 1]
+    ]);
 
-      _play([l.rcl, l.chs, l.yX, l.sto, l.chs, l.sqrt]); // A := D
-      expectMatrixVals(mA, [
-        [1.1, 2.2],
-        [-2, 4.2],
-        [5.1, 1]
-      ]);
-      _play([l.n9, l.chs, l.sto, l.chs, l.sqrt]); // A := 9
-      expectMatrixVals(mA, [
-        [-9, -9],
-        [-9, -9],
-        [-9, -9]
-      ]);
+    _play([l.rcl, l.chs, l.yX, l.sto, l.chs, l.sqrt]); // A := D
+    expectMatrixVals(mA, [
+      [1.1, 2.2],
+      [-2, 4.2],
+      [5.1, 1]
+    ]);
+    _play([l.n9, l.chs, l.sto, l.chs, l.sqrt]); // A := 9
+    expectMatrixVals(mA, [
+      [-9, -9],
+      [-9, -9],
+      [-9, -9]
+    ]);
 
-      // @@ TODO:  Up through end of p. 178
+    // @@ TODO:  Up through end of p. 178
+    final testOpAndResults = [
+      [
+        l.plus,
+        [
+          [8.2, 10.4],
+          [9.2, 13.4]
+        ],
+        [
+          [-36.8, -35.7],
+          [-34.8, -33.7]
+        ]
+      ],
+      [
+        l.minus,
+        [
+          [-6, -6],
+          [-3, -5]
+        ],
+        [
+          [39, 40.1],
+          [41, 42.1]
+        ],
+        [
+          [-39, -40.1],
+          [-41, -42.1]
+        ]
+      ],
+      [
+        l.mult,
+        [
+          [21.23, 29.26],
+          [47.63, 64.06]
+        ],
+        [
+          [-41.69, -83.38],
+          [-117.49, -159.18]
+        ]
+      ],
+      [
+        l.div,
+        [
+          [-1, -0.9281045754],
+          [1, 1.071895425]
+        ],
+        [
+          [-0.02902374670, -0.05804749340],
+          [-0.08179419525, -0.1108179420]
+        ],
+        [
+          [72.35454545, -37.9],
+          [-53.40454545, 18.95]
+        ]
+      ]
+    ];
+    // Test +, -, *, and / on matrices and scalars
+    _play([l.fShift, l.eex, l.tenX]); // f result C
+    for (final tor in testOpAndResults) {
+      for (var i = 0; i < 3; i++) {
+        setMatrix(model, mA, [
+          [1.1, 2.2],
+          [3.1, 4.2],
+        ]);
+        _play([l.rcl, l.chs, l.sqrt]); // rcl matrix A
+        if (i == 0) {
+          setMatrix(model, mB, [
+            [7.1, 8.2],
+            [6.1, 9.2],
+          ]);
+          _play([l.rcl, l.chs, l.eX]); // rcl matrix B
+          _play([tor[0] as CalculatorButton]);
+          expectMatrixVals(mC, tor[1] as List<List<num>>);
+        } else {
+          _play([l.n3, l.n7, l.dot, l.n9, l.chs]); // -37.9
+          if (i == 2) {
+            _play([l.xy]);
+          }
+          _play([tor[0] as CalculatorButton]);
+          if (tor.length == 3) {
+            // Same result x<-->y or no
+            expectMatrixVals(mC, tor[2] as List<List<num>>);
+          } else {
+            expectMatrixVals(mC, tor[i + 1] as List<List<num>>, 0.00000005);
+          }
+        }
+      }
     }
 
     model.userMode = false;
@@ -1541,7 +1626,8 @@ class MatrixTests {
     _transpose();
     _complexMatrix();
     _misc();
-    _testScalar(Operations15.div, (x, y) => y / x);
+    // Operations15.div is tested at the end of the ch. 12 tests.
+    // scalar div matrix doesn't behave like _testScalar is built to handle.
     _testScalar(Operations15.mult, (x, y) => y * x);
     _testScalar(Operations15.plus, (x, y) => y + x);
     _testScalar(Operations15.minus, (x, y) => y - x);
@@ -1588,6 +1674,7 @@ class MatrixTests {
         bool bad = false;
         if (epsilon == 0) {
           if (m.get(r, c) != Value.fromDouble(row[c].toDouble())) {
+            print('${m.get(r, c)} != ${Value.fromDouble(row[c].toDouble())}');
             bad = true;
           }
         } else if ((m.getF(r, c) - row[c]).abs() > epsilon) {
