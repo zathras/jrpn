@@ -139,25 +139,32 @@ void invert(final Matrix m) {
   if (!m.isLU) {
     decomposeLU(m);
   }
+  // Clone the matrix to a native double matrix, for better internal precision.
+  // This seems to give results closer to the real 15C than the version that
+  // did the internal math using Value's precision, in a quick test.  I suspect
+  // that the 15C may be using a more clever algorithm, but brute force works,
+  // too!
+  final dm = List<List<double>>.generate(m.rows,
+      (row) => List<double>.generate(m.columns, (col) => m.getF(row, col)));
 
   /// Now use A^-1 = U^-1 * l^-1 * P, as per HP 15C Advanced Functions p. 83
 
   // Calculate U^-1.  Adapted from dtri2.f in LAPACK from www.netlib.org.
   for (int j = 0; j < m.rows; j++) {
-    final ajj = -1 / m.getF(j, j);
-    m.setF(j, j, -ajj);
+    final ajj = -1 / dm[j][j];
+    dm[j][j] = -ajj;
     // Compute elements 0..j-1 of the jth column
     // DTRMV call:
     for (int jj = 0; jj < j; jj++) {
-      final temp = m.getF(jj, j);
+      final temp = dm[jj][j];
       for (int i = 0; i < jj; i++) {
-        m.setF(i, j, m.getF(i, j) + temp * m.getF(i, jj));
+        dm[i][j] = dm[i][j] + temp * dm[i][jj];
       }
-      m.setF(jj, j, m.getF(jj, j) * m.getF(jj, jj));
+      dm[jj][j] = dm[jj][j] * dm[jj][jj];
     }
     // DSCAL call:
     for (int i = 0; i < j; i++) {
-      m.setF(i, j, m.getF(i, j) * ajj);
+      dm[i][j] = dm[i][j] * ajj;
     }
   }
 
@@ -166,15 +173,14 @@ void invert(final Matrix m) {
     const ajj = -1;
     // DTRMV call:
     for (int jj = m.rows - 2 - j; jj >= 0; jj--) {
-      final temp = m.getF(j + jj + 1, j);
+      final temp = dm[j + jj + 1][j];
       for (int i = m.rows - 2 - j; i > jj; i--) {
-        m.setF(j + 1 + i, j,
-            m.getF(j + 1 + i, j) + temp * m.getF(j + i + 1, j + jj + 1));
+        dm[j + 1 + i][j] = dm[j + 1 + i][j] + temp * dm[j + i + 1][j + jj + 1];
       }
     }
     // DSCAL call:
     for (int i = j + 1; i < m.rows; i++) {
-      m.setF(i, j, m.getF(i, j) * ajj);
+      dm[i][j] = dm[i][j] * ajj;
     }
   }
 
@@ -185,13 +191,15 @@ void invert(final Matrix m) {
       for (int k = max(r, c); k < m.columns; k++) {
         assert(r <= k); // Otherwise U is zero
         assert(c <= k); // Otherwise L is zero;
-        final uv = m.getF(r, k);
-        final lv = (k == c) ? 1 : m.getF(k, c);
+        final uv = dm[r][k];
+        final lv = (k == c) ? 1 : dm[k][c];
         v += uv * lv;
       }
-      m.setF(r, c, v);
+      dm[r][c] = v;
     }
   }
+  // Now copy back into m...
+  m.visit((r, c) => m.setF(r, c, dm[r][c]));
   m.dotByP();
   m.isLU = false;
 }

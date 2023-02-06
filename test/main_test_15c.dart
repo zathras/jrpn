@@ -1604,7 +1604,7 @@ class MatrixTests {
             // Same result x<-->y or no
             expectMatrixVals(mC, tor[2] as List<List<num>>);
           } else {
-            expectMatrixVals(mC, tor[i + 1] as List<List<num>>, 0.00000005);
+            expectMatrixVals(mC, tor[i + 1] as List<List<num>>);
           }
         }
       }
