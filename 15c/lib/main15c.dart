@@ -502,7 +502,8 @@ class Operations15 extends Operations {
           maxDigit: 9, f: (m, v) => m.program.doNextIf(m.getFlag(v ?? 99))),
       name: 'F?');
 
-  static final NormalArgOperation gsb = GosubOperation(
+  static final NormalArgOperation gsb = RunProgramOperation(
+      runner: GosubProgramRunner(),
       arg: LabelArg(
           maxDigit: 19,
           letters: _letterLabelsList,

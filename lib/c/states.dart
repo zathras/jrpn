@@ -121,13 +121,13 @@ abstract class LimitedState extends ControllerState {
   void handleBST();
   void handleClearProgram();
 
-  void gosubEntryDone(GosubArgInputState from, ArgDone label);
+  void gosubEntryDone(RunProgramArgInputState from, ArgDone label);
 
   @protected
   void Function(Model<Operation>)? getCalculation(ArgDone ad) =>
       ad.getCalculation(model, const _OperationSelector());
 
-  ControllerState gosubDoneState();
+  ControllerState gosubDoneState(ProgramRunner runner);
 
   void terminateDigitEntry() {}
 }
@@ -361,7 +361,8 @@ class Resting extends ActiveState {
       program.currentLine = 1;
     }
     program.displayCurrent();
-    changeState(Running(controller as RealController));
+    final rc = controller as RealController;
+    changeState(Running(rc, rc.lastProgramRunner ?? GosubProgramRunner()));
   }
 
   @override
@@ -371,7 +372,7 @@ class Resting extends ActiveState {
   }
 
   @override
-  void gosubEntryDone(GosubArgInputState from, ArgDone label) =>
+  void gosubEntryDone(RunProgramArgInputState from, ArgDone label) =>
       from.handleGosubEntryDone(label);
 
   @override
@@ -392,7 +393,8 @@ class Resting extends ActiveState {
       return;
     }
     program.displayCurrent();
-    final s = GosubArgInputState(gsb, gsb.arg, controller, this);
+    final s = RunProgramArgInputState(
+        gsb, gsb.arg, controller, this, GosubProgramRunner());
     s.isDone = true;
     // Since we're telling the state it's done, it won't try to do the gosub.
     // It will just wait for button up, then switch to gosubDoneState, which
@@ -401,7 +403,8 @@ class Resting extends ActiveState {
   }
 
   @override
-  ControllerState gosubDoneState() => Running(controller as RealController);
+  ControllerState gosubDoneState(ProgramRunner runner) =>
+      Running(controller as RealController, runner);
 }
 
 ///
@@ -687,7 +690,7 @@ class DigitEntry extends ActiveState {
       changeState(Resting(controller)).handleClearProgram();
 
   @override
-  void gosubEntryDone(GosubArgInputState from, ArgDone label) =>
+  void gosubEntryDone(RunProgramArgInputState from, ArgDone label) =>
       changeState(Resting(controller)).gosubEntryDone(from, label);
 
   @override
@@ -695,7 +698,8 @@ class DigitEntry extends ActiveState {
       changeState(Resting(controller)).handleLetterLabel(operation);
 
   @override
-  ControllerState gosubDoneState() => throw StateError('unreachable');
+  ControllerState gosubDoneState(ProgramRunner runner) =>
+      throw StateError('unreachable');
 }
 
 ///
@@ -740,9 +744,10 @@ class ArgInputState extends ControllerState {
 ///
 /// Inputting the argument for GSB.  See [handleGosubEntryDone].
 ///
-class GosubArgInputState extends ArgInputState {
-  GosubArgInputState(
-      Operation op, Arg arg, Controller con, LimitedState lastState)
+class RunProgramArgInputState extends ArgInputState {
+  final ProgramRunner runner;
+  RunProgramArgInputState(Operation op, Arg arg, Controller con,
+      LimitedState lastState, this.runner)
       : super(op, arg, con, lastState);
 
   bool isDone = false;
@@ -780,7 +785,7 @@ class GosubArgInputState extends ArgInputState {
   void buttonUp(Operation key) {
     if (isDone) {
       op.possiblyAlterStackLift(controller);
-      changeState(lastState.gosubDoneState()).buttonUp(key);
+      changeState(lastState.gosubDoneState(runner)).buttonUp(key);
     } else {
       super.buttonUp(key);
     }
@@ -912,7 +917,7 @@ class ProgramEntry extends LimitedState {
   }
 
   @override
-  void gosubEntryDone(GosubArgInputState from, ArgDone label) {
+  void gosubEntryDone(RunProgramArgInputState from, ArgDone label) {
     _addOperation(controller.gsbOperation, label);
   }
 
@@ -954,7 +959,7 @@ class ProgramEntry extends LimitedState {
   }
 
   @override
-  ControllerState gosubDoneState() => this;
+  ControllerState gosubDoneState(ProgramRunner runner) => this;
 }
 
 ///
@@ -1138,21 +1143,33 @@ class OnOffKeyPressed extends DoNothing {
 ///
 class Running extends ControllerState {
   final RunningController _fake;
-  Running(RealController c)
+  ProgramRunner _runnerStack;
+  Running(RealController c, this._runnerStack)
       : _fake = RunningController(c),
-        super(c);
+        super(c) {
+    final lastRunner = _fake.real.lastProgramRunner;
+    if (lastRunner != _runnerStack) {
+      // Not resume from R/S
+      if (lastRunner != null) {
+        // ... but maybe there was a pending, interrupted computation
+        // that bailed from a key press
+        lastRunner.abort();
+      }
+      _runnerStack._parent = null; //Top level runner (from keyboard)
+    }
+  }
 
-  bool _stop = false;
+  bool _stopForButton = false;
   ProgramMemory<Operation> get program => model.memory.program;
 
   @override
   void buttonDown(Operation key) {
-    _stop = true;
+    _stopForButton = true;
   }
 
   @override
   void buttonUp(Operation key) {
-    if (!_stop) {
+    if (!_stopForButton) {
       model.displayDisabled = true;
       unawaited(_run());
     }
@@ -1181,7 +1198,8 @@ class Running extends ControllerState {
     Timer showRunningTimer = _showRunning();
     try {
       model.program.isRunning = true;
-      do {
+      bool stop = false;
+      final doLoop = (final int returnStackStartPos) async {
         await (Future<void>.delayed(
             Duration(milliseconds: (pendingDelay ~/ 4) * 4)));
         // Javascript clock granularity is 4ms
@@ -1196,85 +1214,103 @@ class Running extends ControllerState {
           program.incrementCurrentLine();
         }
         if (instr.op == Operations.rs) {
-          // R/S
           // If we let it execute, it would recursively create another state!
           listener.onRS();
-          break;
-        }
-        _fake.setArg(instr.arg);
-        _fake.buttonDown(instr.op);
-        // This bounces back to RunningController.runWithArg() if there's an
-        // argument.
-        _fake.buttonUp();
-        if (settings.traceProgramToStdout) {
-          final out = StringBuffer();
-          out.write('  ');
-          out.write(line.toString().padLeft(3, '0'));
-          out.write(' ');
-          out.write(instr.programListing.padRight(14));
-          out.write('xyzt:');
-          for (int i = 0; i < 4; i++) {
+          stop = true;
+        } else {
+          _fake.setArg(instr.arg);
+          _fake.buttonDown(instr.op);
+          // This bounces back to RunningController.runWithArg() if there's an
+          // argument.
+          _fake.buttonUp();
+          if (settings.traceProgramToStdout) {
+            final out = StringBuffer();
             out.write('  ');
-            final Value v = model.getStackByIndex(i);
-            final int? vm = v.asMatrix;
-            if (vm != null) {
-              out.write(String.fromCharCodes([('A'.codeUnitAt(0) + vm)]));
-            } else if (model.isComplexMode) {
-              out.write(model.getStackByIndexC(i));
-            } else if (model.isFloatMode) {
-              out.write(v.asDouble);
-            } else {
-              out.write('0x');
-              out.write(v.internal.toRadixString(16));
+            out.write(line.toString().padLeft(3, '0'));
+            out.write(' ');
+            out.write(instr.programListing.padRight(14));
+            out.write('xyzt:');
+            for (int i = 0; i < 4; i++) {
+              out.write('  ');
+              final Value v = model.getStackByIndex(i);
+              final int? vm = v.asMatrix;
+              if (vm != null) {
+                out.write(String.fromCharCodes([('A'.codeUnitAt(0) + vm)]));
+              } else if (model.isComplexMode) {
+                out.write(model.getStackByIndexC(i));
+              } else if (model.isFloatMode) {
+                out.write(v.asDouble);
+              } else {
+                out.write('0x');
+                out.write(v.internal.toRadixString(16));
+              }
             }
+            debugPrint(out.toString());
           }
-          debugPrint(out.toString());
+          pendingDelay = settings.msPerInstruction /
+              ((instr.op.numericValue == null) ? 1 : 5);
+          // While we're not simulating real instruction time, the number keys
+          // are a lot faster than most other operations on a real calculator,
+          // and they might be pretty common.  At a guess, we say 5x faster.
+          pendingError = _fake.pendingError;
+          if (_fake.pause && pendingError == null) {
+            _fake.pause = false;
+            listener.onPause();
+            showRunningTimer.cancel();
+            model.displayDisabled = false;
+            model.display.displayX(flash: false);
+            await listener.resumeFromPause();
+            model.displayDisabled = true;
+            showRunningTimer = _showRunning();
+          }
+          if (program.returnStackPos < returnStackStartPos) {
+            // If we've popped off our return value
+            listener.onDone();
+            stop = true;
+          } else if (pendingError != null) {
+            listener.onError(pendingError!);
+            stop = true;
+          } else if (_stopForButton) {
+            listener.onStop();
+            stop = true;
+          }
         }
-        pendingDelay = settings.msPerInstruction /
-            ((instr.op.numericValue == null) ? 1 : 5);
-        // While we're not simulating real instruction time, the number keys
-        // are a lot faster than most other operations on a real calculator,
-        // and they might be pretty common.  At a guess, we say 5x faster.
-        pendingError = _fake.pendingError;
-        if (_fake.pause && pendingError == null) {
-          _fake.pause = false;
-          listener.onPause();
-          showRunningTimer.cancel();
-          model.displayDisabled = false;
-          model.display.displayX(flash: false);
-          await listener.resumeFromPause();
-          model.displayDisabled = true;
-          showRunningTimer = _showRunning();
-        }
-        if (program.returnStackUnderflow) {
-          listener.onDone();
-          break;
-        }
-        if (pendingError != null) {
-          listener.onError(pendingError);
-          break;
-        }
-        if (_stop) {
-          listener.onStop();
-          break;
-        }
-      } while (!_stop);
+      };
+      final startPos = model.program.returnStackPos;
+      do {
+        await doLoop(startPos);
+      } while (!stop);
     } finally {
       // For  bit of robustness in case there's a bug, we put the restoration
       // to a normal state in a finally.
       showRunningTimer.cancel();
       model.displayDisabled = false;
-      model.program.isRunning = false;
       model.display.current = ' ';
+      program.isRunning = false;
       changeState(Resting(controller));
       if (pendingError != null) {
-        controller.showCalculatorError(pendingError, null);
+        controller.showCalculatorError(pendingError!, null);
       } else {
         model.display.update(); // Blank with no delay
         model.display.displayX();
       }
     }
   }
+}
+
+abstract class ProgramRunner {
+  ProgramRunner? _parent;
+  ProgramRunner? get parent => _parent;
+
+  void abort() {
+    _parent?.abort();
+  }
+
+  Future<void> run();
+}
+
+class GosubProgramRunner extends ProgramRunner {
+  Future<void> run() async {}
 }
 
 ///

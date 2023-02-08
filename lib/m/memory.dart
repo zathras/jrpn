@@ -302,6 +302,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
 
   final List<int> _returnStack;
   int _returnStackPos = -1;
+  int get returnStackPos => _returnStackPos;
 
   /// Current line (editing and/or execution)
   int _currentLine = 0;
@@ -592,7 +593,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     final returnTo = currentLine;
     goto(label);
     if (returnStackUnderflow) {
-      // Keyboard entry of GSB to start program
+      // Keyboard entry of GSB, integrate or solve to start program
       _returnStackPos++;
     } else {
       _returnStack[_returnStackPos++] = returnTo;
@@ -629,7 +630,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   bool get returnStackUnderflow => _returnStackPos < 0;
 
   /// A RunStop keypress can resume a program, in which case the return stack
-  /// shoould be left undisturbed.  It can also start a "new" program run,
+  /// should be left undisturbed.  It can also start a "new" program run,
   /// so we need to be sure the return stack isn't in underflow
   void handleRunStopKepyress() {
     if (returnStackUnderflow) {
@@ -962,7 +963,7 @@ class OperationMap<OT extends ProgramOperation> {
           pl = '${op.name}$las';
         } else if (shift.isShift) {
           pd = '${shift.rcName},${op.rcName},$as';
-          pl = '${shift.name} ${op.name}$las';
+          pl = '${op.name}$las';
         } else {
           // Shift is an operation, like + in like "STO + 0"
           pd = '${op.rcName},${shift.rcName},$as';
@@ -978,7 +979,7 @@ class OperationMap<OT extends ProgramOperation> {
 
 ///
 ///  A listener that receives callbacks when a program delivers results
-///  to the user.  This is used for testing.
+///  to the user.
 ///
 class ProgramListener {
   /// Called when the program finishes normally, via a RTN instruction.

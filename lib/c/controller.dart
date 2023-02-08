@@ -215,6 +215,8 @@ abstract class RealController extends Controller {
   // ignore: prefer_final_fields
   bool _stackLiftEnabled = true;
 
+  ProgramRunner? lastProgramRunner;
+
   @override
   final KeyboardController keyboard = KeyboardController();
 
@@ -745,14 +747,21 @@ class NormalArgOperation extends Operation {
   bool get endsDigitEntry => true;
 }
 
-class GosubOperation extends NormalArgOperation {
-  GosubOperation({required Arg arg, required String name})
+class RunProgramOperation extends NormalArgOperation {
+  final ProgramRunner runner;
+
+  ///
+  /// NOTE:  arg's function is only run when this operation is executed
+  ///        as part of a program.  When it's entered from the keyboard,
+  ///        the arg input state causes the operation to happen.
+  RunProgramOperation(
+      {required Arg arg, required this.runner, required String name})
       : super(arg: arg, name: name);
 
   @override
   ControllerState makeInputState(
           Arg arg, Controller c, LimitedState fromState) =>
-      GosubArgInputState(this, arg, c, fromState);
+      RunProgramArgInputState(this, arg, c, fromState, runner);
 }
 
 class NormalArgOperationWithBeforeCalc extends NormalArgOperation {

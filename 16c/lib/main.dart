@@ -571,7 +571,8 @@ class Operations16 extends Operations {
       arg: DigitArg(max: 5, calc: (model, arg) => model.setFlag(arg, false)),
       name: 'CF');
 
-  static final NormalArgOperation gsb = GosubOperation(
+  static final NormalArgOperation gsb = RunProgramOperation(
+      runner: GosubProgramRunner(),
       arg: LabelArg(
           maxDigit: 15,
           indirect: true,

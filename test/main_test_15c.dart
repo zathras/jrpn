@@ -1694,7 +1694,7 @@ class MatrixTests {
   }
 
   void setMatrix(Model15 model, Matrix m, List<List<num>> val) {
-    if (val.length == 0) {
+    if (val.isEmpty) {
       m.resize(model, 0, 0);
     } else {
       m.resize(model, val.length, val[0].length);
