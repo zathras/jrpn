@@ -277,7 +277,8 @@ class Registers {
 /// line will be line 4, despite the fact that F-ENG-2 takes up two bytes.
 ///
 abstract class ProgramMemory<OT extends ProgramOperation> {
-  bool isRunning = false;
+  MProgramRunner? runner;
+  bool get isRunning => runner != null;
 
   @protected
   final Memory<OT> memory;
@@ -652,6 +653,16 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       incrementCurrentLine();
     }
   }
+
+  String debugReturnStack() {
+    final out = StringBuffer();
+    out.write('stack:');
+    for (int i = 0; i < _returnStackPos; i++) {
+      out.write('  ');
+      out.write(_returnStack[i]);
+    }
+    return out.toString();
+  }
 }
 
 ///
@@ -890,7 +901,7 @@ class OperationMap<OT extends ProgramOperation> {
       s.programListing = v.programListing;
       op.debugLogId = s.opcode;
     });
-    // The HP 15C has 294 extended op codes.  Wow!
+    // The HP 15C has 452 extended op codes.  Wow!
     final int pages = (_nextExtendedOpcode + 0xff) >> 8;
     _extendedOpcode = 0x100 - pages;
     print("@@ $_nextOpcode one byte opcodes");
@@ -974,6 +985,27 @@ class OperationMap<OT extends ProgramOperation> {
       r.programListing = pl;
       assert(r.programDisplay.length < 20, '$op');
     });
+  }
+}
+
+///
+/// The model's view of the thing that runs a program.
+///
+abstract class MProgramRunner {
+  static const int pseudoReturnAddress = 0xdeadbeef;
+
+  ///
+  /// Can be called from the calculation part of operations
+  /// (e.g. integrate and solve.)
+  ///
+  void startRunningProgram(covariant MProgramRunner newRunner);
+
+  void pushPseudoReturn(Model m) {
+    final program = m.memory.program;
+    if (program.returnStackPos >= program._returnStack.length) {
+      throw CalculatorError(5);
+    }
+    program._returnStack[program._returnStackPos++] = pseudoReturnAddress;
   }
 }
 

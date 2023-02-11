@@ -60,7 +60,8 @@ Future<void> main() async {
       MiscTests(controller, layout).run();
       unawaited(() async {
         try {
-          await MatrixTests(TestCalculator(for15C: true), layout).run();
+          await AdvancedFunctionTests(TestCalculator(for15C: true), layout)
+              .run();
         } finally {
           done = true;
         }
@@ -199,14 +200,14 @@ class MiscTests {
   }
 }
 
-class MatrixTests {
+class AdvancedFunctionTests {
   final TestCalculator calculator;
   final Controller15 controller;
   final ButtonLayout15 layout;
   final Model15 model;
   final StreamIterator<ProgramEvent> out;
 
-  MatrixTests(this.calculator, this.layout)
+  AdvancedFunctionTests(this.calculator, this.layout)
       : controller = calculator.controller as Controller15,
         model = calculator.controller.model as Model15,
         out = StreamIterator<ProgramEvent>(calculator.output.stream);
@@ -967,7 +968,7 @@ class MatrixTests {
     }
   }
 
-  /// the main example that works through ch12, starting on page 144.
+  /// Stuff from chapter 12 of the 15C manual (Matrices)
   Future<void> _ch12() async {
     final l = layout;
     final mA = model.matrices[0];
@@ -1614,8 +1615,60 @@ class MatrixTests {
     _play([l.fShift, l.chs, l.n0]); // F matrix 0
   }
 
+  /// Stuff from chapter 13 of the 15C manual (solve)
+  Future<void> _ch13() async {
+    final l = layout;
+    model.userMode = false;
+    model.memory.numRegisters = 10;
+    _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
+    _play([l.fShift, l.sst, l.sqrt]); // f LBL A
+    _play([l.n0, l.enter, l.n1, l.fShift, l.div, l.eX]); // 0, 0 f solve B
+    _play([l.gShift, l.gsb]); // g RTN
+    _play([l.fShift, l.sst, l.eX]); // f LBL B
+    _play([l.n1, l.sto, l.plus, l.n9]); // 1, sto + 9
+    _play([l.gsb, l.eX]); // GSB B (infinite recursive loop)
+    _play([l.gShift, l.rs]); // P/R
+
+    model.memory.registers[9] = Value.fromDouble(0);
+    _play([l.gsb, l.eX]); // GSB B
+    await out.moveNext();
+    expect(out.current.errorNumber, 5);
+    expect(model.display.current, '   error 5  ');
+    // Check stack depth:
+    expect(model.memory.registers[9], Value.fromDouble(8));
+    _play([l.n0]); // Clear error and get back to normal state
+
+    // Same test again, to test if failing due to an error caused
+    // a problem.
+    model.memory.registers[9] = Value.fromDouble(0);
+    _play([l.gsb, l.eX]); // GSB B
+    await out.moveNext();
+    expect(out.current.errorNumber, 5);
+    expect(model.display.current, '   error 5  ');
+    // Check stack depth:
+    expect(model.memory.registers[9], Value.fromDouble(8));
+    _play([l.n0]); // Clear error and get back to normal state
+
+    /*
+    model.memory.registers[9] = Value.fromDouble(0);
+    _play([l.fShift, l.div, l.eX]);  // solve B
+    await out.moveNext();
+    expect(out.current.errorNumber, 5);
+    expect(model.memory.registers[9], Value.fromDouble(8));
+    _play([l.n0]);  // Clear error and get back to normal state
+
+    model.memory.registers[9] = Value.fromDouble(0);
+    _play([l.gsb, l.sqrt]);  // GSB A, to call solve from subroutine
+    await out.moveNext();
+    expect(out.current.errorNumber, 5);
+    expect(model.memory.registers[9], Value.fromDouble(6));
+    _play([l.n0]);  // Clear error and get back to normal state
+     */
+  }
+
   Future<void> runWithComplex(bool complex) async {
     model.isComplexMode = complex;
+    await _ch13();
     await _ch12();
     // print("listing:  ${JsonEncoder.withIndent('  ').convert(model.memory.toJson(comments: true))}");
     _page146();
@@ -1723,3 +1776,117 @@ String formatDouble(double v, int digits) {
   }
   return r;
 }
+/*
+{
+    "version": 1,
+    "modelName": "15C",
+    "settings": {
+        "menuEnabled": false,
+        "windowEnabled": true,
+        "euroComma": false,
+        "hideComplement": false,
+        "showWordSize": false,
+        "showAccelerators": false,
+        "systemOverlaysDisabled": false,
+        "orientation": 0,
+        "traceProgramToStdout": false
+    },
+    "displayMode": "x4",
+    "integerSignMode": "2",
+    "wordSize": 56,
+    "stack": [
+        "0",
+        "1760000000002",
+        "a111eeeeeee000",
+        "1110000000002"
+    ],
+    "lastX": "1000000000000",
+    "flags": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "memory": {
+        "storage": "2000ab69fe2c862101feefce6a6c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000001000000000000",
+        "program": {
+            "lines": 12,
+            "currentLine": 3,
+            "returnStack": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "returnStackPos": -1
+        },
+        "I": "a111eeeeeee000",
+        "commentProgramListing": [
+            "001 -- 42,21,11    0x020  LBL A",
+            "002 --        0    0x000  0",
+            "003 --    44  9    0x0ab  STO 9",
+            "004 --       31    0x069  R/S",
+            "005 -- 42,10,12    0x12c  SOLVE B",
+            "006 --    43 32    0x086  RTN",
+            "007 -- 42,21,12    0x021  LBL B",
+            "008 --        1    0x001  1",
+            "009 -- 44,40, 9    0x1ef  STO + 9",
+            "010 --    45  9    0x0ce  RCL 9",
+            "011 --    42 31    0x06a  PSE",
+            "012 --    32 12    0x06c  GSB B"
+        ]
+    },
+    "numRegisters": 20,
+    "resultMatrix": 0,
+    "matrices": [
+        {
+            "columns": 3,
+            "values": [
+                "1100000000001",
+                "2200000000001",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+            ],
+            "rowSwaps": null
+        },
+        {
+            "columns": 0,
+            "values": [],
+            "rowSwaps": null
+        },
+        {
+            "columns": 0,
+            "values": [],
+            "rowSwaps": null
+        },
+        {
+            "columns": 0,
+            "values": [],
+            "rowSwaps": null
+        },
+        {
+            "columns": 0,
+            "values": [],
+            "rowSwaps": null
+        }
+    ]
+}
+
+
+{"version":1,"modelName":"15C","settings":{"menuEnabled":false,"windowEnabled":true,"euroComma":false,"hideComplement":false,"showWordSize":false,"showAccelerators":false,"systemOverlaysDisabled":false,"orientation":0},"displayMode":"x4","integerSignMode":"2","wordSize":56,"stack":["0","1760000000002","a111eeeeeee000","1110000000002"],"lastX":"1000000000000","flags":[false,false,false,false,false,false,false,false,false,false],"memory":{"storage":"2000ab69fe2c862101feefce6a6c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000001000000000000","program":{"lines":12,"currentLine":3,"returnStack":[0,0,0,0,0,0,0],"returnStackPos":-1},"I":"a111eeeeeee000"},"numRegisters":20,"resultMatrix":0,"matrices":[{"columns":3,"values":["1100000000001","2200000000001","0","0","0","0","0","0","0"],"rowSwaps":null},{"columns":0,"values":[],"rowSwaps":null},{"columns":0,"values":[],"rowSwaps":null},{"columns":0,"values":[],"rowSwaps":null},{"columns":0,"values":[],"rowSwaps":null}]}
+
+ */

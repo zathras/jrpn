@@ -748,15 +748,18 @@ class NormalArgOperation extends Operation {
 }
 
 class RunProgramOperation extends NormalArgOperation {
-  final ProgramRunner runner;
+  final ProgramRunner Function() runner;
 
   ///
   /// NOTE:  arg's function is only run when this operation is executed
   ///        as part of a program.  When it's entered from the keyboard,
   ///        the arg input state causes the operation to happen.
   RunProgramOperation(
-      {required Arg arg, required this.runner, required String name})
-      : super(arg: arg, name: name);
+      {required Arg arg,
+      required this.runner,
+      required String name,
+      int maxOneByteOpcodes = 9999})
+      : super(arg: arg, name: name, maxOneByteOpcodes: maxOneByteOpcodes);
 
   @override
   ControllerState makeInputState(

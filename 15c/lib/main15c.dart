@@ -34,6 +34,7 @@ import 'package:jrpn/v/main_screen.dart';
 
 import 'back_panel15c.dart';
 import 'matrix.dart';
+import 'runners.dart';
 import 'tests15c.dart';
 import 'model15c.dart';
 import 'linear_algebra.dart' as linalg;
@@ -503,7 +504,7 @@ class Operations15 extends Operations {
       name: 'F?');
 
   static final NormalArgOperation gsb = RunProgramOperation(
-      runner: GosubProgramRunner(),
+      runner: () => GosubProgramRunner(),
       arg: LabelArg(
           maxDigit: 19,
           letters: _letterLabelsList,
@@ -556,11 +557,19 @@ class Operations15 extends Operations {
         m.trigMode = TrigMode.grad;
       },
       name: 'GRD');
-  static final NormalOperation solve = NormalOperation.floatOnly(
+  static final NormalArgOperation solve = RunProgramOperation(
       maxOneByteOpcodes: 0,
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
+      runner: () => SolveProgramRunner(),
+      arg: LabelArg(
+          maxDigit: 19,
+          letters: _letterLabelsList,
+          f: (m, final int? label) {
+            if (label == null) {
+              throw CalculatorError(4);
+            }
+            m.memory.program.gosub(label);
+            m.program.runner?.startRunningProgram(SolveProgramRunner());
+          }),
       name: 'SOLVE');
   static final hyp = NonProgrammableOperation(
       pressed: (LimitedState c) => c.handleShift(ShiftKey.none),
@@ -773,11 +782,19 @@ class Operations15 extends Operations {
     }
   }
 
-  static final NormalOperation integrate = NormalOperation.floatOnly(
+  static final NormalArgOperation integrate = RunProgramOperation(
       maxOneByteOpcodes: 0,
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
+      runner: () => IntegrateProgramRunner(),
+      arg: LabelArg(
+          maxDigit: 19,
+          letters: _letterLabelsList,
+          f: (m, final int? label) {
+            if (label == null) {
+              throw CalculatorError(4);
+            }
+            m.memory.program.gosub(label);
+            m.program.runner?.startRunningProgram(IntegrateProgramRunner());
+          }),
       name: 'integrate');
   static final NormalOperation clearSigma = NormalOperation.floatOnly(
       floatCalc: (Model m) {

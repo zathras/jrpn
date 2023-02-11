@@ -572,7 +572,7 @@ class Operations16 extends Operations {
       name: 'CF');
 
   static final NormalArgOperation gsb = RunProgramOperation(
-      runner: GosubProgramRunner(),
+      runner: () => GosubProgramRunner(),
       arg: LabelArg(
           maxDigit: 15,
           indirect: true,
