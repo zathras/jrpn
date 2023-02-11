@@ -41,6 +41,7 @@ Future<void> main() async {
   test('stack lift', testStackLift);
   test('registers and word size', testRegistersAndWordSize);
   test('program with error', programWithError);
+  test('digit entry, R/S, SST', digitEntry);
   test('last x', lastX);
   test('no scroll reset', noScrollReset);
   test('JSON format / opcodes', opcodeTest16C);
@@ -202,6 +203,7 @@ Future<void> lastX() async {
         final out = StreamIterator<ProgramEvent>(tc.output.stream);
         enter(c, Operations.rtn); // An extra one in case of branching instr.
         enter(c, Operations.pr);
+        enter(c, Operations.clearPrgm); // Set line 0
         enter(c, Operations.rs);
         expect(await out.moveNext(), true);
         expect(out.current, ProgramEvent.done);
@@ -231,6 +233,7 @@ Future<void> lastX() async {
       if (program) {
         final out = StreamIterator<ProgramEvent>(tc.output.stream);
         enter(c, Operations.rtn); // An extra one in case of branching instr.
+        enter(c, Operations.sst); // Move to line 0
         enter(c, Operations.pr);
         enter(c, Operations.rs);
         expect(await out.moveNext(), true);
@@ -240,6 +243,43 @@ Future<void> lastX() async {
       expect(m.lastX.asDouble, 4.0, reason: 'lastx for float mode ${op.name}');
     }
   }
+}
+
+Future<void> digitEntry() async {
+  final tc = TestCalculator();
+  final m = tc.model;
+  final c = tc.controller;
+  final out = StreamIterator<ProgramEvent>(tc.output.stream);
+
+  enter(c, Operations.pr);
+  enter(c, Operations.n1);
+  enter(c, Operations.n2);
+  enter(c, Operations.rs);
+  enter(c, Operations.n4);
+  enter(c, Operations.n5);
+  enter(c, Operations.sst);
+  enter(c, Operations.pr);
+  enter(c, Operations.rs);
+  await out.moveNext();
+  expect(out.current, ProgramEvent.runStop);
+  expect(m.xI, BigInt.from(0x12));
+  enter(c, Operations.n3);
+  expect(m.xI, BigInt.from(0x3));
+  enter(c, Operations.sst);
+  await out.moveNext();
+  expect(out.current, ProgramEvent.stop);
+  expect(m.xI, BigInt.from(0x34));
+  enter(c, Operations.sst);
+  await out.moveNext();
+  expect(out.current, ProgramEvent.stop);
+  expect(m.xI, BigInt.from(0x345));
+  enter(c, Operations.n6);
+  expect(m.xI, BigInt.from(0x3456));
+  enter(c, Operations.sst);
+  await out.moveNext();
+  expect(out.current, ProgramEvent.stop);
+  enter(c, Operations.n9);
+  expect(m.xI, BigInt.from(0x19));
 }
 
 Future<void> programWithError() async {
@@ -382,6 +422,7 @@ Future<void> testStackLift() async {
     enter(c, Operations16.mult);
     if (program) {
       final out = StreamIterator<ProgramEvent>(tc.output.stream);
+      enter(c, Operations.sst);
       enter(c, Operations.pr);
       enter(c, Operations.rs);
       expect(await out.moveNext(), true);
