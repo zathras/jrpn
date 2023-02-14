@@ -37,6 +37,8 @@ class ProgramEvent {
   ProgramEvent({this.errorNumber, this.name});
 
   static final done = ProgramEvent(name: 'done');
+
+  /// runStop pressed.  Normally followed by stop.
   static final runStop = ProgramEvent(name: 'run/stop');
   static final pause = ProgramEvent(name: 'pause');
   static final stop = ProgramEvent(name: 'stop');
@@ -58,6 +60,7 @@ class TestCalculator implements ProgramListener {
   // The program's output
   final output = StreamController<ProgramEvent>();
   Completer<void>? _resume;
+  static const trace = false;
 
   TestCalculator({bool for15C = false})
       : controller =
@@ -78,31 +81,60 @@ class TestCalculator implements ProgramListener {
   }
 
   @override
-  void onDone() => output.add(ProgramEvent.done);
+  void onDone() {
+    if (trace) {
+      print("==> sending done");
+    }
+    output.add(ProgramEvent.done);
+  }
 
   @override
-  void onError(CalculatorError err) =>
-      output.add(ProgramEvent(errorNumber: controller.getErrorNumber(err)));
+  void onError(CalculatorError err) {
+    if (trace) {
+      print("==> sending error ${err}");
+    }
+    output.add(ProgramEvent(errorNumber: controller.getErrorNumber(err)));
+  }
 
   @override
   void onPause() {
     _resume ??= Completer<void>();
+    if (trace) {
+      print("==> sending pause");
+    }
     output.add(ProgramEvent.pause);
   }
 
   @override
-  void onRS() => output.add(ProgramEvent.runStop);
+  void onRS() {
+    if (trace) {
+      print("==> sending runStop");
+    }
+    output.add(ProgramEvent.runStop);
+  }
 
   @override
-  void onStop() => output.add(ProgramEvent.stop);
+  void onStop() {
+    if (trace) {
+      print("==> sending stop");
+    }
+    output.add(ProgramEvent.stop);
+  }
 
   @override
   Future<void> resumeFromPause() {
+    if (trace) {
+      print("==> resuming from pause");
+    }
+
     _resume ??= Completer<void>();
     return _resume!.future;
   }
 
   void resume() {
+    if (trace) {
+      print("==> resume");
+    }
     Completer c = _resume!;
     _resume = null;
     c.complete(null);
@@ -273,6 +305,8 @@ Future<void> towersOfHanoi() async {
     p.resume();
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.runStop);
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.stop);
     expect(p.model.xI.toInt(), move.to);
     p.enter(Operations.rs);
   }

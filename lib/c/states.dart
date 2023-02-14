@@ -367,7 +367,8 @@ class Resting extends ActiveState {
     if (spr == null) {
       changeState(Running(rc, GosubProgramRunner()));
     } else {
-      final running = spr.restart();
+      final running =
+          spr.restart(RunningController(controller as RealController));
       changeState(Resumed(running, rc));
     }
   }
@@ -1148,7 +1149,7 @@ class OnOffKeyPressed extends DoNothing {
 /// that has its own [ControllerState].
 ///
 class Running extends ControllerState {
-  final RunningController _fake;
+  RunningController _fake;
   ProgramRunner _runner;
   ProgramRunner? _pushedRunner;
   bool _stopNext;
@@ -1210,6 +1211,7 @@ class Running extends ControllerState {
       // For  bit of robustness in case there's a bug, we put the restoration
       // to a normal state in a finally.
       if (!aborted) {
+        program.programListener.onDone();
         _onDone();
       }
     }
@@ -1224,7 +1226,6 @@ class Running extends ControllerState {
 
   void _onDone() {
     final program = model.memory.program;
-    program.programListener.onDone();
     showRunningTimer.cancel();
     model.displayDisabled = false;
     model.display.current = ' ';
@@ -1324,7 +1325,7 @@ class Running extends ControllerState {
         model.displayDisabled = true;
         showRunningTimer = _showRunning();
       }
-      if (program.returnStackPos < _runner._returnStackStartPos) {
+      if (program.returnStackPos < _runner.returnStackStartPos) {
         // If we've popped off our return value
         assert(program.returnStackPos == -1 ||
             program.currentLine == MProgramRunner.pseudoReturnAddress);
@@ -1349,7 +1350,7 @@ class Running extends ControllerState {
         _runner = _pushedRunner!;
         _pushedRunner = null;
         _runner.pushPseudoReturn(model);
-        _runner._returnStackStartPos = program.returnStackPos;
+        _runner.returnStackStartPos = program.returnStackPos;
         await _runner._run(this);
         _runner = parent;
       }
@@ -1368,11 +1369,37 @@ abstract class ProgramRunner extends MProgramRunner {
   ProgramRunner? _parent;
   ProgramRunner? get parent => _parent;
   late Running _caller;
+  Running get caller => _caller;
   Model get model => _caller.model;
-  int _returnStackStartPos = 0; // Correct for top-level runner
-  static const int _subroutineNotStarted = 0xdeadc0de;
-  int _subroutineStart = _subroutineNotStarted;
+  int returnStackStartPos = 0; // Correct for top-level runner
   Completer<void>? _suspended;
+
+  Future<void> _run(Running caller) {
+    _caller = caller;
+    return run();
+  }
+
+  Future<void> run();
+
+  ///
+  /// Called from the calculation part of an operation to cause
+  /// a program to start running with the next instruction.
+  ///
+  @override
+  void startRunningProgram(ProgramRunner newRunner) {
+    newRunner._parent = this;
+    newRunner.checkStartRunning();
+    _caller._pushedRunner = newRunner;
+  }
+
+  ///
+  /// Called from startRunningProgram in order to see if it's OK to start
+  /// running.  Throws CalculatorError if not.
+  /// This is called as part of a solve or integrate operation that is
+  /// executed in a program.  Not called when solve/integrate is entered from
+  /// the keyboard.
+  ///
+  void checkStartRunning();
 
   @mustCallSuper
   void abort() {
@@ -1395,58 +1422,9 @@ abstract class ProgramRunner extends MProgramRunner {
     s.complete();
   }
 
-  Future<void> _run(Running caller) async {
-    _caller = caller;
-    final program = caller.model.program;
-    await run();
-    if (_subroutineStart == _subroutineNotStarted) {
-      // Degenerate case:  We didn't once execute the subroutine.  Maybe
-      // something like integrating from 0 to 0?
-      //
-      // Running the subroutine would have ended in RTN, which would have
-      // popped the stack.
-      program.popReturnStack();
-    }
-    // And, pop of the real return address
-    program.popReturnStack();
-  }
-
-  Future<void> runProgramLoop() {
-    final model = _caller.model;
-    if (_subroutineStart == _subroutineNotStarted) {
-      _subroutineStart = model.program.currentLine;
-    } else {
-      model.program.currentLine = _subroutineStart;
-      pushPseudoReturn(model);
-      assert(_returnStackStartPos == model.program.returnStackPos);
-    }
-    return _caller.runProgramLoop();
-  }
-
-  @override
-  void startRunningProgram(ProgramRunner newRunner) {
-    newRunner._parent = this;
-    newRunner.checkStartRunning();
-    _caller._pushedRunner = newRunner;
-  }
-
-  ///
-  /// Called from startRunningProgram in order to see if it's OK to start
-  /// running.  Throws CalculatorError if not.
-  /// This is called as part of a solve or integrate operation that is
-  /// executed in a program.  Not called when solve/integrate is entered from
-  /// the keyboard.
-  ///
-  void checkStartRunning();
-
-  ///
-  /// Run the subroutine/solve/integrate.  Returns true if completed, false
-  /// if interrupted.  If interrupted, the computation will be left suspened,
-  /// and can be re-run, or aborted.
-  ///
-  Future<void> run();
-
-  Running restart({void Function(CalculatorError?)? singleStepOnDone}) {
+  Running restart(RunningController newFake,
+      {void Function(CalculatorError?)? singleStepOnDone}) {
+    _caller._fake = newFake;
     _caller.restarting(singleStepOnDone);
     resume();
     return _caller;
@@ -1459,7 +1437,7 @@ class GosubProgramRunner extends ProgramRunner {
   GosubProgramRunner();
 
   @override
-  Future<void> run() => runProgramLoop();
+  Future<void> run() => _caller.runProgramLoop();
 
   @override
   void checkStartRunning() {}
@@ -1515,7 +1493,7 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
         final s = Running.singleStep(_fake, GosubProgramRunner(), _onDone);
         s.buttonUp(key);
       } else {
-        spr.restart(singleStepOnDone: _onDone);
+        spr.restart(_fake, singleStepOnDone: _onDone);
       }
     }
   }

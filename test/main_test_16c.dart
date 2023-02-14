@@ -262,6 +262,8 @@ Future<void> digitEntry() async {
   enter(c, Operations.rs);
   await out.moveNext();
   expect(out.current, ProgramEvent.runStop);
+  await out.moveNext();
+  expect(out.current, ProgramEvent.stop);
   expect(m.xI, BigInt.from(0x12));
   enter(c, Operations.n3);
   expect(m.xI, BigInt.from(0x3));
@@ -319,7 +321,7 @@ Future<void> programWithError() async {
   enter(c, Operations16.gsb);
   enter(c, Operations16.letterA);
   expect(await out.moveNext(), true);
-  expect(out.current.errorNumber, 5);
+  expect(out.current.errorNumber, 5, reason: '${out.current} unexpected');
   expect(m.display.current, '   error 5  ');
   enter(c, Operations16.letterA);
   expect(m.display.current.trim(), '5.00');
