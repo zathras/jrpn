@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+**JRPN 16C or 15C?**
+
 **Describe the bug**
 
 **Debug Log**
@@ -21,7 +23,7 @@ Tell me a bit about how to reproduce the problem.  This is especially important 
 A clear and concise description of what you expected to happen.
 
 **Platform:**
- If relevant, some details on the platform would be helpful.
+ If relevant, some details on the platform are sometimes helpful.
 - OS: [e.g. Linux, MacOS, Android, iOS]
  - Browser, if applicable
  - Any relevant version information
