@@ -502,7 +502,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     }
     n = (json['currentLine'] as num).toInt();
     if (n < 0 || n > _lines) {
-      throw ArgumentError('$n:  Illegal line number');
+      n = 0;
     }
     _currentLine = n;
 

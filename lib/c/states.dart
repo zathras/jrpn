@@ -367,7 +367,8 @@ class Resting extends ActiveState {
     if (spr == null) {
       changeState(Running(rc, GosubProgramRunner()));
     } else {
-      spr.restart();
+      final running = spr.restart();
+      changeState(Resumed(running, rc));
     }
   }
 
@@ -1270,16 +1271,18 @@ class Running extends ControllerState {
         _stopNext = true;
         program.incrementCurrentLine();
       } else {
+        int oldLine = program.currentLine;
+        program.incrementCurrentLine();
         _fake.setArg(instr.arg);
         _fake.buttonDown(instr.op);
         // This bounces back to RunningController.runWithArg() if there's an
         // argument.
         _fake.buttonUp();
-        if (_fake.pendingError == null) {
-          program.incrementCurrentLine();
+        if (_fake.pendingError != null) {
+          program.currentLine = oldLine;
         }
       }
-      if (settings.traceProgramToStdout || true /* @@ */) {
+      if (settings.traceProgramToStdout || false /* @@ */) {
         final out = StringBuffer();
         out.write('  ');
         out.write(line.toString().padLeft(3, '0'));
@@ -1364,7 +1367,8 @@ class Running extends ControllerState {
 abstract class ProgramRunner extends MProgramRunner {
   ProgramRunner? _parent;
   ProgramRunner? get parent => _parent;
-  late final Running _caller;
+  late Running _caller;
+  Model get model => _caller.model;
   int _returnStackStartPos = 0; // Correct for top-level runner
   static const int _subroutineNotStarted = 0xdeadc0de;
   int _subroutineStart = _subroutineNotStarted;
@@ -1393,6 +1397,7 @@ abstract class ProgramRunner extends MProgramRunner {
 
   Future<void> _run(Running caller) async {
     _caller = caller;
+    final program = caller.model.program;
     await run();
     if (_subroutineStart == _subroutineNotStarted) {
       // Degenerate case:  We didn't once execute the subroutine.  Maybe
@@ -1400,29 +1405,22 @@ abstract class ProgramRunner extends MProgramRunner {
       //
       // Running the subroutine would have ended in RTN, which would have
       // popped the stack.
-      _caller.model.program.popReturnStack();
+      program.popReturnStack();
     }
+    // And, pop of the real return address
+    program.popReturnStack();
   }
 
   Future<void> runProgramLoop() {
-    if (_subroutineStart == _subroutineNotStarted) {
-      _subroutineStart = _caller.model.program.currentLine;
-    }
-    return _caller.runProgramLoop();
-  }
-
-  ///
-  ///  Must be called after the subroutine has returned, just before running it
-  ///  again.  May also be called before running the subroutine the first time;
-  ///  in this case it's a NOP.
-  ///
-  void initSubroutine() {
     final model = _caller.model;
-    assert(_returnStackStartPos == model.program.returnStackPos);
-    if (_subroutineStart != _subroutineNotStarted) {
+    if (_subroutineStart == _subroutineNotStarted) {
+      _subroutineStart = model.program.currentLine;
+    } else {
       model.program.currentLine = _subroutineStart;
       pushPseudoReturn(model);
+      assert(_returnStackStartPos == model.program.returnStackPos);
     }
+    return _caller.runProgramLoop();
   }
 
   @override
@@ -1448,9 +1446,10 @@ abstract class ProgramRunner extends MProgramRunner {
   ///
   Future<void> run();
 
-  void restart({void Function(CalculatorError?)? singleStepOnDone}) {
+  Running restart({void Function(CalculatorError?)? singleStepOnDone}) {
     _caller.restarting(singleStepOnDone);
     resume();
+    return _caller;
   }
 }
 
@@ -1539,6 +1538,19 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
       }
       model.display.displayX(flash: false); // @@ TODO:  Not when digit entry?
     }
+  }
+}
+
+///
+/// State when we resume program execution with the R/S key
+///
+class Resumed extends ControllerState {
+  final Running running;
+  Resumed(this.running, Controller controller) : super(controller);
+
+  @override
+  void buttonDown(Operation key) {
+    running.buttonDown(key); // Halts it.
   }
 }
 

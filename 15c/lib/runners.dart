@@ -43,6 +43,7 @@ class SolveProgramRunner extends ProgramRunner {
     print("@@ calling calculator routine");
     await runProgramLoop();
     print("@@ called calculator routine");
+    model.xF = 42.0;
   }
 }
 
