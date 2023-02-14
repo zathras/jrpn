@@ -26,90 +26,7 @@ import 'package:meta/meta.dart';
 
 import 'model15c.dart';
 
-///
-/// A non-trivial program runner involves a computation that isn't
-/// just calling a subroutine.  It's trickier to implement, because
-/// the computation can be suspended (if the user interrupts by pressing
-/// a button, or via the R/S or SST keys).  This requires another asynchronous
-/// task.
-abstract class NontrivialProgramRunner extends ProgramRunner {
-  bool _done = false;
-  bool _abort = false;
-  Completer<void>? _toCompute;
-  Completer<void> _fromCompute = Completer();
-
-  ///
-  /// Called by the Running state whenever the calculator is willing to
-  /// do some of our computation (i.e. when the program isn't in an interrupted
-  /// state, via R/S et al
-  ///
-  @override
-  Future<bool> run() async {
-    final originalFromCompute = _fromCompute;
-    if (_toCompute == null) {
-      unawaited(_compute());
-      assert(_toCompute != null || (_done && _fromCompute.isCompleted));
-    }
-    await originalFromCompute.future;
-    while (!_done) {
-      final lastFromCompute = _fromCompute;
-      final success = await runProgramLoop();
-      // @@ TODO
-      if (success) {
-        // subroutine finished
-        assert(!_toCompute!.isCompleted);
-        _toCompute!.complete();
-      } else {
-        return false;
-      }
-      await lastFromCompute.future;
-    }
-
-    return true;
-  }
-
-  Future<void> _compute() async {
-    try {
-      await compute();
-    } on _Aborted {
-      print("@@ Aborted.  Remove this println.");
-    } finally {
-      _done = true;
-      _fromCompute.complete();
-    }
-  }
-
-  @override
-  void abort() {
-    super.abort();
-    _abort = true;
-    final toCompute = _toCompute;
-    if (toCompute != null && !toCompute.isCompleted) {
-      toCompute.complete();
-    }
-  }
-
-  Future<void> callCalculatorRoutine() async {
-    if (_abort) {
-      throw _Aborted();
-    }
-    initSubroutine();
-    final lastFromCompute = _fromCompute;
-    assert(!lastFromCompute.isCompleted);
-    _toCompute = Completer();
-    _fromCompute = Completer();
-    lastFromCompute.complete();
-    await (_toCompute!.future);
-    return;
-  }
-
-  Future<void> compute();
-}
-
-class _Aborted {}
-
-class SolveProgramRunner extends NontrivialProgramRunner {
-  SolveProgramRunner() {}
+class SolveProgramRunner extends ProgramRunner {
   @override
   void checkStartRunning() {
     ProgramRunner? curr = parent;
@@ -122,23 +39,21 @@ class SolveProgramRunner extends NontrivialProgramRunner {
   }
 
   @override
-  Future<void> compute() async {
+  Future<void> run() async {
     print("@@ calling calculator routine");
-    await callCalculatorRoutine();
+    await runProgramLoop();
     print("@@ called calculator routine");
   }
 }
 
-class IntegrateProgramRunner extends NontrivialProgramRunner {
+class IntegrateProgramRunner extends ProgramRunner {
   @override
   void checkStartRunning() {
-    // TODO: implement startRunning
-    throw UnimplementedError();
+    throw "@@ TODO";
   }
 
   @override
-  Future<void> compute() async {
-    // TODO
-    throw UnimplementedError();
+  Future<void> run() async {
+    throw "@@ TODO";
   }
 }

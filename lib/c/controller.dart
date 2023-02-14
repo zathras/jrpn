@@ -215,7 +215,7 @@ abstract class RealController extends Controller {
   // ignore: prefer_final_fields
   bool _stackLiftEnabled = true;
 
-  ProgramRunner? lastProgramRunner;
+  ProgramRunner? suspendedProgramRunner;
 
   @override
   final KeyboardController keyboard = KeyboardController();
@@ -304,7 +304,7 @@ abstract class RealController extends Controller {
 ///
 class RunningController extends Controller {
   final RealController real;
-  bool pause = false;
+  bool pause = false; // Pause to show user what's on display
   CalculatorError? pendingError;
   ArgDone _argValue = _dummy;
 

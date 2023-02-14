@@ -344,7 +344,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       (_registerStorage.lengthInBytes ~/ 2 - _lines - _extendedLines) % 7;
 
   set currentLine(int v) {
-    if (v < 0 || v > lines) {
+    if (v < 0 || (v > lines && v != MProgramRunner.pseudoReturnAddress)) {
       throw CalculatorError(4);
     }
     _currentLine = v;
@@ -633,7 +633,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   /// A RunStop keypress can resume a program, in which case the return stack
   /// should be left undisturbed.  It can also start a "new" program run,
   /// so we need to be sure the return stack isn't in underflow
-  void handleRunStopKepyress() {
+  void adjustStackForRunStopStarting() {
     if (returnStackUnderflow) {
       _returnStackPos = 0;
     }
