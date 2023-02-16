@@ -215,7 +215,8 @@ abstract class RealController extends Controller {
   // ignore: prefer_final_fields
   bool _stackLiftEnabled = true;
 
-  ProgramRunner? suspendedProgramRunner;
+  ProgramRunner? get suspendedProgramRunner =>
+      model.program.suspendedProgram as ProgramRunner?;
 
   @override
   final KeyboardController keyboard = KeyboardController();

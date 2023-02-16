@@ -613,10 +613,27 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Value get z => _stack[2];
   Complex get zC => _getComplex(2);
 
+  set z(Value v) {
+    _stack[2] = v;
+    _imaginaryStack?[2] = Value.zero;
+    needsSave = true;
+  }
+
+  set zF(double v) => z = Value.fromDouble(v);
+
   void setYZT(Value v) {
     assert(!isComplexMode);
     // This is only used converting between int and float
     _stack[3] = _stack[2] = _stack[1] = v;
+    needsSave = true;
+  }
+
+  void setXYZT(Value v) {
+    _stack[3] = _stack[2] = _stack[1] = _stack[0] = v;
+    final im = _imaginaryStack;
+    if (im != null) {
+      im[3] = im[2] = im[1] = im[0] = Value.zero;
+    }
     needsSave = true;
   }
 

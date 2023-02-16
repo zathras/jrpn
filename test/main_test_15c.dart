@@ -1649,25 +1649,68 @@ class AdvancedFunctionTests {
     expect(model.memory.registers[9], Value.fromDouble(8));
     _play([l.n0]); // Clear error and get back to normal state
 
-    /*
     model.memory.registers[9] = Value.fromDouble(0);
-    _play([l.fShift, l.div, l.eX]);  // solve B
+    _play([l.fShift, l.div, l.eX]); // solve B
     await out.moveNext();
     expect(out.current.errorNumber, 5);
     expect(model.memory.registers[9], Value.fromDouble(8));
-    _play([l.n0]);  // Clear error and get back to normal state
+    _play([l.n0]); // Clear error and get back to normal state
 
     model.memory.registers[9] = Value.fromDouble(0);
-    _play([l.gsb, l.sqrt]);  // GSB A, to call solve from subroutine
+    _play([l.gsb, l.sqrt]); // GSB A, to call solve from subroutine
     await out.moveNext();
     expect(out.current.errorNumber, 5);
     expect(model.memory.registers[9], Value.fromDouble(6));
-    _play([l.n0]);  // Clear error and get back to normal state
-     */
+    _play([l.n0]); // Clear error and get back to normal state
+
+    // Find sqrt(2) the hard way
+    _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
+    _play([l.fShift, l.sst, l.sqrt]); // f LBL A
+    _play([l.n0, l.enter, l.n2, l.fShift, l.div, l.eX]); // 0, 2 f solve B
+    _play([l.gShift, l.gsb]); // g RTN
+    _play([l.fShift, l.sst, l.eX]); // f LBL B
+    _play([l.gShift, l.sqrt, l.n2, l.minus]);
+    _play([l.gShift, l.gsb]); // g RTN
+    _play([l.gShift, l.rs]); // P/R
+    _play([l.gsb, l.sqrt]); // GSB A
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect(model.xF, 1.414213562);
+    expect(model.yF, 1.414213562);
+    expect(model.z.asDouble.abs() < 1e-9, true);
+
+    // Example from page 182
+    _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
+    _play([l.fShift, l.sst, l.n0]); // f LBL 0
+    _play([l.n3, l.minus, l.mult, l.n1, l.n0, l.minus]);
+    _play([l.gShift, l.gsb]); // g RTN
+    _play([l.gShift, l.rs]); // P/R
+    _play([l.n0, l.enter, l.n1, l.n0]);
+    _play([l.fShift, l.div, l.n0]); // f solve 0
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect(model.xF, 5);
+    expect(model.yF, 4.999999999);
+    expect(model.z.asDouble.abs() < 1e-9, true);
+
+    model.yF = 0;
+    model.xF = -10;
+    _play([l.fShift, l.div, l.n0]); // f solve 0
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect(model.xF, -2);
+    expect(model.yF, -2.000001296);
+    expect(model.z.asDouble.abs() < 1e-9, true);
+
+    // Up to:  184
   }
+
+  // Chapter 14:  integrate
+  Future<void> _ch14() async {}
 
   Future<void> runWithComplex(bool complex) async {
     model.isComplexMode = complex;
+    await _ch14();
     await _ch13();
     await _ch12();
     // print("listing:  ${JsonEncoder.withIndent('  ').convert(model.memory.toJson(comments: true))}");

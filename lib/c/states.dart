@@ -376,7 +376,10 @@ class Resting extends ActiveState {
   @override
   void handleClearProgram() {
     stackLiftEnabled = true;
-    model.memory.program.currentLine = 0;
+    final p = model.memory.program;
+    p.currentLine = 0;
+    p.suspendedProgram?.abort();
+    p.suspendedProgram = null;
   }
 
   @override
@@ -955,8 +958,7 @@ class ProgramEntry extends LimitedState {
   @override
   void handleClearProgram() {
     program.reset();
-    model.memory.program.currentLine = 0;
-    model.memory.program.displayCurrent();
+    program.displayCurrent();
   }
 
   @override
@@ -1161,9 +1163,10 @@ class Running extends ControllerState {
       : _fake = RunningController(c),
         _stopNext = false,
         super(c) {
-    assert(c.model.program.returnStackPos <= 0);
-    c.suspendedProgramRunner?.abort();
-    c.suspendedProgramRunner = null;
+    final p = c.model.program;
+    assert(p.returnStackPos <= 0);
+    p.suspendedProgram?.abort();
+    p.suspendedProgram = null;
   }
 
   Running.singleStep(this._fake, this._runner, this._singleStepOnDone)
@@ -1359,7 +1362,7 @@ class Running extends ControllerState {
 
   void restarting(void Function(CalculatorError?)? singleStepOnDone) {
     _singleStepOnDone = singleStepOnDone;
-    _fake.real.suspendedProgramRunner = null;
+    model.program.suspendedProgram = null;
     model.displayDisabled = true;
     _stopNext = singleStepOnDone != null;
   }
@@ -1388,6 +1391,7 @@ abstract class ProgramRunner extends MProgramRunner {
   @override
   void startRunningProgram(ProgramRunner newRunner) {
     newRunner._parent = this;
+    newRunner._caller = _caller;
     newRunner.checkStartRunning();
     _caller._pushedRunner = newRunner;
   }
@@ -1401,6 +1405,7 @@ abstract class ProgramRunner extends MProgramRunner {
   ///
   void checkStartRunning();
 
+  @override
   @mustCallSuper
   void abort() {
     _suspended?.completeError(_Aborted());
@@ -1409,7 +1414,7 @@ abstract class ProgramRunner extends MProgramRunner {
   Future<void> suspend() async {
     assert(_suspended == null);
     final s = _suspended = Completer();
-    _caller._fake.real.suspendedProgramRunner = this;
+    _caller.model.program.suspendedProgram = this;
     await s.future;
     assert(_suspended == null);
     assert(_caller._fake.real.suspendedProgramRunner == null);
@@ -1435,6 +1440,9 @@ class _Aborted {}
 
 class GosubProgramRunner extends ProgramRunner {
   GosubProgramRunner();
+
+  @override
+  int get registersRequired => 0;
 
   @override
   Future<void> run() => _caller.runProgramLoop();

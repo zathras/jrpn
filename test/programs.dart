@@ -91,7 +91,7 @@ class TestCalculator implements ProgramListener {
   @override
   void onError(CalculatorError err) {
     if (trace) {
-      print("==> sending error ${err}");
+      print("==> sending error $err");
     }
     output.add(ProgramEvent(errorNumber: controller.getErrorNumber(err)));
   }

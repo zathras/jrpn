@@ -280,6 +280,8 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   MProgramRunner? runner;
   bool get isRunning => runner != null;
 
+  MProgramRunner? suspendedProgram;
+
   @protected
   final Memory<OT> memory;
 
@@ -468,6 +470,8 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     _currentLine = 0;
     _extendedLines = 0;
     resetReturnStack();
+    suspendedProgram?.abort();
+    suspendedProgram = null;
   }
 
   Map<String, dynamic> toJson() => <String, Object>{
@@ -994,6 +998,8 @@ class OperationMap<OT extends ProgramOperation> {
 abstract class MProgramRunner {
   static const int pseudoReturnAddress = 0xdeadbeef;
 
+  int get registersRequired;
+
   ///
   /// Can be called from the calculation part of operations
   /// (e.g. integrate and solve.)
@@ -1005,8 +1011,14 @@ abstract class MProgramRunner {
     if (program.returnStackPos >= program._returnStack.length) {
       throw CalculatorError(5);
     }
-    program._returnStack[program._returnStackPos++] = pseudoReturnAddress;
+    if (program._returnStackPos == -1) {
+      program._returnStackPos = 0;
+    } else {
+      program._returnStack[program._returnStackPos++] = pseudoReturnAddress;
+    }
   }
+
+  void abort();
 }
 
 ///

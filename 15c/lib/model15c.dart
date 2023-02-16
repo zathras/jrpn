@@ -279,7 +279,10 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
   }
 
   /// Number of uncommitted registers available in the pool.
-  int get availableRegisters {
+  int get availableRegisters =>
+      availableRegistersWithProgram(program.runner ?? program.suspendedProgram);
+
+  int availableRegistersWithProgram(MProgramRunner? runner) {
     int result = totalNybbles ~/ 14;
     assert(totalNybbles % 14 == 0);
     result -= numRegisters;
@@ -291,6 +294,7 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
     for (final m in model.matrices) {
       result -= m.length;
     }
+    result -= runner?.registersRequired ?? 0;
     return result;
   }
 }
