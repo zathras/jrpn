@@ -60,7 +60,7 @@ class TestCalculator implements ProgramListener {
   // The program's output
   final output = StreamController<ProgramEvent>();
   Completer<void>? _resume;
-  static const trace = false;
+  static const trace = true; // @@
 
   TestCalculator({bool for15C = false})
       : controller =

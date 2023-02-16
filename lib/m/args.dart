@@ -73,10 +73,15 @@ class DigitArg extends Arg {
       }
     }
     if (key == Arg.kDot) {
-      return _nextOnDot;
-    } else {
-      return null;
+      final nd = _nextOnDot;
+      if (nd != null) {
+        return nd.matches(key, userMode);
+        // Honestly, I don't quite remember why there's the intervening
+        // KeyArg(.).  Maybe something to do with f-float-dot on the 16C?
+        // Anyway, here we need to skip over it.
+      }
     }
+    return null;
   }
 
   @override

@@ -1207,6 +1207,9 @@ class Running extends ControllerState {
     bool aborted = false;
     try {
       await _runner._run(this);
+    } on CalculatorError catch (e) {
+      _fake.pendingError = e;
+      program.programListener.onError(e);
     } on _Aborted {
       aborted = true;
       // We're unawaited, so we swallow exception.
@@ -1214,7 +1217,9 @@ class Running extends ControllerState {
       // For  bit of robustness in case there's a bug, we put the restoration
       // to a normal state in a finally.
       if (!aborted) {
-        program.programListener.onDone();
+        if (_fake.pendingError == null) {
+          program.programListener.onDone();
+        }
         _onDone();
       }
     }

@@ -50,7 +50,7 @@ abstract class NontrivialProgramRunner extends ProgramRunner {
     if (!program.returnStackUnderflow) {
       // If integrate/solve came inside a program
       program.doNextIf(result);
-    } else {
+    } else if (!result) {
       throw CalculatorError(failureNumber);
     }
   }

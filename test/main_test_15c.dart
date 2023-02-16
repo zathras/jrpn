@@ -1523,7 +1523,6 @@ class AdvancedFunctionTests {
       [-9, -9]
     ]);
 
-    // @@ TODO:  Up through end of p. 178
     final testOpAndResults = [
       [
         l.plus,
@@ -1702,7 +1701,71 @@ class AdvancedFunctionTests {
     expect(model.yF, -2.000001296);
     expect(model.z.asDouble.abs() < 1e-9, true);
 
-    // Up to:  184
+    // Example from page 184:
+    _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
+    _play([l.fShift, l.sst, l.sqrt]); // f LBL A
+    _play([l.n2, l.n0, l.div, l.chs, l.eX, l.chs]);
+    _play([l.n1, l.plus, l.n5, l.n0, l.n0, l.n0, l.mult]);
+    _play([l.xy, l.n2, l.n0, l.n0, l.mult, l.minus]);
+    _play([l.gShift, l.gsb]); // g RTN
+    _play([l.fShift, l.sst, l.eX]); // f LBL B
+    _play([l.n5, l.enter, l.n6]);
+    _play([l.fShift, l.div, l.sqrt]); // f solve A
+    _play([l.n4, l.n2]); // 42 (or 2, if solve fails)
+    _play([l.gShift, l.rs]); // P/R
+
+    _play([l.n5, l.enter, l.n6]);
+    _play([l.fShift, l.div, l.sqrt]); // f solve A
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect(model.xF, 9.284255085);
+    expect(model.yF, 9.284255109);
+    expect(model.z.asDouble.abs() < 1e-9, true);
+
+    // Test "do if true" if solve A done in program B
+    _play([l.gsb, l.eX]); // GSB B
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect(model.xF, 42);
+    expect(model.yF, 9.284255085);
+
+    // Example from page 186:
+    _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
+    _play([l.fShift, l.sst, l.sqrt]); // f LBL A
+    _play([l.gShift, l.chs, l.n1, l.plus]);
+    _play([l.gShift, l.gsb]); // g RTN
+    _play([l.fShift, l.sst, l.eX]); // f LBL B
+    _play([l.n1, l.enter, l.n1, l.chs]);
+    _play([l.fShift, l.div, l.sqrt]); // f solve A
+    _play([l.n4, l.n2]); // 42 (or 2, if solve fails)
+    _play([l.gShift, l.rs]); // P/R
+
+    _play([l.n1, l.enter, l.n1, l.chs]);
+    _play([l.fShift, l.div, l.sqrt]); // f solve A
+    expect(await out.moveNext(), true);
+    expect(out.current.errorNumber, 8);
+    _play([l.gsb]); // clear error
+
+    // Test "do if true" if solve A done in program B
+    _play([l.gsb, l.eX]); // GSB B
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect(model.xF, 2);
+
+    // Example from page 189:
+    _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
+    _play([l.fShift, l.sst, l.dot, l.n3]); // f LBL .3
+    _play([l.n6, l.minus, l.mult, l.n8, l.plus, l.mult, l.n4, l.mult]);
+    _play([l.n7, l.dot, l.n5, l.minus]);
+    _play([l.gShift, l.rs]); // P/R
+
+    _play([l.n1, l.enter, l.n2]);
+    _play([l.fShift, l.div, l.dot, l.n3]); // f solve .3
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect(model.xF, 1.5);
+    expect(model.yF, 1.499999992);
+    expect(model.z.asDouble, 0);
   }
 
   // Chapter 14:  integrate
@@ -1710,8 +1773,6 @@ class AdvancedFunctionTests {
 
   Future<void> runWithComplex(bool complex) async {
     model.isComplexMode = complex;
-    await _ch14();
-    await _ch13();
     await _ch12();
     // print("listing:  ${JsonEncoder.withIndent('  ').convert(model.memory.toJson(comments: true))}");
     _page146();
@@ -1735,6 +1796,8 @@ class AdvancedFunctionTests {
     await _page139(asProgram: true);
     await runWithComplex(false);
     await runWithComplex(true);
+    await _ch14(); // @@ Move after 13
+    await _ch13();
   }
 
   void expectMatrix(AMatrix m, AMatrix expected, [double epsilon = 0]) {
