@@ -196,5 +196,6 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
   @override
   Future<bool> runCalculation() async {
     throw "@@ TODO";
+    // Maybe qromo, from https://www.hpmuseum.org/forum/thread-16523.html
   }
 }
