@@ -270,7 +270,7 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
     int k = 1;
     ro[0] = await runSubroutine((a + b) / 2) * h;
     int calls = 1;
-    double avgMagnitude = ro[0].abs();
+    double totalMagnitude = ro[0].abs();
     int i;
     for (i = 1; i < maxIterations; i++) {
       int s = 1;
@@ -281,8 +281,7 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
         double f1 = await runSubroutine(a + (j - 1) * h + h / 2);
         double f2 = await runSubroutine(a + (j + 1) * h + h / 2);
         calls += 2;
-        avgMagnitude =
-            (avgMagnitude * (calls - 2) + f1.abs() + f2.abs()) / calls;
+        totalMagnitude += f1.abs() + f2.abs();
         sum += f1 + f2;
       }
       ru[0] = h * sum + ro[0] / 3;
@@ -290,12 +289,17 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
         s *= 9;
         ru[j] = (s * ru[j - 1] - ro[j - 1]) / (s - 1);
       }
-      final int digit;
-      if (avgMagnitude < 1e-100) {
-        digit = precision.leastSignificantDigit(1);
+      final double digit;
+      final area = (totalMagnitude / calls) * span;
+      if (area < 1e-100) {
+        digit = precision.leastSignificantDigit(1).toDouble();
       } else {
-        digit = (log(avgMagnitude).floor() +
-            precision.leastSignificantDigit(avgMagnitude));
+        digit = (log(area) - 1 + precision.leastSignificantDigit(area));
+        // I think log(area).floor() is closer to what the 15C does, but
+        // subtracting 1 instead makes it so the error scales linearly, which
+        // makes more sense to me.  We're so much faster than the real
+        // calculator that being overly accurate doesn't hurt, so this is
+        // a pretty conservative choice.
       }
       final double eps = fpow(10.0, digit.toDouble());
       final rt = ro;

@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, non_constant_identifier_names
+
 /*
  This is a little program that spits out a map from keycodes to opcodes.
  It was derived from DM15.TCL in https://hp15c.com/, which is:

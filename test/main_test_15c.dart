@@ -21,7 +21,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 */
 
 import 'dart:async';
-import 'dart:convert';
+import 'dart:math' as dart;
 
 import 'package:flutter/material.dart';
 import 'package:jrpn/c/controller.dart';
@@ -1769,7 +1769,58 @@ class AdvancedFunctionTests {
   }
 
   // Chapter 14:  integrate
-  Future<void> _ch14() async {}
+  Future<void> _ch14() async {
+    final l = layout;
+    model.userMode = false;
+    model.memory.numRegisters = 10;
+    _play([l.gShift, l.n8]); // g-rad
+
+    // Find that the integral of sin from 0 to pi is 2
+    _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
+    _play([l.fShift, l.sst, l.sqrt]); // f LBL A
+    _play([l.sin]);
+    _play([l.gShift, l.rs]); // P/R
+    _play([l.n0, l.gShift, l.eex]); // 0 g-PI
+    _play([l.fShift, l.mult, l.sqrt]); // f integrate a
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect((model.xF - 2).abs() < 0.0000001, true);
+    expect(model.yF.abs() < 0.00009, true);
+    expect(model.z, Value.fromDouble(dart.pi));
+    expect(model.t.asDouble, 0);
+
+    // P. 195
+    _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
+    _play([l.fShift, l.sst, l.dot, l.n9]); // f LBL .9
+    _play([l.sin, l.cos, l.gShift, l.gsb]); // cos sin g-rtn
+    _play([l.gShift, l.rs]); // P/R
+    _play([l.n0, l.gShift, l.eex]); // 0 g-PI
+    _play([l.fShift, l.mult, l.dot, l.n9]); // f integrate .9
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    print(model.xF);
+    print(model.yF);
+    expect((model.xF - 2.403939).abs() < 0.00001, true);
+    expect(model.yF.abs() < 0.00005, true);
+    expect(model.z, Value.fromDouble(dart.pi));
+    expect(model.t.asDouble, 0);
+
+    // P. 195
+    _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
+    _play([l.fShift, l.sst, l.dot, l.n9]); // f LBL .9
+    _play([l.sin, l.cos, l.gShift, l.gsb]); // cos sin g-rtn
+    _play([l.gShift, l.rs]); // P/R
+    _play([l.n0, l.gShift, l.eex]); // 0 g-PI
+    _play([l.fShift, l.mult, l.dot, l.n9]); // f integrate .9
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    print(model.xF);
+    print(model.yF);
+    expect((model.xF - 2.403939).abs() < 0.00001, true);
+    expect(model.yF.abs() < 0.00005, true);
+    expect(model.z, Value.fromDouble(dart.pi));
+    expect(model.t.asDouble, 0);
+  }
 
   Future<void> runWithComplex(bool complex) async {
     model.isComplexMode = complex;

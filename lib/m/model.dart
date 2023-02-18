@@ -884,6 +884,26 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         hideComplement: settings.hideComplement);
   }
 
+  LcdContents _newLcdContentsJustDigits() {
+    return LcdContents(
+        mainText: display.current,
+        shift: ShiftKey.none,
+        sign: SignMode.twosComplement,
+        bits: 0,
+        cFlag: false,
+        complexFlag: false,
+        gFlag: false,
+        prgmFlag: false,
+        rightJustify: false,
+        windowEnabled: false,
+        euroComma: false,
+        hideComplement: false,
+        wordSize: null,
+        trigMode: TrigMode.deg,
+        userMode: false,
+        extraShift: null);
+  }
+
   ///
   /// Negate the value in x like the CHS key does.  The behavior varies
   /// according to the current sign mode.  In complex mode, it leaves the
@@ -1352,16 +1372,20 @@ class DisplayModel {
   }
 
   void update(
-      {bool flash = false, bool blink = false, bool disableWindow = false}) {
+      {bool flash = false,
+      BlinkMode blink = BlinkMode.none,
+      bool disableWindow = false}) {
     if (ignoreUpdates) {
       return;
     }
-    final LcdContents c = model._newLcdContents(disableWindow: disableWindow);
-    if (blink || model.errorBlink) {
+    final LcdContents c = (blink == BlinkMode.justDigits)
+        ? model._newLcdContentsJustDigits()
+        : model._newLcdContents(disableWindow: disableWindow);
+    if (blink.blinking || model.errorBlink) {
       bool on = true;
       final blank = LcdContents.blank();
       final Duration d;
-      if (blink) {
+      if (blink.blinking) {
         d = const Duration(milliseconds: 400);
       } else {
         d = const Duration(milliseconds: 200);
@@ -1407,6 +1431,15 @@ class DisplayModel {
       update(flash: flash, disableWindow: disableWindow);
     }
   }
+}
+
+enum BlinkMode {
+  none(false),
+  all(true),
+  justDigits(true); // Like "RuNNING"
+
+  final bool blinking;
+  const BlinkMode(this.blinking);
 }
 
 class TrigMode {

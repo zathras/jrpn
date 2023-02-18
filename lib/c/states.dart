@@ -1121,7 +1121,7 @@ class OnOffKeyPressed extends DoNothing {
       Future<void> runTests() async {
         try {
           model.display.current = 'RuNNING  ';
-          model.display.update(blink: true);
+          model.display.update(blink: BlinkMode.justDigits);
           await controller.newSelfTests(inCalculator: true).runAll();
           changeState(Resting(controller));
           model.display.show(model.selfTestContents());
@@ -1194,7 +1194,7 @@ class Running extends ControllerState {
         assert(model.displayDisabled);
         model.displayDisabled = false;
         model.display.current = 'RuNNING  ';
-        model.display.update(blink: true);
+        model.display.update(blink: BlinkMode.justDigits);
         model.displayDisabled = true;
       });
 
