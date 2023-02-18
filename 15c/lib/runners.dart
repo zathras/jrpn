@@ -269,6 +269,8 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
     double h = span;
     int k = 1;
     ro[0] = await runSubroutine((a + b) / 2) * h;
+    int calls = 1;
+    double avgMagnitude = ro[0].abs();
     int i;
     for (i = 1; i < maxIterations; i++) {
       int s = 1;
@@ -276,20 +278,25 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
       k *= 3;
       h /= 3;
       for (int j = 1; j < k; j += 3) {
-        sum += (await runSubroutine(a + (j - 1) * h + h / 2)) +
-            (await runSubroutine(a + (j + 1) * h + h / 2));
+        double f1 = await runSubroutine(a + (j - 1) * h + h / 2);
+        double f2 = await runSubroutine(a + (j + 1) * h + h / 2);
+        calls += 2;
+        avgMagnitude =
+            (avgMagnitude * (calls - 2) + f1.abs() + f2.abs()) / calls;
+        sum += f1 + f2;
       }
       ru[0] = h * sum + ro[0] / 3;
       for (int j = 1; j <= i; ++j) {
         s *= 9;
         ru[j] = (s * ru[j - 1] - ro[j - 1]) / (s - 1);
       }
-      double averageF = (ru[i] / span).abs();
-      if (averageF < 1e-100) {
-        averageF = 1;
+      final int digit;
+      if (avgMagnitude < 1e-100) {
+        digit = precision.leastSignificantDigit(1);
+      } else {
+        digit = (log(avgMagnitude).floor() +
+            precision.leastSignificantDigit(avgMagnitude));
       }
-      final int digit =
-          (log(averageF).floor() + precision.leastSignificantDigit(averageF));
       final double eps = fpow(10.0, digit.toDouble());
       final rt = ro;
       ro = ru;

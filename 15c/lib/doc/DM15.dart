@@ -234,6 +234,6 @@ final SEQ_2_CODE = [
   ['45_49', 'a7'],
 ];
 
-main() {
+void main() {
   print(SEQ_2_CODE);
 }
