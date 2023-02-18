@@ -196,24 +196,24 @@ class Resting extends ActiveState {
   }
 
   void calculate(Operation op, ArgDone arg) {
-    op.pressed(this);
-    final f = op.calcDisabled(controller) ? null : getCalculation(arg);
-    if (f != null) {
-      try {
+    try {
+      op.pressed(this);
+      final f = op.calcDisabled(controller) ? null : getCalculation(arg);
+      if (f != null) {
         // Give the argument a chance to veto or defer the beforeCalculate
         // step.  This is needed for operations with a timeout, like the
         // 15C's STO to matrix.
         arg.handleOpBeforeCalculate(model, () => op.beforeCalculate(this));
         f(model);
         model.display.displayX();
-      } on CalculatorError catch (e, stack) {
-        controller.showCalculatorError(e, stack);
-        // ignore: avoid_catches_without_on_clauses
-      } catch (e, s) {
-        debugPrint('Unexpected exception $e\n\n$s');
-        controller.showCalculatorError(CalculatorError(9), s);
+        op.possiblyAlterStackLift(controller);
       }
-      op.possiblyAlterStackLift(controller);
+    } on CalculatorError catch (e, stack) {
+      controller.showCalculatorError(e, stack);
+      // ignore: avoid_catches_without_on_clauses
+    } catch (e, s) {
+      debugPrint('Unexpected exception $e\n\n$s');
+      controller.showCalculatorError(CalculatorError(9), s);
     }
   }
 

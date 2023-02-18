@@ -1792,11 +1792,11 @@ class AdvancedFunctionTests {
   }
 
   Future<void> run() async {
+    await _ch14(); // @@ Move after 13
     await _page139(asProgram: false);
     await _page139(asProgram: true);
     await runWithComplex(false);
     await runWithComplex(true);
-    await _ch14(); // @@ Move after 13
     await _ch13();
   }
 

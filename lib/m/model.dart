@@ -621,6 +621,13 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   set zF(double v) => z = Value.fromDouble(v);
 
+  Value get t => _stack[3];
+  set t(Value v) {
+    _stack[3] = v;
+    _imaginaryStack?[3] = Value.zero;
+    needsSave = true;
+  }
+
   void setYZT(Value v) {
     assert(!isComplexMode);
     // This is only used converting between int and float

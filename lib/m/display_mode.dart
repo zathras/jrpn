@@ -146,6 +146,16 @@ abstract class DisplayMode {
   SignMode signMode(IntegerSignMode integerSignMode);
 
   void setComplexMode(Model m, bool v);
+
+  ///
+  /// Gives the least significant digit when value is displayed, where the units
+  /// digit is 0, and negative is to the right of the decimal.  For example,
+  /// for FIX-3, gives -3 (10^-3 is 0.001), unless the value is such that
+  /// scientific notation would be used.
+  ///
+  /// This is needed for the HP 15C's integrate function.
+  ///
+  int leastSignificantDigit(double value);
 }
 
 abstract class IntegerDisplayMode extends DisplayMode {
@@ -224,6 +234,9 @@ abstract class IntegerDisplayMode extends DisplayMode {
   void setComplexMode(Model m, bool v) {
     assert(false);
   }
+
+  @override
+  int leastSignificantDigit(double value) => 1;
 }
 
 abstract class _Pow2IntegerMode extends IntegerDisplayMode {
@@ -428,6 +441,10 @@ class _FloatMode extends DisplayMode {
 
   @override
   String get _jsonName => _formatter._jsonName;
+
+  @override
+  int leastSignificantDigit(double value) =>
+      _formatter.leastSignificantDigit(value);
 }
 
 class _ComplexMode extends _FloatMode {
@@ -450,6 +467,7 @@ abstract class FloatFormatter {
   const FloatFormatter();
 
   String get _jsonName;
+  int get fractionDigits;
 
   static final int _ascii0 = '0'.codeUnitAt(0);
 
@@ -553,10 +571,24 @@ abstract class FloatFormatter {
   }
 
   String format(Value v);
+
+  ///
+  /// See [DisplayMode.leastSignificantDigit]
+  ///
+  /// This assumes scientific notation, and is overriden for fixed-point.
+  ///
+  int leastSignificantDigit(double value) {
+    if (value != 0) {
+      return log(value.abs()).floor() - fractionDigits;
+    } else {
+      return -fractionDigits;
+    }
+  }
 }
 
 @immutable
 class SciFloatFormatter extends FloatFormatter {
+  @override
   final int fractionDigits;
   const SciFloatFormatter(this.fractionDigits);
 
@@ -569,6 +601,7 @@ class SciFloatFormatter extends FloatFormatter {
 
 @immutable
 class FixFloatFormatter extends FloatFormatter {
+  @override
   final int fractionDigits;
   const FixFloatFormatter(this.fractionDigits);
 
@@ -579,6 +612,17 @@ class FixFloatFormatter extends FloatFormatter {
   String format(Value v) =>
       formatFixed(v, fractionDigits) ??
       formatScientific(v, min(6, fractionDigits + 1));
+
+  @override
+  int leastSignificantDigit(double value) {
+    if (value != 0) {
+      final r = log(value.abs()).floor();
+      if (r < -fractionDigits || r >= 10) {
+        return r - fractionDigits; // Same as super.leastSignificantDigit()
+      }
+    }
+    return -fractionDigits;
+  }
 }
 
 ///

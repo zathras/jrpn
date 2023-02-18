@@ -734,8 +734,9 @@ class Operations15 extends Operations {
       name: 'RESULT');
 
   static final NormalOperation piOp = NormalOperation.floatOnly(
+      pressed: (ActiveState s) => s.liftStackIfEnabled(),
       floatCalc: (Model m) {
-        m.xF = dart.pi;
+        m.resultXF = dart.pi;
       },
       name: 'PI');
   static final NormalArgOperation xExchange = NormalArgOperation(

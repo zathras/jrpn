@@ -20,6 +20,8 @@ this program; if not, see https://www.gnu.org/licenses/ .
 
 import 'dart:async';
 import 'dart:math';
+import 'dart:math' as math show pow;
+import 'dart:typed_data';
 
 import 'package:jrpn/c/states.dart';
 import 'package:jrpn/m/model.dart';
@@ -70,7 +72,6 @@ abstract class NontrivialProgramRunner extends ProgramRunner {
     }
     model.setXYZT(Value.fromDouble(arg));
     await caller.runProgramLoop();
-    print("@@ f($arg) gives ${model.xF}");
     return model.xF;
   }
 
@@ -193,9 +194,119 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
     super.checkStartRunning();
   }
 
+  // pow(num, num) returning num is annoying
+  static double fpow(double a, double b) => math.pow(a, b).toDouble();
+
   @override
   Future<bool> runCalculation() async {
-    throw "@@ TODO";
-    // Maybe qromo, from https://www.hpmuseum.org/forum/thread-16523.html
+    final DisplayMode precision = model.displayMode;
+    // The number of digits being displayed determines how precisely we
+    // estimate the integral.
+    const int maxIterations = 15;
+    // Complexity is... uh... maybe O(maxIterations^2)?  I took 15 from
+    // doc/HP-15C.tcl code, which uses an algorithm that's slightly
+    // different, but similar.
+
+    final Value originalY = model.y;
+    final Value originalX = model.x;
+    double a = model.yF; // lower bound
+    double b = model.xF; // upper bound
+    final double signResult;
+    if (a == b) {
+      model.z = originalX;
+      model.t = originalY;
+      model.x = model.y = Value.zero;
+      return true;
+    } else if (a > b) {
+      signResult = -1;
+      final tmp = b;
+      b = a;
+      a = tmp;
+    } else {
+      signResult = 1;
+    }
+    final double span = b - a;
+
+    // This is a port of qromo(), copied from
+    // https://www.hpmuseum.org/forum/thread-16523.html
+    // The post includes the text "You may freely use any of the code
+    // here and please ask questions or PM me if something is not clear."
+    /*
+      double qromo(double (*f)(double), double a, double b, int n, double eps) {
+        double R1[n], R2[n];
+        double *Ro = &R1[0], *Ru = &R2[0];
+        double h = b-a;
+        int i, j;
+        unsigned long long k = 1;
+        Ro[0] = f((a+b)/2)*h;
+        for (i = 1; i < n; ++i) {
+          unsigned long long s = 1;
+          double sum = 0;
+          double *Rt;
+          k *= 3;
+          h /= 3;
+          for (j = 1; j < k; j += 3)
+            sum += f(a+(j-1)*h+h/2) + f(a+(j+1)*h+h/2);
+          Ru[0] = h*sum + Ro[0]/3;
+          for (j = 1; j <= i; ++j) {
+            s *= 9;
+            Ru[j] = (s*Ru[j-1] - Ro[j-1])/(s-1);
+          }
+          if (i > 1 && fabs(Ro[i-1]-Ru[i]) <= eps*fabs(Ru[i])+eps)
+            return Ru[i];
+          Rt = Ro;
+          Ro = Ru;
+          Ru = Rt;
+        }
+        return Ro[n-1]; // no convergence, return best result,
+                        // error is fabs((Ru[n-2]-Ro[n-1])/Ro[n-1])
+      }
+     */
+    final r1 = Float64List(maxIterations);
+    final r2 = Float64List(maxIterations);
+    var ro = r1;
+    var ru = r2;
+    double h = span;
+    int k = 1;
+    ro[0] = await runSubroutine((a + b) / 2) * h;
+    int i;
+    for (i = 1; i < maxIterations; i++) {
+      int s = 1;
+      double sum = 0;
+      k *= 3;
+      h /= 3;
+      for (int j = 1; j < k; j += 3) {
+        sum += (await runSubroutine(a + (j - 1) * h + h / 2)) +
+            (await runSubroutine(a + (j + 1) * h + h / 2));
+      }
+      ru[0] = h * sum + ro[0] / 3;
+      for (int j = 1; j <= i; ++j) {
+        s *= 9;
+        ru[j] = (s * ru[j - 1] - ro[j - 1]) / (s - 1);
+      }
+      double averageF = (ru[i] / span).abs();
+      if (averageF < 1e-100) {
+        averageF = 1;
+      }
+      final int digit =
+          (log(averageF).floor() + precision.leastSignificantDigit(averageF));
+      final double eps = fpow(10.0, digit.toDouble());
+      final rt = ro;
+      ro = ru;
+      ru = rt;
+      if (i > 1 && (ru[i - 1] - ro[i]).abs() <= eps * ro[i].abs() + eps) {
+        break;
+      }
+    }
+    final ok = i < maxIterations;
+    if (!ok) {
+      i--;
+    }
+    final err = ((ru[i - 1] - ro[i]) / ro[i]).abs();
+    model.z = originalX;
+    model.t = originalY;
+    model.yF = err;
+    model.xF = ro[i] * signResult;
+    return ok;
   }
 }
