@@ -272,10 +272,8 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
                         // error is fabs((Ru[n-2]-Ro[n-1])/Ro[n-1])
       }
      */
-    final r1 = Float64List(maxIterations);
-    final r2 = Float64List(maxIterations);
-    var ro = r1;
-    var ru = r2;
+    var ro = Float64List(maxIterations);
+    var ru = Float64List(maxIterations);
     double h = span;
     int k = 1;
     ro[0] = await runSubroutine((a + b) / 2) * h;
