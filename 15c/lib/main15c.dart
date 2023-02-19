@@ -830,11 +830,10 @@ class Operations15 extends Operations {
         throw "@@ TODO";
       },
       name: 'RND');
-  static final _random = dart.Random();
   static final NormalOperation ranNum = NormalOperation.floatOnly(
       pressed: (ActiveState s) => s.liftStackIfEnabled(),
       floatCalc: (Model m) {
-        m.resultXF = _random.nextDouble();
+        m.resultXF = (m as Model15).rand.nextValue;
       },
       // TODO:  Store random seed
       name: 'RAN #');
@@ -1136,7 +1135,7 @@ class Operations15 extends Operations {
         KeyArg(
             key: Operations15.ranNum,
             child: ArgDone(((m) {
-              // @@ TODO
+              (m as Model15).rand.setSeed(m.xF);
             }))),
         KeyArg(
             key: Operations15.resultOp,
@@ -1246,7 +1245,7 @@ class Operations15 extends Operations {
         KeyArg(
             key: Operations15.ranNum,
             child: ArgDone(((m) {
-              // @@ TODO
+              m.resultXF = (m as Model15).rand.lastValue;
             }))),
         // g A..E
         KeysArg(

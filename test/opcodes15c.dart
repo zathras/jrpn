@@ -1,14 +1,12 @@
 // ignore_for_file: file_names, non_constant_identifier_names
 
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 
 import 'programs.dart';
 
 /*
  The variable SEQ_2_CODE is derived from DM15.tcl in
- https://hp15c.com/, which is:
+ https://hp-15c.homepage.t-online.de/homepage.htm, which is:
 
 #------------------------------------------------------------------------------
 #
@@ -944,20 +942,16 @@ const expectedOpcodes = [
   [714, "-45,10,15", "RCL / E"],
   [715, "- 45,43,24", "RCL g (i)"]
 ];
-// NOTE:  I made the following changes
-//
-//   The STO/RCL +/-/*/divide buttons were listed like this:
-//        45_40_48_(0-9)  (rcl + dot #)
-//   I changed this to:
-//        45_40_.[0-9]   (rcl + .#)
-//   This is how the 15 C displays this "45,40, .2".  jrpn15c.com displays
-//   it as "45,40,12" instead
+
 ///
 /// Expand the (limited) regex syntax used in SEQ_2_CODE.  _48_ becomes dot
 /// ("_.") -- For, say, sto + 15, the 15C displays it as "44,40, .5", whereas
-/// Thorsten's displays it as "44,40,15, and represents it in SEQ_TO_CODE
-/// as "44_40_48_(0-9)".
-//   @@ TODO:  Translate for import/export
+/// SEQ_TO_CODE represents it as "44_40_48_([0-9])"  "." of course means 
+/// soemthing in TCL regular expressions.
+///
+/// As of 4.2.00, Build 6026, the TCL version accepts either syntax in a
+/// program file:  (44 40 48 0) and (44 40 .0) are equivalent.
+///
 List<String> expand(String regex) {
   bool paren = false;
   regex = regex.replaceFirst('_48_', '_.');
@@ -1008,7 +1002,6 @@ List<String> expand(String regex) {
 //
 Map<String, String> tclDisplayToOpcode() {
   final result = <String, String>{};
-  int num = 0;
   for (final entry in SEQ_2_CODE) {
     final opcodes = expand(entry[1]);
     if (opcodes.length == 1 && opcodes[0] == '""') {
@@ -1084,4 +1077,17 @@ Future<void> opcodeTest15C() async {
     // to make sure nothing important has changed, and then re-generate
     // expectedOpcodes.
   }
+
+  // Note that JRPN doesn't use the same numerical opcodes as the original
+  // calculator, whereas Torsten's (and the SwissMicros calculator) do.  That's
+  // an explicit non-goal for JRPN.  The JSON memory dump is considered an
+  // internal format.
+  //
+  // With that said, it would be easy enough to convert a memory dump back
+  // and forth, using the tables in these regression tests.
+  //
+  // The 15C's internal opcodes are discussed here:
+  // http://www.brouhaha.com/~eric/hpcalc/hp15c/tennant83.html
+  // I skimmed it when JRPN was almost finished, but since duplicating the
+  // 15C's internals is an explicit non-goal, I didn't change anything.
 }

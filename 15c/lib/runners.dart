@@ -122,7 +122,7 @@ class SolveProgramRunner extends NontrivialProgramRunner {
         x1 = 1e-7;
       } else {
         // "One count in the seventh significant digit"
-        x1 += pow(10, log(x0).floorToDouble()) * 1e-6;
+        x1 += pow(10, log10(x0).floorToDouble()) * 1e-6;
       }
     }
 
@@ -182,7 +182,7 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
 
   ///
   /// For integration, "failure" just returns.  It takes a loooong time
-  /// to get here anyway -- see [maxIterations].
+  /// to get here anyway -- see `maxIterations`.
   @override
   fail() {
     throw 'unreachable';
@@ -302,8 +302,8 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
       if (area < 1e-100) {
         digit = precision.leastSignificantDigit(1).toDouble();
       } else {
-        digit = (log(area) - 1 + precision.leastSignificantDigit(area));
-        // I think log(area).floor() is closer to what the 15C does, but
+        digit = (log10(area) - 1 + precision.leastSignificantDigit(area));
+        // I think log10(area).floor() is closer to what the 15C does, but
         // subtracting 1 instead makes it so the error scales smoothly, which
         // makes more sense to me.  We're so much faster than the real
         // calculator that being overly accurate doesn't hurt, so this is

@@ -19,6 +19,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 */
 
 import 'dart:typed_data';
+import 'dart:math' as dart;
 
 import 'package:jrpn/m/model.dart';
 
@@ -59,10 +60,13 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   ProgramInstruction<OT> newProgramInstruction(OT operation, ArgDone arg) =>
       _newProgramInstructionF(operation, arg);
 
+  final rand = RandomGenerator();
+
   @override
   reset() {
     super.reset();
     displayMode = DisplayMode.fix(4, false);
+    rand.reset();
   }
 
   @override
@@ -160,6 +164,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
     r['resultMatrix'] = resultMatrix;
     r['matrices'] = List.generate(matrices.length, (i) => matrices[i].toJson(),
         growable: false);
+    r['lastRandom'] = rand.lastValue;
     return r;
   }
 
@@ -172,6 +177,10 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
     final ms = json['matrices'] as List;
     for (int i = 0; i < matrices.length; i++) {
       matrices[i].decodeJson(ms[i] as Map<String, dynamic>);
+    }
+    final Object? lastRandom = json['lastRandom'];
+    if (lastRandom is double) {
+      rand.setNoReseed(lastRandom);
     }
   }
 
@@ -199,6 +208,65 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
 
   void setNeedsSave() {
     needsSave = true;
+  }
+}
+
+///
+/// Implementation of the RAN # key, and sto/rcl
+///
+/// Note that the generator isn't re-seeded with the last value every time
+/// a number is requested.  That means that the sequence:
+///    STO RAN #
+///    RAN #
+///    STO RAN #
+///    RAN #
+/// will yield a different result than:
+///    STO RAN #
+///    RAN #
+///    RAN #
+///  whereas the two will generate identical results on a real 15C.
+///
+/// Re-seeding each time would presumably generate worse results that
+/// Dart's built-in function, and I'm a little concerned it might even
+/// lead to pathological cases, like small cycles in certain cases.
+///
+class RandomGenerator {
+
+  var _generator = dart.Random();
+  double _lastValue = 0;
+
+  RandomGenerator() {
+    nextValue;
+  }
+
+  void setSeed(double seed) {
+    seed = seed.abs();
+    if (seed > 1) {
+      final exp = log10(seed).floorToDouble() + 1;
+      print(exp);
+      seed /= dart.pow(10.0, exp);
+    }
+    print(seed);
+    _lastValue = seed;
+    int s = ((seed - 0.5) * dart.pow(2.0, 52.0)).round();
+    print(s);
+    _generator = dart.Random(s);
+    // Stupid JavaScript ints are limited to +- 2^52. To be conservative, I
+    // go for 2^51
+  }
+
+  ///
+  /// Set from JSON on startup
+  ///
+  void setNoReseed(double val) => _lastValue = val;
+
+  double get lastValue => _lastValue;
+
+  double get nextValue => _lastValue = _generator.nextDouble();
+
+  void reset() {
+    _generator = dart.Random();
+    nextValue;
   }
 }
 
@@ -342,3 +410,5 @@ class ProgramMemory15<OT extends ProgramOperation> extends ProgramMemory<OT> {
     }
   }
 }
+
+double log10(double val) => dart.log(val) * dart.log10e;
