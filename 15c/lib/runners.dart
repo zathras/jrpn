@@ -304,7 +304,7 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
       } else {
         digit = (log(area) - 1 + precision.leastSignificantDigit(area));
         // I think log(area).floor() is closer to what the 15C does, but
-        // subtracting 1 instead makes it so the error scales linearly, which
+        // subtracting 1 instead makes it so the error scales smoothly, which
         // makes more sense to me.  We're so much faster than the real
         // calculator that being overly accurate doesn't hurt, so this is
         // a pretty conservative choice.
