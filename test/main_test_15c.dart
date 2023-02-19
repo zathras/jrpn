@@ -1825,8 +1825,6 @@ class AdvancedFunctionTests {
     _play([l.fShift, l.mult, l.dot, l.n2]); // f integrate .2
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
-    print(model.xF);
-    print(model.yF);
     expect((model.xF - 1.60541).abs() < 0.00001, true);
     expect(model.yF.abs() < 0.00005, true);
   }
