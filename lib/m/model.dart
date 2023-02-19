@@ -1063,9 +1063,9 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   Future<void> writeToPersistentStorage() async {
-    if (!needsSave) {
-      return;
-    }
+    // We could query needsSave here, but this is called infrequently.
+    // A full audit to make sure needsSave is always updated would be needed
+    // to restore the query here.
     needsSave = false;
     final storage = await SharedPreferences.getInstance();
     String js = json.encode(toJson());

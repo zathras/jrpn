@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, non_constant_identifier_names
+// ignore_for_file: file_names, non_constant_identifier_names, avoid_print
 
 import 'package:flutter_test/flutter_test.dart';
 
@@ -946,7 +946,7 @@ const expectedOpcodes = [
 ///
 /// Expand the (limited) regex syntax used in SEQ_2_CODE.  _48_ becomes dot
 /// ("_.") -- For, say, sto + 15, the 15C displays it as "44,40, .5", whereas
-/// SEQ_TO_CODE represents it as "44_40_48_([0-9])"  "." of course means 
+/// SEQ_TO_CODE represents it as "44_40_48_([0-9])"  "." of course means
 /// soemthing in TCL regular expressions.
 ///
 /// As of 4.2.00, Build 6026, the TCL version accepts either syntax in a
@@ -1072,7 +1072,7 @@ Future<void> opcodeTest15C() async {
     final e = expectedOpcodes[i];
     expect(c[0], e[0]);
     expect(c[1], e[1]);
-    expect(c[2], e[2]);  // Cosmetic, but possibly helpful to know
+    expect(c[2], e[2]); // Cosmetic, but possibly helpful to know
     // If this fails, it's easy enough to comment it out, re-run the test
     // to make sure nothing important has changed, and then re-generate
     // expectedOpcodes.

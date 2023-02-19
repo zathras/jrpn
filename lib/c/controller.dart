@@ -696,29 +696,29 @@ class NormalOperationOrLetter extends NormalOperation {
 
   NormalOperationOrLetter.floatOnly(
       {void Function(ActiveState)? pressed,
-        StackLift? stackLift,
-        required void Function(Model) floatCalc,
-        void Function(Model)? complexCalc,
-        required String name,
-        required LetterLabel letter})
+      StackLift? stackLift,
+      required void Function(Model) floatCalc,
+      void Function(Model)? complexCalc,
+      required String name,
+      required LetterLabel letter})
       : numericValue = letter.numericValue,
         programListingArgName = letter.name,
         super.floatOnly(
-          pressed: pressed,
-          stackLift: stackLift,
-          floatCalc: floatCalc,
-          complexCalc: complexCalc,
-          name: name);
+            pressed: pressed,
+            stackLift: stackLift,
+            floatCalc: floatCalc,
+            complexCalc: complexCalc,
+            name: name);
 
   NormalOperationOrLetter(NormalOperation op, LetterLabel letter)
       : numericValue = letter.numericValue,
         programListingArgName = letter.name,
         super.floatOnly(
-          pressed: op._pressed,
-          stackLift: op._stackLift,
-          floatCalc: op.floatCalc!,
-          complexCalc: op.complexCalc,
-          name: op.name);
+            pressed: op._pressed,
+            stackLift: op._stackLift,
+            floatCalc: op.floatCalc!,
+            complexCalc: op.complexCalc,
+            name: op.name);
 }
 
 ///
@@ -734,18 +734,18 @@ class NormalOperationShiftedArg extends NormalOperation {
 
   NormalOperationShiftedArg.floatOnly(
       {void Function(ActiveState)? pressed,
-        StackLift? stackLift,
-        required void Function(Model) floatCalc,
-        void Function(Model)? complexCalc,
-        required String name,
-        required this.argShift,
+      StackLift? stackLift,
+      required void Function(Model) floatCalc,
+      void Function(Model)? complexCalc,
+      required String name,
+      required this.argShift,
       required this.programListingArgName})
       : super.floatOnly(
-          pressed: pressed,
-          stackLift: stackLift,
-          floatCalc: floatCalc,
-          complexCalc: complexCalc,
-          name: name);
+            pressed: pressed,
+            stackLift: stackLift,
+            floatCalc: floatCalc,
+            complexCalc: complexCalc,
+            name: name);
 }
 
 ///

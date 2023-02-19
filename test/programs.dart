@@ -69,6 +69,10 @@ class TestCalculator implements ProgramListener {
     model.program.programListener = this;
   }
 
+  void _trace(String msg) {
+    // print(msg);
+  }
+
   void loadState(final String fileName) {
     final state = File('./test/examples/$fileName').readAsStringSync();
     loadStateFromString(state);
@@ -82,59 +86,45 @@ class TestCalculator implements ProgramListener {
 
   @override
   void onDone() {
-    if (trace) {
-      print("==> sending done");
-    }
+    _trace("==> sending done");
     output.add(ProgramEvent.done);
   }
 
   @override
   void onError(CalculatorError err) {
-    if (trace) {
-      print("==> sending error $err");
-    }
+    _trace("==> sending error $err");
     output.add(ProgramEvent(errorNumber: controller.getErrorNumber(err)));
   }
 
   @override
   void onPause() {
     _resume ??= Completer<void>();
-    if (trace) {
-      print("==> sending pause");
-    }
+    _trace("==> sending pause");
     output.add(ProgramEvent.pause);
   }
 
   @override
   void onRS() {
-    if (trace) {
-      print("==> sending runStop");
-    }
+    _trace("==> sending runStop");
     output.add(ProgramEvent.runStop);
   }
 
   @override
   void onStop() {
-    if (trace) {
-      print("==> sending stop");
-    }
+    _trace("==> sending stop");
     output.add(ProgramEvent.stop);
   }
 
   @override
   Future<void> resumeFromPause() {
-    if (trace) {
-      print("==> resuming from pause");
-    }
+    _trace("==> resuming from pause");
 
     _resume ??= Completer<void>();
     return _resume!.future;
   }
 
   void resume() {
-    if (trace) {
-      print("==> resume");
-    }
+    _trace("==> resume");
     Completer c = _resume!;
     _resume = null;
     c.complete(null);

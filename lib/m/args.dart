@@ -326,8 +326,8 @@ class LabelArg extends ArgAlternates {
     if (!noI) {
       iList.add(KeyArg(
           key: Arg.kI,
-          child: ArgDone((m) =>
-              f(m, _translate(m, m.memory.registers.index)))));
+          child:
+              ArgDone((m) => f(m, _translate(m, m.memory.registers.index)))));
     }
     // Note that (i) comes before I on the 16C keyboard, so I originally
     // did the opcodes in that order.  On the 15C, I has to come first, so it's

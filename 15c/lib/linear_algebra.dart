@@ -130,6 +130,12 @@ void solve(Matrix a, AMatrix b, AMatrix x) {
       }
     }
   }
+  x.visit((r, c) {
+    final v = x.get(r, c);
+    if (v == Value.fInfinity || v == Value.fNegativeInfinity) {
+      throw MatrixOverflow();
+    }
+  });
 }
 
 ///
@@ -251,5 +257,4 @@ double frobeniusNorm(AMatrix mat) {
   return sqrt(result);
 }
 
-// @@ TODO:  Used?
 class MatrixOverflow {}

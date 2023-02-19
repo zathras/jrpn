@@ -101,7 +101,8 @@ class SolveProgramRunner extends NontrivialProgramRunner {
     super.checkStartRunning();
   }
 
-  @override fail() {
+  @override
+  fail() {
     throw CalculatorError(8);
   }
 
@@ -302,7 +303,7 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
       if (area < 1e-100) {
         digit = precision.leastSignificantDigit(1).toDouble();
       } else {
-        digit = (log10(area) - 1 + precision.leastSignificantDigit(area));
+        digit = log10(area) - 1 + precision.leastSignificantDigit(area);
         // I think log10(area).floor() is closer to what the 15C does, but
         // subtracting 1 instead makes it so the error scales smoothly, which
         // makes more sense to me.  We're so much faster than the real
@@ -326,6 +327,6 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
     model.t = originalY;
     model.yF = err;
     model.xF = ro[i] * signResult;
-    return true;  // The 15C never gives CalculatorError on failure to converge
+    return true; // The 15C never gives CalculatorError on failure to converge
   }
 }

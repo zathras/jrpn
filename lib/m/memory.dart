@@ -926,9 +926,6 @@ class OperationMap<OT extends ProgramOperation> {
     // The HP 15C has 452 extended op codes.  Wow!
     final int pages = (_nextExtendedOpcode + 0xff) >> 8;
     _extendedOpcode = 0x100 - pages;
-    print("@@ $_nextOpcode one byte opcodes");
-    print("@@ $_nextExtendedOpcode extended opcodes");
-    print("@@ $_extendedOpcode through 255:  extended escape");
     assert(_extendedOpcode >= 0 && _nextOpcode <= _extendedOpcode,
         'one byte opcodes:  $_nextOpcode, extended opcode: $_extendedOpcode');
     final len = (_nextExtendedOpcode == 0)

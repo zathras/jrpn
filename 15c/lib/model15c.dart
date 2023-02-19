@@ -34,9 +34,12 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
     Matrix('e')
   ];
 
-  // @@ TODO:  On dimension, set needsSave true
-
-  int resultMatrix = 0; // Index into matrices
+  int _resultMatrix = 0; // Index into matrices
+  int get resultMatrix => _resultMatrix;
+  set resultMatrix(int v) {
+    _resultMatrix = v;
+    setNeedsSave();
+  }
 
   final ProgramInstruction<OT> Function(OT, ArgDone) _newProgramInstructionF;
   final List<List<MKey<OT>?>> Function() _getLogicalKeys;
@@ -231,7 +234,6 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
 /// lead to pathological cases, like small cycles in certain cases.
 ///
 class RandomGenerator {
-
   var _generator = dart.Random();
   double _lastValue = 0;
 
@@ -243,13 +245,10 @@ class RandomGenerator {
     seed = seed.abs();
     if (seed > 1) {
       final exp = log10(seed).floorToDouble() + 1;
-      print(exp);
       seed /= dart.pow(10.0, exp);
     }
-    print(seed);
     _lastValue = seed;
     int s = ((seed - 0.5) * dart.pow(2.0, 52.0)).round();
-    print(s);
     _generator = dart.Random(s);
     // Stupid JavaScript ints are limited to +- 2^52. To be conservative, I
     // go for 2^51

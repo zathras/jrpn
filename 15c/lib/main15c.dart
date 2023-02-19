@@ -125,6 +125,7 @@ class Operations15 extends Operations {
             if (x != r) {
               r.resize(m, y.rows, y.columns);
             }
+            m.setNeedsSave();
             try {
               linalg.solve(x, y, r);
             } on linalg.MatrixOverflow {
@@ -408,18 +409,21 @@ class Operations15 extends Operations {
             child: ArgDone((m) {
               final mat = _getMatrixFromValue(m as Model15, m.x);
               mat.convertToZTilde(m);
+              m.setNeedsSave();
             })),
         KeyArg(
             key: Operations.n3,
             child: ArgDone((m) {
               final mat = _getMatrixFromValue(m as Model15, m.x);
               mat.convertFromZTilde(m);
+              m.setNeedsSave();
             })),
         KeyArg(
             key: Operations.n4,
             child: ArgDone((m) {
               final mat = _getMatrixFromValue(m as Model15, m.x);
               mat.transpose();
+              m.setNeedsSave();
             })),
         KeyArg(
             key: Operations.n5,
@@ -1017,6 +1021,7 @@ class Operations15 extends Operations {
           throw "@@ TODO";
         } else {
           (m as Model15).matrices[mx].convertToZP();
+          m.setNeedsSave();
         }
       },
       name: 'Py,x');
@@ -1027,6 +1032,7 @@ class Operations15 extends Operations {
           throw "@@ TODO";
         } else {
           (m as Model15).matrices[mx].convertToZC();
+          m.setNeedsSave();
         }
       },
       name: 'Cy,x');
@@ -1062,6 +1068,7 @@ class Operations15 extends Operations {
         matrix.isLU = false;
       }
       matrix.set(row, col, m.x);
+      m.setNeedsSave();
       if (increment) {
         _incrementR0R1(m, row, col, matrix);
       }
