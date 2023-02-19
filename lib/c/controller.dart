@@ -691,29 +691,61 @@ class NormalOperationOrLetter extends NormalOperation {
   @override
   final int numericValue;
 
+  @override
+  final String programListingArgName;
+
   NormalOperationOrLetter.floatOnly(
       {void Function(ActiveState)? pressed,
-      StackLift? stackLift,
-      required void Function(Model) floatCalc,
-      void Function(Model)? complexCalc,
-      required String name,
-      required LetterLabel letter})
+        StackLift? stackLift,
+        required void Function(Model) floatCalc,
+        void Function(Model)? complexCalc,
+        required String name,
+        required LetterLabel letter})
       : numericValue = letter.numericValue,
+        programListingArgName = letter.name,
         super.floatOnly(
-            pressed: pressed,
-            stackLift: stackLift,
-            floatCalc: floatCalc,
-            complexCalc: complexCalc,
-            name: name);
+          pressed: pressed,
+          stackLift: stackLift,
+          floatCalc: floatCalc,
+          complexCalc: complexCalc,
+          name: name);
 
   NormalOperationOrLetter(NormalOperation op, LetterLabel letter)
       : numericValue = letter.numericValue,
+        programListingArgName = letter.name,
         super.floatOnly(
-            pressed: op._pressed,
-            stackLift: op._stackLift,
-            floatCalc: op.floatCalc!,
-            complexCalc: op.complexCalc,
-            name: op.name);
+          pressed: op._pressed,
+          stackLift: op._stackLift,
+          floatCalc: op.floatCalc!,
+          complexCalc: op.complexCalc,
+          name: op.name);
+}
+
+///
+/// A [NormalOperation] that is shifted (by fShift or gShift), and that
+/// is used as an argument.
+///
+class NormalOperationShiftedArg extends NormalOperation {
+  @override
+  final ProgramOperation argShift;
+
+  @override
+  final String programListingArgName;
+
+  NormalOperationShiftedArg.floatOnly(
+      {void Function(ActiveState)? pressed,
+        StackLift? stackLift,
+        required void Function(Model) floatCalc,
+        void Function(Model)? complexCalc,
+        required String name,
+        required this.argShift,
+      required this.programListingArgName})
+      : super.floatOnly(
+          pressed: pressed,
+          stackLift: stackLift,
+          floatCalc: floatCalc,
+          complexCalc: complexCalc,
+          name: name);
 }
 
 ///

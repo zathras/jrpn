@@ -429,6 +429,20 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     // irrelevant.
   }
 
+  List<ProgramInstruction<OT>> getAllInstructionsForTesting() {
+    final result = <ProgramInstruction<OT>>[];
+    for (int opcode = 0; opcode < _operationTable.length; opcode++) {
+      final op = _operationTable[opcode];
+      if (op != null) {
+        final arg = _argValues[opcode]!;
+        final instr = memory.model.newProgramInstruction(op, arg);
+        assert(instr.opcode == opcode);
+        result.add(instr);
+      }
+    }
+    return result;
+  }
+
   void _setCachedAddress(final int line) {
     if (line < _cachedLine) {
       _cachedLine = 1;
@@ -690,6 +704,10 @@ abstract class ProgramOperation {
 
   int get maxOneByteOpcodes => 9999;
 
+  /// If used as an argument, the shift key needed for that argument.
+  /// Rare:  sto g <LETTER> and rcl g <LETTER> do this.
+  ProgramOperation? get argShift => null;
+
   static const _invalidOpcodeStart = -1;
   // Invalid op codes are negative, but still distinct.  That allows them to
   // be used in the capture of a debug key log.
@@ -945,7 +963,7 @@ class OperationMap<OT extends ProgramOperation> {
       if (secondShift != null) {
         assert(shift != null);
         assert(arg == null);
-        pd = '${shift!.rcName},${secondShift.rcName}${op.rcName}';
+        pd = '${shift!.rcName},${secondShift.rcName},${op.rcName}';
         pl = op.name;
       } else if (shift == null && arg == null) {
         assert(!argDot);
@@ -974,7 +992,12 @@ class OperationMap<OT extends ProgramOperation> {
           }
         }
         if (shift == null) {
-          pd = ' ${op.rcName} $as';
+          final argShift = arg.argShift;
+          if (argShift == null) {
+            pd = ' ${op.rcName} $as';
+          } else {
+            pd = ' ${op.rcName},${argShift.rcName},$as';
+          }
           pl = '${op.name}$las';
         } else if (shift.isShift) {
           pd = '${shift.rcName},${op.rcName},$as';

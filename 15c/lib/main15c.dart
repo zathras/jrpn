@@ -265,7 +265,7 @@ class Operations15 extends Operations {
   ///
   /// The HP 15's (i) operation, to see the imaginary part.
   ///
-  static final NormalOperation parenI15 = LimitedOperation(
+  static final NormalOperation parenI15 = NonProgrammableOperation(
       pressed: (LimitedState cs) => cs.handleShowImaginary(), name: '(i)');
 
   static final sqrtOp15 =
@@ -280,7 +280,9 @@ class Operations15 extends Operations {
         m.resultXC = m.xC.exp();
       },
       name: 'eX');
-  static final NormalOperation xSquared = NormalOperation.floatOnly(
+  static final NormalOperation xSquared = NormalOperationShiftedArg.floatOnly(
+      argShift: Operations.gShift,
+      programListingArgName: 'g A',
       floatCalc: (Model m) {
         double x = m.xF;
         m.resultXF = x * x;
@@ -290,7 +292,9 @@ class Operations15 extends Operations {
         m.resultXC = v * v;
       },
       name: 'x^2');
-  static final NormalOperation lnOp = NormalOperation.floatOnly(
+  static final NormalOperation lnOp = NormalOperationShiftedArg.floatOnly(
+      argShift: Operations.gShift,
+      programListingArgName: 'g B',
       floatCalc: (Model m) {
         double x = m.xF;
         if (x <= 0) {
@@ -312,7 +316,9 @@ class Operations15 extends Operations {
         m.resultXC = (m.xC * const Complex(ln10, 0)).exp();
       },
       name: '10^x');
-  static final NormalOperation logOp = NormalOperation.floatOnly(
+  static final NormalOperation logOp = NormalOperationShiftedArg.floatOnly(
+      programListingArgName: 'g C',
+      argShift: Operations.gShift,
       floatCalc: (Model m) {
         double x = m.xF;
         if (x <= 0) {
@@ -333,7 +339,9 @@ class Operations15 extends Operations {
         m.popSetResultXC = m.yC.pow(m.xC);
       },
       name: 'yX');
-  static final NormalOperation percent = NormalOperation.floatOnly(
+  static final NormalOperation percent = NormalOperationShiftedArg.floatOnly(
+      programListingArgName: 'g D',
+      argShift: Operations.gShift,
       floatCalc: (Model m) {
         m.resultXF = m.xF * 0.01 * m.yF;
       },
@@ -371,11 +379,14 @@ class Operations15 extends Operations {
           },
           name: '1/x');
 
-  static final NormalOperation deltaPercent = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        m.resultXF = ((m.xF - m.yF) / m.yF) * 100.0;
-      },
-      name: 'delta%');
+  static final NormalOperation deltaPercent =
+      NormalOperationShiftedArg.floatOnly(
+          programListingArgName: 'g E',
+          argShift: Operations.gShift,
+          floatCalc: (Model m) {
+            m.resultXF = ((m.xF - m.yF) / m.yF) * 100.0;
+          },
+          name: 'delta%');
   static final NormalArgOperation matrix = NormalArgOperation(
       maxOneByteOpcodes: 0,
       arg: ArgAlternates(children: [
@@ -504,10 +515,13 @@ class Operations15 extends Operations {
       name: 'F?');
 
   static final NormalArgOperation gsb = RunProgramOperation(
+      maxOneByteOpcodes:
+          16, // The user's guide is wrong on p. 218, GSB .0-.9 are two-byte
       runner: () => GosubProgramRunner(),
       arg: LabelArg(
           maxDigit: 19,
           letters: _letterLabelsList,
+          iFirst: true,
           f: (m, final int? label) {
             if (label == null) {
               throw CalculatorError(4);
@@ -563,6 +577,7 @@ class Operations15 extends Operations {
       arg: LabelArg(
           maxDigit: 19,
           letters: _letterLabelsList,
+          noI: true,
           f: (m, final int? label) {
             if (label == null) {
               throw CalculatorError(4);
@@ -604,7 +619,9 @@ class Operations15 extends Operations {
         m.resultXC = m.xC.cos();
       },
       name: 'COS');
-  static final NormalOperation cosInverse = NormalOperation.floatOnly(
+  static final NormalOperation cosInverse = NormalOperationShiftedArg.floatOnly(
+      argShift: Operations.gShift,
+      programListingArgName: 'g (i)',
       floatCalc: (Model m) {
         m.xF = dart.acos(m.xF) / m.trigMode.scaleFactor;
       },
@@ -690,6 +707,11 @@ class Operations15 extends Operations {
     Operations.chs: Operations15.matrix,
     Operations.eex: Operations15.resultOp,
     ..._letterSynonyms
+  };
+
+  static final _matrixSynonymsPlusRandom = {
+    ..._matrixSynonyms,
+    Operations.enter: Operations15.ranNum
   };
 
   static void _dim(Model m, int arg) {
@@ -789,6 +811,7 @@ class Operations15 extends Operations {
       arg: LabelArg(
           maxDigit: 19,
           letters: _letterLabelsList,
+          noI: true,
           f: (m, final int? label) {
             if (label == null) {
               throw CalculatorError(4);
@@ -807,10 +830,13 @@ class Operations15 extends Operations {
         throw "@@ TODO";
       },
       name: 'RND');
+  static final _random = dart.Random();
   static final NormalOperation ranNum = NormalOperation.floatOnly(
+      pressed: (ActiveState s) => s.liftStackIfEnabled(),
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.resultXF = _random.nextDouble();
       },
+      // TODO:  Store random seed
       name: 'RAN #');
   static final NormalOperation toR = NormalOperation.floatOnly(
       floatCalc: (Model m) {
@@ -1102,11 +1128,16 @@ class Operations15 extends Operations {
   }
 
   static final NormalArgOperation sto15 = NormalArgOperation(
-      maxOneByteOpcodes: 33,
-      arg: ArgAlternates(synonyms: _matrixSynonyms, children: [
+      maxOneByteOpcodes: 34,
+      arg: ArgAlternates(synonyms: _matrixSynonymsPlusRandom, children: [
         // 0-.9, I
         RegisterWriteArg(
             maxDigit: 19, noParenI: true, f: (m) => m.x), // 21 opcodes
+        KeyArg(
+            key: Operations15.ranNum,
+            child: ArgDone(((m) {
+              // @@ TODO
+            }))),
         KeyArg(
             key: Operations15.resultOp,
             child: ArgDone((m) {
@@ -1199,7 +1230,7 @@ class Operations15 extends Operations {
       name: 'STO');
 
   static final NormalArgOperation rcl15 = NormalArgOperationWithBeforeCalc(
-      maxOneByteOpcodes: 44,
+      maxOneByteOpcodes: 47,
       beforeCalculate: (Resting s) {
         // For the matrix operations, this is deferred to key release.  It is
         // not run if the operation is cancelled.
@@ -1207,11 +1238,16 @@ class Operations15 extends Operations {
         return StackLift.neutral;
       },
       arg: ArgAlternates(synonyms: {
-        ..._matrixSynonyms,
+        ..._matrixSynonymsPlusRandom,
         Operations15.sin: Operations15.dim
       }, children: [
         RegisterReadArg(
             maxDigit: 19, noParenI: true, f: (m, v) => m.resultX = v),
+        KeyArg(
+            key: Operations15.ranNum,
+            child: ArgDone(((m) {
+              // @@ TODO
+            }))),
         // g A..E
         KeysArg(
             keys: _letterLabelsGShifted,
@@ -1229,6 +1265,11 @@ class Operations15 extends Operations {
                   m.popStack();
                   m.x = matrix.get(row, col);
                 })),
+        KeyArg(
+            key: Operations15.sigmaPlus,
+            child: ArgDone((m) {
+              // @@ TODO:  RCL sigma-plus
+            })),
         KeyArg(
             key: Operations15.dim,
             child:
@@ -1252,6 +1293,11 @@ class Operations15 extends Operations {
                     m.resultXF = mat.rows.toDouble();
                     m.pushStack();
                     m.resultXF = mat.columns.toDouble();
+                  })),
+              KeyArg(
+                  key: Operations15.parenI15,
+                  child: ArgDone((m) {
+                    // @@ TODO:  RCL DIM (i), page 216
                   }))
             ])),
         KeyArg(
@@ -1914,8 +1960,40 @@ class Controller15 extends RealController {
   Controller15(this.model)
       : super(
             numbers: numbers,
-            shortcuts: const {},
+            shortcuts: _shortcuts,
             lblOperation: Operations15.lbl15);
+
+  static final Map<Operation, ArgDone> _shortcuts = {
+    Operations15.letterLabelA:
+        _makeShortcut(Operations15.gsb.arg, Operations15.letterLabelA)!,
+    Operations15.letterLabelB:
+        _makeShortcut(Operations15.gsb.arg, Operations15.letterLabelB)!,
+    Operations15.letterLabelC:
+        _makeShortcut(Operations15.gsb.arg, Operations15.letterLabelC)!,
+    Operations15.letterLabelD:
+        _makeShortcut(Operations15.gsb.arg, Operations15.letterLabelD)!,
+    Operations15.letterLabelE:
+        _makeShortcut(Operations15.gsb.arg, Operations15.letterLabelE)!,
+  };
+
+  /// Map from operation that is a shortcut to what it's a shortcut for, with
+  /// the key as an argument.  We want the identical instance of ArgDone, so
+  /// we climb down the tree.  It's admittedly a bit of a hack.
+  static ArgDone? _makeShortcut(Arg arg, Operation wanted) {
+    if (arg is ArgAlternates) {
+      for (final a in arg.children) {
+        final r = _makeShortcut(a, wanted);
+        if (r != null) {
+          return r;
+        }
+      }
+    } else if (arg is KeyArg) {
+      if (arg.key == wanted) {
+        return arg.child as ArgDone;
+      }
+    }
+    return null;
+  }
 
   @override
   List<Operation> get nonProgrammableOperations => _nonProgrammableOperations;
@@ -1925,6 +2003,7 @@ class Controller15 extends RealController {
     Operations15.hyp,
     Operations15.hypInverse,
     Operations15.userOp,
+    Operations15.parenI15
   ];
 
   static final _userModeSwapped = <Operation, Operation>{

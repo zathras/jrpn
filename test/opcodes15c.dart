@@ -1,8 +1,12 @@
 // ignore_for_file: file_names, non_constant_identifier_names
 
+import 'package:flutter_test/flutter_test.dart';
+
+import 'programs.dart';
+
 /*
- This is a little program that spits out a map from keycodes to opcodes.
- It was derived from DM15.TCL in https://hp15c.com/, which is:
+ The variable SEQ_2_CODE is derived from DM15.tcl in
+ https://hp15c.com/, which is:
 
 #------------------------------------------------------------------------------
 #
@@ -235,7 +239,125 @@ final SEQ_2_CODE = [
   ['45_48_([0-9])', '5[0-9]'],
   ['45_49', 'a7'],
 ];
+// NOTE:  I made the following changes
+//
+//   The STO/RCL +/-/*/divide buttons were listed like this:
+//        45_40_48_(0-9)  (rcl + dot #)
+//   I changed this to:
+//        45_40_.[0-9]   (rcl + .#)
+//   This is how the 15 C displays this "45,40, .2".  jrpn15c.com displays
+//   it as "45,40,12" instead
+///
+/// Expand the (limited) regex syntax used in SEQ_2_CODE.  _48_ becomes dot
+/// ("_.") -- For, say, sto + 15, the 15C displays it as "44,40, .5", whereas
+/// Thorsten's displays it as "44,40,15, and represents it in SEQ_TO_CODE
+/// as "44_40_48_(0-9)".
+//   @@ TODO:  Translate for import/export
+List<String> expand(String regex) {
+  bool paren = false;
+  regex = regex.replaceFirst('_48_', '_.');
+  final prefix = StringBuffer();
+  int i;
+  for (i = 0; i < regex.length; i++) {
+    final ch = regex.codeUnitAt(i);
+    if (ch == '('.codeUnitAt(0)) {
+      paren = true;
+    } else if (ch == '['.codeUnitAt(0)) {
+      i++;
+      break;
+    } else {
+      prefix.writeCharCode(ch);
+    }
+  }
+  if (i == regex.length) {
+    return [prefix.toString()];
+  }
+  final result = <String>[];
+  final start = regex.codeUnitAt(i++);
+  if (regex.codeUnitAt(i++) != '-'.codeUnitAt(0)) {
+    throw "error";
+  }
+  final end = regex.codeUnitAt(i++);
+  for (int j = start; j <= end; j++) {
+    result.add(prefix.toString() + String.fromCharCode(j));
+  }
+  if (regex.codeUnitAt(i++) != ']'.codeUnitAt(0)) {
+    throw "error";
+  }
+  if (paren && regex.codeUnitAt(i++) != ')'.codeUnitAt(0)) {
+    throw "error";
+  }
+  if (i == regex.length) {
+    return result;
+  }
+  final postfix = StringBuffer();
+  for (; i < regex.length; i++) {
+    postfix.writeCharCode(regex.codeUnitAt(i));
+  }
+  for (int j = 0; j < result.length; j++) {
+    result[j] = result[j] + postfix.toString();
+  }
+  return result;
+}
 
-void main() {
-  print(SEQ_2_CODE);
+//
+Map<String, String> tclDisplayToOpcode() {
+  final result = <String, String>{};
+  int num = 0;
+  for (final entry in SEQ_2_CODE) {
+    final opcodes = expand(entry[1]);
+    if (opcodes.length == 1 && opcodes[0] == '""') {
+      continue;
+    }
+    final display = expand(entry[0]);
+    if (opcodes.length != display.length) {
+      throw 'Oopsie!  $display $opcodes';
+    }
+    for (int i = 0; i < opcodes.length; i++) {
+      if (result[display[i]] != null) {
+        throw 'Oopsie!  ${display[i]} already present';
+      }
+      result[display[i]] = opcodes[i];
+    }
+  }
+  return result;
+}
+
+Future<void> opcodeTest15C() async {
+  final c = TestCalculator(for15C: true);
+  final instructions = c.model.memory.program.getAllInstructionsForTesting();
+  final tcl = tclDisplayToOpcode();
+  final seen = <String>{};
+  for (final instr in instructions) {
+    String pd = instr.programDisplay.replaceFirst('-', '').trim();
+    while (pd.contains('  ')) {
+      pd = pd.replaceFirst('  ', ' ');
+    }
+    if (pd.contains(',')) {
+      pd = pd.replaceAll(',', '_').replaceAll(' ', '');
+    } else {
+      pd = pd.replaceAll(' ', '_');
+    }
+    if (pd.startsWith('u_')) {
+      pd = '${pd.substring(2)}_u';
+    }
+    expect(seen.add(pd), true, reason: '$pd previously seen');
+    final tclOpcode = tcl.remove(pd);
+    expect(tclOpcode == null, false);
+    if (instr.opcode <= 0xff) {
+      expect(tclOpcode!.length, 2,
+          reason: '$instr ($tclOpcode, '
+              '0x${instr.opcode.toRadixString(16)}) should be two bytes');
+    } else {
+      expect(tclOpcode!.length, 4,
+          reason: '$instr ($tclOpcode, '
+              '0x${instr.opcode.toRadixString(16)}) should be one byte');
+    }
+  }
+  tcl.remove('44_42_36'); // Synonym for 44_36, sto-random
+  final undead = tcl.keys.toList()..sort();
+  for (final t in undead) {
+    print('$t is undead');
+  }
+  expect(tcl.length, 0);
 }

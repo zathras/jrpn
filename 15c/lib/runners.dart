@@ -33,8 +33,6 @@ abstract class NontrivialProgramRunner extends ProgramRunner {
   static const int _subroutineNotStarted = 0xdeadc0de;
   int _subroutineStart = _subroutineNotStarted;
 
-  int get failureNumber;
-
   @override
   Future<void> run() async {
     final program = model.program;
@@ -53,9 +51,11 @@ abstract class NontrivialProgramRunner extends ProgramRunner {
       // If integrate/solve came inside a program
       program.doNextIf(result);
     } else if (!result) {
-      throw CalculatorError(failureNumber);
+      fail();
     }
   }
+
+  void fail();
 
   ///
   /// Run the solve/integrate algorithm.
@@ -90,9 +90,6 @@ class SolveProgramRunner extends NontrivialProgramRunner {
   int get registersRequired => max(5, (parent?.registersRequired ?? 0));
 
   @override
-  int get failureNumber => 8;
-
-  @override
   void checkStartRunning() {
     ProgramRunner? curr = parent;
     while (curr != null) {
@@ -102,6 +99,10 @@ class SolveProgramRunner extends NontrivialProgramRunner {
       curr = curr.parent;
     }
     super.checkStartRunning();
+  }
+
+  @override fail() {
+    throw CalculatorError(8);
   }
 
   @override
@@ -179,8 +180,13 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
   @override
   int get registersRequired => max(23, (parent?.registersRequired ?? 0));
 
+  ///
+  /// For integration, "failure" just returns.  It takes a loooong time
+  /// to get here anyway -- see [maxIterations].
   @override
-  int get failureNumber => throw 'unreachable';
+  fail() {
+    throw 'unreachable';
+  }
 
   @override
   void checkStartRunning() {
@@ -202,10 +208,14 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
     final DisplayMode precision = model.displayMode;
     // The number of digits being displayed determines how precisely we
     // estimate the integral.
-    const int maxIterations = 15;
-    // Complexity is... uh... maybe O(maxIterations^2)?  I took 15 from
-    // doc/HP-15C.tcl code, which uses an algorithm that's slightly
-    // different, but similar.
+    const int maxIterations = 10;
+    // Complexity is... uh... O(a lot)
+    // In testing, typical functions converge in 3 or 4 iterations.
+    // With the default 50ms/program instruction, and a trivial function
+    // that generates a random number, it takes over an hour to get here.
+    // 10 is conservatively high, and a nice, round number
+    // that's low enough so the thing will terminate before the universe
+    // expires.
 
     final Value originalY = model.y;
     final Value originalX = model.x;
@@ -318,6 +328,6 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
     model.t = originalY;
     model.yF = err;
     model.xF = ro[i] * signResult;
-    return ok;
+    return true;  // The 15C never gives CalculatorError on failure to converge
   }
 }

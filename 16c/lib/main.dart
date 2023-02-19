@@ -726,7 +726,6 @@ class Operations16 extends Operations {
       name: '>');
 }
 
-/* @@ TODO:  Vestegial?  */
 class ProgramInstruction16 extends ProgramInstruction<Operation> {
   ProgramInstruction16(Operation op, ArgDone arg) : super(op, arg);
 }

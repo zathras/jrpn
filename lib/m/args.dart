@@ -302,13 +302,20 @@ class LabelArg extends ArgAlternates {
       List<ProgramOperation> letters = const [],
       required void Function(Model m, int? v) f,
       bool indirect = false,
-      bool iFirst = false})
+      bool iFirst = false,
+      bool noI = false})
       : super(
             synonyms: Arg.gsbLabelSynonyms,
-            children: _makeChildren(maxDigit, indirect, iFirst, letters, f));
+            children:
+                _makeChildren(maxDigit, indirect, iFirst, noI, letters, f));
 
-  static List<Arg> _makeChildren(int maxDigit, bool indirect, bool iFirst,
-      List<ProgramOperation> letters, void Function(Model, int? v) f) {
+  static List<Arg> _makeChildren(
+      int maxDigit,
+      bool indirect,
+      bool iFirst,
+      bool noI,
+      List<ProgramOperation> letters,
+      void Function(Model, int? v) f) {
     final List<Arg> iList = List.empty(growable: true);
     if (indirect) {
       iList.add(KeyArg(
@@ -316,9 +323,12 @@ class LabelArg extends ArgAlternates {
           child: ArgDone(
               (m) => f(m, _translate(m, m.memory.registers.indirectIndex)))));
     }
-    iList.add(KeyArg(
-        key: Arg.kI,
-        child: ArgDone((m) => f(m, _translate(m, m.memory.registers.index)))));
+    if (!noI) {
+      iList.add(KeyArg(
+          key: Arg.kI,
+          child: ArgDone((m) =>
+              f(m, _translate(m, m.memory.registers.index)))));
+    }
     // Note that (i) comes before I on the 16C keyboard, so I originally
     // did the opcodes in that order.  On the 15C, I has to come first, so it's
     // a one-byte opcode; on the 16C, I initially did it in the other order.

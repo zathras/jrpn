@@ -37,6 +37,7 @@ import 'package:jrpn15c/matrix.dart';
 import 'package:jrpn15c/model15c.dart';
 import 'package:jrpn15c/tests15c.dart';
 import 'hyperbolic.dart';
+import 'opcodes15c.dart';
 import 'programs.dart';
 import 'package:jrpn15c/linear_algebra.dart' as linalg;
 
@@ -72,10 +73,10 @@ Future<void> main() async {
     await tester.pumpAndSettle(const Duration(milliseconds: 10000));
     expect(done, true);
   });
-
   test('Built-in self tests 15C', () async {
     await SelfTests15(inCalculator: false).runAll();
   });
+  test('15C opcode test', opcodeTest15C);
 }
 
 class MiscTests {
@@ -1798,28 +1799,36 @@ class AdvancedFunctionTests {
     _play([l.fShift, l.mult, l.dot, l.n9]); // f integrate .9
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
-    print(model.xF);
-    print(model.yF);
     expect((model.xF - 2.403939).abs() < 0.00001, true);
     expect(model.yF.abs() < 0.00005, true);
     expect(model.z, Value.fromDouble(dart.pi));
     expect(model.t.asDouble, 0);
 
-    // P. 195
+    // P. 197-8
     _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
     _play([l.fShift, l.sst, l.dot, l.n9]); // f LBL .9
-    _play([l.sin, l.cos, l.gShift, l.gsb]); // cos sin g-rtn
+    _play([l.sin, l.minus, l.cos]);
     _play([l.gShift, l.rs]); // P/R
     _play([l.n0, l.gShift, l.eex]); // 0 g-PI
     _play([l.fShift, l.mult, l.dot, l.n9]); // f integrate .9
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
+    expect((model.xF - 1.38246).abs() < 0.00001, true);
+    expect(model.yF.abs() < 0.00005, true);
+
+    // P. 199:  sin(x)/x
+    _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
+    _play([l.fShift, l.sst, l.dot, l.n2]); // f LBL .2
+    _play([l.sin, l.xy, l.div]);
+    _play([l.gShift, l.rs]); // P/R
+    _play([l.n0, l.enter, l.n2]); // 0 g-PI
+    _play([l.fShift, l.mult, l.dot, l.n2]); // f integrate .2
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
     print(model.xF);
     print(model.yF);
-    expect((model.xF - 2.403939).abs() < 0.00001, true);
+    expect((model.xF - 1.60541).abs() < 0.00001, true);
     expect(model.yF.abs() < 0.00005, true);
-    expect(model.z, Value.fromDouble(dart.pi));
-    expect(model.t.asDouble, 0);
   }
 
   Future<void> runWithComplex(bool complex) async {
@@ -1843,12 +1852,12 @@ class AdvancedFunctionTests {
   }
 
   Future<void> run() async {
-    await _ch14(); // @@ Move after 13
     await _page139(asProgram: false);
     await _page139(asProgram: true);
     await runWithComplex(false);
     await runWithComplex(true);
     await _ch13();
+    await _ch14();
   }
 
   void expectMatrix(AMatrix m, AMatrix expected, [double epsilon = 0]) {

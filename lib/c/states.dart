@@ -1259,10 +1259,22 @@ class Running extends ControllerState {
     final ProgramListener listener = model.memory.program.programListener;
     final settings = controller.model.settings;
     final program = model.memory.program;
+    var lastDelay = DateTime.now();
     for (;;) {
-      if (!_stopNext && pendingDelay >= 4) {
-        await (Future<void>.delayed(
-            Duration(milliseconds: (pendingDelay ~/ 4) * 4)));
+      if (!_stopNext) {
+        if (pendingDelay >= 4) {
+          lastDelay = DateTime.now();
+          await (Future<void>.delayed(
+              Duration(milliseconds: (pendingDelay ~/ 4) * 4)));
+        } else {
+          final now = DateTime.now();
+          if (now.difference(lastDelay).inMilliseconds >= 1000) {
+            // Delay at least 4 ms every second, so the calculator doesn't become
+            // non-responsive if the user cranks the speed up all the way.
+            await Future<void>.delayed(const Duration(milliseconds: 4));
+            lastDelay = now;
+          }
+        }
       }
       // Javascript clock granularity is 4ms
       pendingDelay = pendingDelay % 4;
