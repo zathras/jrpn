@@ -38,6 +38,7 @@ import 'runners.dart';
 import 'tests15c.dart';
 import 'model15c.dart';
 import 'linear_algebra.dart' as linalg;
+import 'more_math.dart';
 
 void main() async {
   runStaticInitialization15();
@@ -115,12 +116,10 @@ class Operations15 extends Operations {
           });
         } else {
           _scalarOrMatrix(m, scalar: (x, y) {
-            try {
-              return y / x;
-              // ignore: avoid_catches_without_on_clauses
-            } catch (e) {
+            if (x == 0) {
               throw CalculatorError(0);
             }
+            return y / x;
           }, matrix: (m, x, y, r) {
             if (x != r) {
               r.resize(m, y.rows, y.columns);
@@ -137,6 +136,8 @@ class Operations15 extends Operations {
       complexCalc: (Model m) {
         if (m.x.asMatrix != null || m.y.asMatrix != null) {
           div.floatCalc!(m);
+        } else if (m.xC == Complex.zero) {
+          throw CalculatorError(0);
         } else {
           m.popSetResultXC = m.yC / m.xC;
         }
@@ -981,7 +982,7 @@ class Operations15 extends Operations {
       name: 'USER');
   static final NormalOperation xFactorial = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.resultXF = factorial(m.xF);
       },
       name: 'x!');
   static final NormalOperation xBar = NormalOperation.floatOnly(
@@ -1018,7 +1019,7 @@ class Operations15 extends Operations {
       floatCalc: (Model m) {
         final mx = m.x.asMatrix;
         if (mx == null) {
-          throw "@@ TODO";
+          m.popSetResultXF = permutations(m.yF, m.xF);
         } else {
           (m as Model15).matrices[mx].convertToZP();
           m.setNeedsSave();
@@ -1029,7 +1030,7 @@ class Operations15 extends Operations {
       floatCalc: (Model m) {
         final mx = m.x.asMatrix;
         if (mx == null) {
-          throw "@@ TODO";
+          m.popSetResultXF = binomialCoefficient(m.yF, m.xF);
         } else {
           (m as Model15).matrices[mx].convertToZC();
           m.setNeedsSave();

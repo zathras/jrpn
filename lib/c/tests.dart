@@ -68,7 +68,7 @@ abstract class SelfTests {
     }
     if (val != expected) {
       debugPrint('');
-      debugPrint('*** Error in self-test:  $val != $expected');
+      debugPrint('*** Error in self-test:  $val != expected $expected');
       if (reason != null) {
         debugPrint('  $reason');
         debugPrint('');

@@ -107,8 +107,7 @@ class Value {
       return fInfinity;
     } else if (num == double.negativeInfinity) {
       return fNegativeInfinity;
-    } else if (num == double.nan) {
-      assert(false);
+    } else if (num.isNaN) {
       return fInfinity;
     }
 

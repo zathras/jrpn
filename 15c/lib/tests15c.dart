@@ -77,11 +77,18 @@ class SelfTests15 extends SelfTests {
   }
 
   Future<void> _testTwoArgFloat(
-      Model15 m, NormalOperation op, double x, double y, double result) async {
+      Model15 m, NormalOperation op, double x, double y, double? result,
+      {int? err}) async {
+    assert(result != null || err != null);
     m.xF = x;
     m.yF = y;
-    op.floatCalc!(m);
-    await expect(m.x, Value.fromDouble(result));
+    try {
+      op.floatCalc!(m);
+    } on CalculatorError catch (e) {
+      await expect(e.num15, err);
+      return;
+    }
+    await expect(m.x, Value.fromDouble(result!));
     m.isComplexMode = true;
     m.xC = Complex(x, 0);
     m.yC = Complex(y, 0);
@@ -224,10 +231,72 @@ class SelfTests15 extends SelfTests {
     });
   }
 
+  Future<void> testStatisticsFunctions() async {
+    await test('15c statistics functions', () async {
+      final m = newModel();
+      await _testOneArgFloat(m, Operations15.xFactorial, 0, 1);
+      await _testOneArgFloat(m, Operations15.xFactorial, 1, 1);
+      await _testOneArgFloat(m, Operations15.xFactorial, 9, 362880);
+      await _testOneArgFloat(m, Operations15.xFactorial, 0.5, 0.8862269255);
+      await _testOneArgFloat(m, Operations15.xFactorial, -0.7, 2.991568988);
+      await _testOneArgFloat(
+          m, Operations15.xFactorial, -31.2, -1.016536828e-32);
+      await _testOneArgFloat(m, Operations15.xFactorial, 57.3, 1.367681189e77);
+      await expect(m.getFlag(9), false);
+      await _testOneArgFloat(m, Operations15.xFactorial, 70, 9.999999999e+99);
+      await expect(m.getFlag(9), true);
+      m.setFlag(9, false);
+      await _testOneArgFloat(m, Operations15.xFactorial, 70.1, 9.999999999e+99);
+      await expect(m.getFlag(9), true);
+      m.setFlag(9, false);
+
+      await _testTwoArgFloat(m, Operations15.pYX, 1, 0, null, err: 0);
+      await _testTwoArgFloat(m, Operations15.pYX, 0, 1, 1);
+      await _testTwoArgFloat(m, Operations15.pYX, 0, 1.1, null, err: 0);
+      await _testTwoArgFloat(m, Operations15.pYX, 0, 5, 1);
+      await _testTwoArgFloat(m, Operations15.pYX, 1, 5, 5);
+      await _testTwoArgFloat(m, Operations15.pYX, 2, 5, 20);
+      await _testTwoArgFloat(m, Operations15.pYX, 3, 5, 60);
+      await _testTwoArgFloat(m, Operations15.pYX, 4, 5, 120);
+      await _testTwoArgFloat(m, Operations15.pYX, 5, 5, 120);
+      await expect(m.getFlag(9), false);
+      await _testTwoArgFloat(m, Operations15.pYX, 341, 357, 9.999999999e+99);
+      await expect(m.getFlag(9), true);
+      m.setFlag(9, false);
+      await _testTwoArgFloat(m, Operations15.pYX, 7, 101, 8.668605053e13);
+      await _testTwoArgFloat(m, Operations15.pYX, 15, 111, 1.777747078e30);
+      await _testTwoArgFloat(m, Operations15.pYX, 21, 213, 2.840246967e48);
+      await expect(m.getFlag(9), false);
+
+      await _testTwoArgFloat(m, Operations15.cYX, 1, 0, null, err: 0);
+      await _testTwoArgFloat(m, Operations15.cYX, 0, 1, 1);
+      await _testTwoArgFloat(m, Operations15.cYX, 0, 1.1, null, err: 0);
+      await _testTwoArgFloat(m, Operations15.cYX, 0, 5, 1);
+      await _testTwoArgFloat(m, Operations15.cYX, 1, 5, 5);
+      await _testTwoArgFloat(m, Operations15.cYX, 2, 5, 10);
+      await _testTwoArgFloat(m, Operations15.cYX, 3, 5, 10);
+      await _testTwoArgFloat(m, Operations15.cYX, 4, 5, 5);
+      await _testTwoArgFloat(m, Operations15.cYX, 5, 5, 1);
+      await _testTwoArgFloat(m, Operations15.cYX, 341, 357, 2.365542599e27);
+      await expect(m.getFlag(9), false);
+      await _testTwoArgFloat(m, Operations15.cYX, 3410, 3570, 9.999999999e99);
+      await expect(m.getFlag(9), true);
+      m.setFlag(9, false);
+      await _testTwoArgFloat(
+          m, Operations15.cYX, 10097, 10101, 433499141500425);
+      // That's 10 places of accuracy, much more accurate than real 15C
+      await expect(m.getFlag(9), false);
+      await _testTwoArgFloat(m, Operations15.cYX, 10007, 10101, 9.999999999e99);
+      await expect(m.getFlag(9), true);
+      m.setFlag(9, false);
+    });
+  }
+
   @override
   Future<void> runAll() async {
     await testFloatFunctions();
     await testComplexFunctions();
+    await testStatisticsFunctions();
     return super.runAll();
   }
 }
