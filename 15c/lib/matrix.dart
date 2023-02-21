@@ -103,7 +103,8 @@ abstract class AMatrix {
     if (columns != 0 && rows != 0) {
       sb.writeln(':');
     }
-    sb.write(formatValueWith((v) => (const FixFloatFormatter(4)).format(v, false)));
+    sb.write(
+        formatValueWith((v) => (const FixFloatFormatter(4)).format(v, false)));
     return sb.toString();
   }
 

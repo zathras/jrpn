@@ -66,10 +66,20 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   final rand = RandomGenerator();
 
   @override
-  reset() {
-    super.reset();
+  void reset() {
     displayMode = DisplayMode.fix(4, false);
+    super.reset();
     rand.reset();
+    trigMode = TrigMode.deg;
+    _resultMatrix = 0;
+    for (final mat in matrices) {
+      mat.resize(this, 0, 0);
+    }
+    memory.program.suspendedProgram?.abort();
+    memory.program.suspendedProgram = null;
+    memory.program.runner?.abort(); // Should be null, but be conservative
+    memory.program.runner = null;
+    memory.numRegisters = 20;
   }
 
   @override

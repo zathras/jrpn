@@ -138,6 +138,14 @@ class Model16 extends Model<Operation> {
       ProgramInstruction16(operation, arg);
 
   @override
+  void reset() {
+    displayMode = DisplayMode.hex;
+    integerSignMode = SignMode.twosComplement;
+    wordSize = 16;
+    super.reset();
+  }
+
+  @override
   int get returnStackSize => 4;
 
   @override

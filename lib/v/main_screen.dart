@@ -484,7 +484,8 @@ class _MainMenuState extends State<MainMenu> {
                 value: () {},
                 child: _StateMenu('Calculator State', widget.main.app)),
             PopupMenuItem(
-                value: () {}, child: _SettingsMenu('Settings', model, controller)),
+                value: () {},
+                child: _SettingsMenu('Settings', model, controller)),
             // PopupMenuDivider(),
             PopupMenuItem(
                 value: () {},
@@ -586,7 +587,8 @@ class _SettingsMenu extends StatefulWidget {
   final String title;
   final Model model;
   final RealController controller;
-  const _SettingsMenu(this.title, this.model, this.controller, {Key? key}) : super(key: key);
+  const _SettingsMenu(this.title, this.model, this.controller, {Key? key})
+      : super(key: key);
 
   @override
   __SettingsMenuState createState() => __SettingsMenuState();
@@ -615,26 +617,34 @@ class __SettingsMenuState extends State<_SettingsMenu> {
             },
             child: const Text('Show Menu Icon')),
         CheckedPopupMenuItem(
-            checked: widget.controller.windowMenuName == null ? settings.windowEnabled : !settings.windowEnabled,
+            checked: widget.controller.menus15C
+                ? !settings.windowEnabled
+                : settings.windowEnabled,
             value: () {
               settings.windowEnabled = !settings.windowEnabled;
               display.update();
             },
-            child: Text(widget.controller.windowMenuName ?? 'Enable Window')),
-        CheckedPopupMenuItem(
-            checked: settings.hideComplement,
-            value: () {
-              settings.hideComplement = !settings.hideComplement;
-              display.update();
-            },
-            child: const Text('Hide Complement Status')),
-        CheckedPopupMenuItem(
-            checked: settings.showWordSize,
-            value: () {
-              settings.showWordSize = !settings.showWordSize;
-              display.update();
-            },
-            child: const Text('Show Word Size')),
+            child: Text(widget.controller.menus15C
+                ? 'Full display of SCI 9'
+                : 'Enable Window')),
+        ...(widget.controller.menus15C
+            ? []
+            : [
+                CheckedPopupMenuItem(
+                    checked: settings.hideComplement,
+                    value: () {
+                      settings.hideComplement = !settings.hideComplement;
+                      display.update();
+                    },
+                    child: const Text('Hide Complement Status')),
+                CheckedPopupMenuItem(
+                    checked: settings.showWordSize,
+                    value: () {
+                      settings.showWordSize = !settings.showWordSize;
+                      display.update();
+                    },
+                    child: const Text('Show Word Size')),
+              ]),
         CheckedPopupMenuItem(
             checked: settings.showAccelerators.value,
             value: () {

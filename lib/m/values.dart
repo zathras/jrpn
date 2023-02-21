@@ -212,7 +212,8 @@ class Value {
     return mantissa;
   }
 
-  double get asDouble => _mantissa.toDouble() * pow(10.0, (exponent - 9).toDouble());
+  double get asDouble =>
+      _mantissa.toDouble() * pow(10.0, (exponent - 9).toDouble());
 
   String get floatPrefix {
     final sb = StringBuffer();

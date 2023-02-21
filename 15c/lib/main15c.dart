@@ -2117,7 +2117,7 @@ class Controller15 extends RealController {
   Operation get multOp => Operations15.mult;
 
   @override
-  String? get windowMenuName => 'Full display of SCI 9';
+  bool get menus15C => true;
 }
 
 //

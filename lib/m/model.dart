@@ -925,9 +925,6 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ///
   void reset() {
     settings._reset();
-    displayMode = DisplayMode.hex;
-    integerSignMode = SignMode.twosComplement;
-    wordSize = 16;
     for (int i = 0; i < _stack.length; i++) {
       _stack[i] = Value.zero;
     }

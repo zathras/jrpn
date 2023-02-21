@@ -300,10 +300,9 @@ abstract class RealController extends Controller {
       BuildContext context, ScreenPositioner screen);
 
   ///
-  /// If overriden, the sense of the checkmark is changed, too.  The 15C
-  /// does this.
+  /// Some menus change on the 15C (e.g. settings)
   ///
-  String? get windowMenuName => null;
+  bool get menus15C => false;
 }
 
 ///
