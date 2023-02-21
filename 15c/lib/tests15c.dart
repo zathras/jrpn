@@ -116,6 +116,20 @@ class SelfTests15 extends SelfTests {
           m, Operations15.reciprocal15, 0.01, 100, Operations15.reciprocal15);
       await _testTwoArgFloat(
           m, Operations15.deltaPercent, 5.678, 1.234, 360.1296596);
+
+      await _testOneArgFloat(m, Operations15.fracOp, 2.37, 0.37);
+      await _testOneArgFloat(m, Operations15.fracOp, -2.37, -0.37);
+      await _testOneArgFloat(m, Operations15.fracOp, 2.37e54, 0);
+      await _testOneArgFloat(m, Operations15.fracOp, -2.37e54, 0);
+      await _testOneArgFloat(m, Operations15.fracOp, 2.37e-54, 2.37e-54);
+      await _testOneArgFloat(m, Operations15.fracOp, -2.37e-54, -2.37e-54);
+
+      await _testOneArgFloat(m, Operations15.intOp, 2.37, 2);
+      await _testOneArgFloat(m, Operations15.intOp, -2.37, -2);
+      await _testOneArgFloat(m, Operations15.intOp, 2.37e54, 2.37e54);
+      await _testOneArgFloat(m, Operations15.intOp, -2.37e54, -2.37e54);
+      await _testOneArgFloat(m, Operations15.intOp, -2.37e-54, 0);
+      await _testOneArgFloat(m, Operations15.intOp, 2.37e-54, 0);
     });
   }
 

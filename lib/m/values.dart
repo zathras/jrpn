@@ -194,7 +194,7 @@ class Value {
   /// Interpret this value as a floating point, and convert to a double.
   /// There is no corresponding asInt method, because the int interpretation
   /// depends on the bit size and the sign mode - cf. IntegerSignMode.toBigInt()
-  double get asDouble {
+  int get _mantissa {
     final BigInt upper52 = _upper52;
     int mantissa = 0;
     for (int d = 0; d < 10; d++) {
@@ -209,8 +209,10 @@ class Value {
         throw CalculatorError(6, num15: 1);
       }
     }
-    return mantissa.toDouble() * pow(10.0, (exponent - 9).toDouble());
+    return mantissa;
   }
+
+  double get asDouble => _mantissa.toDouble() * pow(10.0, (exponent - 9).toDouble());
 
   String get floatPrefix {
     final sb = StringBuffer();
@@ -281,5 +283,15 @@ class Value {
     final r = ((internal >> 4 * (12 - digit)) & _maskF).toInt();
     assert(r <= 9 && r >= 0);
     return r;
+  }
+
+  Value fracOp() {
+    final e = exponent;
+    throw "@@ TODO";
+  }
+
+  Value intOp() {
+    final e = exponent;
+    throw "@@ TODO";
   }
 }

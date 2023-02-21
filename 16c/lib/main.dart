@@ -434,13 +434,12 @@ class Operations16 extends Operations {
 
   static final NormalOperation div = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
-        try {
-          m.floatOverflow = false;
-          m.popSetResultXF = m.yF / m.xF;
-          // ignore: avoid_catches_without_on_clauses
-        } catch (e) {
+        final x = m.xF;
+        if (x == 0) {
           throw CalculatorError(0);
         }
+        m.floatOverflow = false;
+        m.popSetResultXF = m.yF / x;
       },
       intCalc: (Model m) {
         try {

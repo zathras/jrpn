@@ -1252,7 +1252,7 @@ class DisplayModel {
   final Model model;
   String _current;
   int _window = 0; // Number of digits scrolled off the right side
-  bool _suspendWindow = false;
+  bool _showingX = true;
   final Observable<LcdContents> _lastShown;
   bool get ignoreUpdates => model.displayDisabled;
 
@@ -1266,12 +1266,12 @@ class DisplayModel {
 
   set current(String v) {
     _current = v;
-    _suspendWindow = true;
+    _showingX = false;
   }
 
-  set currentWithWindow(String v) {
+  set currentShowingX(String v) {
     _current = v;
-    _suspendWindow = false;
+    _showingX = true;
   }
 
   String get currentWithoutWindow => model.isFloatMode ? current : _current;
@@ -1290,7 +1290,7 @@ class DisplayModel {
         // If, for example, the base changed out from under us, like in
         // https://github.com/zathras/jrpn/issues/12
       }
-      final int window = (_suspendWindow) ? 0 : _window;
+      final int window = (_showingX) ? _window : 0;
       final int count = _numDigits;
       if (count <= 8) {
         return _current;
@@ -1378,6 +1378,10 @@ class DisplayModel {
     if (ignoreUpdates) {
       return;
     }
+    if (_showingX) {
+      currentShowingX = model.formatValue(model.x);
+      // In case window enabled setting changed
+    }
     final LcdContents c = (blink == BlinkMode.justDigits)
         ? model._newLcdContentsJustDigits()
         : model._newLcdContents(disableWindow: disableWindow);
@@ -1418,7 +1422,7 @@ class DisplayModel {
     final String newNumber = model.formatValue(model.x);
     if (delayed) {
       final initial = model._newLcdContents(disableWindow: disableWindow);
-      currentWithWindow = newNumber;
+      currentShowingX = newNumber;
       final delayed = model._newLcdContents(disableWindow: false);
       final t = Timer(const Duration(milliseconds: 1400), () {
         show(delayed);
@@ -1427,7 +1431,7 @@ class DisplayModel {
       initial._myTimer = t;
       show(initial);
     } else {
-      currentWithWindow = newNumber;
+      currentShowingX = newNumber;
       update(flash: flash, disableWindow: disableWindow);
     }
   }

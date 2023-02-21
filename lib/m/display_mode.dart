@@ -430,7 +430,8 @@ class _FloatMode extends DisplayMode {
   /// (or a '-' for a negative exponent) - we always provide a two-digit
   /// exponent with a sign, like "E+07'.
   @override
-  String format(Value v, Model m) => addCommas(_formatter.format(v));
+  String format(Value v, Model m) =>
+      addCommas(_formatter.format(v, m.settings.windowEnabled));
 
   @override
   int get hashCode => Object.hash(_jsonName, _formatter);
@@ -528,7 +529,7 @@ abstract class FloatFormatter {
       digits = dpOffset + 1;
     }
 
-    final sp = '       '.substring(digits);
+    final sp = '       '.substring(min(digits, 7));
     final eSign = shownExp >= 0 ? '+' : '-';
     shownExp = shownExp.abs();
     return '$minus${m.substring(0, 1 + dpOffset)}.${m.substring(dpOffset + 1)}'
@@ -570,7 +571,7 @@ abstract class FloatFormatter {
     return '$minus${mantissa.substring(0, i)}.${mantissa.substring(i)}$sp';
   }
 
-  String format(Value v);
+  String format(Value v, bool windowEnabled);
 
   ///
   /// See [DisplayMode.leastSignificantDigit]
@@ -596,7 +597,10 @@ class SciFloatFormatter extends FloatFormatter {
   String get _jsonName => 's$fractionDigits';
 
   @override
-  String format(Value v) => formatScientific(v, fractionDigits + 1);
+  String format(Value v, bool windowEnabled) {
+    return formatScientific(
+        v, windowEnabled ? min(7, fractionDigits + 1) : fractionDigits + 1);
+  }
 }
 
 @immutable
@@ -609,9 +613,10 @@ class FixFloatFormatter extends FloatFormatter {
   String get _jsonName => 'x$fractionDigits';
 
   @override
-  String format(Value v) =>
+  String format(Value v, bool windowEnabled) =>
       formatFixed(v, fractionDigits) ??
-      formatScientific(v, min(6, fractionDigits + 1));
+      formatScientific(
+          v, windowEnabled ? min(7, fractionDigits + 1) : fractionDigits + 1);
 
   @override
   int leastSignificantDigit(double value) {
@@ -639,8 +644,9 @@ class _Fix16FloatFormatter extends FixFloatFormatter {
   String get _jsonName => 'f$fractionDigits';
 
   @override
-  String format(Value v) =>
-      formatFixed(v, fractionDigits) ?? formatScientific(v, 7);
+  String format(Value v, windowEnabled) =>
+      formatFixed(v, fractionDigits) ??
+      formatScientific(v, windowEnabled ? 7 : max(7, fractionDigits + 1));
 }
 
 ///
@@ -649,7 +655,7 @@ class _Fix16FloatFormatter extends FixFloatFormatter {
 ///
 @immutable
 class _Sci16FloatFormatter extends SciFloatFormatter {
-  const _Sci16FloatFormatter() : super(6);
+  const _Sci16FloatFormatter() : super(9);
 
   @override
   String get _jsonName => 'f10';

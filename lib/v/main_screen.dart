@@ -484,7 +484,7 @@ class _MainMenuState extends State<MainMenu> {
                 value: () {},
                 child: _StateMenu('Calculator State', widget.main.app)),
             PopupMenuItem(
-                value: () {}, child: _SettingsMenu('Settings', model)),
+                value: () {}, child: _SettingsMenu('Settings', model, controller)),
             // PopupMenuDivider(),
             PopupMenuItem(
                 value: () {},
@@ -585,7 +585,8 @@ Widget _showNonWarranty(BuildContext context) => AlertDialog(
 class _SettingsMenu extends StatefulWidget {
   final String title;
   final Model model;
-  const _SettingsMenu(this.title, this.model, {Key? key}) : super(key: key);
+  final RealController controller;
+  const _SettingsMenu(this.title, this.model, this.controller, {Key? key}) : super(key: key);
 
   @override
   __SettingsMenuState createState() => __SettingsMenuState();
@@ -614,12 +615,12 @@ class __SettingsMenuState extends State<_SettingsMenu> {
             },
             child: const Text('Show Menu Icon')),
         CheckedPopupMenuItem(
-            checked: settings.windowEnabled,
+            checked: widget.controller.windowMenuName == null ? settings.windowEnabled : !settings.windowEnabled,
             value: () {
               settings.windowEnabled = !settings.windowEnabled;
               display.update();
             },
-            child: const Text('Enable Window')),
+            child: Text(widget.controller.windowMenuName ?? 'Enable Window')),
         CheckedPopupMenuItem(
             checked: settings.hideComplement,
             value: () {

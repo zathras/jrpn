@@ -298,6 +298,12 @@ abstract class RealController extends Controller {
 
   PortraitButtonFactory getPortraitButtonFactory(
       BuildContext context, ScreenPositioner screen);
+
+  ///
+  /// If overriden, the sense of the checkmark is changed, too.  The 15C
+  /// does this.
+  ///
+  String? get windowMenuName => null;
 }
 
 ///

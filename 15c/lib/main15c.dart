@@ -963,12 +963,12 @@ class Operations15 extends Operations {
 
   static final NormalOperation fracOp = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.resultX = m.x.fracOp();
       },
       name: 'FRAC');
   static final NormalOperation intOp = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.resultX = m.x.intOp();
       },
       name: 'INT');
   static final userOp = NonProgrammableOperation(
@@ -2115,6 +2115,9 @@ class Controller15 extends RealController {
 
   @override
   Operation get multOp => Operations15.mult;
+
+  @override
+  String? get windowMenuName => 'Full display of SCI 9';
 }
 
 //
