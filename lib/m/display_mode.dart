@@ -156,6 +156,8 @@ abstract class DisplayMode {
   /// This is needed for the HP 15C's integrate function.
   ///
   int leastSignificantDigit(double value);
+
+  Value round(Value x);
 }
 
 abstract class IntegerDisplayMode extends DisplayMode {
@@ -237,6 +239,9 @@ abstract class IntegerDisplayMode extends DisplayMode {
 
   @override
   int leastSignificantDigit(double value) => 1;
+
+  @override
+  Value round(Value x) => x;
 }
 
 abstract class _Pow2IntegerMode extends IntegerDisplayMode {
@@ -446,6 +451,9 @@ class _FloatMode extends DisplayMode {
   @override
   int leastSignificantDigit(double value) =>
       _formatter.leastSignificantDigit(value);
+
+  @override
+  Value round(Value x) => _formatter.round(x);
 }
 
 class _ComplexMode extends _FloatMode {
@@ -560,10 +568,8 @@ abstract class FloatFormatter {
       return null;
     }
     int i = mantissa.length - fractionDigits;
-    if (i < 0) {
-      return null;
-    } else if (i == 0) {
-      mantissa = '0$mantissa';
+    if (i <= 0) {
+      mantissa = '${''.padLeft(1 - i, '0')}$mantissa';
       i = 1;
     }
     String minus = v.mantissaDigit(-1) == 9 ? '-' : '';
@@ -585,6 +591,8 @@ abstract class FloatFormatter {
       return -fractionDigits;
     }
   }
+
+  Value round(Value v);
 }
 
 @immutable
@@ -600,6 +608,15 @@ class SciFloatFormatter extends FloatFormatter {
   String format(Value v, bool windowEnabled) {
     return formatScientific(
         v, windowEnabled ? min(7, fractionDigits + 1) : fractionDigits + 1);
+  }
+
+  @override
+  Value round(Value v) {
+    final d = double.parse(v.asDouble.toStringAsExponential(fractionDigits));
+    if (d >= 1e100 || d <= -1e100) {
+      return v;
+    }
+    return Value.fromDouble(d);
   }
 }
 
@@ -627,6 +644,18 @@ class FixFloatFormatter extends FloatFormatter {
       }
     }
     return -fractionDigits;
+  }
+
+  @override
+  Value round(Value v) {
+    if (v.exponent >= 9) {
+      return v;
+    }
+    final s = formatFixed(v, fractionDigits);
+    if (s == null) {
+      return Value.zero;
+    }
+    return Value.fromDouble(double.parse(s.trim()));
   }
 }
 

@@ -1829,6 +1829,76 @@ class AdvancedFunctionTests {
     expect(model.yF.abs() < 0.00005, true);
   }
 
+  // Misc.
+  Future<void> _misc2() async {
+    final l = layout;
+    model.userMode = false;
+    for (final sign in [-1.0, 1.0]) {
+      for (final roundMode in [l.n7, l.n8, l.n9]) {
+        // FIX, SCI, ENG
+        _play([l.fShift, roundMode, l.n1]);
+        model.xF = sign * 1.234567891;
+        _play([l.gShift, l.xy]); // round
+        expect(model.x, Value.fromDouble(sign * 1.2));
+        model.xF = sign * 1.294567891;
+        _play([l.gShift, l.xy]); // round
+        expect(model.x, Value.fromDouble(sign * 1.3));
+        model.xF = sign * 9.999999998e99;
+        _play([l.gShift, l.xy]); // round
+        expect(model.x, Value.fromDouble(sign * 9.999999998e99));
+      }
+      _play([l.fShift, l.n7, l.n2]); // FIX 2
+      model.xF = sign * 12.34567891;
+      _play([l.gShift, l.xy]); // round
+      expect(model.x, Value.fromDouble(sign * 12.35));
+      model.xF = sign * 12.34467891;
+      _play([l.gShift, l.xy]); // round
+      expect(model.x, Value.fromDouble(sign * 12.34));
+      model.xF = sign * 0.1235467891;
+      _play([l.gShift, l.xy]); // round
+      expect(model.x, Value.fromDouble(sign * 0.12));
+      model.xF = sign * 0.1255467891;
+      _play([l.gShift, l.xy]); // round
+      expect(model.x, Value.fromDouble(sign * 0.13));
+      model.xF = sign * 9.999999998e98;
+      _play([l.gShift, l.xy]); // round
+      expect(model.x, Value.fromDouble(sign * 9.999999998e98));
+      model.xF = sign * 1.2345668e-32;
+      _play([l.gShift, l.xy]); // round
+      expect(model.x, Value.zero);
+      model.xF = sign * 0.005;
+      _play([l.gShift, l.xy]); // round
+      expect(model.x, Value.fromDouble(sign * 0.01));
+      model.xF = sign * 0.004999999999;
+      _play([l.gShift, l.xy]); // round
+      expect(model.x, Value.zero);
+      for (final roundMode in [l.n8, l.n9]) {
+        // SCI, ENG
+        for (final mult in [
+          1.0,
+          10.0,
+          100.0,
+          1000.0,
+          10000.0,
+          1e70,
+          1e-70,
+          1e71,
+          1e-71,
+          1e72,
+          1e-72
+        ]) {
+          _play([l.fShift, roundMode, l.n3]);
+          model.xF = sign * 1.234567891 * mult;
+          _play([l.gShift, l.xy]); // round
+          expect(model.x, Value.fromDouble(sign * 1.235 * mult));
+          model.xF = sign * 1.234499999 * mult;
+          _play([l.gShift, l.xy]); // round
+          expect(model.x, Value.fromDouble(sign * 1.234 * mult));
+        }
+      }
+    }
+  }
+
   Future<void> runWithComplex(bool complex) async {
     model.isComplexMode = complex;
     await _ch12();
@@ -1856,6 +1926,7 @@ class AdvancedFunctionTests {
     await runWithComplex(true);
     await _ch13();
     await _ch14();
+    await _misc2();
   }
 
   void expectMatrix(AMatrix m, AMatrix expected, [double epsilon = 0]) {

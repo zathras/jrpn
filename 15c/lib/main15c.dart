@@ -832,7 +832,7 @@ class Operations15 extends Operations {
       name: 'CLEAR-E');
   static final NormalOperation rnd = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.resultX = m.displayMode.round(m.x);
       },
       name: 'RND');
   static final NormalOperation ranNum = NormalOperation.floatOnly(
@@ -840,7 +840,6 @@ class Operations15 extends Operations {
       floatCalc: (Model m) {
         m.resultXF = (m as Model15).rand.nextValue;
       },
-      // TODO:  Store random seed
       name: 'RAN #');
   static final NormalOperation toR = NormalOperation.floatOnly(
       floatCalc: (Model m) {
