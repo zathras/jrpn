@@ -48,8 +48,8 @@ class Value {
   /// The calculator's internal representation of a value, as an *unsigned*
   /// integer of (up to) 64 bits in normal operation (128 for the double
   /// integer operations).  It's a BigInt rather than an int because
-  /// Javascript Is Evil (tm).  That said, it does let us handle the double
-  /// integer operations easily.
+  /// Javascript Is Evil (tm).  That said, using BigInt does let us handle the
+  /// double integer operations easily.
   final BigInt internal;
   static final BigInt _maxNormalInternal =
       BigInt.parse('ffffffffffffffff', radix: 16);
@@ -98,6 +98,8 @@ class Value {
   static final BigInt _mask52 = (BigInt.one << 52) - BigInt.one;
   static final BigInt _maskF = BigInt.from(0xf);
   static final BigInt _mantissaSign = BigInt.parse('90000000000', radix: 16);
+  static final BigInt _mantissaMagnitude =
+      BigInt.parse('ffffffffff', radix: 16);
 
   static final BigInt _matrixMantissa = BigInt.parse('a111eeeeeee', radix: 16);
   // Not a valid float.  Also, matrices are painful, and vaguely French.
@@ -194,26 +196,20 @@ class Value {
   /// Interpret this value as a floating point, and convert to a double.
   /// There is no corresponding asInt method, because the int interpretation
   /// depends on the bit size and the sign mode - cf. IntegerSignMode.toBigInt()
-  int get _mantissa {
+  double get asDouble {
     final BigInt upper52 = _upper52;
-    int mantissa = 0;
-    for (int d = 0; d < 10; d++) {
-      mantissa *= 10;
-      mantissa += ((upper52 >> 36 - (d * 4)) & _maskF).toInt();
-    }
+    String mantissa = (upper52 & _mantissaMagnitude).toRadixString(16);
     final int sign = (upper52 >> 40).toInt();
+    double m = double.parse(mantissa);
     if (sign != 0) {
       if (sign == 0x9) {
-        mantissa = -mantissa;
+        m = -m;
       } else {
         throw CalculatorError(6, num15: 1);
       }
     }
-    return mantissa;
+    return m * pow(10.0, (exponent - 9).toDouble());
   }
-
-  double get asDouble =>
-      _mantissa.toDouble() * pow(10.0, (exponent - 9).toDouble());
 
   String get floatPrefix {
     final sb = StringBuffer();
@@ -287,12 +283,38 @@ class Value {
   }
 
   Value fracOp() {
-    final e = exponent;
-    throw "@@ TODO";
+    if (asMatrix != null) {
+      throw CalculatorError(1);
+    }
+    final int e = exponent;
+    if (e > 9) {
+      return zero;
+    } else if (e < 0) {
+      return this;
+    }
+    final BigInt u = _upper52;
+    final BigInt mag = (u << ((e + 1) * 4)) & _mantissaMagnitude;
+    if ((u & _mantissaSign) == BigInt.zero) {
+      return Value._fromMantissaAndExponent(mag, 0x999); // 0x999 is -1
+    } else {
+      return Value._fromMantissaAndExponent(mag | _mantissaSign, 0x999);
+    }
   }
 
   Value intOp() {
+    if (asMatrix != null) {
+      throw CalculatorError(1);
+    }
     final e = exponent;
-    throw "@@ TODO";
+    if (e < 0) {
+      return zero;
+    } else if (e > 9) {
+      return this;
+    }
+    final BigInt u = _upper52;
+    final mask = 'fffffffffff'.substring(9 - e).padRight(11, '0');
+    // mask includes sign
+    final BigInt m = BigInt.parse(mask, radix: 16);
+    return Value._fromMantissaAndExponent(u & m, e);
   }
 }
