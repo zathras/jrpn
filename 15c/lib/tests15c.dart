@@ -130,6 +130,49 @@ class SelfTests15 extends SelfTests {
       await _testOneArgFloat(m, Operations15.intOp, -2.37e54, -2.37e54);
       await _testOneArgFloat(m, Operations15.intOp, -2.37e-54, 0);
       await _testOneArgFloat(m, Operations15.intOp, 2.37e-54, 0);
+
+      for (final sign in [1.0, -1.0]) {
+        await _testOneArgFloat(m, Operations15.toH, sign * 1.2345,
+            sign * 1.395833333, Operations15.toHMS);
+        await _testOneArgFloat(
+            m, Operations15.toH, sign * 1.6789, sign * 2.141388889);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 2.141388889, sign * 2.0829);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 2.141388889, sign * 2.0829);
+        await _testOneArgFloat(m, Operations15.toH, sign * 1.595999999,
+            sign * 1.999999997, Operations15.toHMS);
+        // The following three are verified on a physical 15C.  59.999996
+        // is rounded to 59.99999, and not 60.00000, even though 6 >= 5.
+        // In general, it never rounds up to 60 (or up to 6, where only the
+        // tens digit is available).
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 1.999999999, sign * 1.595999999);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 99999999.99, sign * 99999999.59);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 999999999.9, sign * 999999999.5);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 999999.9999, sign * 999999.5959);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 9999999.999, sign * 9999999.595);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 99999.99999, sign * 99999.59599);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 1.666666667e-2, sign * 0.01);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 1.666666666e-2, sign * 0.01);
+        await _testOneArgFloat(m, Operations15.toHMS, sign * 1.666666665e-2,
+            sign * 0.005999999990); // 15C gives 0:00:59.99999990
+        await _testOneArgFloat(m, Operations15.toHMS, sign * 1.666666664e-2,
+            sign * 0.005999999990);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 123456789.9, sign * 123456789.5);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 1234567891, sign * 1234567891);
+        await _testOneArgFloat(
+            m, Operations15.toHMS, sign * 0.9999999999, sign * 0.5959999999);
+      }
     });
   }
 

@@ -867,16 +867,10 @@ class Operations15 extends Operations {
             atan2(v.imaginary, v.real) / m.trigMode.scaleFactor);
       },
       name: '->P');
-  static final NormalOperation toHMS = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: '->H.MS');
-  static final NormalOperation toH = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
-      },
-      name: '->H');
+  static final NormalOperation toHMS =
+      NormalOperation.floatOnly(floatCalc: convertHtoHMS, name: '->H.MS');
+  static final NormalOperation toH =
+      NormalOperation.floatOnly(floatCalc: convertHMStoH, name: '->H');
   static final NormalOperation toRad = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         throw "@@ TODO";

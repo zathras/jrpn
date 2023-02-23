@@ -123,3 +123,88 @@ double binomialCoefficient(double nr, double kr) {
   }
   return c[k];
 }
+
+void convertHMStoH(Model m) {
+  final Value hr = m.x;
+  final Value min = Value.fromDouble(hr.fracOp().asDouble * 100);
+  final double sec = min.fracOp().asDouble * 100;
+  m.resultX = Value.fromDouble(
+      hr.intOp().asDouble + (min.intOp().asDouble + sec / 60) / 60);
+}
+
+void convertHtoHMS(Model m) {
+  Value round(Value v, int digits) => FixFloatFormatter(digits).round(v);
+
+  final Value hr = m.x.intOp();
+  final int hrDigits = (hr == Value.zero) ? 0 : (hr.exponent + 1);
+  if (hrDigits >= 10) {
+    m.resultX = m.x;
+    return;
+  }
+  Value min = Value.fromDouble(m.x.fracOp().asDouble * 60);
+  int digitsLeft = 10 - hrDigits; // 1..10
+  if (hrDigits == 0 && min.intOp() == Value.zero) {
+    final sec = round(Value.fromDouble(min.asDouble * 60), 7);
+    final secD = sec.asDouble;
+    if (secD >= 60.0) {
+      m.resultX = Value.fromDouble(0.01);
+    } else if (secD <= -60.0) {
+      m.resultX = Value.fromDouble(-0.01);
+    } else {
+      m.resultX = Value.fromDouble(secD).timesTenTo(-4);
+    }
+    return;
+  }
+  // >= 1 minute
+  if (digitsLeft != 10) {
+    min = round(min.timesTenTo(-2), digitsLeft).timesTenTo(2);
+  }
+  final minD = min.intOp().asDouble;
+  if (minD.abs() >= 60.0) {
+    // I believe this branch is impossible, but just to be extra paranoid...
+    final minSec = "0.5959999999".substring(0, 2 + digitsLeft);
+    if (minD > 0) {
+      m.resultX = Value.fromDouble(hr.asDouble + double.parse(minSec));
+    } else {
+      m.resultX = Value.fromDouble(hr.asDouble - double.parse(minSec));
+    }
+    return;
+  }
+  digitsLeft -= 2;
+  assert(minD <= 59 && minD >= -59);
+  if (digitsLeft <= 0) {
+    m.resultX = Value.fromDouble(hr.asDouble + min.timesTenTo(-2).asDouble);
+    return;
+  }
+  Value sec = Value.fromDouble(min.fracOp().asDouble * 60);
+  if (digitsLeft == 1) {
+    final tensSec = round(sec.timesTenTo(-1), 0).asDouble; // tens of seconds
+    if (tensSec.abs() >= 6) {
+      // I believe this branch is impossible, too.
+      if (tensSec > 0) {
+        m.resultX = Value.fromDouble(hr.asDouble + minD / 100 + 0.005);
+      } else {
+        m.resultX = Value.fromDouble(hr.asDouble + minD / 100 - 0.005);
+      }
+    } else {
+      m.resultX = Value.fromDouble(hr.asDouble + minD / 100 + tensSec / 1000);
+    }
+    return;
+  }
+  digitsLeft -= 2;
+  assert(digitsLeft >= 0);
+  final secD = round(sec, digitsLeft).asDouble;
+  if (secD.abs() >= 60) {
+    // I believe this branch is impossible, but I'm still paranoid.
+    final secStr = "0.0059999999".substring(0, 4 + digitsLeft);
+    if (secD > 0) {
+      m.resultX =
+          Value.fromDouble(hr.asDouble + minD / 100 + double.parse(secStr));
+    } else {
+      m.resultX =
+          Value.fromDouble(hr.asDouble + minD / 100 - double.parse(secStr));
+    }
+  } else {
+    m.resultX = Value.fromDouble(hr.asDouble + minD / 100 + secD / 10000);
+  }
+}

@@ -60,8 +60,9 @@ class Value {
     assert(internal >= BigInt.zero);
   }
 
-  Value._fromMantissaAndExponent(BigInt mantissa, int exponent)
+  Value._fromMantissaAndRawExponent(BigInt mantissa, int exponent)
       : internal = (mantissa << 12) | BigInt.from(exponent) {
+    assert(exponent >= 0, 'Exponent must be tens complement');
     // Assert a valid float bit pattern by throwing CaclulatorError(6)
     // if malformed.
     // In production, asDouble can legitimately throw this error when a
@@ -85,9 +86,9 @@ class Value {
   /// Zero for both floats and ints
   static final Value zero = Value.fromInternal(BigInt.from(0));
   static final Value oneF = Value.fromDouble(1);
-  static final Value fMaxValue = Value._fromMantissaAndExponent(
+  static final Value fMaxValue = Value._fromMantissaAndRawExponent(
       BigInt.parse('09999999999', radix: 16), 0x099);
-  static final Value fMinValue = Value._fromMantissaAndExponent(
+  static final Value fMinValue = Value._fromMantissaAndRawExponent(
       BigInt.parse('99999999999', radix: 16), 0x099);
   static final Value fInfinity =
       Value.fromInternal(BigInt.parse('0100000000009a', radix: 16));
@@ -170,7 +171,7 @@ class Value {
       // -0.0, which the real calculator doesn't distinguish from 0.0
       mantissa = BigInt.zero;
     }
-    return Value._fromMantissaAndExponent(mantissa, exponent);
+    return Value._fromMantissaAndRawExponent(mantissa, exponent);
   }
 
   Value.fromMatrix(int matrixNumber)
@@ -243,7 +244,8 @@ class Value {
     if (this == zero) {
       return this;
     } else {
-      return Value._fromMantissaAndExponent(_mantissaSign ^ _upper52, _lower12);
+      return Value._fromMantissaAndRawExponent(
+          _mantissaSign ^ _upper52, _lower12);
     }
   }
 
@@ -274,13 +276,15 @@ class Value {
 
   ///
   /// Give one digit of the mantissa, where 0 is the MSD, and 9 is the LSD.
-  /// -1 gives the carry digit (9 is negative, 0 is positive).
+  /// -1 gives the sign digit (9 is negative, 0 is positive).
   int mantissaDigit(int digit) {
     assert(digit >= -1 && digit <= 9);
     final r = ((internal >> 4 * (12 - digit)) & _maskF).toInt();
     assert(r <= 9 && r >= 0);
     return r;
   }
+
+  bool get isPositive => mantissaDigit(-1) == 0;
 
   Value fracOp() {
     if (asMatrix != null) {
@@ -295,9 +299,9 @@ class Value {
     final BigInt u = _upper52;
     final BigInt mag = (u << ((e + 1) * 4)) & _mantissaMagnitude;
     if ((u & _mantissaSign) == BigInt.zero) {
-      return Value._fromMantissaAndExponent(mag, 0x999); // 0x999 is -1
+      return Value._fromMantissaAndRawExponent(mag, 0x999); // 0x999 is -1
     } else {
-      return Value._fromMantissaAndExponent(mag | _mantissaSign, 0x999);
+      return Value._fromMantissaAndRawExponent(mag | _mantissaSign, 0x999);
     }
   }
 
@@ -315,6 +319,35 @@ class Value {
     final mask = 'fffffffffff'.substring(9 - e).padRight(11, '0');
     // mask includes sign
     final BigInt m = BigInt.parse(mask, radix: 16);
-    return Value._fromMantissaAndExponent(u & m, e);
+    return Value._fromMantissaAndRawExponent(u & m, e);
+  }
+
+  bool get isNegative => mantissaDigit(-1) == 9;
+
+  int _intToRawExponent(int e) {
+    bool negative = e < 0;
+    e = e.abs();
+    assert(e <= 99);
+    int rawE = ((e ~/ 10) * 0x10) | (e % 10);
+    if (negative) {
+      rawE = 0x99a - rawE;
+    }
+    return rawE;
+  }
+
+  Value timesTenTo(int power) {
+    assert(asMatrix == null);
+    final e = exponent + power;
+    if (e >= 100) {
+      if (mantissaDigit(-1) == 0) {
+        return fInfinity;
+      } else {
+        return fNegativeInfinity;
+      }
+    } else if (e <= -100) {
+      return zero;
+    } else {
+      return Value._fromMantissaAndRawExponent(_upper52, _intToRawExponent(e));
+    }
   }
 }

@@ -453,7 +453,12 @@ class _FloatMode extends DisplayMode {
       _formatter.leastSignificantDigit(value);
 
   @override
-  Value round(Value x) => _formatter.round(x);
+  Value round(Value x) {
+    if (x.asMatrix != null) {
+      throw CalculatorError(1);
+    }
+    return _formatter.round(x);
+  }
 }
 
 class _ComplexMode extends _FloatMode {
@@ -549,6 +554,8 @@ abstract class FloatFormatter {
 
   @protected
   String? formatFixed(Value v, int fractionDigits) {
+    assert(fractionDigits >= 0 && fractionDigits < 11);
+    // 10 is possible, when this is used for ->H.MS
     int exp = v.exponent;
     // First, try assuming no carry
     int mantissaDigits = min(10, exp + fractionDigits + 1);
@@ -564,7 +571,7 @@ abstract class FloatFormatter {
       return null;
     }
     fractionDigits = mantissa.length - exp - 1;
-    if (fractionDigits < 0 || fractionDigits > 9) {
+    if (fractionDigits < 0 || fractionDigits > 10) {
       return null;
     }
     int i = mantissa.length - fractionDigits;
@@ -573,7 +580,8 @@ abstract class FloatFormatter {
       i = 1;
     }
     String minus = v.mantissaDigit(-1) == 9 ? '-' : '';
-    final sp = '         '.substring(mantissa.length - 1);
+    final sp = '         '.substring(min(9, mantissa.length - 1));
+    // If eleven total digits (like 0.0100000000), don't blow up
     return '$minus${mantissa.substring(0, i)}.${mantissa.substring(i)}$sp';
   }
 
