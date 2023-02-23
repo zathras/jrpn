@@ -172,6 +172,13 @@ class SelfTests15 extends SelfTests {
             m, Operations15.toHMS, sign * 1234567891, sign * 1234567891);
         await _testOneArgFloat(
             m, Operations15.toHMS, sign * 0.9999999999, sign * 0.5959999999);
+
+        await _testOneArgFloat(m, Operations15.toRad, sign * 100,
+            sign * 1.745329252, Operations15.toDeg);
+        await _testOneArgFloat(
+            m, Operations15.toDeg, sign * 42.1, sign * 2412.152318);
+        await _testOneArgFloat(m, Operations15.toRad, sign * 2412.152318,
+            sign * 42.10000001, Operations15.toDeg); // Matches 15C
       }
     });
   }
@@ -285,6 +292,20 @@ class SelfTests15 extends SelfTests {
           const Complex(0.15, 0.25),
           const Complex(1.764705882, -2.941176471),
           Operations15.reciprocal15);
+
+      m.isComplexMode = false;
+      m.xF = 12.34;
+      Operations15.reImSwap.floatCalc!(m);
+      await expect(m.xF, 0);
+      await expect(m.xImaginary.asDouble, 12.34);
+      await expect(m.xC, const Complex(0, 12.34));
+      m.xC = Complex(56.78, m.xImaginary.asDouble);
+      Operations15.reImSwap.complexCalc!(m);
+      await expect(m.xF, 12.34);
+      await expect(m.xImaginary.asDouble, 56.78);
+      await expect(m.xC, const Complex(12.34, 56.78));
+
+      await expect(m.isComplexMode, true);
     });
   }
 

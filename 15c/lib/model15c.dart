@@ -77,6 +77,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
     }
     memory.program.suspendedProgram?.abort();
     memory.program.suspendedProgram = null;
+    assert(memory.program.runner == null);
     memory.program.runner?.abort(); // Should be null, but be conservative
     memory.program.runner = null;
     memory.numRegisters = 20;

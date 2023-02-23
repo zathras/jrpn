@@ -1897,6 +1897,17 @@ class AdvancedFunctionTests {
         }
       }
     }
+    return; // @@@@ TODO
+    model.xF = 42;
+    _play([l.fShift, l.sin, l.cos]); // f DIM (i)
+    model.setXYZT(Value.zero);
+    _play([l.rcl, l.sin, l.cos]); // RCL DIM (i)
+    expect(model.xF, 42);
+    model.xF = 19;
+    _play([l.fShift, l.sin, l.fShift, l.cos]); // f DIM (i)
+    model.setXYZT(Value.zero);
+    _play([l.rcl, l.fShift, l.sin, l.fShift, l.cos]); // RCL DIM (i)
+    expect(model.xF, 19);
   }
 
   Future<void> runWithComplex(bool complex) async {

@@ -743,10 +743,11 @@ class Operations15 extends Operations {
             key: Operations15.I15,
             child: ArgDone(
                 (m) => _dim(m, m.memory.registers.index.asMatrix ?? 99))),
+        // "Dimension" the number of registers:
         KeyArg(
             key: Operations15.parenI15,
-            child: ArgDone((m) =>
-                _dim(m, m.memory.registers.indirectIndex.asMatrix ?? 99))),
+            child: ArgDone((m) => (m as Model15).memory.numRegisters =
+                m.x.intOp().asDouble.abs().toInt() + 1)),
       ]),
       name: 'DIM');
 
@@ -873,17 +874,20 @@ class Operations15 extends Operations {
       NormalOperation.floatOnly(floatCalc: convertHMStoH, name: '->H');
   static final NormalOperation toRad = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.resultXF = m.xF * dart.pi / 180;
       },
       name: '->RAD');
   static final NormalOperation toDeg = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        m.resultXF = 180 * m.xF / dart.pi;
       },
       name: '->DEG');
   static final NormalOperation reImSwap = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        (m as Model15).isComplexMode = true;
+        final x = m.x;
+        m.x = m.xImaginary; // Not m.resultX; don't change Last X
+        m.xImaginary = x;
       },
       name: 'Re<=>Im');
 
@@ -1296,9 +1300,8 @@ class Operations15 extends Operations {
                   })),
               KeyArg(
                   key: Operations15.parenI15,
-                  child: ArgDone((m) {
-                    // @@ TODO:  RCL DIM (i), page 216
-                  }))
+                  child: ArgDone((m) => m.resultXF =
+                      ((m as Model15).memory.numRegisters - 1).toDouble()))
             ])),
         KeyArg(
             key: Operations15.resultOp,
