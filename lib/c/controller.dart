@@ -507,6 +507,10 @@ class LimitedOperation extends NoArgOperation implements NormalOperation {
   final bool endsDigitEntry;
 
   @override
+  bool liftStackIfEnabled(Model m) => false;
+  // Some limited operations may do this via a pressed callback
+
+  @override
   final void Function(LimitedState) _pressed;
 
   LimitedOperation(
@@ -544,6 +548,9 @@ class NumberEntry extends NoArgOperation {
 
   @override
   bool get endsDigitEntry => false;
+
+  @override
+  bool liftStackIfEnabled(Model m) => false;
 
   NumberEntry(String name, this.numericValue) : super(name: name);
 
@@ -664,6 +671,10 @@ class NormalOperation extends NoArgOperation implements ArgDone {
         super(name: name);
 
   @override
+  bool liftStackIfEnabled(Model m) => false;
+  // Some operations do this via a pressed callback
+
+  @override
   void pressed(LimitedState arg) {
     final p = _pressed;
     if (p != null) {
@@ -687,6 +698,28 @@ class NormalOperation extends NoArgOperation implements ArgDone {
   void Function(Model)? getCalculation<T extends ProgramOperation>(
           Model m, DisplayModeSelector<void Function(Model)?, T> selector) =>
       m.displayMode.select(selector, this);
+}
+
+///
+/// A [NormalOperation] that might lift this stack, if enabled
+///
+class StackLiftingNormalOperation extends NormalOperation {
+  final bool Function(Model) needsStackLiftIfEnabled;
+
+  StackLiftingNormalOperation.floatOnly(
+      {required void Function(Model) floatCalc,
+      void Function(Model)? complexCalc,
+      required this.needsStackLiftIfEnabled,
+      required String name,
+      int maxOneByteOpcodes = 9999})
+      : super.floatOnly(
+            floatCalc: floatCalc,
+            complexCalc: complexCalc,
+            name: name,
+            maxOneByteOpcodes: maxOneByteOpcodes);
+
+  @override
+  bool liftStackIfEnabled(Model m) => needsStackLiftIfEnabled(m);
 }
 
 ///

@@ -204,6 +204,9 @@ class Resting extends ActiveState {
         // step.  This is needed for operations with a timeout, like the
         // 15C's STO to matrix.
         arg.handleOpBeforeCalculate(model, () => op.beforeCalculate(this));
+        if (arg.liftStackIfEnabled(model)) {
+          liftStackIfEnabled();
+        }
         f(model);
         model.display.displayX();
         op.possiblyAlterStackLift(controller);

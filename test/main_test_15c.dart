@@ -213,6 +213,100 @@ class AdvancedFunctionTests {
         model = calculator.controller.model as Model15,
         out = StreamIterator<ProgramEvent>(calculator.output.stream);
 
+  Future<void> _statistics() async {
+    final l = layout;
+    final m = model;
+    final regs = model.memory.registers;
+    final badValue = Value.fromDouble(0xdeadbeef.toDouble());
+    for (int i = 0; i < 9; i++) {
+      regs[i] = badValue;
+    }
+    _play([l.fShift, l.gsb]);  // Clear sigma
+    for (int i = 2; i <= 7; i++) {
+      expect(regs[i], Value.zero);
+    }
+    _play([l.n4, l.dot, l.n6, l.n3, l.enter, l.n0]);
+    expect(m.xF, 0);
+    _play([l.sum]);
+    expect(m.xF, 1);
+    expect(m.yF, 4.63);
+    _play([l.n4, l.dot, l.n7, l.n8]);
+    expect(m.xF, 4.78);
+    expect(m.yF, 4.63);
+    _play([l.enter, l.n2, l.n0, l.sum]);
+    expect(m.xF, 2);
+    expect(m.yF, 4.78);
+    _play([l.n6, l.dot, l.n6, l.n1, l.enter]);
+    _play([l.n4, l.n0, l.sum]);
+    expect(m.xF, 3);
+    _play([l.n7, l.dot, l.n2, l.n1, l.enter]);
+    _play([l.n6, l.n0, l.sum]);
+    expect(m.xF, 4);
+    _play([l.n7, l.dot, l.n7, l.n8, l.enter]);
+    _play([l.n8, l.n0, l.sum]);
+    expect(m.xF, 5);
+    _play([l.rcl, l.sum]);
+    expect(m.x, Value.fromDouble(200));
+    expect(m.y, Value.fromDouble(31.01));
+    expect(m.z, Value.fromDouble(7.78));
+    expect(m.t, Value.fromDouble(7.21));
+    _play([l.rcl, l.sum]);  // Check stack lift behavior
+    expect(m.x, Value.fromDouble(200));
+    expect(m.y, Value.fromDouble(31.01));
+    expect(m.z, Value.fromDouble(200));
+    expect(m.t, Value.fromDouble(31.01));
+    expect(m.memory.registers[2], Value.fromDouble(5));
+    expect(m.memory.registers[3], Value.fromDouble(200));
+    expect(m.memory.registers[4], Value.fromDouble(12000));
+    expect(m.memory.registers[5], Value.fromDouble(31.01));
+    expect(m.memory.registers[6], Value.fromDouble(200.4899));
+    expect(m.memory.registers[7], Value.fromDouble(1415));
+    _play([l.n4, l.dot, l.n7, l.n8, l.enter]);
+    _play([l.n2, l.n0, l.gShift, l.sum]);   // sigma-minus
+    expect(m.xF, 4);
+    _play([l.n5, l.dot, l.n7, l.n8, l.enter]);
+    _play([l.n2, l.n0, l.sum]);
+    expect(m.xF, 5);
+    for (final enterOrNot in [<CalculatorButton>[], [l.enter]]) {
+      _play([l.n9, l.enter, l.n8]); // Test stack lift
+      _play(enterOrNot); // Test stack lift
+      _play([l.gShift, l.n0]);  // average
+      expect(m.xF, 40);
+      expect(m.y, Value.fromDouble(6.402));
+      expect(m.z, Value.fromDouble(8));
+      expect(m.t, Value.fromDouble(9));
+
+      _play([l.n9, l.enter, l.n8]); // Test stack lift
+      _play(enterOrNot); // Test stack lift
+      _play([l.gShift, l.dot]); // standard deviation
+      expect(m.x, Value.fromDouble(31.62277660));
+      expect(m.y, Value.fromDouble(1.237121659));
+      expect(m.z, Value.fromDouble(8));
+      expect(m.t, Value.fromDouble(9));
+
+      _play([l.n9, l.enter, l.n8]); // Test stack lift
+      _play(enterOrNot); // Test stack lift
+      _play([l.fShift, l.sum]); // linear regression
+      expect(m.x, Value.fromDouble(4.856));
+      expect(m.y, Value.fromDouble(0.03865));
+      expect(m.z, Value.fromDouble(8));
+      expect(m.t, Value.fromDouble(9));
+
+      _play([l.n9, l.enter, l.n8, l.enter, l.n7, l.n0]);
+      _play(enterOrNot); // Test stack lift
+      _play([l.fShift, l.dot]); // yhat, r - estimate y
+      expect(m.x, Value.fromDouble(7.5615));
+      expect(m.y, Value.fromDouble(0.9879548276));
+      expect(m.z, Value.fromDouble(70));
+      expect(m.t, Value.fromDouble(8));
+
+      m.xF = 58.3;
+      _play([l.fShift, l.dot]); // yhat, r - estimate y
+      expect(m.x, Value.fromDouble(7.109295));
+      expect(m.y, Value.fromDouble(0.9879548276));
+    }
+  }
+
   Future<void> _page139({required bool asProgram}) async {
     model.isComplexMode = true;
     model.userMode = false;
@@ -1897,7 +1991,6 @@ class AdvancedFunctionTests {
         }
       }
     }
-    return; // @@@@ TODO
     model.xF = 42;
     _play([l.fShift, l.sin, l.cos]); // f DIM (i)
     model.setXYZT(Value.zero);
@@ -1931,6 +2024,7 @@ class AdvancedFunctionTests {
   }
 
   Future<void> run() async {
+    await _statistics();
     await _page139(asProgram: false);
     await _page139(asProgram: true);
     await runWithComplex(false);

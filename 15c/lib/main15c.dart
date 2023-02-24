@@ -828,7 +828,10 @@ class Operations15 extends Operations {
       name: 'integrate');
   static final NormalOperation clearSigma = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        for (int i = 7; i >= 2; i--) {
+          m.memory.registers[i] = Value.zero;
+        }
+        m.setXYZT(Value.zero);
       },
       name: 'CLEAR-E');
   static final NormalOperation rnd = NormalOperation.floatOnly(
@@ -982,34 +985,95 @@ class Operations15 extends Operations {
         m.resultXF = factorial(m.xF);
       },
       name: 'x!');
-  static final NormalOperation xBar = NormalOperation.floatOnly(
+  static final NormalOperation xBar = StackLiftingNormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        final denom = m.memory.registers[2].asDouble;
+        m.resultXF = m.memory.registers[5].asDouble / denom;
+        m.pushStack();
+        m.xF = m.memory.registers[3].asDouble / denom;
       },
+      needsStackLiftIfEnabled: _statsLift,
       name: 'xBar');
-  static final NormalOperation yHatR = NormalOperation.floatOnly(
+  static final NormalOperation yHatR = StackLiftingNormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        final lr = LinearRegression(m.memory.registers);
+        final x = m.xF;
+        m.resultXF = lr.r;
+        m.pushStack();
+        m.resultXF = lr.yHat(x);
+      },
+      needsStackLiftIfEnabled: (m) {
+        m.xF;
+        LinearRegression(m.memory.registers);   // Throw exception if error
+        return true;
       },
       name: 'yHat,r');
-  static final NormalOperation sOp = NormalOperation.floatOnly(
+  static final NormalOperation stdDeviation =
+      StackLiftingNormalOperation.floatOnly(
+          floatCalc: (Model m) {
+            final n = m.memory.registers[2].asDouble;
+            m.resultX = _stdDev(m.memory.registers, 5, 6, n);
+            m.pushStack();
+            m.x = _stdDev(m.memory.registers, 3, 4, n);
+          },
+          needsStackLiftIfEnabled: (m) =>
+              _statsLift(m) && m.memory.registers[2].asDouble != 1,
+          name: 's');
+  static bool _statsLift(Model m) {
+    m.memory.registers[7]; // Throw exception if not valid
+    if (m.memory.registers[2].asDouble == 0) {
+      throw CalculatorError(0);
+    }
+    return true;
+  }
+  static Value _stdDev(Registers r, int sumR, int sumSqR, double n) {
+    final double sum = r[sumR].asDouble;
+    final double sumSq = r[sumSqR].asDouble;
+    final m = n * sumSq - sum * sum;
+    return Value.fromDouble(dart.sqrt(m / (n * (n - 1))));
+  }
+
+  static final NormalOperation linearRegression = StackLiftingNormalOperation.floatOnly(
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        final lr = LinearRegression(m.memory.registers);
+        m.resultXF = lr.slope;
+        m.pushStack();
+        m.resultXF = lr.yIntercept;
       },
-      name: 's');
-  static final NormalOperation linearRegression = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        throw "@@ TODO";
+      needsStackLiftIfEnabled: (m) {
+        LinearRegression(m.memory.registers);   // Throw exception if error
+        return true;
       },
       name: 'L.R.');
+
   static final NormalOperation sigmaPlus = NormalOperation.floatOnly(
+      stackLift: StackLift.disable,
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        final reg = m.memory.registers;
+        final x = m.xF;
+        final y = m.yF;
+        reg[7] = Value.fromDouble(reg[7].asDouble + x * y);
+        reg[6] = Value.fromDouble(reg[6].asDouble + y * y);
+        reg[5] = Value.fromDouble(reg[5].asDouble + y);
+        reg[4] = Value.fromDouble(reg[4].asDouble + x * x);
+        reg[3] = Value.fromDouble(reg[3].asDouble + x);
+        m.lastX = m.x;
+        m.x = reg[2] = Value.fromDouble(reg[2].asDouble + 1);
       },
       name: 'E+');
   static final NormalOperation sigmaMinus = NormalOperation.floatOnly(
+      stackLift: StackLift.disable,
       floatCalc: (Model m) {
-        throw "@@ TODO";
+        final reg = m.memory.registers;
+        final x = m.xF;
+        final y = m.yF;
+        reg[7] = Value.fromDouble(reg[7].asDouble - x * y);
+        reg[6] = Value.fromDouble(reg[6].asDouble - y * y);
+        reg[5] = Value.fromDouble(reg[5].asDouble - y);
+        reg[4] = Value.fromDouble(reg[4].asDouble - x * x);
+        reg[3] = Value.fromDouble(reg[3].asDouble - x);
+        m.lastX = m.x;
+        m.x = reg[2] = Value.fromDouble(reg[2].asDouble - 1);
       },
       name: 'E-');
   static final NormalOperation pYX = NormalOperation.floatOnly(
@@ -1122,7 +1186,7 @@ class Operations15 extends Operations {
     if (srcMatrix != null) {
       dest.copyFrom(m, m.matrices[srcMatrix]);
     } else {
-      dest.isLU = false; // @@ TODO:  Where else does this happen?
+      dest.isLU = false;
       for (int i = 0; i < dest.rows; i++) {
         for (int j = 0; j < dest.columns; j++) {
           dest.set(i, j, m.x);
@@ -1271,9 +1335,13 @@ class Operations15 extends Operations {
                 })),
         KeyArg(
             key: Operations15.sigmaPlus,
-            child: ArgDone((m) {
-              // @@ TODO:  RCL sigma-plus
-            })),
+            child: StackLiftingArgDone((m) {
+              m.resultX = m.memory.registers[5];
+              m.pushStack();
+              m.x = m.memory.registers[3];
+            },
+                needsStackLiftIfEnabled: (m) =>
+                    (m as Model15).memory.numRegisters >= 6)),
         KeyArg(
             key: Operations15.dim,
             child:
@@ -1815,7 +1883,7 @@ class ButtonLayout15 extends ButtonLayout {
       'x\u22600',
       Operations.dot,
       Operations15.yHatR,
-      Operations15.sOp,
+      Operations15.stdDeviation,
       '.',
       '\u2219/\u201a',
       acceleratorLabel: '\u2219');
@@ -2186,7 +2254,7 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
     MKey(Operations15.rcl15, Operations15.userOp, Operations.mem),
     null,
     MKey(Operations.n0, Operations15.xFactorial, Operations15.xBar),
-    MKey(Operations.dot, Operations15.yHatR, Operations15.sOp),
+    MKey(Operations.dot, Operations15.yHatR, Operations15.stdDeviation),
     MKey(Operations15.sigmaPlus, Operations15.linearRegression,
         Operations15.sigmaMinus),
     MKey(Operations15.plus, Operations15.pYX, Operations15.cYX),

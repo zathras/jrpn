@@ -356,6 +356,8 @@ class ArgDone extends Arg {
           Model m, DisplayModeSelector<void Function(Model)?, T> selector) =>
       _calculate;
 
+  bool liftStackIfEnabled(Model m) => false;
+
   @override
   void init(int registerBase,
           {required OpInitFunction f,
@@ -375,4 +377,15 @@ class ArgDone extends Arg {
   ///
   void handleOpBeforeCalculate(Model m, void Function() opBeforeCalculate) =>
       opBeforeCalculate();
+}
+
+class StackLiftingArgDone extends ArgDone {
+  final bool Function(Model) needsStackLiftIfEnabled;
+
+  StackLiftingArgDone(Function(Model) calculate,
+      {required this.needsStackLiftIfEnabled})
+      : super(calculate);
+
+  @override
+  bool liftStackIfEnabled(Model m) => needsStackLiftIfEnabled(m);
 }

@@ -581,7 +581,6 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set resultX(Value v) {
     lastX = x;
     x = v;
-    needsSave = true;
   }
 
   // ignore: avoid_setters_without_getters
@@ -593,7 +592,6 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     lastX = x;
     _lastXImaginary = _imaginaryStack![0];
     xC = v;
-    needsSave = true;
   }
 
   Value get y => _stack[1];

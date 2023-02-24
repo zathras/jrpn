@@ -208,3 +208,39 @@ void convertHtoHMS(Model m) {
     m.resultX = Value.fromDouble(hr.asDouble + minD / 100 + secD / 10000);
   }
 }
+
+class LinearRegression {
+  final double num; // Number of samples
+  final double m;  // Taken from p. 208
+  final double n;
+  final double p;
+  final double sumY;
+  final double sumX;
+
+  LinearRegression._internal(this.num, this.m, this.n, this.p, this.sumY, this.sumX);
+
+  factory LinearRegression(Registers regs) {
+    regs[7];  // Throw exception if invalid
+    final num = regs[2].asDouble;
+    if (num == 0 || num == 1) {
+      throw CalculatorError(0);
+    }
+    final sumX = regs[3].asDouble;
+    final m = num * regs[4].asDouble - sumX * sumX;
+    final sumY = regs[5].asDouble;
+    final n = num * regs[6].asDouble - sumY * sumY;
+    if (m == 0 || n == 0) {
+      throw CalculatorError(0);
+    }
+    final p = num * regs[7].asDouble - sumX * sumY;
+    return LinearRegression._internal(num, m, n, p, sumY, sumX);
+  }
+
+  double get slope => p / m;
+
+  double get yIntercept => (m * sumY - p * sumX) / (num * m);
+
+  double yHat(double x) => (m * sumY + p * (num * x - sumX)) / (num * m);
+
+  double get r => p / sqrt(m * n);
+}
