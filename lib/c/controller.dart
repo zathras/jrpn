@@ -224,7 +224,8 @@ abstract class RealController extends Controller {
   RealController(
       {required List<NumberEntry> numbers,
       required Map<Operation, ArgDone> shortcuts,
-      required Operation lblOperation})
+      required Operation lblOperation,
+      required Operation rtn})
       : super() {
     model.memory.initializeSystem(
         OperationMap<Operation>(
@@ -233,7 +234,8 @@ abstract class RealController extends Controller {
             numbers: numbers,
             special: nonProgrammableOperations,
             shortcuts: shortcuts),
-        lblOperation);
+        lblOperation,
+        rtn);
     state = Resting(this);
     keyboard.controller = this;
   }

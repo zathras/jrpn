@@ -178,8 +178,16 @@ class SolveProgramRunner extends NontrivialProgramRunner {
 }
 
 class IntegrateProgramRunner extends NontrivialProgramRunner {
+  double _lastEstimate = 0;
+
   @override
   int get registersRequired => max(23, (parent?.registersRequired ?? 0));
+
+  @override
+  bool get runImplicitRtnOnSST => true;
+  // This is needed for the behavior of executing the RTN for integrate,
+  // which lets a user SST through the function as described on page
+  // 257, third paragraph.
 
   ///
   /// For integration, "failure" just returns.  It takes a loooong time
@@ -205,6 +213,13 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
   static double fpow(double a, double b) => math.pow(a, b).toDouble();
 
   @override
+  Future<double> runSubroutine(double arg) async {
+    model.lastX = Value.fromDouble(_lastEstimate);
+    // See page 257 of User's Guide, third paragraph.
+    return super.runSubroutine(arg);
+  }
+
+  @override
   Future<bool> runCalculation() async {
     final DisplayMode precision = model.displayMode;
     // The number of digits being displayed determines how precisely we
@@ -218,6 +233,7 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
     // that's low enough so the thing will terminate before the universe
     // expires.
 
+    _lastEstimate = 0;
     final Value originalY = model.y;
     final Value originalX = model.x;
     double a = model.yF; // lower bound
@@ -278,6 +294,7 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
     double h = span;
     int k = 1;
     ro[0] = await runSubroutine((a + b) / 2) * h;
+    _lastEstimate = ro[0] * signResult;
     int calls = 1;
     double totalMagnitude = ro[0].abs();
     int i;
@@ -317,6 +334,7 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
       if (i > 1 && (ru[i - 1] - ro[i]).abs() <= eps * ro[i].abs() + eps) {
         break;
       }
+      _lastEstimate = ro[i] * signResult;
     }
     final ok = i < maxIterations;
     if (!ok) {

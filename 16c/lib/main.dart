@@ -224,20 +224,26 @@ class Memory16 extends Memory<Operation> {
       : super(memoryNybbles: memoryNybbles);
 
   @override
-  void initializeSystem(OperationMap<Operation> layout, Operation lbl) {
+  void initializeSystem(
+      OperationMap<Operation> layout, Operation lbl, Operation rtn) {
     final int opcode =
         (lbl.arg.matches(Operations.n0, false) as ArgDone).opcode;
-    program =
-        ProgramMemory16(this, storage, layout, model.returnStackSize, opcode);
+    program = ProgramMemory16(
+        this, storage, layout, model.returnStackSize, opcode, rtn);
   }
 }
 
 class ProgramMemory16 extends ProgramMemory<Operation> {
   final int _lblOpcode;
 
-  ProgramMemory16(Memory16 memory, ByteData registerStorage,
-      OperationMap<Operation> layout, int returnStackSize, this._lblOpcode)
-      : super(memory, registerStorage, layout, returnStackSize);
+  ProgramMemory16(
+      Memory16 memory,
+      ByteData registerStorage,
+      OperationMap<Operation> layout,
+      int returnStackSize,
+      this._lblOpcode,
+      Operation rtn)
+      : super(memory, registerStorage, layout, returnStackSize, rtn);
 
   @override
   void goto(int label) {
@@ -985,7 +991,8 @@ class Controller16 extends RealController {
       : super(
             numbers: numbers,
             shortcuts: _shortcuts,
-            lblOperation: Operations16.lbl);
+            lblOperation: Operations16.lbl,
+            rtn: Operations.rtn);
 
   /// Map from operation that is a shortcut to what it's a shortcut for, with
   /// the key as an argument.  We want the identical instance of ArgDone, so

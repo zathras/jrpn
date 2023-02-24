@@ -62,7 +62,7 @@ abstract class Memory<OT extends ProgramOperation> {
 
   /// Called by our controller, which necessarily happens after the Model
   /// exists.
-  void initializeSystem(OperationMap<OT> layout, OT lbl);
+  void initializeSystem(OperationMap<OT> layout, OT lbl, OT rtn);
   // We rely on our Controller to give us an OperationMap with the
   // layout information that tells us the row/column positions of the various
   // operations.  Those positions are how the 16C displays program
@@ -299,6 +299,9 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   // extended opcodes, where 0xfe is 0x100-0x1ff and xff are 0x200-0x2ff.
   // The 15C doesn't use up all of the potential opcodes, however.
 
+  @protected
+  final ProgramOperation _rtn;
+
   int _lines = 0;
   // Number of lines with extended op codes
   int _extendedLines = 0;
@@ -322,7 +325,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   ProgramListener programListener = ProgramListener();
 
   ProgramMemory(this.memory, this._registerStorage, OperationMap<OT> layout,
-      int returnStackSize)
+      int returnStackSize, this._rtn)
       : _returnStack = List.filled(returnStackSize, 0),
         _operationTable = layout._operationTable,
         _argValues = layout._argValues,
@@ -413,7 +416,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     memory.model.needsSave = true;
   }
 
-  /// line counts from 1
+  /// line counts from 1, with a phantom return at line 0
   ProgramInstruction<OT> operator [](final int line) {
     final int opCode = opcodeAt(line);
     final OT op = _operationTable[opCode]!;
@@ -459,6 +462,9 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   }
 
   int opcodeAt(final int line) {
+    if (line == 0) {
+      return (_rtn.arg as ArgDone).opcode;
+    }
     assert(line > 0 && line <= _lines);
     _setCachedAddress(line);
     final b = _byteAt(_cachedAddress);

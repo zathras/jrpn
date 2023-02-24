@@ -1964,7 +1964,8 @@ class Controller15 extends RealController {
       : super(
             numbers: numbers,
             shortcuts: _shortcuts,
-            lblOperation: Operations15.lbl15);
+            lblOperation: Operations15.lbl15,
+            rtn: Operations.rtn);
 
   static final Map<Operation, ArgDone> _shortcuts = {
     Operations15.letterLabelA:

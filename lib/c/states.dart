@@ -360,6 +360,9 @@ class Resting extends ActiveState {
     program.adjustStackForRunStopStarting();
     if (program.currentLine == 0 && program.lines > 0) {
       program.currentLine = 1;
+      // On the 15C, if R/S is pressed just before the phantom RTN of an
+      // integrate function that runs off the end of memory, it does *not*
+      // handle it gracefully - it just wraps like this.
     }
     program.displayCurrent();
     final rc = controller as RealController;
@@ -1278,14 +1281,8 @@ class Running extends ControllerState {
       }
       // Javascript clock granularity is 4ms
       pendingDelay = pendingDelay % 4;
-      final ProgramInstruction<Operation> instr;
       final int line = program.currentLine;
-      if (line == 0) {
-        instr = model.newProgramInstruction(
-            Operations.rtn, Operations.rtn.arg as ArgDone);
-      } else {
-        instr = program[line];
-      }
+      final ProgramInstruction<Operation> instr = program[line];
       if (instr.op == Operations.rs) {
         // If we let it execute, it would recursively create another state!
         listener.onRS();
@@ -1394,6 +1391,8 @@ abstract class ProgramRunner extends MProgramRunner {
   int returnStackStartPos = 0; // Correct for top-level runner
   Completer<void>? _suspended;
 
+  bool get runImplicitRtnOnSST => false;
+
   Future<void> _run(Running caller) {
     _caller = caller;
     return run();
@@ -1489,9 +1488,12 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
   @override
   void onChangedTo() {
     if (program.currentLine == 0 && program.lines > 0) {
-      program.currentLine = 1;
-      stackLiftEnabled = true;
-      changeState(Resting(_fake));
+      final spr = _fake.real.suspendedProgramRunner;
+      if (spr?.runImplicitRtnOnSST != true) {
+        program.currentLine = 1;
+        stackLiftEnabled = true;
+        changeState(Resting(_fake));
+      }
     }
     program.displayCurrent();
     model.displayDisabled = true;
