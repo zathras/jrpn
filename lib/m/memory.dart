@@ -541,15 +541,18 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
 
   List<String> get listing {
     final r = List<String>.empty(growable: true);
+    r.add('   000 {          } ');
     for (int i = 1; i <= lines; i++) {
       String line = i.toString().padLeft(3, '0');
-      final pad = hasExtended ? 3 : 2;
-      String opc = opcodeAt(i).toRadixString(16).padLeft(pad, '0');
       final ProgramInstruction<OT> pi = this[i];
       final pd = this[i].programDisplay;
-      String semiHuman = pd.substring(0, 1) + pd.substring(1).padLeft(9);
+      String semiHuman = pd
+          .substring(1)
+          .replaceAll(',', ' ')
+          .replaceAll('  .', ' .')
+          .padLeft(8);
       String human = pi.programListing;
-      r.add('$line -$semiHuman    0x$opc  $human');
+      r.add('   $line { $semiHuman } $human');
     }
     return r;
   }
@@ -846,7 +849,7 @@ class OperationMap<OT extends ProgramOperation> {
       final o = numbers[i];
       final ok = visited.add(o);
       assert(ok);
-      o.rcName = ' ${i.toRadixString(16)}';
+      o.rcName = ' ${i.toRadixString(16).toUpperCase()}';
       _initializeOperation(o, null);
     }
     for (int row = 0; row < keys.length; row++) {
