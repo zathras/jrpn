@@ -779,29 +779,21 @@ class Jrpn extends StatefulWidget {
 
   Model get model => controller.model;
 
-  Future<void> sendUrlToClipboard({required bool comments}) {
-    final bytes =
-        const ZLibEncoder().encode(_getJson(comments: comments).codeUnits);
+  Future<void> sendUrlToClipboard() {
+    final bytes = const ZLibEncoder().encode(_getJson().codeUnits);
     final j = base64UrlEncode(bytes);
     final s = 'https://jrpn.jovial.com/run/index.html?state=$j';
     return Clipboard.setData(ClipboardData(text: s));
   }
 
-  Future<void> sendJsonToExternalApp({required bool comments}) =>
-      Share.share(_getJson(comments: comments),
-          subject: 'JRPN Calculator State');
+  Future<void> sendJsonToExternalApp() =>
+      Share.share(_getJson(), subject: 'JRPN Calculator State');
 
-  Future<void> sendJsonToClipboard({required bool comments}) =>
-      Clipboard.setData(ClipboardData(text: _getJson(comments: comments)));
+  Future<void> sendJsonToClipboard() =>
+      Clipboard.setData(ClipboardData(text: _getJson()));
 
-  String _getJson({required bool comments}) {
-    if (comments) {
-      final r = const JsonEncoder.withIndent('    ')
-          .convert(model.toJson(comments: true));
-      return '$r\n';
-    } else {
-      return json.encoder.convert(model.toJson());
-    }
+  String _getJson() {
+    return json.encoder.convert(model.toJson());
   }
 
   @override

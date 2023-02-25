@@ -351,7 +351,7 @@ class Settings {
   ///
   /// Convert to a data structure that can be serialized as JSON.
   ///
-  Map<String, dynamic> toJson({bool comments = false}) {
+  Map<String, dynamic> toJson() {
     final r = <String, dynamic>{
       'menuEnabled': menuEnabled.value,
       'windowEnabled': _windowEnabled,
@@ -365,7 +365,7 @@ class Settings {
     if (_msPerInstruction != null) {
       r['msPerInstruction'] = _msPerInstruction;
     }
-    if (comments || _traceProgramToStdout) {
+    if (_traceProgramToStdout) {
       r['traceProgramToStdout'] = _traceProgramToStdout;
     }
     return r;
@@ -464,10 +464,6 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// Create an instance of the model-specific ProgramInstruction subtype
   ///
   ProgramInstruction<OT> newProgramInstruction(OT operation, ArgDone arg);
-
-  /// Not used, but we retain any comments found in the JSON file
-  /// so we can write them back out.
-  Object? _comments;
 
   @override
   BigInt get maxInt => _integerSignMode.maxValue(this);
@@ -934,6 +930,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     display.window = 0;
     prgmFlag = false;
     needsSave = true;
+    display.displayX(flash: false);
   }
 
   ///
@@ -948,14 +945,11 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ///
   /// Convert to a data structure that can be serialized as JSON.
   ///
-  Map<String, Object> toJson({bool comments = false}) {
+  Map<String, Object> toJson() {
     final r = <String, Object>{};
-    if (comments && _comments != null) {
-      r['comments'] = _comments!;
-    }
     r['version'] = _jsonVersion;
     r['modelName'] = modelName;
-    r['settings'] = settings.toJson(comments: comments);
+    r['settings'] = settings.toJson();
     final tm = trigMode.toJson();
     if (tm != null) {
       r['trigMode'] = tm;
@@ -970,10 +964,10 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       r['lastXImaginary'] = _lastXImaginary!.toJson();
     }
     r['flags'] = _flags;
-    r['memory'] = memory.toJson(comments: comments);
+    r['memory'] = memory.toJson();
     final debugLog = _debugLog;
-    if (debugLog != null && comments) {
-      r['debugLog'] = debugLog.toJson(comments: comments);
+    if (debugLog != null) {
+      r['debugLog'] = debugLog.toJson();
       r['endDisplay'] = display.current;
     }
     return r;
@@ -995,7 +989,6 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
           'Wrong calculator model.  This is a $modelName, not a $jModelName.');
     }
 
-    _comments = json['comments'];
     settings.decodeJson(json['settings'] as Map<String, dynamic>);
     trigMode = TrigMode.fromJson(json['trigMode']);
     integerSignMode =
@@ -1030,12 +1023,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       _flags[i++] = v as bool;
     }
     memory.decodeJson(json['memory'] as Map<String, dynamic>);
-    Object? debugLog = json['debugLog'];
-    if (debugLog == null) {
-      _debugLog = null;
-    } else {
-      _debugLog = DebugLog.fromJson(debugLog as Map<String, dynamic>, this);
-    }
+    _debugLog = null; // Don't restore debug log, even if it was saved
     display.window = 0;
     this.needsSave = needsSave;
   }
@@ -1487,7 +1475,7 @@ class DebugLog {
     return DebugLog._p(initialState, keys, model);
   }
 
-  Map<String, Object> toJson({required bool comments}) {
+  Map<String, Object> toJson() {
     return <String, Object>{
       'initialState': _initialState,
       'keys': _keys,
@@ -1496,7 +1484,7 @@ class DebugLog {
 
   void initModelState() {
     assert(_model._debugLog == null);
-    _initialState = _model.toJson(comments: false);
+    _initialState = _model.toJson();
   }
 
   void addKey(ProgramOperation key) {

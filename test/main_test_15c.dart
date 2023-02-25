@@ -32,7 +32,7 @@ import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/m/model.dart';
 
 import 'package:jrpn/v/main_screen.dart';
-import 'package:jrpn15c/main15c.dart';
+import 'package:jrpn15c/main.dart';
 import 'package:jrpn15c/matrix.dart';
 import 'package:jrpn15c/model15c.dart';
 import 'package:jrpn15c/tests15c.dart';
@@ -221,7 +221,7 @@ class AdvancedFunctionTests {
     for (int i = 0; i < 9; i++) {
       regs[i] = badValue;
     }
-    _play([l.fShift, l.gsb]);  // Clear sigma
+    _play([l.fShift, l.gsb]); // Clear sigma
     for (int i = 2; i <= 7; i++) {
       expect(regs[i], Value.zero);
     }
@@ -250,7 +250,7 @@ class AdvancedFunctionTests {
     expect(m.y, Value.fromDouble(31.01));
     expect(m.z, Value.fromDouble(7.78));
     expect(m.t, Value.fromDouble(7.21));
-    _play([l.rcl, l.sum]);  // Check stack lift behavior
+    _play([l.rcl, l.sum]); // Check stack lift behavior
     expect(m.x, Value.fromDouble(200));
     expect(m.y, Value.fromDouble(31.01));
     expect(m.z, Value.fromDouble(200));
@@ -262,15 +262,18 @@ class AdvancedFunctionTests {
     expect(m.memory.registers[6], Value.fromDouble(200.4899));
     expect(m.memory.registers[7], Value.fromDouble(1415));
     _play([l.n4, l.dot, l.n7, l.n8, l.enter]);
-    _play([l.n2, l.n0, l.gShift, l.sum]);   // sigma-minus
+    _play([l.n2, l.n0, l.gShift, l.sum]); // sigma-minus
     expect(m.xF, 4);
     _play([l.n5, l.dot, l.n7, l.n8, l.enter]);
     _play([l.n2, l.n0, l.sum]);
     expect(m.xF, 5);
-    for (final enterOrNot in [<CalculatorButton>[], [l.enter]]) {
+    for (final enterOrNot in [
+      <CalculatorButton>[],
+      [l.enter]
+    ]) {
       _play([l.n9, l.enter, l.n8]); // Test stack lift
       _play(enterOrNot); // Test stack lift
-      _play([l.gShift, l.n0]);  // average
+      _play([l.gShift, l.n0]); // average
       expect(m.xF, 40);
       expect(m.y, Value.fromDouble(6.402));
       expect(m.z, Value.fromDouble(8));
@@ -2094,16 +2097,6 @@ class AdvancedFunctionTests {
     }
     m.visit((r, c) => m.setF(r, c, val[r][c].toDouble()));
   }
-}
-
-void printListing(Model model) {
-  final j = model.toJson(comments: true);
-  final pl = (j['memory'] as Map)['commentProgramListing'] as List;
-  debugPrint('');
-  for (final line in pl) {
-    debugPrint(line.toString());
-  }
-  debugPrint('');
 }
 
 String formatDouble(double v, int digits) {

@@ -481,8 +481,7 @@ class _MainMenuState extends State<MainMenu> {
         itemBuilder: (BuildContext context) {
           return <PopupMenuEntry<void Function()>>[
             PopupMenuItem(
-                value: () {},
-                child: _StateMenu('Calculator State', widget.main.app)),
+                value: () {}, child: _FileMenu('File', widget.main.app)),
             PopupMenuItem(
                 value: () {},
                 child: _SettingsMenu('Settings', model, controller)),
@@ -754,17 +753,17 @@ class _TextEntryState extends State<_TextEntry> {
       );
 }
 
-class _StateMenu extends StatefulWidget {
+class _FileMenu extends StatefulWidget {
   final String title;
   final Jrpn app;
 
-  const _StateMenu(this.title, this.app, {Key? key}) : super(key: key);
+  const _FileMenu(this.title, this.app, {Key? key}) : super(key: key);
 
   @override
-  __StateMenuState createState() => __StateMenuState();
+  _FileMenuState createState() => _FileMenuState();
 }
 
-class __StateMenuState extends State<_StateMenu> {
+class _FileMenuState extends State<_FileMenu> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<Future<void> Function()>(
@@ -791,15 +790,18 @@ class __StateMenuState extends State<_StateMenu> {
           child: const Text('Restore from Saved'),
         ),
         PopupMenuItem(
-            value: () async {},
-            child: _ExportMenu('Share State', widget.app, false)),
-        PopupMenuItem(
-            value: () async {},
-            child: _ExportMenu('State with Comments', widget.app, true)),
+            value: () async {}, child: _ExportMenu('Share State', widget.app)),
         PopupMenuItem(
           value: () => _pasteFromClipboard(context),
           child: const Text('Import from Clipboard'),
         ),
+        PopupMenuItem(
+            value: () async {
+              widget.app.controller.resetAll();
+              widget.app.model.reset();
+              await widget.app.model.writeToPersistentStorage();
+            },
+            child: const Text('Reset All'))
       ],
       child: Row(
         children: [
@@ -837,10 +839,8 @@ class __StateMenuState extends State<_StateMenu> {
 class _ExportMenu extends StatefulWidget {
   final String title;
   final Jrpn app;
-  final bool comments;
 
-  const _ExportMenu(this.title, this.app, this.comments, {Key? key})
-      : super(key: key);
+  const _ExportMenu(this.title, this.app, {Key? key}) : super(key: key);
 
   @override
   __ExportMenuState createState() => __ExportMenuState();
@@ -861,17 +861,15 @@ class __ExportMenuState extends State<_ExportMenu> {
       },
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(
-          value: () =>
-              widget.app.sendJsonToClipboard(comments: widget.comments),
+          value: () => widget.app.sendJsonToClipboard(),
           child: const Text('Copy to Clipboard'),
         ),
         PopupMenuItem(
-          value: () =>
-              widget.app.sendJsonToExternalApp(comments: widget.comments),
+          value: () => widget.app.sendJsonToExternalApp(),
           child: const Text('Export to Application'),
         ),
         PopupMenuItem(
-          value: () => widget.app.sendUrlToClipboard(comments: widget.comments),
+          value: () => widget.app.sendUrlToClipboard(),
           child: const Text('Copy URL to Clipboard'),
         ),
       ],

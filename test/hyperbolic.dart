@@ -3,7 +3,7 @@ import 'package:jrpn/m/complex.dart';
 import 'package:jrpn/m/model.dart';
 
 import 'package:jrpn/v/buttons.dart';
-import 'package:jrpn15c/main15c.dart';
+import 'package:jrpn15c/main.dart';
 
 ///
 /// Test the trig function, and test the input state machine for

@@ -367,8 +367,8 @@ Future<void> opcodeTest16C() async {
     final js = json.decoder.convert(src) as Map;
     final srcProgram = (js['memory'] as Map)['commentProgramListing'] as List;
     final c = TestCalculator()..loadStateFromString(src);
-    final r = c.model.toJson(comments: true);
-    final resultProgram = (r['memory'] as Map)['commentProgramListing'] as List;
+    final r = c.model.toJson();
+    final resultProgram = c.model.program.listing;
     expect(resultProgram.isNotEmpty, true);
     expect(resultProgram, srcProgram);
   }

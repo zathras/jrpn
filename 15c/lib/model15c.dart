@@ -172,8 +172,8 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   }
 
   @override
-  Map<String, Object> toJson({bool comments = false}) {
-    final r = super.toJson(comments: comments);
+  Map<String, Object> toJson() {
+    final r = super.toJson();
     r['numRegisters'] = memory.numRegisters;
     r['resultMatrix'] = resultMatrix;
     r['matrices'] = List.generate(matrices.length, (i) => matrices[i].toJson(),

@@ -153,6 +153,62 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.4"
+  file_selector:
+    dependency: "direct main"
+    description:
+      name: file_selector
+      sha256: "3e7f5a2e97262989862ebe10d5d20076978c1ca3febfedff30d9d1d35e29ea55"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.2+3"
+  file_selector_ios:
+    dependency: transitive
+    description:
+      name: file_selector_ios
+      sha256: "2a107ed6abe4f9e93cb3c45c7ceeaeb791ed17ef7518030cb13a766a61483532"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.0+3"
+  file_selector_linux:
+    dependency: transitive
+    description:
+      name: file_selector_linux
+      sha256: "3b998328a9531e3de5e55fcf0a5db6945d3d942049d637ac879460c972f4e10a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.1+1"
+  file_selector_macos:
+    dependency: transitive
+    description:
+      name: file_selector_macos
+      sha256: "9fc34f918045299714bc616eb961dfb7fd499e45675a97376a0b01cfa4f60f20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.0+5"
+  file_selector_platform_interface:
+    dependency: transitive
+    description:
+      name: file_selector_platform_interface
+      sha256: "98b3f98effcc135bd951b34b575886620ce208d3ff60e3b61cbaea9e2e00f54b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1"
+  file_selector_web:
+    dependency: transitive
+    description:
+      name: file_selector_web
+      sha256: "1038cf12fc355cf83cf9aa51a707c9acbc871caf8d9cdb0504638cafd6163426"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.0+3"
+  file_selector_windows:
+    dependency: transitive
+    description:
+      name: file_selector_windows
+      sha256: "466288883103abc67178266edaa0d2ac5e4a11b744a5bde6e18010c47570f75e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.1+5"
   flutter:
     dependency: "direct main"
     description: flutter

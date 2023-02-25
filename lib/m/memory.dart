@@ -83,7 +83,7 @@ abstract class Memory<OT extends ProgramOperation> {
     registers.resetI();
   }
 
-  Map<String, Object> toJson({bool comments = false}) {
+  Map<String, Object> toJson() {
     final st = StringBuffer();
     for (int i = 0; i < storage.lengthInBytes; i++) {
       st.write(storage.getUint8(i).toRadixString(16));
@@ -93,9 +93,6 @@ abstract class Memory<OT extends ProgramOperation> {
       'program': program.toJson(),
       'I': registers._indexValue.toJson()
     };
-    if (comments) {
-      r['commentProgramListing'] = program.listing;
-    }
     return r;
   }
 

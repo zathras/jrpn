@@ -211,16 +211,17 @@ void convertHtoHMS(Model m) {
 
 class LinearRegression {
   final double num; // Number of samples
-  final double m;  // Taken from p. 208
+  final double m; // Taken from p. 208
   final double n;
   final double p;
   final double sumY;
   final double sumX;
 
-  LinearRegression._internal(this.num, this.m, this.n, this.p, this.sumY, this.sumX);
+  LinearRegression._internal(
+      this.num, this.m, this.n, this.p, this.sumY, this.sumX);
 
   factory LinearRegression(Registers regs) {
-    regs[7];  // Throw exception if invalid
+    regs[7]; // Throw exception if invalid
     final num = regs[2].asDouble;
     if (num == 0 || num == 1) {
       throw CalculatorError(0);

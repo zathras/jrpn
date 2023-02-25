@@ -22,7 +22,7 @@ import 'package:jrpn/m/complex.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/c/controller.dart';
 
-import 'main15c.dart';
+import 'main.dart';
 import 'model15c.dart';
 
 class SelfTests15 extends SelfTests {

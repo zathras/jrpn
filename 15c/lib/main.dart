@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021,2022 William Foote
+Copyright (c) 2021-2023 William Foote
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -43,6 +43,7 @@ import 'more_math.dart';
 void main() async {
   runStaticInitialization15();
   genericMain(Jrpn(Controller15(createModel15())));
+  // @@ TODO:  Calculator test should only turn on 15C LCD stuff
 }
 
 void runStaticInitialization15() {
@@ -1004,7 +1005,7 @@ class Operations15 extends Operations {
       },
       needsStackLiftIfEnabled: (m) {
         m.xF;
-        LinearRegression(m.memory.registers);   // Throw exception if error
+        LinearRegression(m.memory.registers); // Throw exception if error
         return true;
       },
       name: 'yHat,r');
@@ -1026,6 +1027,7 @@ class Operations15 extends Operations {
     }
     return true;
   }
+
   static Value _stdDev(Registers r, int sumR, int sumSqR, double n) {
     final double sum = r[sumR].asDouble;
     final double sumSq = r[sumSqR].asDouble;
@@ -1033,18 +1035,19 @@ class Operations15 extends Operations {
     return Value.fromDouble(dart.sqrt(m / (n * (n - 1))));
   }
 
-  static final NormalOperation linearRegression = StackLiftingNormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        final lr = LinearRegression(m.memory.registers);
-        m.resultXF = lr.slope;
-        m.pushStack();
-        m.resultXF = lr.yIntercept;
-      },
-      needsStackLiftIfEnabled: (m) {
-        LinearRegression(m.memory.registers);   // Throw exception if error
-        return true;
-      },
-      name: 'L.R.');
+  static final NormalOperation linearRegression =
+      StackLiftingNormalOperation.floatOnly(
+          floatCalc: (Model m) {
+            final lr = LinearRegression(m.memory.registers);
+            m.resultXF = lr.slope;
+            m.pushStack();
+            m.resultXF = lr.yIntercept;
+          },
+          needsStackLiftIfEnabled: (m) {
+            LinearRegression(m.memory.registers); // Throw exception if error
+            return true;
+          },
+          name: 'L.R.');
 
   static final NormalOperation sigmaPlus = NormalOperation.floatOnly(
       stackLift: StackLift.disable,
