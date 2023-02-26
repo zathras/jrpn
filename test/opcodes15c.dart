@@ -1,5 +1,7 @@
 // ignore_for_file: file_names, non_constant_identifier_names, avoid_print
 
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'programs.dart';
@@ -410,11 +412,11 @@ const expectedOpcodes = [
   [166, '- 44 25', 'STO I'],
   [167, '- 44 36', 'STO 36'],
   [168, '- 44 26', 'STO 26'],
-  [169, '- 44,43,11', 'STO g A'],
-  [170, '- 44,43,12', 'STO g B'],
-  [171, '- 44,43,13', 'STO g C'],
-  [172, '- 44,43,14', 'STO g D'],
-  [173, '- 44,43,15', 'STO g E'],
+  [169, '-44,43,11', 'STO g A'],
+  [170, '-44,43,12', 'STO g B'],
+  [171, '-44,43,13', 'STO g C'],
+  [172, '-44,43,14', 'STO g D'],
+  [173, '-44,43,15', 'STO g E'],
   [174, '- 44 11', 'STO A'],
   [175, '- 44 12', 'STO B'],
   [176, '- 44 13', 'STO C'],
@@ -445,11 +447,11 @@ const expectedOpcodes = [
   [201, '- 45  .9', 'RCL 19'],
   [202, '- 45 25', 'RCL I'],
   [203, '- 45 36', 'RCL 36'],
-  [204, '- 45,43,11', 'RCL g A'],
-  [205, '- 45,43,12', 'RCL g B'],
-  [206, '- 45,43,13', 'RCL g C'],
-  [207, '- 45,43,14', 'RCL g D'],
-  [208, '- 45,43,15', 'RCL g E'],
+  [204, '-45,43,11', 'RCL g A'],
+  [205, '-45,43,12', 'RCL g B'],
+  [206, '-45,43,13', 'RCL g C'],
+  [207, '-45,43,14', 'RCL g D'],
+  [208, '-45,43,15', 'RCL g E'],
   [209, '- 45 49', 'RCL 49'],
   [210, '-45,23,11', 'RCL DIM A'],
   [211, '-45,23,12', 'RCL DIM B'],
@@ -706,12 +708,12 @@ const expectedOpcodes = [
   [478, '- 32  .7', 'GSB 17'],
   [479, '- 32  .8', 'GSB 18'],
   [480, '- 32  .9', 'GSB 19'],
-  [481, 'u 44 11', 'STO A'],
-  [482, 'u 44 12', 'STO B'],
-  [483, 'u 44 13', 'STO C'],
-  [484, 'u 44 14', 'STO D'],
-  [485, 'u 44 15', 'STO E'],
-  [486, 'u 44 24', 'STO (i)'],
+  [481, 'u 44 11', 'u STO A'],
+  [482, 'u 44 12', 'u STO B'],
+  [483, 'u 44 13', 'u STO C'],
+  [484, 'u 44 14', 'u STO D'],
+  [485, 'u 44 15', 'u STO E'],
+  [486, 'u 44 24', 'u STO (i)'],
   [487, '-44,16,11', 'STO MATRIX A'],
   [488, '-44,16,12', 'STO MATRIX B'],
   [489, '-44,16,13', 'STO MATRIX C'],
@@ -825,13 +827,13 @@ const expectedOpcodes = [
   [597, '-44,10,13', 'STO / C'],
   [598, '-44,10,14', 'STO / D'],
   [599, '-44,10,15', 'STO / E'],
-  [600, '- 44,43,24', 'STO g (i)'],
-  [601, 'u 45 11', 'RCL A'],
-  [602, 'u 45 12', 'RCL B'],
-  [603, 'u 45 13', 'RCL C'],
-  [604, 'u 45 14', 'RCL D'],
-  [605, 'u 45 15', 'RCL E'],
-  [606, 'u 45 24', 'RCL (i)'],
+  [600, '-44,43,24', 'STO g (i)'],
+  [601, 'u 45 11', 'u RCL A'],
+  [602, 'u 45 12', 'u RCL B'],
+  [603, 'u 45 13', 'u RCL C'],
+  [604, 'u 45 14', 'u RCL D'],
+  [605, 'u 45 15', 'u RCL E'],
+  [606, 'u 45 24', 'u RCL (i)'],
   [607, '-45,40,24', 'RCL + (i)'],
   [608, '-45,40,25', 'RCL + I'],
   [609, '-45,40, 0', 'RCL + 0'],
@@ -940,7 +942,7 @@ const expectedOpcodes = [
   [712, '-45,10,13', 'RCL / C'],
   [713, '-45,10,14', 'RCL / D'],
   [714, '-45,10,15', 'RCL / E'],
-  [715, '- 45,43,24', 'RCL g (i)']
+  [715, '-45,43,24', 'RCL g (i)']
 ];
 
 ///
@@ -1076,6 +1078,20 @@ Future<void> opcodeTest15C() async {
     // If this fails, it's easy enough to comment it out, re-run the test
     // to make sure nothing important has changed, and then re-generate
     // expectedOpcodes.
+  }
+
+  // Make sure all survive import/export
+  final mem = c.model.memory;
+  for (final instr in instructions) {
+    mem.reset();
+    mem.program.insert(instr);
+    final String exported = mem.program.listing[1];
+    mem.reset();
+    expect(mem.program.listing.length, 1);
+    mem.program.importProgram(exported);
+    expect(mem.program[1].opcode, instr.opcode,
+        reason: '${mem.program[1].programListing}'
+            ' != ${instr.programListing} ($exported)');
   }
 
   // Note that JRPN doesn't use the same numerical opcodes as the original

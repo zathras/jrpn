@@ -66,6 +66,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
 
   @override
   void reset() {
+    userMode = false;
     displayMode = DisplayMode.fix(4, false);
     super.reset();
     rand.reset();

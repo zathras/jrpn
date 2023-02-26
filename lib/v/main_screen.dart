@@ -843,7 +843,7 @@ class __FileSaveMenuState extends State<_FileSaveMenu> {
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(
           value: () => widget.app.model.writeToPersistentStorage(),
-          child: const Text('Save'),
+          child: const Text('Save as Starting State'),
         ),
         ...(_filesWork
             ? [
@@ -1111,7 +1111,7 @@ class __FileReadMenuState extends State<_FileReadMenu> {
             widget.app.controller.resetAll();
             return widget.app.model.resetFromPersistentStorage();
           },
-          child: const Text('Restore from Saved'),
+          child: const Text('Restore Starting State'),
         ),
         ...(_filesWork
             ? [

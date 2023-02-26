@@ -548,12 +548,15 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     for (int i = 1; i <= lines; i++) {
       String line = i.toString().padLeft(3, '0');
       final ProgramInstruction<OT> pi = this[i];
-      final pd = this[i].programDisplay;
-      String semiHuman = pd
-          .substring(1)
-          .replaceAll(',', ' ')
-          .replaceAll('  .', ' .')
-          .padLeft(8);
+      final String pd = this[i].programDisplay;
+      final maybeU = pd.startsWith('u') ? ' u' : '';
+      String semiHuman =
+          pd.substring(1).replaceAll(',', ' ').replaceAll('  .', ' .');
+      if (pd.startsWith('u')) {
+        semiHuman = '$semiHuman u';
+      }
+      semiHuman = semiHuman.padLeft(8);
+      assert(semiHuman.length == 8, '"$semiHuman" from $pd'); // and no longer
       String human = pi.programListing;
       r.add('   $line { $semiHuman } $human');
     }
@@ -1118,7 +1121,7 @@ class OperationMap<OT extends ProgramOperation> {
           if (argShift == null) {
             pd = ' ${op.rcName} $as';
           } else {
-            pd = ' ${op.rcName},${argShift.rcName},$as';
+            pd = '${op.rcName},${argShift.rcName},$as';
           }
           pl = '${op.name}$las';
         } else if (shift.isShift) {
@@ -1131,10 +1134,11 @@ class OperationMap<OT extends ProgramOperation> {
         }
       }
       r.programDisplay = '$dash$pd';
+      final userName = userMode ? 'u ' : '';
       if (shiftIn == null) {
-        r.programListing = pl;
+        r.programListing = '$userName$pl';
       } else {
-        r.programListing = '${shiftIn.name} $pl';
+        r.programListing = '$userName${shiftIn.name} $pl';
       }
       assert(r.programDisplay.length < 20, '$op');
     });
