@@ -1102,7 +1102,11 @@ class OperationMap<OT extends ProgramOperation> {
         }
       }
       r.programDisplay = '$dash$pd';
-      r.programListing = pl;
+      if (shiftIn == null) {
+        r.programListing = pl;
+      } else {
+        r.programListing = '${shiftIn.name} $pl';
+      }
       assert(r.programDisplay.length < 20, '$op');
     });
   }
