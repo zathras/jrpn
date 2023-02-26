@@ -78,7 +78,7 @@ abstract class Memory<OT extends ProgramOperation> {
   // decoupled sometimes is.
 
   void reset() {
-    for (int i = 0; i < storage.lengthInBytes; i++) {
+    for (int i = 0; i < totalNybbles; i++) {
       storage.setUint8(i, 0);
     }
     program.reset(zeroMemory: false);
@@ -87,7 +87,7 @@ abstract class Memory<OT extends ProgramOperation> {
 
   Map<String, Object> toJson() {
     final st = StringBuffer();
-    for (int i = 0; i < storage.lengthInBytes; i++) {
+    for (int i = 0; i < totalNybbles; i++) {
       st.write(storage.getUint8(i).toRadixString(16));
     }
     final r = <String, Object>{
@@ -100,7 +100,7 @@ abstract class Memory<OT extends ProgramOperation> {
 
   void decodeJson(Map<String, dynamic> json) {
     final sto = json['storage'] as String;
-    for (int i = 0; i < storage.lengthInBytes; i++) {
+    for (int i = 0; i < totalNybbles; i++) {
       storage.setUint8(i, int.parse(sto.substring(i, i + 1), radix: 16));
     }
     // Must come after storage.  cf. ProgramMemory.decodeJson().
@@ -323,14 +323,12 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   /// and detect events.
   ProgramListener programListener = ProgramListener();
 
-  ProgramMemory(this.memory, this._registerStorage, OperationMap<OT> layout,
-      int returnStackSize, this._rtn)
+  ProgramMemory(
+      this.memory, OperationMap<OT> layout, int returnStackSize, this._rtn)
       : _returnStack = List.filled(returnStackSize, 0),
         _operationTable = layout._operationTable,
         _argValues = layout._argValues,
         _extendedOpcode = layout._extendedOpcode;
-
-  final ByteData _registerStorage;
 
   /// 7-byte chunks occupied
   int get _chunksOccupied => (_lines + _extendedLines + 6) ~/ 7;
@@ -345,7 +343,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   int get currentLine => _currentLine;
 
   int get bytesToNextAllocation =>
-      (_registerStorage.lengthInBytes ~/ 2 - _lines - _extendedLines) % 7;
+      (memory.totalNybbles ~/ 2 - _lines - _extendedLines) % 7;
 
   set currentLine(int v) {
     if (v < 0 || (v > lines && v != MProgramRunner.pseudoReturnAddress)) {
@@ -359,28 +357,29 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   /// Insert a new instruction, and increment currentLine to refer to it.
   void insert(final ProgramInstruction<OT> instruction) {
     final needed = instruction.isExtended ? 2 : 1;
-    if (bytesToNextAllocation > needed) {
+    if (bytesToNextAllocation < needed) {
       memory.policy.checkExtendProgramMemory();
     }
     assert(_currentLine >= 0 && _currentLine <= _lines);
+    final storage = memory.storage;
     _setCachedAddress(_currentLine + 1);
     int addr = _cachedAddress; // stored as nybbles
     for (int a = _maxAddress; a >= addr; a--) {
-      _registerStorage.setUint8(a + 2 * needed, _registerStorage.getUint8(a));
+      storage.setUint8(a + 2 * needed, storage.getUint8(a));
     }
     final int opcode = instruction.opcode;
     if (opcode >= 0x100) {
       assert(needed == 2);
       final int pageCode = (opcode >> 8) - 1 + _extendedOpcode;
       assert(pageCode >= _extendedOpcode && pageCode < 0x100);
-      _registerStorage.setUint8(addr++, pageCode >> 4);
-      _registerStorage.setUint8(addr++, pageCode & 0xf);
+      storage.setUint8(addr++, pageCode >> 4);
+      storage.setUint8(addr++, pageCode & 0xf);
       _extendedLines++;
     } else {
       assert(needed == 1);
     }
-    _registerStorage.setUint8(addr++, (opcode >> 4) & 0xf);
-    _registerStorage.setUint8(addr++, opcode & 0xf);
+    storage.setUint8(addr++, (opcode >> 4) & 0xf);
+    storage.setUint8(addr++, opcode & 0xf);
     _lines++;
     _currentLine++; // Where we just inserted the instruction
 
@@ -401,16 +400,17 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     } else {
       delta = 2;
     }
+    final storage = memory.storage;
     while (addr <= _maxAddress) {
-      _registerStorage.setUint8(addr, _registerStorage.getUint8(addr + delta));
+      storage.setUint8(addr, storage.getUint8(addr + delta));
       addr++;
     }
     if (extended) {
-      _registerStorage.setUint8(addr++, 0);
-      _registerStorage.setUint8(addr++, 0);
+      storage.setUint8(addr++, 0);
+      storage.setUint8(addr++, 0);
     }
-    _registerStorage.setUint8(addr++, 0);
-    _registerStorage.setUint8(addr, 0);
+    storage.setUint8(addr++, 0);
+    storage.setUint8(addr, 0);
 
     memory.model.needsSave = true;
   }
@@ -475,14 +475,15 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   }
 
   int _byteAt(int a) =>
-      (_registerStorage.getUint8(a) << 4) + _registerStorage.getUint8(a + 1);
+      (memory.storage.getUint8(a) << 4) + memory.storage.getUint8(a + 1);
 
   ProgramInstruction<OT> getCurrent() => this[currentLine];
 
   void reset({bool zeroMemory = true}) {
     if (zeroMemory) {
+      final storage = memory.storage;
       for (int i = 0; i < _lines * 2; i++) {
-        _registerStorage.setUint8(i, 0);
+        storage.setUint8(i, 0);
       }
     }
     _lines = 0;
@@ -504,7 +505,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   /// stray data will be properly zeroed out.
   void decodeJson(Map<String, dynamic> json) {
     int n = (json['lines'] as num).toInt();
-    if (n < 0 || n > _registerStorage.lengthInBytes ~/ 2) {
+    if (n < 0 || n > memory.totalNybbles ~/ 2) {
       throw ArgumentError('$n:  Illegal number of lines');
     }
     _lines = n;

@@ -374,5 +374,13 @@ Future<void> opcodeTest16C() async {
     final resultProgram = c.model.program.listing;
     expect(resultProgram.isNotEmpty, true);
     expect(resultProgram, listing16C[i]);
+    final toImport = StringBuffer();
+    toImport.writeln('# a comment');
+    toImport.writeln();
+    for (final line in listing16C[i]) {
+      toImport.writeln(line);
+    }
+    c.model.program.importProgram(toImport.toString());
+    expect(c.model.program.listing, listing16C[i]);
   }
 }

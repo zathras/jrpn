@@ -18,8 +18,6 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 
 import 'package:jrpn/c/controller.dart';
@@ -231,22 +229,16 @@ class Memory16 extends Memory<Operation> {
       OperationMap<Operation> layout, Operation lbl, Operation rtn) {
     final int opcode =
         (lbl.arg.matches(Operations.n0, false) as ArgDone).opcode;
-    program = ProgramMemory16(
-        this, storage, layout, model.returnStackSize, opcode, rtn);
+    program = ProgramMemory16(this, layout, model.returnStackSize, opcode, rtn);
   }
 }
 
 class ProgramMemory16 extends ProgramMemory<Operation> {
   final int _lblOpcode;
 
-  ProgramMemory16(
-      Memory16 memory,
-      ByteData registerStorage,
-      OperationMap<Operation> layout,
-      int returnStackSize,
-      this._lblOpcode,
-      Operation rtn)
-      : super(memory, registerStorage, layout, returnStackSize, rtn);
+  ProgramMemory16(Memory16 memory, OperationMap<Operation> layout,
+      int returnStackSize, this._lblOpcode, Operation rtn)
+      : super(memory, layout, returnStackSize, rtn);
 
   @override
   void goto(int label) {

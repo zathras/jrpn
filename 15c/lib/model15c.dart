@@ -18,7 +18,6 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
-import 'dart:typed_data';
 import 'dart:math' as dart;
 
 import 'package:jrpn/m/model.dart';
@@ -353,9 +352,8 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
       : super(memoryNybbles: memoryNybbles);
 
   @override
-  void initializeSystem(OperationMap<OT> layout, OT lbl, OT rtn) =>
-      program = ProgramMemory15<OT>(
-          this, storage, layout, model.returnStackSize, lbl, rtn);
+  void initializeSystem(OperationMap<OT> layout, OT lbl, OT rtn) => program =
+      ProgramMemory15<OT>(this, layout, model.returnStackSize, lbl, rtn);
 
   int get numRegisters => _numRegisters;
   set numRegisters(int v) {
@@ -388,10 +386,10 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
 class ProgramMemory15<OT extends ProgramOperation> extends ProgramMemory<OT> {
   final List<int> _lblOpcodes;
 
-  ProgramMemory15(Memory<OT> memory, ByteData registerStorage,
-      OperationMap<OT> layout, int returnStackSize, OT lbl, OT rtn)
+  ProgramMemory15(Memory<OT> memory, OperationMap<OT> layout,
+      int returnStackSize, OT lbl, OT rtn)
       : _lblOpcodes = _makeLblOpcodes(lbl),
-        super(memory, registerStorage, layout, returnStackSize, rtn);
+        super(memory, layout, returnStackSize, rtn);
 
   static List<int> _makeLblOpcodes(ProgramOperation lbl) {
     /// Because LBL . n is two-byte, we have to chase down the opcodes
