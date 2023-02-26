@@ -314,6 +314,13 @@ class MemoryPolicy15 extends MemoryPolicy {
       throw CalculatorError(4);
     }
   }
+
+  @override
+  int get maxProgramBytes {
+    int regs = _memory.availableRegistersWithProgram(null);
+    regs += _memory.program.programBytes ~/ 7;
+    return regs * 7;
+  }
 }
 
 /// HP 15C's memory.  Like in the HP 16C, registers and programs are

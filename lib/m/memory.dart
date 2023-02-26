@@ -30,6 +30,8 @@ abstract class MemoryPolicy {
   /// Throws CalculatorError(4) if there's no room to add seven bytes
   /// of program memory.
   void checkExtendProgramMemory();
+
+  int get maxProgramBytes;
 }
 
 /// The calculator's internal memory that holds registers and
@@ -429,7 +431,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     // irrelevant.
   }
 
-  List<ProgramInstruction<OT>> getAllInstructionsForTesting() {
+  List<ProgramInstruction<OT>> getAllInstructions() {
     final result = <ProgramInstruction<OT>>[];
     for (int opcode = 0; opcode < _operationTable.length; opcode++) {
       final op = _operationTable[opcode];
@@ -583,7 +585,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       newText = '000-      ';
     } else {
       String ls = currentLine.toRadixString(10).padLeft(3, '0');
-      String disp = getCurrent().programDisplay;
+      String disp = getCurrent().programDisplay.toLowerCase();
       newText = '$ls$disp';
     }
     if (delayed) {
@@ -686,6 +688,93 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       out.write(_returnStack[i]);
     }
     return out.toString();
+  }
+
+  static final _whitespaceOrComma = RegExp(r'[\s+,]');
+
+  ///
+  /// Canonicalize the program display string
+  ///
+  static String _canonicalizePD(String pd) {
+    final keys = pd.trim().split(_whitespaceOrComma);
+    final result = StringBuffer();
+    for (String k in keys) {
+      k = k.trim();
+      if (k.isEmpty) {
+        continue;
+      }
+      if (result.isNotEmpty) {
+        result.write(' ');
+      }
+      if (k.startsWith('.')) {
+        result.write('48 '); // decimal point, both 15C and 16C
+        result.write(k.substring(1));
+      } else {
+        result.write(k);
+      }
+    }
+    return result.toString();
+  }
+
+  void importProgram(String listing) {
+    final Map<String, ProgramInstruction<OT>> pdToInstruction =
+        <String, ProgramInstruction<OT>>{
+      for (final v in getAllInstructions())
+        _canonicalizePD(v.programDisplay.substring(1)): v
+    };
+    final lines = listing.split('\n');
+    final program = List<ProgramInstruction<OT>>.empty(growable: true);
+    int lineNumber = 0;
+    for (final line in lines) {
+      lineNumber++;
+      var rest = line.trim();
+      if (rest.isEmpty || rest.startsWith('#')) {
+        continue;
+      }
+      int pos = rest.indexOf(' ');
+      if (pos == -1) {
+        throw Exception('Error at line $lineNumber:  Line number not found');
+      }
+      final instructionNumber = int.tryParse(rest.substring(0, pos));
+      if (instructionNumber == null) {
+        throw Exception('No instruction number on line $lineNumber');
+      }
+      rest = rest.substring(pos).trim();
+      if (rest.substring(0, 1) != '{') {
+        throw Exception(
+            'Error at line $lineNumber: Line doesn\'t have " {" after number');
+      }
+      rest = rest.substring(1);
+      pos = rest.indexOf('}');
+      if (pos == -1) {
+        throw Exception('Syntax error at line $lineNumber: "}" not found');
+      }
+      rest = _canonicalizePD(rest.substring(0, pos));
+      if (rest.isEmpty) {
+        if (program.isNotEmpty || instructionNumber != 0) {
+          throw Exception('Unexpected empty instruction at line $lineNumber');
+        }
+      } else if (instructionNumber != program.length + 1) {
+        throw Exception('Unexpected instruction number at line $lineNumber');
+      } else {
+        final instr = pdToInstruction[rest];
+        if (instr == null) {
+          throw Exception('Instruction "$rest" not found at line $lineNumber');
+        }
+        program.add(instr);
+      }
+    }
+    final int len =
+        program.fold(0, (n, instr) => n + (instr.isExtended ? 2 : 1));
+    if (len > memory.policy.maxProgramBytes) {
+      throw Exception('Insufficient space for $len byte program');
+    }
+    suspendedProgram?.abort();
+    suspendedProgram = null;
+    reset();
+    for (final instr in program) {
+      insert(instr);
+    }
   }
 }
 

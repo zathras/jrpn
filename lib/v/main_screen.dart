@@ -24,7 +24,11 @@ this program; if not, see https://www.gnu.org/licenses/ .
 library view.main_screen;
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
@@ -37,6 +41,12 @@ import 'buttons.dart';
 import 'lcd_display.dart';
 
 // See the library comments, above!  (Android Studio  hides them by default.)
+
+final _filesWork = kIsWeb ||
+    Platform.isWindows ||
+    Platform.isIOS ||
+    Platform.isLinux ||
+    Platform.isMacOS;
 
 const _topSilverColor = Color(0xffcdcdcd);
 
@@ -779,22 +789,15 @@ class _FileMenuState extends State<_FileMenu> {
       onCanceled: () => Navigator.pop(context),
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(
-          value: () => widget.app.model.writeToPersistentStorage(),
-          child: const Text('Save'),
-        ),
+            value: () async {}, child: _FileReadMenu('Read', widget.app)),
         PopupMenuItem(
-          value: () {
-            widget.app.controller.resetAll();
-            return widget.app.model.resetFromPersistentStorage();
-          },
-          child: const Text('Restore from Saved'),
-        ),
+            value: () async {}, child: _FileSaveMenu('Save', widget.app)),
         PopupMenuItem(
-            value: () async {}, child: _ExportMenu('Share State', widget.app)),
+            value: () async {},
+            child: _ImportProgramMenu('Import Program', widget.app)),
         PopupMenuItem(
-          value: () => _pasteFromClipboard(context),
-          child: const Text('Import from Clipboard'),
-        ),
+            value: () async {},
+            child: _ExportProgramMenu('Export Program', widget.app)),
         PopupMenuItem(
             value: () async {
               widget.app.controller.resetAll();
@@ -802,6 +805,305 @@ class _FileMenuState extends State<_FileMenu> {
               await widget.app.model.writeToPersistentStorage();
             },
             child: const Text('Reset All'))
+      ],
+      child: Row(
+        children: [
+          Text(widget.title),
+          const Spacer(),
+          const Icon(Icons.arrow_right, size: 30.0),
+        ],
+      ),
+    );
+  }
+}
+
+class _FileSaveMenu extends StatefulWidget {
+  final String title;
+  final Jrpn app;
+
+  const _FileSaveMenu(this.title, this.app, {Key? key}) : super(key: key);
+
+  @override
+  __FileSaveMenuState createState() => __FileSaveMenuState();
+}
+
+class __FileSaveMenuState extends State<_FileSaveMenu> {
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<Future<void> Function()>(
+      // how much the submenu should offset from parent.
+      offset: const Offset(-100, 0),
+      onSelected: (Future<void> Function() action) async {
+        await action();
+        setState(() {});
+        if (mounted) {
+          Navigator.pop<Future<void> Function()>(context, () async {});
+        }
+      },
+      itemBuilder: (BuildContext context) => [
+        PopupMenuItem(
+          value: () => widget.app.model.writeToPersistentStorage(),
+          child: const Text('Save'),
+        ),
+        ...(_filesWork
+            ? [
+                PopupMenuItem(
+                  value: () => _saveToFile(context),
+                  child: const Text('Save to File...'),
+                ),
+              ]
+            : []),
+        PopupMenuItem(
+          value: () => widget.app.sendJsonToClipboard(),
+          child: const Text('Copy to Clipboard'),
+        ),
+        PopupMenuItem(
+          value: () => widget.app.sendJsonToExternalApp(),
+          child: const Text('Export to Application'),
+        ),
+        PopupMenuItem(
+          value: () => widget.app.sendUrlToClipboard(),
+          child: const Text('Copy URL to Clipboard'),
+        ),
+      ],
+      child: Row(
+        children: [
+          Text(widget.title),
+          const Spacer(),
+          const Icon(Icons.arrow_right, size: 30.0),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _saveToFile(BuildContext context) async {
+    final model = widget.app.model;
+    final ext = 'j${model.modelName.toLowerCase()}';
+    final suggested = 'calculator.$ext';
+    final String? path = await getSavePath(suggestedName: suggested);
+    if (path == null) {
+      return;
+    }
+    final String data = json.encoder.convert(model.toJson());
+    final f = XFile.fromData(utf8.encoder.convert(data),
+        mimeType: 'application/json', name: suggested);
+    try {
+      await f.saveTo(path);
+    } catch (e, s) {
+      debugPrint('\n\n$e\n\n$s');
+      if (mounted) {
+        return showErrorDialog(context, 'Error saving', e);
+      }
+    }
+  }
+}
+
+class _ImportProgramMenu extends StatefulWidget {
+  final String title;
+  final Jrpn app;
+
+  const _ImportProgramMenu(this.title, this.app, {Key? key}) : super(key: key);
+
+  @override
+  __ImportProgramMenuState createState() => __ImportProgramMenuState();
+}
+
+class __ImportProgramMenuState extends State<_ImportProgramMenu> {
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<Future<void> Function()>(
+      // how much the submenu should offset from parent.
+      offset: const Offset(-100, 0),
+      onSelected: (Future<void> Function() action) async {
+        await action();
+        setState(() {});
+        if (mounted) {
+          Navigator.pop<Future<void> Function()>(context, () async {});
+        }
+      },
+      itemBuilder: (BuildContext context) => [
+        ...(_filesWork
+            ? [
+                PopupMenuItem(
+                  value: () => _importFromFile(context),
+                  child: const Text('Import from File...'),
+                ),
+              ]
+            : []),
+        PopupMenuItem(
+          value: () => _importFromClipboard(context),
+          child: const Text('Import from Clipboard'),
+        ),
+      ],
+      child: Row(
+        children: [
+          Text(widget.title),
+          const Spacer(),
+          const Icon(Icons.arrow_right, size: 30.0),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _importFromClipboard(BuildContext context) async {
+    final String? cd;
+    try {
+      cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
+    } catch (e) {
+      return showErrorDialog(context, 'Error accessing clipboard', e);
+    }
+    if (cd == null) {
+      widget.app.controller.showMessage('bad c1ip ');
+    } else {
+      try {
+        widget.app.model.program.importProgram(cd);
+      } catch (e, s) {
+        debugPrint('\n\n$e\n\n$s');
+        widget.app.controller.showMessage('bad c1ip ');
+        if (mounted) {
+          return showErrorDialog(context, 'Bad data in clipboard', e);
+        }
+      }
+    }
+  }
+
+  Future<void> _importFromFile(BuildContext context) async {
+    final model = widget.app.model;
+    final typeGroup = XTypeGroup(
+        label: 'JRPN Program', extensions: [model.modelName.toLowerCase()]);
+    final file = await openFile(acceptedTypeGroups: [typeGroup]);
+    if (file == null) {
+      return;
+    }
+    final data = await file.readAsString();
+    try {
+      widget.app.model.program.importProgram(data);
+    } catch (e, s) {
+      debugPrint('\n\n$e\n\n$s');
+      widget.app.controller.showMessage('bad fi1e ');
+      if (mounted) {
+        return showErrorDialog(context, 'Bad data in file', e);
+      }
+    }
+  }
+}
+
+class _ExportProgramMenu extends StatefulWidget {
+  final String title;
+  final Jrpn app;
+
+  const _ExportProgramMenu(this.title, this.app, {Key? key}) : super(key: key);
+
+  @override
+  __ExportProgramMenuState createState() => __ExportProgramMenuState();
+}
+
+class __ExportProgramMenuState extends State<_ExportProgramMenu> {
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<Future<void> Function()>(
+      // how much the submenu should offset from parent.
+      offset: const Offset(-100, 0),
+      onSelected: (Future<void> Function() action) async {
+        await action();
+        setState(() {});
+        if (mounted) {
+          Navigator.pop<Future<void> Function()>(context, () async {});
+        }
+      },
+      itemBuilder: (BuildContext context) => [
+        ...(_filesWork
+            ? [
+                PopupMenuItem(
+                  value: () => _exportToFile(context),
+                  child: const Text('Export to File...'),
+                ),
+              ]
+            : []),
+        PopupMenuItem(
+          value: () => widget.app.sendProgramToClipboard(),
+          child: const Text('Export to Clipboard'),
+        ),
+        PopupMenuItem(
+          value: () => widget.app.sendProgramToExternalApp(),
+          child: const Text('Export to Application'),
+        ),
+      ],
+      child: Row(
+        children: [
+          Text(widget.title),
+          const Spacer(),
+          const Icon(Icons.arrow_right, size: 30.0),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _exportToFile(BuildContext context) async {
+    final model = widget.app.model;
+    final ext = model.modelName.toLowerCase();
+    final suggested = 'program.$ext';
+    final String? path = await getSavePath(suggestedName: suggested);
+    if (path == null) {
+      return;
+    }
+    final String data = widget.app.getProgram();
+    final f = XFile.fromData(utf8.encoder.convert(data),
+        mimeType: 'text/plain', name: suggested);
+    try {
+      await f.saveTo(path);
+    } catch (e, s) {
+      debugPrint('\n\n$e\n\n$s');
+      if (mounted) {
+        return showErrorDialog(context, 'Error saving', e);
+      }
+    }
+  }
+}
+
+class _FileReadMenu extends StatefulWidget {
+  final String title;
+  final Jrpn app;
+
+  const _FileReadMenu(this.title, this.app, {Key? key}) : super(key: key);
+
+  @override
+  __FileReadMenuState createState() => __FileReadMenuState();
+}
+
+class __FileReadMenuState extends State<_FileReadMenu> {
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<Future<void> Function()>(
+      // how much the submenu should offset from parent.
+      offset: const Offset(-100, 0),
+      onSelected: (Future<void> Function() action) async {
+        await action();
+        setState(() {});
+        if (mounted) {
+          Navigator.pop<Future<void> Function()>(context, () async {});
+        }
+      },
+      itemBuilder: (BuildContext context) => [
+        PopupMenuItem(
+          value: () {
+            widget.app.controller.resetAll();
+            return widget.app.model.resetFromPersistentStorage();
+          },
+          child: const Text('Restore from Saved'),
+        ),
+        ...(_filesWork
+            ? [
+                PopupMenuItem(
+                  value: () => _readFromFile(context),
+                  child: const Text('Read from File...'),
+                ),
+              ]
+            : []),
+        PopupMenuItem(
+          value: () => _pasteFromClipboard(context),
+          child: const Text('Read from Clipboard'),
+        ),
       ],
       child: Row(
         children: [
@@ -834,53 +1136,26 @@ class _FileMenuState extends State<_FileMenu> {
       }
     }
   }
-}
 
-class _ExportMenu extends StatefulWidget {
-  final String title;
-  final Jrpn app;
-
-  const _ExportMenu(this.title, this.app, {Key? key}) : super(key: key);
-
-  @override
-  __ExportMenuState createState() => __ExportMenuState();
-}
-
-class __ExportMenuState extends State<_ExportMenu> {
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<Future<void> Function()>(
-      // how much the submenu should offset from parent.
-      offset: const Offset(-100, 0),
-      onSelected: (Future<void> Function() action) async {
-        await action();
-        setState(() {});
-        if (mounted) {
-          Navigator.pop<Future<void> Function()>(context, () async {});
-        }
-      },
-      itemBuilder: (BuildContext context) => [
-        PopupMenuItem(
-          value: () => widget.app.sendJsonToClipboard(),
-          child: const Text('Copy to Clipboard'),
-        ),
-        PopupMenuItem(
-          value: () => widget.app.sendJsonToExternalApp(),
-          child: const Text('Export to Application'),
-        ),
-        PopupMenuItem(
-          value: () => widget.app.sendUrlToClipboard(),
-          child: const Text('Copy URL to Clipboard'),
-        ),
-      ],
-      child: Row(
-        children: [
-          Text(widget.title),
-          const Spacer(),
-          const Icon(Icons.arrow_right, size: 30.0),
-        ],
-      ),
-    );
+  Future<void> _readFromFile(BuildContext context) async {
+    final model = widget.app.model;
+    final typeGroup = XTypeGroup(
+        label: 'Calculator State',
+        extensions: ['j${model.modelName.toLowerCase()}']);
+    final file = await openFile(acceptedTypeGroups: [typeGroup]);
+    if (file == null) {
+      return;
+    }
+    final data = await file.readAsString();
+    try {
+      widget.app.model.initializeFromJsonOrUri(data);
+    } catch (e, s) {
+      debugPrint('\n\n$e\n\n$s');
+      widget.app.controller.showMessage('bad fi1e ');
+      if (mounted) {
+        return showErrorDialog(context, 'Bad data in file', e);
+      }
+    }
   }
 }
 

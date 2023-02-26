@@ -211,6 +211,9 @@ class MemoryPolicy16 extends MemoryPolicy {
       throw CalculatorError(4);
     }
   }
+
+  @override
+  int get maxProgramBytes => (_memory.totalNybbles ~/ 14) * 14;
 }
 
 class Memory16 extends Memory<Operation> {

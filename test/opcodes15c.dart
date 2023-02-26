@@ -1023,7 +1023,7 @@ Map<String, String> tclDisplayToOpcode() {
 
 Future<void> opcodeTest15C() async {
   final c = TestCalculator(for15C: true);
-  final instructions = c.model.memory.program.getAllInstructionsForTesting();
+  final instructions = c.model.memory.program.getAllInstructions();
   final tcl = tclDisplayToOpcode();
   final seen = <String>{};
   for (final instr in instructions) {
