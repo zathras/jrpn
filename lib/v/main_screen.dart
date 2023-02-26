@@ -969,15 +969,17 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
 
   Future<void> _importFromFile(BuildContext context) async {
     final model = widget.app.model;
-    final typeGroup = XTypeGroup(
-        label: 'JRPN Program', extensions: [model.modelName.toLowerCase()]);
+    final typeGroup = XTypeGroup(label: 'JRPN Program', extensions: [
+      model.modelName.toLowerCase(),
+      model.modelName.toUpperCase()
+    ]);
     final file = await openFile(acceptedTypeGroups: [typeGroup]);
     if (file == null) {
       return;
     }
-    final data = await file.readAsString();
+    final data = await file.readAsBytes();
     try {
-      widget.app.model.program.importProgram(data);
+      widget.app.model.program.importProgramFromFile(data);
     } catch (e, s) {
       debugPrint('\n\n$e\n\n$s');
       widget.app.controller.showMessage('bad fi1e ');
@@ -1015,8 +1017,12 @@ class __ExportProgramMenuState extends State<_ExportProgramMenu> {
         ...(_filesWork
             ? [
                 PopupMenuItem(
-                  value: () => _exportToFile(context),
+                  value: () => _exportToFile(context, true),
                   child: const Text('Export to File...'),
+                ),
+                PopupMenuItem(
+                  value: () => _exportToFile(context, false),
+                  child: const Text('Export to UTF-16LE File...'),
                 ),
               ]
             : []),
@@ -1039,7 +1045,7 @@ class __ExportProgramMenuState extends State<_ExportProgramMenu> {
     );
   }
 
-  Future<void> _exportToFile(BuildContext context) async {
+  Future<void> _exportToFile(BuildContext context, bool inUtf8) async {
     final model = widget.app.model;
     final ext = model.modelName.toLowerCase();
     final suggested = 'program.$ext';
@@ -1047,9 +1053,24 @@ class __ExportProgramMenuState extends State<_ExportProgramMenu> {
     if (path == null) {
       return;
     }
-    final String data = widget.app.getProgram();
-    final f = XFile.fromData(utf8.encoder.convert(data),
-        mimeType: 'text/plain', name: suggested);
+    final XFile f;
+    if (inUtf8) {
+      final String data = widget.app.getProgram('UTF-8');
+      f = XFile.fromData(utf8.encoder.convert(data),
+          mimeType: 'text/plain;charset=UTF-8', name: suggested);
+    } else {
+      final String s = widget.app.getProgram('UTF-16LE');
+      final data = Uint8List(s.length * 2 + 2);
+      int pos = 0;
+      data[pos++] = 0xff;
+      data[pos++] = 0xfe;
+      for (final c in s.codeUnits) {
+        data[pos++] = c & 0xff;
+        data[pos++] = (c >> 8) & 0xff;
+      }
+      f = XFile.fromData(data,
+          mimeType: 'text/plain;charset=UTF-16LE', name: suggested);
+    }
     try {
       await f.saveTo(path);
     } catch (e, s) {

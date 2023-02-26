@@ -697,6 +697,11 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   /// Canonicalize the program display string
   ///
   static String _canonicalizePD(String pd) {
+    if (pd.startsWith('-')) {
+      pd = pd.substring(1);
+    } else if (pd.startsWith('u')) {
+      pd = '${pd.substring(1)} u';
+    }
     final keys = pd.trim().split(_whitespaceOrComma);
     final result = StringBuffer();
     for (String k in keys) {
@@ -718,11 +723,14 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   }
 
   void importProgram(String listing) {
-    final Map<String, ProgramInstruction<OT>> pdToInstruction =
-        <String, ProgramInstruction<OT>>{
-      for (final v in getAllInstructions())
-        _canonicalizePD(v.programDisplay.substring(1)): v
-    };
+    final Map<String, ProgramInstruction<OT>> pdToInstruction;
+    {
+      final allInstructions = getAllInstructions();
+      pdToInstruction = <String, ProgramInstruction<OT>>{
+        for (final v in allInstructions) _canonicalizePD(v.programDisplay): v
+      };
+      assert(allInstructions.length == pdToInstruction.length);
+    }
     final lines = listing.split('\n');
     final program = List<ProgramInstruction<OT>>.empty(growable: true);
     int lineNumber = 0;
@@ -738,29 +746,33 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       }
       final instructionNumber = int.tryParse(rest.substring(0, pos));
       if (instructionNumber == null) {
-        throw Exception('No instruction number on line $lineNumber');
+        throw Exception('No instruction number on line $lineNumber: $line');
       }
       rest = rest.substring(pos).trim();
       if (rest.substring(0, 1) != '{') {
-        throw Exception(
-            'Error at line $lineNumber: Line doesn\'t have " {" after number');
+        throw Exception('Error at line $lineNumber: '
+            'Line doesn\'t have " {" after number: $line');
       }
       rest = rest.substring(1);
       pos = rest.indexOf('}');
       if (pos == -1) {
-        throw Exception('Syntax error at line $lineNumber: "}" not found');
+        throw Exception(
+            'Syntax error at line $lineNumber: "}" not found: $line');
       }
       rest = _canonicalizePD(rest.substring(0, pos));
       if (rest.isEmpty) {
         if (program.isNotEmpty || instructionNumber != 0) {
-          throw Exception('Unexpected empty instruction at line $lineNumber');
+          throw Exception(
+              'Unexpected empty instruction at line $lineNumber: $line');
         }
       } else if (instructionNumber != program.length + 1) {
-        throw Exception('Unexpected instruction number at line $lineNumber');
+        throw Exception(
+            'Unexpected instruction number at line $lineNumber: $line');
       } else {
         final instr = pdToInstruction[rest];
         if (instr == null) {
-          throw Exception('Instruction "$rest" not found at line $lineNumber');
+          throw Exception(
+              'Instruction "$rest" not found at line $lineNumber: $line');
         }
         program.add(instr);
       }
@@ -775,6 +787,23 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     reset();
     for (final instr in program) {
       insert(instr);
+    }
+  }
+
+  void importProgramFromFile(Uint8List original) {
+    if (original.length > 1 && original[0] == 0xff && original[1] == 0xfe) {
+      // UTF-16 LE (little endian).  It's not even supported by Dart's
+      // encoder!  Also, Dart doesn't seem to have a little-endian to
+      // native-endian converter.
+      final sb = StringBuffer();
+      for (int i = 2; i < original.length - 1; i += 2) {
+        final code = original[i] | (original[i + 1] << 8);
+        sb.writeCharCode(code);
+      }
+      return importProgram(sb.toString());
+    } else {
+      // Default to UTF8
+      return importProgram(utf8.decoder.convert(original));
     }
   }
 }

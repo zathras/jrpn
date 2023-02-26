@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html><head>
+	<title>Triangle Solutions</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<style type="text/css">
+    @import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+    @font-face {
+      font-family: 'HP15CWebFont';
+      src: local('HP15C Simulator Font'),
+           url('../fonts/HP-15C_Simulator_Font.ttf');
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+    }
+
+    code {
+      font-size: 1.2em;
+    }
+
+    pre {
+      font-size: 1.2em;
+      background-color: #F4F4F4;
+      margin-left: 20px;
+      padding: 10px;
+      display: inline-block;
+    }
+
+    .HP15CTblLayout {
+      empty-cells: show;
+      border-collapse: collapse;
+      margin-left: 20px;
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+      border: none;
+    }
+
+    .HP15CTblHead {
+      font-family: Helvetica, Arial, sans-serif;
+      text-align: left;
+      vertical-align: middle;
+      white-space:nowrap;
+      color: #000000;
+      background-color: #D0D0D0;
+      padding: 0.2em;
+      padding-left: 0.5em;
+      padding-right: 0.5em;
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CTblHeadEmpty {
+      padding-left: 0.5em;
+      border: none;
+    }
+
+    .HP15CTblLeft {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: normal;
+      text-align: left;
+      vertical-align: middle;
+      padding-left: 5px;
+      padding-right: 5px;
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CTblCentered {
+      font-family: Helvetica, Arial, sans-serif;
+      text-align: center;
+      vertical-align: middle;
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CTblRight {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: normal;
+      text-align: right;
+      vertical-align: middle;
+      padding-left: 5px;
+      padding-right: 5px;
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CTblRightCode {
+      font-family: HP15CWebFont, Inconsolata, Courier, monospace;
+      font-weight: normal;
+      font-size: 1.25em;
+      text-align: right;
+      vertical-align: middle;
+      padding-left: 5px;
+      padding-right: 5px;
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CRegister {
+      font-family: Times, serif;
+      font-size:  0.9em;
+      font-weight: bold;
+    }
+
+    .HP15CKey {
+      color: white;
+      background-color: #454545;
+    }
+
+    .HP15CBWKey {
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CfKeyLabel {
+      color: #E1A83E;
+      background-color: #454545;
+    }
+
+    .HP15CgKeyLabel {
+      color: #6CB7BD;
+      background-color: #454545;
+    }
+
+    .HP15CKey, .HP15CBWKey, .HP15CfKeyLabel, .HP15CgKeyLabel {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: bold;
+      font-size: 0.9em;
+      font-style: normal;
+      text-align: center;
+      padding-top: 0.1em;
+      padding-left: 3px;
+      padding-right: 3px;
+      border-radius: 4px;
+      display: inline-block;
+      min-width: 2.1em;
+    }
+
+    .HP15CfKey {
+      background-color:  #E1A83E;
+    }
+
+    .HP15CgKey {
+      background-color:  #6CB7BD;
+    }
+
+    .HP15CBWfgKey {
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CfKey, .HP15CgKey, .HP15CBWfgKey {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: bold;
+      font-size: 0.9em;
+      color:  black;
+      text-align: center;
+      padding-top: 0.1em;
+      padding-left: 6px;
+      padding-right: 6px;
+      border-radius: 4px;
+      display: inline-block;
+      min-width: 0.6em;
+    }
+
+    .HP15CindentSeq {
+      margin-left: 1.65em;
+    }
+</style>
+</head>
+
+<body>
+<h1>Triangle Solutions</h1>
+<h2>Description</h2>
+Origin: HP-34C MATHEMATICS Applications, June 1981, p. 33<br>
+<br>
+This program may be used to find the sides, the angles, and the area of a plane triangle.<br>
+<img src="Triangle Solutions.png"><br>
+In general, the specification of any three of the six parameters of a triangle (3 sides, 3 angles) is sufficient to define the triangle. (The exception is that three angles will not define a triangle.) There are thus five possible cases that this program will handle: two sides and the included angle (SAS), two angles and the included side (ASA), two sides and the adjacent angle (SSA—an ambiguous case), two angles and the adjacent side (AAS), and three sides (SSS).<br>
+<br>
+If the three known input values are selected in a clockwise order around the triangle the outputs will also follow a clockwise order. The outputs are obtained by reviewing the storage registers as follows:<br>
+<br>
+<strong>Remarks:</strong><br>
+<ul>
+<li>Inputs may be in any angular mode (i.e., DEG, RAD, GRAD). Be sure calculator is set to match the angular mode of the inputs.</li>
+<li>Note that the triangle described by the program does not conform to standard triangle notation; i.e., A, is not opposite S,.</li>
+<li>Angles must be entered as decimals. The <span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">→H</span> conversion can be used to convert degrees, minutes, and seconds to decimal degrees.</li>
+<li>Accuracy of solution may degenerate for triangles containing extremely small angles.</li>
+</ul>
+<strong>Instructions:</strong><br>
+<ol>
+<li>SSS: 3 sides known</li>
+<li>ASA: 2 angles and included side known</li>
+<li>SAA: 2 angles and adjacent side known</li>
+<li>SAS: 2 sides and included angle known</li>
+<li>SSA: 2 sides and adjacent angle known</li>
+</ol>
+<strong>Note:</strong> The following examples are calculated with "Strict HP-15C behaviour" activated. When deactivated, results will differ slightly.<br>
+<br>
+<strong>Example 1:</strong><br>
+<br>
+A surveyor is to find the area and dimensions of a triangular land parcel. From point A, the distance to B and C are measured with an electronic distance meter. The angle between AB and AC is also measure. Find the area and the dimensions of the triangle.<br>
+<img src="Triangle Solutions - Example 1.png"><br>
+This is a side-angle-side problem where:<br>
+S<sub>1</sub> = 171.63, A<sub>1</sub> = 98°12' and S<sub>2</sub> = 297.35.<br>
+<br>
+<span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">DEG</span> <span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">FIX</span> 2<br>
+171.63 <span class="HP15CKey">ENTER</span> → 171.63<br>
+98.12 <span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">→H</span> → 98.20<br>
+297.35 <span class="HP15CKey">GSB</span> 4 → 25,281.69<br>
+<span class="HP15CKey">RCL</span> 4 → 27.80<br>
+<span class="HP15CKey">RCL</span> 5 → 364.18<br>
+<span class="HP15CKey">RCL</span> 6 → 54:00<br>
+<br>
+<strong>Example 2:</strong><br>
+<br>
+Given 2 sides and a nonincluded angle solve for the triangle:<br>
+<br>
+Side<sub>1</sub> = 25.6<br>
+Side<sub>2</sub> = 32.8<br>
+Angle<sub>2</sub> = 42.3°<br>
+<img src="Triangle Solutions - Example 2.png"><br>
+25.6 <span class="HP15CKey">ENTER</span> → 25.60<br>
+32.9 <span class="HP15CKey">ENTER</span> → 32.80<br>
+42.3 <span class="HP15CKey">GSB</span> 5 → 2 (2 Solutions - flashing)<br>
+<span class="HP15CKey">R/S</span> <span class="HP15CKey">RCL</span> 0 → 410.85 (Area 1)<br>
+<span class="HP15CfKeyLabel">A</span> → 124.68 (Area 2)<br>
+<span class="HP15CKey">RCL</span> 1 → 26.60 (Area 2)<br>
+etc.<br>
+<h2>Program Resources</h2>
+<h3>Labels</h3>
+<table class="HP15CTblLayout">
+<colgroup>
+<col style="width: 4em;">
+<col style="width: 33em;">
+<col style="width: 0.5em;">
+</colgroup>
+<colgroup>
+<col style="width: 4em;">
+<col style="width: 33em;">
+<col style="width: 0.5em;">
+</colgroup>
+<thead>
+<tr>
+<th class="HP15CTblHead">Name</th>
+<th class="HP15CTblHead">Description</th>
+<th class="HP15CTblHeadEmpty"></th>
+<th class="HP15CTblHead">Name</th>
+<th class="HP15CTblHead">Description</th>
+<th class="HP15CTblHeadEmpty"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="HP15CTblCentered"> A</td>
+<td class="HP15CTblLeft">Calculates 2nd solution (if available)</td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered"> 4</td>
+<td class="HP15CTblLeft">SAS: 2 sides and included angle known</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> E</td>
+<td class="HP15CTblLeft"># Set flashing for solution indicator</td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered"> 5</td>
+<td class="HP15CTblLeft">SSA: 2 sides and adjacent angle known</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 0</td>
+<td class="HP15CTblLeft">#</td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered"> 7</td>
+<td class="HP15CTblLeft"># Indicator 2 solutions</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 1</td>
+<td class="HP15CTblLeft">SSS: 3 sides known</td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered"> 8</td>
+<td class="HP15CTblLeft"># Calculate adjacent angle</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 2</td>
+<td class="HP15CTblLeft">ASA: 2 angles and included side known</td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered"> 9</td>
+<td class="HP15CTblLeft"># Indicator 1 solution</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 3</td>
+<td class="HP15CTblLeft">SAA: 2 angles and adjacent side known</td>
+<td class="HP15CTblEmpty"></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>Storage Registers</h3>
+<table class="HP15CTblLayout">
+<colgroup>
+<col style="width: 4em;">
+<col style="width: 70.5em;">
+<col style="width: 0.5em;">
+</colgroup>
+<thead>
+<tr>
+<th class="HP15CTblHead">Name</th>
+<th class="HP15CTblHead">Description</th>
+<th class="HP15CTblHeadEmpty"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="HP15CTblCentered"> 0</td>
+<td class="HP15CTblLeft">Area</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 1</td>
+<td class="HP15CTblLeft">Side 1</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 2</td>
+<td class="HP15CTblLeft">Angle 1</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 3</td>
+<td class="HP15CTblLeft">Side 2</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 4</td>
+<td class="HP15CTblLeft">Angle 2</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 5</td>
+<td class="HP15CTblLeft">Side 3</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 6</td>
+<td class="HP15CTblLeft">Angle 3</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+</tbody>
+</table>
+<h3>Flags</h3>
+<table class="HP15CTblLayout">
+<colgroup>
+<col style="width: 5em;">
+<col style="width: 69.5em;">
+<col style="width: 0.5em;">
+</colgroup>
+<thead>
+<tr>
+<th class="HP15CTblHead">Number</th>
+<th class="HP15CTblHead">Description</th>
+<th class="HP15CTblEmpty"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="HP15CTblCentered">9</td>
+<td class="HP15CTblLeft">Flashing display indicates number of solutions found</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+</tbody>
+</table>
+<h2>Program</h2>
+<table class="HP15CTblLayout">
+<colgroup>
+<col style="width: 3.5em;">
+<col style="width: 7em;">
+<col style="width: 14em;">
+<col style="width: 0.5em;">
+</colgroup>
+<colgroup>
+<col style="width: 3.5em;">
+<col style="width: 7em;">
+<col style="width: 14em;">
+<col style="width: 0.5em;">
+</colgroup>
+<colgroup>
+<col style="width: 3.5em;">
+<col style="width: 7em;">
+<col style="width: 14em;">
+<col style="width: 0.5em;">
+</colgroup>
+<thead>
+<tr>
+<th class="HP15CTblHead">Line</th>
+<th class="HP15CTblHead">Display</th>
+<th class="HP15CTblHead">Key Sequence</th>
+<th class="HP15CTblHeadEmpty"></th>
+<th class="HP15CTblHead">Line</th>
+<th class="HP15CTblHead">Display</th>
+<th class="HP15CTblHead">Key Sequence</th>
+<th class="HP15CTblHeadEmpty"></th>
+<th class="HP15CTblHead">Line</th>
+<th class="HP15CTblHead">Display</th>
+<th class="HP15CTblHead">Key Sequence</th>
+<th class="HP15CTblHeadEmpty"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="HP15CTblCentered">000</td>
+<td class="HP15CTblRightCode">         </td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">045</td>
+<td class="HP15CTblRightCode">     45 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">090</td>
+<td class="HP15CTblRightCode"> 42,21, 4</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CKey">4</span> </td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">001</td>
+<td class="HP15CTblRightCode"> 42,21, 1</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CKey">1</span> </td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">046</td>
+<td class="HP15CTblRightCode">       40</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">+</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">091</td>
+<td class="HP15CTblRightCode">     44 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">002</td>
+<td class="HP15CTblRightCode">     44 5</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">5</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">047</td>
+<td class="HP15CTblRightCode">       23</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">SIN</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">092</td>
+<td class="HP15CTblRightCode">       33</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R⬇</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">003</td>
+<td class="HP15CTblRightCode">       33</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R⬇</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">048</td>
+<td class="HP15CTblRightCode">     45 4</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">4</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">093</td>
+<td class="HP15CTblRightCode">     44 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">004</td>
+<td class="HP15CTblRightCode">     44 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">049</td>
+<td class="HP15CTblRightCode">       23</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">SIN</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">094</td>
+<td class="HP15CTblRightCode">       33</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R⬇</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">005</td>
+<td class="HP15CTblRightCode">       33</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R⬇</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">050</td>
+<td class="HP15CTblRightCode">       10</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&divide;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">095</td>
+<td class="HP15CTblRightCode">     44 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">006</td>
+<td class="HP15CTblRightCode">     44 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">051</td>
+<td class="HP15CTblRightCode">     45 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">096</td>
+<td class="HP15CTblRightCode"> 42,21, 0</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CKey">0</span> </td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">007</td>
+<td class="HP15CTblRightCode">     45 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">052</td>
+<td class="HP15CTblRightCode">       20</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&times;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">097</td>
+<td class="HP15CTblRightCode">     45 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">008</td>
+<td class="HP15CTblRightCode">     43 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">&rarr;P</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">053</td>
+<td class="HP15CTblRightCode">     44 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">098</td>
+<td class="HP15CTblRightCode">     45 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">009</td>
+<td class="HP15CTblRightCode">    43 11</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">x&sup2;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">054</td>
+<td class="HP15CTblRightCode">     22 0</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GTO</span> <span class="HP15CKey">0</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">099</td>
+<td class="HP15CTblRightCode">     42 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">&rarr;&thinsp;R</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">010</td>
+<td class="HP15CTblRightCode">     45 5</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">5</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">055</td>
+<td class="HP15CTblRightCode"> 42,21, 5</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CKey">5</span> </td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">100</td>
+<td class="HP15CTblRightCode">     45 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">011</td>
+<td class="HP15CTblRightCode">    43 11</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">x&sup2;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">056</td>
+<td class="HP15CTblRightCode">     44 4</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">4</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">101</td>
+<td class="HP15CTblRightCode">       34</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">x&harr;y</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">012</td>
+<td class="HP15CTblRightCode">       30</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&minus;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">057</td>
+<td class="HP15CTblRightCode">       33</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R⬇</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">102</td>
+<td class="HP15CTblRightCode">       30</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&minus;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">013</td>
+<td class="HP15CTblRightCode">     45 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">058</td>
+<td class="HP15CTblRightCode">     44 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">103</td>
+<td class="HP15CTblRightCode">     43 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">&rarr;P</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">014</td>
+<td class="HP15CTblRightCode">     45 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">059</td>
+<td class="HP15CTblRightCode">       33</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R⬇</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">104</td>
+<td class="HP15CTblRightCode">     44 5</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">5</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">015</td>
+<td class="HP15CTblRightCode">       20</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&times;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">060</td>
+<td class="HP15CTblRightCode">     44 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">105</td>
+<td class="HP15CTblRightCode">       34</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">x&harr;y</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">016</td>
+<td class="HP15CTblRightCode">        2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">061</td>
+<td class="HP15CTblRightCode">     45 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">106</td>
+<td class="HP15CTblRightCode">     44 4</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">4</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">017</td>
+<td class="HP15CTblRightCode">       20</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&times;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">062</td>
+<td class="HP15CTblRightCode">     45 4</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">4</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">107</td>
+<td class="HP15CTblRightCode">     45 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">018</td>
+<td class="HP15CTblRightCode">       10</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&divide;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">063</td>
+<td class="HP15CTblRightCode">       23</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">SIN</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">108</td>
+<td class="HP15CTblRightCode">       40</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">+</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">019</td>
+<td class="HP15CTblRightCode">    43 24</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">COS⁻&sup1;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">064</td>
+<td class="HP15CTblRightCode">     45 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">109</td>
+<td class="HP15CTblRightCode">     32 9</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GSB</span> <span class="HP15CKey">9</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">020</td>
+<td class="HP15CTblRightCode">     44 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">065</td>
+<td class="HP15CTblRightCode">       10</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&divide;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">110</td>
+<td class="HP15CTblRightCode">     44 6</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">6</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">021</td>
+<td class="HP15CTblRightCode">     22 0</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GTO</span> <span class="HP15CKey">0</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">066</td>
+<td class="HP15CTblRightCode">       20</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&times;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">111</td>
+<td class="HP15CTblRightCode">       23</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">SIN</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">022</td>
+<td class="HP15CTblRightCode"> 42,21, 2</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CKey">2</span> </td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">067</td>
+<td class="HP15CTblRightCode">    43 23</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">SIN⁻&sup1;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">112</td>
+<td class="HP15CTblRightCode">       20</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&times;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">023</td>
+<td class="HP15CTblRightCode">     44 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">068</td>
+<td class="HP15CTblRightCode">     45 4</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">4</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">113</td>
+<td class="HP15CTblRightCode">     45 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">024</td>
+<td class="HP15CTblRightCode">       33</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R⬇</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">069</td>
+<td class="HP15CTblRightCode">       40</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">+</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">114</td>
+<td class="HP15CTblRightCode">       20</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&times;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">025</td>
+<td class="HP15CTblRightCode">     44 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">070</td>
+<td class="HP15CTblRightCode">     32 9</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GSB</span> <span class="HP15CKey">9</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">115</td>
+<td class="HP15CTblRightCode">        2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">026</td>
+<td class="HP15CTblRightCode">       33</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R⬇</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">071</td>
+<td class="HP15CTblRightCode">     44 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">116</td>
+<td class="HP15CTblRightCode">       10</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&divide;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">027</td>
+<td class="HP15CTblRightCode">     44 6</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">6</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">072</td>
+<td class="HP15CTblRightCode">     32 0</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GSB</span> <span class="HP15CKey">0</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">117</td>
+<td class="HP15CTblRightCode">     44 0</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">0</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">028</td>
+<td class="HP15CTblRightCode">       23</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">SIN</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">073</td>
+<td class="HP15CTblRightCode">     45 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">118</td>
+<td class="HP15CTblRightCode">    43 32</td>
+<td class="HP15CTblLeft"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">RTN</span> </td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">029</td>
+<td class="HP15CTblRightCode">     45 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">074</td>
+<td class="HP15CTblRightCode">     45 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">119</td>
+<td class="HP15CTblRightCode"> 42,21, 9</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CKey">9</span> </td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">030</td>
+<td class="HP15CTblRightCode">     45 6</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">6</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">075</td>
+<td class="HP15CTblRightCode">    43 10</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">x&le;y</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">120</td>
+<td class="HP15CTblRightCode">       24</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">COS</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">031</td>
+<td class="HP15CTblRightCode">       40</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">+</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">076</td>
+<td class="HP15CTblRightCode">     22 8</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GTO</span> <span class="HP15CKey">8</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">121</td>
+<td class="HP15CTblRightCode">       16</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">CHS</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">032</td>
+<td class="HP15CTblRightCode">       23</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">SIN</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">077</td>
+<td class="HP15CTblRightCode"> 42,21, 7</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CKey">7</span> </td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">122</td>
+<td class="HP15CTblRightCode">    43 24</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">COS⁻&sup1;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">033</td>
+<td class="HP15CTblRightCode">       10</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&divide;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">078</td>
+<td class="HP15CTblRightCode">        2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">123</td>
+<td class="HP15CTblRightCode">    43 32</td>
+<td class="HP15CTblLeft"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">RTN</span> </td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">034</td>
+<td class="HP15CTblRightCode">     45 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">079</td>
+<td class="HP15CTblRightCode">    32 15</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GSB</span> <span class="HP15CfKeyLabel">E</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">124</td>
+<td class="HP15CTblRightCode"> 42,21, 8</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CKey">8</span> </td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">035</td>
+<td class="HP15CTblRightCode">       20</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&times;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">080</td>
+<td class="HP15CTblRightCode">    43 32</td>
+<td class="HP15CTblLeft"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">RTN</span> </td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">125</td>
+<td class="HP15CTblRightCode">        1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">036</td>
+<td class="HP15CTblRightCode">     44 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">081</td>
+<td class="HP15CTblRightCode"> 42,21,11</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CfKeyLabel">A</span> </td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">126</td>
+<td class="HP15CTblRightCode">    32 15</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GSB</span> <span class="HP15CfKeyLabel">E</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">037</td>
+<td class="HP15CTblRightCode">     22 0</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GTO</span> <span class="HP15CKey">0</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">082</td>
+<td class="HP15CTblRightCode">     45 6</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">6</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">127</td>
+<td class="HP15CTblRightCode">    43 32</td>
+<td class="HP15CTblLeft"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">RTN</span> </td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">038</td>
+<td class="HP15CTblRightCode"> 42,21, 3</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CKey">3</span> </td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">083</td>
+<td class="HP15CTblRightCode">     32 9</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GSB</span> <span class="HP15CKey">9</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">128</td>
+<td class="HP15CTblRightCode"> 42,21,15</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CfKeyLabel">E</span> </td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">039</td>
+<td class="HP15CTblRightCode">     44 4</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">4</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">084</td>
+<td class="HP15CTblRightCode">     44 6</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">6</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">129</td>
+<td class="HP15CTblRightCode"> 43, 4, 9</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">SF</span> <span class="HP15CKey">9</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">040</td>
+<td class="HP15CTblRightCode">       33</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R⬇</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">085</td>
+<td class="HP15CTblRightCode">     45 4</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">4</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">130</td>
+<td class="HP15CTblRightCode">       31</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R/S</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">041</td>
+<td class="HP15CTblRightCode">     44 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">086</td>
+<td class="HP15CTblRightCode">       40</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">+</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">131</td>
+<td class="HP15CTblRightCode"> 43, 5, 9</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">CF</span> <span class="HP15CKey">9</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">042</td>
+<td class="HP15CTblRightCode">       33</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R⬇</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">087</td>
+<td class="HP15CTblRightCode">     32 9</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GSB</span> <span class="HP15CKey">9</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">132</td>
+<td class="HP15CTblRightCode">    43 32</td>
+<td class="HP15CTblLeft"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">RTN</span> </td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">043</td>
+<td class="HP15CTblRightCode">     44 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">088</td>
+<td class="HP15CTblRightCode">     44 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">044</td>
+<td class="HP15CTblRightCode">     45 4</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">4</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">089</td>
+<td class="HP15CTblRightCode">     22 0</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GTO</span> <span class="HP15CKey">0</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>

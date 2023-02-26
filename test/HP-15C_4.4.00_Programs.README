@@ -1,0 +1,10 @@
+
+The directory HP-15C_4.4.00_Programs is copied from Torsten's 15C website,
+https://hp-15c.homepage.t-online.de/homepage.htm, specifically from
+https://hp-15c.homepage.t-online.de/download.htm#ProgramExamples, which
+has a download link to https://bit.ly/3i0przV.
+
+As of the date of download, the top page of the website identifies its
+contents as being licensed under the GPL (https://www.gnu.org/licenses/).
+
+These programs are used for regression tests -- see program_test_15c.dart.

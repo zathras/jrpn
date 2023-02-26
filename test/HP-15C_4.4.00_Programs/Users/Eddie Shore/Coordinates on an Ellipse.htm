@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html><head>
+	<title>Coordinates on an Ellipse</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<style type="text/css">
+    @import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+    @font-face {
+      font-family: 'HP15CWebFont';
+      src: local('HP15C Simulator Font'),
+           url('../fonts/HP-15C_Simulator_Font.ttf');
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+    }
+
+    code {
+      font-size: 1.2em;
+    }
+
+    pre {
+      font-size: 1.2em;
+      background-color: #F4F4F4;
+      margin-left: 20px;
+      padding: 10px;
+      display: inline-block;
+    }
+
+    .HP15CTblLayout {
+      empty-cells: show;
+      border-collapse: collapse;
+      margin-left: 20px;
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+      border: none;
+    }
+
+    .HP15CTblHead {
+      font-family: Helvetica, Arial, sans-serif;
+      text-align: left;
+      vertical-align: middle;
+      white-space:nowrap;
+      color: #000000;
+      background-color: #D0D0D0;
+      padding: 0.2em;
+      padding-left: 0.5em;
+      padding-right: 0.5em;
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CTblHeadEmpty {
+      padding-left: 0.5em;
+      border: none;
+    }
+
+    .HP15CTblLeft {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: normal;
+      text-align: left;
+      vertical-align: middle;
+      padding-left: 5px;
+      padding-right: 5px;
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CTblCentered {
+      font-family: Helvetica, Arial, sans-serif;
+      text-align: center;
+      vertical-align: middle;
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CTblRight {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: normal;
+      text-align: right;
+      vertical-align: middle;
+      padding-left: 5px;
+      padding-right: 5px;
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CTblRightCode {
+      font-family: HP15CWebFont, Inconsolata, Courier, monospace;
+      font-weight: normal;
+      font-size: 1.25em;
+      text-align: right;
+      vertical-align: middle;
+      padding-left: 5px;
+      padding-right: 5px;
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CRegister {
+      font-family: Times, serif;
+      font-size:  0.9em;
+      font-weight: bold;
+    }
+
+    .HP15CKey {
+      color: white;
+      background-color: #454545;
+    }
+
+    .HP15CBWKey {
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CfKeyLabel {
+      color: #E1A83E;
+      background-color: #454545;
+    }
+
+    .HP15CgKeyLabel {
+      color: #6CB7BD;
+      background-color: #454545;
+    }
+
+    .HP15CKey, .HP15CBWKey, .HP15CfKeyLabel, .HP15CgKeyLabel {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: bold;
+      font-size: 0.9em;
+      font-style: normal;
+      text-align: center;
+      padding-top: 0.1em;
+      padding-left: 3px;
+      padding-right: 3px;
+      border-radius: 4px;
+      display: inline-block;
+      min-width: 2.1em;
+    }
+
+    .HP15CfKey {
+      background-color:  #E1A83E;
+    }
+
+    .HP15CgKey {
+      background-color:  #6CB7BD;
+    }
+
+    .HP15CBWfgKey {
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .HP15CfKey, .HP15CgKey, .HP15CBWfgKey {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: bold;
+      font-size: 0.9em;
+      color:  black;
+      text-align: center;
+      padding-top: 0.1em;
+      padding-left: 6px;
+      padding-right: 6px;
+      border-radius: 4px;
+      display: inline-block;
+      min-width: 0.6em;
+    }
+
+    .HP15CindentSeq {
+      margin-left: 1.65em;
+    }
+</style>
+</head>
+
+<body>
+<h1>Coordinates on an Ellipse</h1>
+<h2>Description</h2>
+By Eddie Shore, January 2016 (<a href="https://edspi31415.blogspot.com/search?q=Coordinates+on+an+Ellipse" target="_blank">Eddie's Math and Calculator Blog</a>)<br>
+<br>
+<strong>Store the following values before running:</strong><br>
+<span class="HP15CRegister">R</span><sub>0</sub> = number of points. θ always starts at 0° to 360° in equal increments.<br>
+<span class="HP15CRegister">R</span><sub>1</sub> = a, length of horizontal semi-axis<br>
+<span class="HP15CRegister">R</span><sub>2</sub> = b, length of vertical semi-axis<br>
+The centre of the ellipse is at (0,0)<br>
+<br>
+<strong>To calculate the coordinates:</strong><br>
+<span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">B</span> show first point number<br>
+<span class="HP15CKey">R/S</span> show X coordinate<br>
+<span class="HP15CKey">R/S</span> show Y coordinate<br>
+<span class="HP15CKey">R/S</span> show next point number<br>
+etc.<br>
+<h2>Program Resources</h2>
+<h3>Labels</h3>
+<table class="HP15CTblLayout">
+<colgroup>
+<col style="width: 4em;">
+<col style="width: 70.5em;">
+<col style="width: 0.5em;">
+</colgroup>
+<thead>
+<tr>
+<th class="HP15CTblHead">Name</th>
+<th class="HP15CTblHead">Description</th>
+<th class="HP15CTblHeadEmpty"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="HP15CTblCentered"> B</td>
+<td class="HP15CTblLeft">Main program, initialise registers</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 2</td>
+<td class="HP15CTblLeft">Coordinates calculation</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+</tbody>
+</table>
+<h3>Storage Registers</h3>
+<table class="HP15CTblLayout">
+<colgroup>
+<col style="width: 4em;">
+<col style="width: 70.5em;">
+<col style="width: 0.5em;">
+</colgroup>
+<thead>
+<tr>
+<th class="HP15CTblHead">Name</th>
+<th class="HP15CTblHead">Description</th>
+<th class="HP15CTblHeadEmpty"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="HP15CTblCentered"> 0</td>
+<td class="HP15CTblLeft">Number of points to be calculated</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 1</td>
+<td class="HP15CTblLeft">Length of horizontal semi-axis a</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 2</td>
+<td class="HP15CTblLeft">Length of vertical semi-axis b</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 3</td>
+<td class="HP15CTblLeft">Counter</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered"> 4</td>
+<td class="HP15CTblLeft">Angle increment</td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+</tbody>
+</table>
+<h2>Program</h2>
+<table class="HP15CTblLayout">
+<colgroup>
+<col style="width: 3.5em;">
+<col style="width: 7em;">
+<col style="width: 14em;">
+<col style="width: 0.5em;">
+</colgroup>
+<colgroup>
+<col style="width: 3.5em;">
+<col style="width: 7em;">
+<col style="width: 14em;">
+<col style="width: 0.5em;">
+</colgroup>
+<thead>
+<tr>
+<th class="HP15CTblHead">Line</th>
+<th class="HP15CTblHead">Display</th>
+<th class="HP15CTblHead">Key Sequence</th>
+<th class="HP15CTblHeadEmpty"></th>
+<th class="HP15CTblHead">Line</th>
+<th class="HP15CTblHead">Display</th>
+<th class="HP15CTblHead">Key Sequence</th>
+<th class="HP15CTblHeadEmpty"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="HP15CTblCentered">000</td>
+<td class="HP15CTblRightCode">         </td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">016</td>
+<td class="HP15CTblRightCode">     45 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">001</td>
+<td class="HP15CTblRightCode"> 42,21,12</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CfKeyLabel">B</span> </td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">017</td>
+<td class="HP15CTblRightCode">    43 44</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">INT</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">002</td>
+<td class="HP15CTblRightCode">     43 7</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">DEG</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">018</td>
+<td class="HP15CTblRightCode">       31</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R/S</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">003</td>
+<td class="HP15CTblRightCode">     45 0</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">0</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">019</td>
+<td class="HP15CTblRightCode"> 45,20, 4</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">&times;</span> <span class="HP15CKey">4</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">004</td>
+<td class="HP15CTblRightCode">        1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">020</td>
+<td class="HP15CTblRightCode">       36</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">ENTER</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">005</td>
+<td class="HP15CTblRightCode">       30</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&minus;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">021</td>
+<td class="HP15CTblRightCode">       24</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">COS</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">006</td>
+<td class="HP15CTblRightCode">        3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">022</td>
+<td class="HP15CTblRightCode"> 45,20, 1</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">&times;</span> <span class="HP15CKey">1</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">007</td>
+<td class="HP15CTblRightCode">       13</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">10ˣ</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">023</td>
+<td class="HP15CTblRightCode">       31</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R/S</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">008</td>
+<td class="HP15CTblRightCode">       10</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">&divide;</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">024</td>
+<td class="HP15CTblRightCode">       34</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">x&harr;y</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">009</td>
+<td class="HP15CTblRightCode">     44 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">025</td>
+<td class="HP15CTblRightCode">       23</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">SIN</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">010</td>
+<td class="HP15CTblRightCode">        3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">026</td>
+<td class="HP15CTblRightCode"> 45,20, 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">&times;</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">011</td>
+<td class="HP15CTblRightCode">        6</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">6</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">027</td>
+<td class="HP15CTblRightCode">       31</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">R/S</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">012</td>
+<td class="HP15CTblRightCode">        0</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">0</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">028</td>
+<td class="HP15CTblRightCode"> 42, 6, 3</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">ISG</span> <span class="HP15CKey">3</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">013</td>
+<td class="HP15CTblRightCode"> 45,10, 0</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">RCL</span> <span class="HP15CKey">&divide;</span> <span class="HP15CKey">0</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">029</td>
+<td class="HP15CTblRightCode">     22 2</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">GTO</span> <span class="HP15CKey">2</span></span></td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">014</td>
+<td class="HP15CTblRightCode">     44 4</td>
+<td class="HP15CTblLeft"><span class="HP15CindentSeq"><span class="HP15CKey">STO</span> <span class="HP15CKey">4</span></span></td>
+<td class="HP15CTblEmpty"></td>
+<td class="HP15CTblCentered">030</td>
+<td class="HP15CTblRightCode">    43 32</td>
+<td class="HP15CTblLeft"><span class="HP15CgKey">g</span> <span class="HP15CgKeyLabel">RTN</span> </td>
+<td class="HP15CTblEmpty"></td>
+</tr>
+<tr>
+<td class="HP15CTblCentered">015</td>
+<td class="HP15CTblRightCode"> 42,21, 2</td>
+<td class="HP15CTblLeft"><span class="HP15CfKey">f</span> <span class="HP15CfKeyLabel">LBL</span> <span class="HP15CKey">2</span> </td>
+<td class="HP15CTblEmpty"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>

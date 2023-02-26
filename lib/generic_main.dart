@@ -790,21 +790,24 @@ class Jrpn extends StatefulWidget {
       Share.share(_getJson(), subject: 'JRPN Calculator State');
 
   Future<void> sendJsonToClipboard() =>
-      Clipboard.setData(ClipboardData(text: getProgram()));
+      Clipboard.setData(ClipboardData(text: _getJson()));
 
   Future<void> sendProgramToExternalApp() =>
       Share.share(_getJson(), subject: 'JRPN Calculator State');
 
   Future<void> sendProgramToClipboard() =>
-      Clipboard.setData(ClipboardData(text: getProgram()));
+      Clipboard.setData(ClipboardData(text: getProgram(null)));
 
   String _getJson() {
     return json.encoder.convert(model.toJson());
   }
 
-  String getProgram() {
+  String getProgram(String? encoding) {
     final out = StringBuffer();
     out.writeln('#  Program produced by JRPN ${model.modelName}.');
+    if (encoding != null) {
+      out.writeln('#  Character encoding:  $encoding');
+    }
     final d = DateTime.now().toLocal();
     final now = '${d.year}-${d.month}-${d.day} '
         '${d.hour.toString().padLeft(2, '0')}:'

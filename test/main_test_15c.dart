@@ -38,6 +38,7 @@ import 'package:jrpn15c/model15c.dart';
 import 'package:jrpn15c/tests15c.dart';
 import 'hyperbolic.dart';
 import 'opcodes15c.dart';
+import 'program_test_15c.dart';
 import 'programs.dart';
 import 'package:jrpn15c/linear_algebra.dart' as linalg;
 
@@ -77,6 +78,7 @@ Future<void> main() async {
     await SelfTests15(inCalculator: false).runAll();
   });
   test('15C opcode test', opcodeTest15C);
+  test15cPrograms();
 }
 
 class MiscTests {
@@ -2109,117 +2111,3 @@ String formatDouble(double v, int digits) {
   }
   return r;
 }
-/*
-{
-    "version": 1,
-    "modelName": "15C",
-    "settings": {
-        "menuEnabled": false,
-        "windowEnabled": true,
-        "euroComma": false,
-        "hideComplement": false,
-        "showWordSize": false,
-        "showAccelerators": false,
-        "systemOverlaysDisabled": false,
-        "orientation": 0,
-        "traceProgramToStdout": false
-    },
-    "displayMode": "x4",
-    "integerSignMode": "2",
-    "wordSize": 56,
-    "stack": [
-        "0",
-        "1760000000002",
-        "a111eeeeeee000",
-        "1110000000002"
-    ],
-    "lastX": "1000000000000",
-    "flags": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-    ],
-    "memory": {
-        "storage": "2000ab69fe2c862101feefce6a6c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000001000000000000",
-        "program": {
-            "lines": 12,
-            "currentLine": 3,
-            "returnStack": [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-            ],
-            "returnStackPos": -1
-        },
-        "I": "a111eeeeeee000",
-        "commentProgramListing": [
-            "001 -- 42,21,11    0x020  LBL A",
-            "002 --        0    0x000  0",
-            "003 --    44  9    0x0ab  STO 9",
-            "004 --       31    0x069  R/S",
-            "005 -- 42,10,12    0x12c  SOLVE B",
-            "006 --    43 32    0x086  RTN",
-            "007 -- 42,21,12    0x021  LBL B",
-            "008 --        1    0x001  1",
-            "009 -- 44,40, 9    0x1ef  STO + 9",
-            "010 --    45  9    0x0ce  RCL 9",
-            "011 --    42 31    0x06a  PSE",
-            "012 --    32 12    0x06c  GSB B"
-        ]
-    },
-    "numRegisters": 20,
-    "resultMatrix": 0,
-    "matrices": [
-        {
-            "columns": 3,
-            "values": [
-                "1100000000001",
-                "2200000000001",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0"
-            ],
-            "rowSwaps": null
-        },
-        {
-            "columns": 0,
-            "values": [],
-            "rowSwaps": null
-        },
-        {
-            "columns": 0,
-            "values": [],
-            "rowSwaps": null
-        },
-        {
-            "columns": 0,
-            "values": [],
-            "rowSwaps": null
-        },
-        {
-            "columns": 0,
-            "values": [],
-            "rowSwaps": null
-        }
-    ]
-}
-
-
-{"version":1,"modelName":"15C","settings":{"menuEnabled":false,"windowEnabled":true,"euroComma":false,"hideComplement":false,"showWordSize":false,"showAccelerators":false,"systemOverlaysDisabled":false,"orientation":0},"displayMode":"x4","integerSignMode":"2","wordSize":56,"stack":["0","1760000000002","a111eeeeeee000","1110000000002"],"lastX":"1000000000000","flags":[false,false,false,false,false,false,false,false,false,false],"memory":{"storage":"2000ab69fe2c862101feefce6a6c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000001000000000000","program":{"lines":12,"currentLine":3,"returnStack":[0,0,0,0,0,0,0],"returnStackPos":-1},"I":"a111eeeeeee000"},"numRegisters":20,"resultMatrix":0,"matrices":[{"columns":3,"values":["1100000000001","2200000000001","0","0","0","0","0","0","0"],"rowSwaps":null},{"columns":0,"values":[],"rowSwaps":null},{"columns":0,"values":[],"rowSwaps":null},{"columns":0,"values":[],"rowSwaps":null},{"columns":0,"values":[],"rowSwaps":null}]}
-
- */
