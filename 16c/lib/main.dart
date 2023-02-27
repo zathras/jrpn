@@ -865,10 +865,10 @@ class ButtonLayout16 extends ButtonLayout {
       Operations.onOff, Operations.onOff, Operations.onOff, 'O', 'OFF');
   CalculatorButton get fShift => CalculatorFButton(factory, 'f', '', '',
       Operations.fShift, Operations.fShift, Operations.fShift, 'M\u0006',
-      acceleratorLabel: 'M');
+      extraAcceleratorName: '^F', acceleratorLabel: 'M');
   CalculatorButton get gShift => CalculatorGButton(factory, 'g', '', '',
       Operations.gShift, Operations.gShift, Operations.gShift, 'G\u0007',
-      acceleratorLabel: 'G');
+      extraAcceleratorName: '^G', acceleratorLabel: 'G');
   CalculatorButton get sto => CalculatorButton(factory, 'STO', 'WSIZE', '<',
       Operations16.sto, Operations16.wSize, Operations16.windowRight, 'S<');
   CalculatorButton get rcl => CalculatorButton(factory, 'RCL', 'FLOAT', '>',

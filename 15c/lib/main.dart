@@ -1742,7 +1742,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.deltaPercent,
       'E');
   CalculatorButton get chs => CalculatorButton(factory, 'CHS', 'MATRIX', 'ABS',
-      Operations.chs, Operations15.matrix, Operations.abs, 'F');
+      Operations.chs, Operations15.matrix, Operations.abs, 'H');
   CalculatorButton get n7 => CalculatorButton(factory, '7', 'FIX', 'DEG',
       Operations.n7, Operations15.fix, Operations15.deg, '7');
   CalculatorButton get n8 => CalculatorButton(factory, '8', 'SCI', 'RAD',
@@ -1753,7 +1753,7 @@ class ButtonLayout15 extends ButtonLayout {
       'x\u2264y', Operations15.div, Operations15.solve, Operations.xLEy, '/');
 
   CalculatorButton get sst => CalculatorButton(factory, 'SST', 'LBL', 'BST',
-      Operations.sst, Operations15.lbl15, Operations.bst, 'U');
+      Operations.sst, Operations15.lbl15, Operations.bst, ']');
   CalculatorButton get gto => CalculatorButton(
       factory,
       'GTO',
@@ -1762,7 +1762,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.gto,
       Operations15.hyp,
       Operations15.hypInverse,
-      'T');
+      'L');
   CalculatorButton get sin => CalculatorButtonHyperbolic(
       factory,
       'SIN',
@@ -1773,7 +1773,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.sinInverse,
       Operations15.sinh,
       Operations15.sinhInverse,
-      'I');
+      'S');
   CalculatorButton get cos => CalculatorButtonHyperbolic(
       factory,
       'COS',
@@ -1784,7 +1784,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.cosInverse,
       Operations15.cosh,
       Operations15.coshInverse,
-      'Z');
+      'O');
   CalculatorButton get tan => CalculatorButtonHyperbolic(
       factory,
       'TAN',
@@ -1795,10 +1795,10 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.tanInverse,
       Operations15.tanh,
       Operations15.tanhInverse,
-      'K');
+      'T');
 
   CalculatorButton get eex => CalculatorButton(factory, 'EEX', 'RESULT',
-      '\u03c0', Operations.eex, Operations15.resultOp, Operations15.piOp, 'L');
+      '\u03c0', Operations.eex, Operations15.resultOp, Operations15.piOp, 'P');
   CalculatorButton get n4 => CalculatorButton(factory, '4', 'x\u2b0c', 'SF',
       Operations.n4, Operations15.xExchange, Operations15.sf, '4');
   CalculatorButton get n5 => CalculatorButton(factory, '5', 'DSE', 'CF',
@@ -1820,7 +1820,7 @@ class ButtonLayout15 extends ButtonLayout {
   CalculatorButton get rs => CalculatorButton(factory, 'R/S', 'PSE', 'P/R',
       Operations.rs, Operations.pse, Operations.pr, '[');
   CalculatorButton get gsb => CalculatorButton(factory, 'GSB', '\u03a3', 'RTN',
-      Operations15.gsb, Operations15.clearSigma, Operations.rtn, ']');
+      Operations15.gsb, Operations15.clearSigma, Operations.rtn, 'U');
   CalculatorButton get rdown => CalculatorButton(factory, 'R\u2193', 'PRGM',
       'R\u2191', Operations.rDown, Operations.clearPrgm, Operations.rUp, 'V');
   CalculatorButton get xy => CalculatorButton(factory, 'x\u2b0cy', 'REG', 'RND',
@@ -1866,17 +1866,17 @@ class ButtonLayout15 extends ButtonLayout {
       acceleratorLabel: '\u2212');
 
   CalculatorButton get onOff => CalculatorOnButton(factory, 'ON', '', '',
-      Operations.onOff, Operations.onOff, Operations.onOff, 'O', 'OFF');
+      Operations.onOff, Operations.onOff, Operations.onOff, 'N', 'OFF');
   CalculatorButton get fShift => CalculatorFButton(factory, 'f', '', '',
-      Operations.fShift, Operations.fShift, Operations.fShift, 'M\u0006',
-      acceleratorLabel: 'M');
+      Operations.fShift, Operations.fShift, Operations.fShift, 'F\u0006',
+      extraAcceleratorName: '', acceleratorLabel: 'F');
   CalculatorButton get gShift => CalculatorGButton(factory, 'g', '', '',
       Operations.gShift, Operations.gShift, Operations.gShift, 'G\u0007',
-      acceleratorLabel: 'G');
+      extraAcceleratorName: '', acceleratorLabel: 'G');
   CalculatorButton get sto => CalculatorButton(factory, 'STO', 'FRAC', 'INT',
-      Operations15.sto15, Operations15.fracOp, Operations15.intOp, 'S<');
+      Operations15.sto15, Operations15.fracOp, Operations15.intOp, 'M');
   CalculatorButton get rcl => CalculatorButton(factory, 'RCL', 'USER', 'MEM',
-      Operations15.rcl15, Operations15.userOp, Operations.mem, 'R>');
+      Operations15.rcl15, Operations15.userOp, Operations.mem, 'R');
   CalculatorButton get n0 => CalculatorButton(factory, '0', 'x!', 'x\u0305',
       Operations.n0, Operations15.xFactorial, Operations15.xBar, '0');
   CalculatorButton get dot => CalculatorOnSpecialButton(
@@ -1898,7 +1898,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.sigmaPlus,
       Operations15.linearRegression,
       Operations15.sigmaMinus,
-      'H');
+      'W');
   CalculatorButton get plus => CalculatorButton(
       factory,
       '+',

@@ -149,7 +149,10 @@ const _programs = [
       'HP Applications Books/Mechanical Engineering/Kinetic Engergy.15c', ''),
   _Program(
       'HP Applications Books/Mechanical Engineering/Equations of Motion.15c',
-      ''),
+      '264 STO 1 35 ENTER 5280 × 3600 ÷ STO I → 51.3333 '
+          '4 STO 0 0 STO 2 STO 3 A RCL 3 → 7.3333 '
+          '5 STO 0 0 STO 1 STO 2 A RCL 1 → 348.3333 '
+          '264 – → 84.3333'),
   _Program('HP Applications Books/Fun and Games/Biorhythms.15c', ''),
   _Program('HP Applications Books/Fun and Games/Moonlanding.15c', ''),
   _Program(
@@ -230,6 +233,7 @@ class _ProgramRun {
   };
 
   static final numbers = <String, Operation>{
+    // Also other keys in labels
     '.': Operations.dot,
     '0': Operations.n0,
     '1': Operations.n1,
@@ -240,7 +244,8 @@ class _ProgramRun {
     '6': Operations.n6,
     '7': Operations.n7,
     '8': Operations.n8,
-    '9': Operations.n9
+    '9': Operations.n9,
+    'I': Operations15.I15
   };
 
   static final otherOperations = <String, Operation>{
@@ -250,6 +255,12 @@ class _ProgramRun {
     'STO': Operations15.sto15,
     'RCL': Operations15.rcl15,
     '+': Operations15.plus,
+    '×': Operations15.mult,
+    '*': Operations15.mult,
+    '÷': Operations15.div,
+    '/': Operations15.div,
+    '-': Operations15.minus,
+    '–': Operations15.minus,
     'x↔y': Operations.xy,
   };
 
@@ -285,7 +296,7 @@ class _ProgramRun {
       await waitProgramDone();
     } else {
       final op = otherOperations[keys];
-      expect(op != null, true);
+      expect(op != null, true, reason: keys);
       play(op!);
 
       if (keys == 'STO' || keys == 'RCL') {

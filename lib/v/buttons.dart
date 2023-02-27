@@ -217,6 +217,30 @@ abstract class PortraitButtonFactory extends ButtonFactory {
 /// The layout of the buttons.
 ///
 abstract class ButtonLayout {
+  ButtonLayout() {
+    assert(_noDuplicateAccelerators(landscapeLayout));
+    assert(_noDuplicateAccelerators(portraitLayout));
+  }
+
+  bool _noDuplicateAccelerators(List<List<CalculatorButton?>> buttons) {
+    final seen = <String>{};
+    for (final row in buttons) {
+      for (final b in row) {
+        if (b != null) {
+          final a = b.acceleratorKey;
+          for (int i = 0; i < a.length; i++) {
+            if (seen.contains(a[i])) {
+              assert(false, '$a in $b');
+              return false;
+            }
+            seen.add(a[i]);
+          }
+        }
+      }
+    }
+    return true;
+  }
+
   List<List<CalculatorButton?>> get landscapeLayout;
 
   List<List<CalculatorButton?>> get portraitLayout;
@@ -666,7 +690,8 @@ class CalculatorFButton extends CalculatorShiftButton {
       Operation fKey,
       Operation gKey,
       String rawKeyboardKey,
-      {String? acceleratorLabel,
+      {required this.extraAcceleratorName,
+      String? acceleratorLabel,
       Key? key})
       : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
             acceleratorLabel: acceleratorLabel, key: key);
@@ -687,7 +712,7 @@ class CalculatorFButton extends CalculatorShiftButton {
   TextStyle get keyTextStyle => bFactory.shiftKeyTextStyle;
 
   @override
-  String get extraAcceleratorName => '^F';
+  final String extraAcceleratorName;
 }
 
 ///
@@ -703,7 +728,8 @@ class CalculatorGButton extends CalculatorShiftButton {
       Operation fKey,
       Operation gKey,
       String rawKeyboardKey,
-      {String? acceleratorLabel,
+      {required this.extraAcceleratorName,
+      String? acceleratorLabel,
       Key? key})
       : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
             acceleratorLabel: acceleratorLabel, key: key);
@@ -724,7 +750,7 @@ class CalculatorGButton extends CalculatorShiftButton {
   TextStyle get keyTextStyle => bFactory.shiftKeyTextStyle;
 
   @override
-  String get extraAcceleratorName => '^G';
+  final String extraAcceleratorName;
 }
 
 ///
