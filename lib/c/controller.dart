@@ -74,7 +74,7 @@ abstract class Controller {
 
   set state(ControllerState s) {
     _state = s;
-    // print('@@ state set to $s');
+    // print('@@ state of $this set to $s');
     s.onChangedTo();
   }
 

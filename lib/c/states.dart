@@ -441,6 +441,7 @@ class DigitEntry extends ActiveState {
       _sign = other._sign;
       _exponent = other._exponent;
       _negativeExponent = other._negativeExponent;
+      _tryNewValue(_entered, _sign, _exponent, _negativeExponent);
     } else {
       changeState(Resting(controller));
     }
@@ -1510,9 +1511,12 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
     if (_running) {
       return;
     }
-    _running = true;
-    final spr = _fake.real.suspendedProgramRunner;
-    if (program.lines > 0) {
+    if (program.lines == 0) {
+      model.displayDisabled = false;
+      _onDone(null);
+    } else {
+      _running = true;
+      final spr = _fake.real.suspendedProgramRunner;
       ProgramInstruction<Operation> instr = program[program.currentLine];
       if (instr.op == Operations.rs) {
         stackLiftEnabled = true;
@@ -1543,8 +1547,8 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
         _fake.returnToParent(replacement);
       } else {
         _fake.returnToParent(Resting(_fake.real));
+        model.display.displayX(flash: false);
       }
-      model.display.displayX(flash: false); // @@ TODO:  Not when digit entry?
     }
   }
 }

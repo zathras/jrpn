@@ -169,4 +169,3 @@ void test15cPrograms() {
 }
 
 // @@ TODO:  Run programs
-// @@ TODO:  In 15C, pressing SST with no program in memory makes calculator unresponsive

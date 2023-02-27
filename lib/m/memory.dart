@@ -549,7 +549,6 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       String line = i.toString().padLeft(3, '0');
       final ProgramInstruction<OT> pi = this[i];
       final String pd = this[i].programDisplay;
-      final maybeU = pd.startsWith('u') ? ' u' : '';
       String semiHuman =
           pd.substring(1).replaceAll(',', ' ').replaceAll('  .', ' .');
       if (pd.startsWith('u')) {
