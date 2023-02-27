@@ -33,14 +33,14 @@ import 'package:jrpn16c/main.dart';
 class ProgramEvent {
   final int? errorNumber;
   final String? name;
+  final Value? pauseValue;
 
-  ProgramEvent({this.errorNumber, this.name});
+  ProgramEvent({this.errorNumber, this.name, this.pauseValue});
 
   static final done = ProgramEvent(name: 'done');
 
   /// runStop pressed.  Normally followed by stop.
   static final runStop = ProgramEvent(name: 'run/stop');
-  static final pause = ProgramEvent(name: 'pause');
   static final stop = ProgramEvent(name: 'stop');
 
   @override
@@ -48,7 +48,7 @@ class ProgramEvent {
     if (name != null) {
       return ('ProgramEvent("$name")');
     } else if (errorNumber != null) {
-      return ('ProgramEvent($errorNumber)');
+      return ('ProgramEvent(error $errorNumber)');
     }
     return super.toString();
   }
@@ -60,7 +60,6 @@ class TestCalculator implements ProgramListener {
   // The program's output
   final output = StreamController<ProgramEvent>();
   Completer<void>? _resume;
-  static const trace = false;
 
   TestCalculator({bool for15C = false})
       : controller =
@@ -100,7 +99,7 @@ class TestCalculator implements ProgramListener {
   void onPause() {
     _resume ??= Completer<void>();
     _trace("==> sending pause");
-    output.add(ProgramEvent.pause);
+    output.add(ProgramEvent(name: 'pause', pauseValue: model.x));
   }
 
   @override
@@ -117,8 +116,7 @@ class TestCalculator implements ProgramListener {
 
   @override
   Future<void> resumeFromPause() {
-    _trace("==> resuming from pause");
-
+    _trace("==> waiting for resume");
     _resume ??= Completer<void>();
     return _resume!.future;
   }
@@ -292,7 +290,7 @@ Future<void> towersOfHanoi() async {
   p.enter(Operations16.letterA);
   for (final Move move in hanoi(0x7, 1, 3)) {
     expect(await out.moveNext(), true);
-    expect(out.current, ProgramEvent.pause);
+    expect(out.current.pauseValue != null, true);
     expect(p.model.xI.toInt(), move.from);
     p.resume();
     expect(await out.moveNext(), true);
