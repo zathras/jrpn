@@ -653,6 +653,13 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                       display.update();
                     },
                     child: const Text('Show Word Size')),
+                CheckedPopupMenuItem(
+                    checked: settings.integerModeCommas,
+                    value: () {
+                      settings.integerModeCommas = !settings.integerModeCommas;
+                      display.update();
+                    },
+                    child: const Text('Integer Mode Commas')),
               ]),
         CheckedPopupMenuItem(
             checked: settings.showAccelerators.value,

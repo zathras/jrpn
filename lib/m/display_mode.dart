@@ -90,7 +90,7 @@ abstract class DisplayMode {
   ///
   bool get rightJustify;
 
-  String addCommas(String s) {
+  String addCommas(String s, bool intToo) {
     String r = '';
     final int dp = s.indexOf('.');
     if (dp > -1) {
@@ -164,6 +164,15 @@ abstract class IntegerDisplayMode extends DisplayMode {
   IntegerDisplayMode._protected() : super._protected();
 
   @override
+  String addCommas(String s, bool intToo) {
+    if (intToo) {
+      return super.addCommas(s, intToo);
+    } else {
+      return s;
+    }
+  }
+
+  @override
   Value? tryParse(String s, NumStatus m) {
     s = s.replaceAll(',', '');
     BigInt? v = BigInt.tryParse(s, radix: radix);
@@ -200,7 +209,7 @@ abstract class IntegerDisplayMode extends DisplayMode {
               .substring(0, n) +
           s;
     }
-    return addCommas(s) + displayName;
+    return addCommas(s, m.settings.integerModeCommas) + displayName;
   }
 
   @override
@@ -435,8 +444,9 @@ class _FloatMode extends DisplayMode {
   /// (or a '-' for a negative exponent) - we always provide a two-digit
   /// exponent with a sign, like "E+07'.
   @override
-  String format(Value v, Model m) =>
-      addCommas(_formatter.format(v, m.settings.windowEnabled));
+  String format(Value v, Model m) => addCommas(
+      _formatter.format(v, m.settings.windowEnabled),
+      m.settings.integerModeCommas);
 
   @override
   int get hashCode => Object.hash(_jsonName, _formatter);

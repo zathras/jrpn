@@ -523,7 +523,8 @@ class DigitEntry extends ActiveState {
     model.x = v;
     if (ex == null) {
       model.display.current = sign +
-          model.displayMode.addCommas(ent.replaceAll(',', '')) +
+          model.displayMode.addCommas(
+              ent.replaceAll(',', ''), model.settings.integerModeCommas) +
           model.displayMode.displayName;
     } else {
       assert(model.displayMode.isFloatMode);
@@ -562,8 +563,10 @@ class DigitEntry extends ActiveState {
       }
       // Note that LcdDisplay dictates that 'e' is
       // part of a hex number, whereas E is for an exponent.
-      model.display.current =
-          sign + model.displayMode.addCommas(show) + pad + exs;
+      model.display.current = sign +
+          model.displayMode.addCommas(show, model.settings.integerModeCommas) +
+          pad +
+          exs;
     }
     _entered = ent;
     _sign = sign;

@@ -193,6 +193,7 @@ class Settings {
   bool _euroComma = false;
   bool _hideComplement = false;
   bool _showWordSize = false;
+  bool _integerModeCommas = false;
   final Observable<bool> showAccelerators = Observable(false);
   double? _msPerInstruction;
   bool _traceProgramToStdout = false;
@@ -214,6 +215,7 @@ class Settings {
     _euroComma = false;
     _hideComplement = false;
     _showWordSize = false;
+    _integerModeCommas = false;
     showAccelerators.value = false;
     _msPerInstruction = null;
     _traceProgramToStdout = false;
@@ -229,6 +231,12 @@ class Settings {
   bool get showWordSize => _showWordSize;
   set showWordSize(bool v) {
     _showWordSize = v;
+    _model.needsSave = true;
+  }
+
+  bool get integerModeCommas => _integerModeCommas;
+  set integerModeCommas(bool v) {
+    _integerModeCommas = v;
     _model.needsSave = true;
   }
 
@@ -358,6 +366,7 @@ class Settings {
       'euroComma': _euroComma,
       'hideComplement': _hideComplement,
       'showWordSize': _showWordSize,
+      'integerModeCommas': _integerModeCommas,
       'showAccelerators': showAccelerators.value,
       'systemOverlaysDisabled': systemOverlaysDisabled,
       'orientation': orientation.index
@@ -382,6 +391,7 @@ class Settings {
     _euroComma = json['euroComma'] as bool;
     _hideComplement = json['hideComplement'] as bool;
     _showWordSize = json['showWordSize'] as bool? ?? false;
+    _integerModeCommas = json['integerModeCommas'] as bool? ?? false;
     showAccelerators.value = json['showAccelerators'] == true; // could be null
     _msPerInstruction = (json['msPerInstruction'] as num?)?.toDouble();
     _traceProgramToStdout = (json['traceProgramToStdout'] as bool?) ?? false;
