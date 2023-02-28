@@ -59,11 +59,18 @@ abstract class Arg {
 class DigitArg extends Arg {
   final int max;
   final void Function(Model, int) calc;
+  final ArgDone Function(Function(Model)) argDoneFactory;
 
   late final List<ArgDone> _next;
   late final KeyArg? _nextOnDot;
 
-  DigitArg({required this.max, required this.calc});
+  DigitArg(
+      {required this.max,
+      required this.calc,
+      this.argDoneFactory = _defaultArgDoneFactory});
+
+  static ArgDone _defaultArgDoneFactory(void Function(Model) calculate) =>
+      ArgDone(calculate);
 
   @override
   Arg? matches(ProgramOperation key, bool userMode) {
@@ -98,7 +105,7 @@ class DigitArg extends Arg {
       arg = null;
     }
     _next = List.generate(min(max + 1, registerBase), (i) {
-      final a = ArgDone((m) => calc(m, i)); // Function currying, baby
+      final a = argDoneFactory((m) => calc(m, i)); // Function currying, baby
       a.init(registerBase,
           f: f,
           shift: shift,
@@ -115,7 +122,8 @@ class DigitArg extends Arg {
           key: Arg.kDot,
           child: DigitArg(
               max: max - registerBase,
-              calc: (m, i) => calc(m, i + registerBase)));
+              calc: (m, i) => calc(m, i + registerBase),
+              argDoneFactory: argDoneFactory));
       // Skip over ka, straight to its child:
       ka.child.init(registerBase,
           f: f, shift: shift, argDot: true, arg: arg, userMode: userMode);

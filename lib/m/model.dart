@@ -364,13 +364,15 @@ class Settings {
       'menuEnabled': menuEnabled.value,
       'windowEnabled': _windowEnabled,
       'euroComma': _euroComma,
-      'hideComplement': _hideComplement,
-      'showWordSize': _showWordSize,
-      'integerModeCommas': _integerModeCommas,
       'showAccelerators': showAccelerators.value,
       'systemOverlaysDisabled': systemOverlaysDisabled,
       'orientation': orientation.index
     };
+    if (_model.modelName != '15C') {
+      r['showWordSize'] = _showWordSize;
+      r['hideComplement'] = _hideComplement;
+      r['integerModeCommas'] = _integerModeCommas;
+    }
     if (_msPerInstruction != null) {
       r['msPerInstruction'] = _msPerInstruction;
     }
@@ -389,7 +391,7 @@ class Settings {
     menuEnabled.value = json['menuEnabled'] as bool;
     _windowEnabled = json['windowEnabled'] as bool;
     _euroComma = json['euroComma'] as bool;
-    _hideComplement = json['hideComplement'] as bool;
+    _hideComplement = json['hideComplement'] as bool? ?? false;
     _showWordSize = json['showWordSize'] as bool? ?? false;
     _integerModeCommas = json['integerModeCommas'] as bool? ?? false;
     showAccelerators.value = json['showAccelerators'] == true; // could be null

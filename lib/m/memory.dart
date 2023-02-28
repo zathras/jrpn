@@ -685,7 +685,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
 
   String debugReturnStack() {
     final out = StringBuffer();
-    out.write('stack:');
+    out.write('                    return stack:');
     for (int i = 0; i < _returnStackPos; i++) {
       out.write('  ');
       out.write(_returnStack[i]);

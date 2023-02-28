@@ -1309,6 +1309,13 @@ class Running extends ControllerState {
       }
       if (settings.traceProgramToStdout || false /* @@ */) {
         final out = StringBuffer();
+        /*  Simplified version, useful for comparisons
+        out.write(line.toString());
+        out.write(' ');
+        out.write(model.xF.toStringAsExponential(9));
+        out.write(' ');
+        out.write(model.yF.toStringAsExponential(9));
+         */
         out.write('  ');
         out.write(line.toString().padLeft(3, '0'));
         out.write(' ');
@@ -1330,7 +1337,7 @@ class Running extends ControllerState {
           }
         }
         debugPrint(out.toString());
-        debugPrint(program.debugReturnStack());
+        // @@ debugPrint(program.debugReturnStack());
       }
       pendingDelay =
           settings.msPerInstruction / ((instr.op.numericValue == null) ? 1 : 5);

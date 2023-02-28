@@ -1307,17 +1307,18 @@ class Operations15 extends Operations {
         // not run if the operation is cancelled.
         s.liftStackIfEnabled();
         return StackLift.neutral;
+        // But stack lift is still set after the calculation completes,
+        // as with normal operations.
       },
       arg: ArgAlternates(synonyms: {
         ..._matrixSynonymsPlusRandom,
         Operations15.sin: Operations15.dim
       }, children: [
-        RegisterReadArg(
-            maxDigit: 19, noParenI: true, f: (m, v) => m.resultX = v),
+        RegisterReadArg(maxDigit: 19, noParenI: true, f: (m, v) => m.x = v),
         KeyArg(
             key: Operations15.ranNum,
             child: ArgDone(((m) {
-              m.resultXF = (m as Model15).rand.lastValue;
+              m.xF = (m as Model15).rand.lastValue;
             }))),
         // g A..E
         KeysArg(
@@ -1339,7 +1340,7 @@ class Operations15 extends Operations {
         KeyArg(
             key: Operations15.sigmaPlus,
             child: StackLiftingArgDone((m) {
-              m.resultX = m.memory.registers[5];
+              m.x = m.memory.registers[5]; // Don't set lastX
               m.pushStack();
               m.x = m.memory.registers[3];
             },
@@ -1353,9 +1354,9 @@ class Operations15 extends Operations {
                   keys: _letterLabels,
                   generator: (i) => ArgDone((m) {
                         final mat = (m as Model15).matrices[i];
-                        m.resultXF = mat.rows.toDouble();
+                        m.xF = mat.rows.toDouble();
                         m.pushStack();
-                        m.resultXF = mat.columns.toDouble();
+                        m.xF = mat.columns.toDouble();
                       })),
               KeyArg(
                   key: Operations15.I15,
@@ -1365,27 +1366,26 @@ class Operations15 extends Operations {
                       throw CalculatorError(11);
                     }
                     final mat = (m as Model15).matrices[miv];
-                    m.resultXF = mat.rows.toDouble();
+                    m.xF = mat.rows.toDouble();
                     m.pushStack();
-                    m.resultXF = mat.columns.toDouble();
+                    m.xF = mat.columns.toDouble();
                   })),
               KeyArg(
                   key: Operations15.parenI15,
-                  child: ArgDone((m) => m.resultXF =
+                  child: ArgDone((m) => m.xF =
                       ((m as Model15).memory.numRegisters - 1).toDouble()))
             ])),
         KeyArg(
             key: Operations15.resultOp,
-            child: ArgDone((m) =>
-                m.resultX = Value.fromMatrix((m as Model15).resultMatrix))),
+            child: ArgDone(
+                (m) => m.x = Value.fromMatrix((m as Model15).resultMatrix))),
         KeyArg(
             // RCL MATRIX A..E.  These are one-byte opcodes.
             key: Operations15.matrix,
             child: KeysArg(
                 synonyms: _matrixSynonyms,
                 keys: _letterLabels,
-                generator: (i) =>
-                    ArgDone((m) => m.resultX = Value.fromMatrix(i)))),
+                generator: (i) => ArgDone((m) => m.x = Value.fromMatrix(i)))),
         UserArg(
             userMode: false,
             child:
@@ -1506,29 +1506,29 @@ class RegisterReadOpArg extends ArgAlternates {
       : super(synonyms: Operations15._letterAndRegisterISynonyms, children: [
           KeyArg(
               key: Arg.kParenI,
-              child: ArgDone((m) {
+              child: RegisterReadOpArgDone((m) {
                 final mi = m.memory.registers.index.asMatrix;
                 if (mi == null) {
-                  m.resultXF =
-                      f(m.xF, m.memory.registers.indirectIndex.asDouble);
+                  m.xF = f(m.xF, m.memory.registers.indirectIndex.asDouble);
+                  // Do not set LastX, as per real 15C's behavior
                 } else {
                   // See bottom of page 173
                   _forMatrix(m as Model15, mi, f);
                 }
               })),
-          KeyArg(
-              key: Arg.kI,
-              child: ArgDone((m) =>
-                  m.resultXF = f(m.xF, m.memory.registers.index.asDouble))),
+          KeyArg(key: Arg.kI, child: RegisterReadOpArgDone(
+              // Do not set LastX, as per real 15C's behavior
+              (m) => m.xF = f(m.xF, m.memory.registers.index.asDouble))),
           DigitArg(
               max: maxDigit,
-              calc: (m, i) =>
-                  m.resultXF = f(m.xF, m.memory.registers[i].asDouble)),
+              calc: (m, i) => m.xF = f(m.xF, m.memory.registers[i].asDouble),
+              // Do not set LastX, as per real 15C's behavior
+              argDoneFactory: (calc) => RegisterReadOpArgDone(calc)),
           ...List.generate(
               _letterLabelsList.length,
               (i) => KeyArg(
                   key: _letterLabelsList[i],
-                  child: ArgDone((m) {
+                  child: RegisterReadOpArgDone((m) {
                     _forMatrix(m as Model15, i, f);
                   }))),
         ]);
@@ -1652,6 +1652,20 @@ class DeferredRclArg extends ArgDone {
       }
       released(m, matrix);
     }).run;
+  }
+}
+
+///
+/// RCL [+-*/] reg does NOT lift the stack - see Recall Arithmetic, page 44.
+///
+class RegisterReadOpArgDone extends ArgDone {
+  RegisterReadOpArgDone(super.calculate);
+
+  @override
+  void handleOpBeforeCalculate(Model m, void Function() opBeforeCalculate) {
+    // Do nothing - don't lift the stack, as per page 44.  Note that
+    // stack lift is enabled after the calculation completes, via the
+    // normal op.stackLift mechanism.
   }
 }
 

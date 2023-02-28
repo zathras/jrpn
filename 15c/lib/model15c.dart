@@ -359,6 +359,9 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
   int get numRegisters => _numRegisters;
   set numRegisters(int v) {
     policy.checkAvailable(v - _numRegisters);
+    for (int i = v; i < _numRegisters; i++) {
+      registers[i] = Value.zero;
+    }
     _numRegisters = v;
     model.setNeedsSave();
   }

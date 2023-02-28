@@ -2006,6 +2006,29 @@ class AdvancedFunctionTests {
     model.setXYZT(Value.zero);
     _play([l.rcl, l.fShift, l.sin, l.fShift, l.cos]); // RCL DIM (i)
     expect(model.xF, 19);
+
+    // Check rcl op # stack lift behavior
+    _play([l.n9, l.sto, l.n3]);
+    for (final swap in [false, true]) {
+      _play([l.n7, l.enter, l.plus]);
+      expect(model.lastX, Value.fromDouble(7));
+      _play([l.n1, l.enter, l.n2, l.enter, l.n3, l.enter, l.n4]);
+      if (swap) {
+        _play([l.xy, l.xy]); // Enables stack lift
+      }
+      _play([l.rcl, l.minus, l.n3]);
+      expect(model.xF, -5);
+      expect(model.yF, 3);
+      expect(model.z.asDouble, 2);
+      expect(model.t.asDouble, 1);
+      _play([l.n8]);
+      expect(model.xF, 8);
+      expect(model.yF, -5);
+      expect(model.z.asDouble, 3);
+      expect(model.t.asDouble, 2);
+      _play([l.enter]);
+      expect(model.lastX, Value.fromDouble(7)); // From way back when
+    }
   }
 
   Future<void> runWithComplex(bool complex) async {

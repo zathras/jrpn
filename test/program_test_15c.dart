@@ -137,16 +137,52 @@ const _programs = [
       'HP-15C Matrix/HP-15C Owner\'s Handbook - Pages 138-140 general.15c', ''),
   _Program('Games/Hamurabi.15C', ''),
   _Program('Games/Dice.15c', ''),
-  _Program('Games/Sudoku Solver.15c', ''),
+  _Program(
+      'Games/Sudoku Solver.15c',
+      '34 DIM (i) '
+          '875921346 STO 8 361754892 STO 9 249863715 STO .0 '
+          '584697123 STO .1 713248659 STO .2 926135487 STO .3 '
+          '697 412 538 STO .4 158379264 STO .5 432 586 971 STO .6 '
+          'GSB A '
+          '17 STO I RCL (i) -> 875921346 '
+          '18 STO I RCL (i) -> 361754892 '
+          '19 STO I RCL (i) -> 249863715 '
+          '20 STO I RCL (i) -> 584697123 '
+          '21 STO I RCL (i) -> 713248659 '
+          '22 STO I RCL (i) -> 926135487 '
+          '23 STO I RCL (i) -> 697412538 '
+          '24 STO I RCL (i) -> 158379264 '
+          '25 STO I RCL (i) -> 432586971 '
+          '1 DIM (i) 34 DIM (i) '
+          'RCL 8 -> 0 '
+          '12000570 STO 8 600501004 STO 9 400020008 STO .0 '
+          '20010050 STO .1  4907800 STO .2  70080010 STO .3 '
+          '700090005 STO .4  500408006 STO .5  38000940 STO .6 '
+          'GSB A '
+          '17 STO I RCL (i) -> 912846573 '
+          '18 STO I RCL (i) -> 683571294 '
+          '19 STO I RCL (i) -> 457329168 '
+          '20 STO I RCL (i) -> 829613457 '
+          '21 STO I RCL (i) -> 164957832 '
+          '22 STO I RCL (i) -> 375284619 '
+          '23 STO I RCL (i) -> 746192385 '
+          '24 STO I RCL (i) -> 591438726 '
+          '25 STO I RCL (i) -> 238765941'),
   _Program('Games/Hanoi Towers.15C', ''),
   _Program('Games/Display_Control.15c', ''),
   _Program('Games/Train.15C', ''),
   _Program(
       'HP Applications Books/Thermal and Transport Science/Ideal Gas Equation of State.15c',
-      ''),
-  _Program('HP Applications Books/Geometry/Triangle Solutions.15c', ''),
+      '83.14 STO 0 25000 STO 2 .63 STO 3 1200 STO 4 GSB 1 → 2.5142 '
+          '82.05 STO 0 GSB 1 → 2.4812'),
   _Program(
-      'HP Applications Books/Mechanical Engineering/Kinetic Engergy.15c', ''),
+      'HP Applications Books/Geometry/Triangle Solutions.15c',
+      'g DEG f FIX 2 171.63 ENTER → 171.63 98.12 g →H → 98.20 '
+          '297.35 GSB 4 → 25256.21 RCL 4 → 27.83 RCL 5 → 363.91 RCL 6 → 53.97 '
+          '25.6 ENTER → 25.60 32.9 ENTER → 32.90 42.3 GSB 5 → 2 '
+          'R/S RCL 0 → 411.65 A → 127.15 RCL 1 → 25.60'),
+  _Program('HP Applications Books/Mechanical Engineering/Kinetic Engergy.15c',
+      'B 775 STO 1 5 ENTER 4 ENTER 16 ÷ + STO 2 GSB 3 → 97.4627'),
   _Program(
       'HP Applications Books/Mechanical Engineering/Equations of Motion.15c',
       '264 STO 1 35 ENTER 5280 × 3600 ÷ STO I → 51.3333 '
@@ -245,7 +281,6 @@ class _ProgramRun {
     '7': Operations.n7,
     '8': Operations.n8,
     '9': Operations.n9,
-    'I': Operations15.I15
   };
 
   static final otherOperations = <String, Operation>{
@@ -262,6 +297,12 @@ class _ProgramRun {
     '-': Operations15.minus,
     '–': Operations15.minus,
     'x↔y': Operations.xy,
+    'DEG': Operations15.deg,
+    'FIX': Operations15.fix,
+    '→H': Operations15.toH,
+    'DIM': Operations15.dim,
+    '(i)': Operations15.parenI15,
+    'I': Operations15.I15,
   };
 
   _ProgramRun(this.script, this.c, {required this.pauseValues})
@@ -294,6 +335,8 @@ class _ProgramRun {
     } else if (keys == 'R/S') {
       play(Operations.rs);
       await waitProgramDone();
+    } else if (keys == 'f' || keys == 'g') {
+      // do nothing
     } else {
       final op = otherOperations[keys];
       expect(op != null, true, reason: keys);
@@ -330,10 +373,14 @@ class _ProgramRun {
   }
 
   void playLabel(String keys) {
+    if (otherOperations[keys] != null) {
+      play(otherOperations[keys]!);
+      return;
+    }
     for (int i = 0; i < keys.length; i++) {
       final ch = keys[i];
       final op = letters[ch] ?? numbers[ch];
-      expect(op != null, true);
+      expect(op != null, true, reason: keys);
       play(op!);
     }
   }
@@ -345,6 +392,15 @@ class _ProgramRun {
 
   Future<void> expectState(String keys) async {
     final v = double.parse(keys);
+    if (c.model.formatValue(c.model.x) !=
+        c.model.formatValue(Value.fromDouble(v))) {
+      final r = c.model.memory.registers;
+      for (int i = 0; i <= 34; i++) {
+        print("$i\t${r[i].asDouble}");
+      }
+
+      print("@@");
+    }
     expect(c.model.formatValue(c.model.x),
         c.model.formatValue(Value.fromDouble(v)));
     state = normalState;
