@@ -262,7 +262,7 @@ class Resting extends ActiveState {
   @override
   void handleBackspace() {
     stackLiftEnabled = false;
-    model.x = Value.zero;
+    model.clx(); // @@ TODO:  Test behavior against 15C
     model.display.displayX();
   }
 
@@ -285,10 +285,12 @@ class Resting extends ActiveState {
     if (!model.isComplexMode) {
       throw CalculatorError(3);
     }
-    final tmp = model.xC;
-    model.x = model.xImaginary;
+    final tmpR = model.x;
+    final tmpI = model.xImaginary;
+    model.xPreserveCLX = tmpI;
     model.display.displayX();
-    model.xC = tmp;
+    model.xPreserveCLX = tmpR;
+    model.xImaginary = tmpI;
     changeState(ShowState(this));
   }
 
@@ -450,6 +452,7 @@ class DigitEntry extends ActiveState {
   @override
   void buttonDown(Operation key) {
     if (key.endsDigitEntry) {
+      model.x = model.x; // Clear CLX status
       changeState(Resting(controller)).buttonDown(key);
     } else {
       key.pressed(this);
@@ -520,7 +523,7 @@ class DigitEntry extends ActiveState {
         return false;
       }
     }
-    model.x = v;
+    model.xPreserveCLX = v;
     if (ex == null) {
       model.display.current = sign +
           model.displayMode.addCommas(
@@ -1308,7 +1311,7 @@ class Running extends ControllerState {
           program.currentLine = oldLine;
         }
       }
-      if (settings.traceProgramToStdout || true /* @@ */) {
+      if (settings.traceProgramToStdout || false /* @@ */) {
         final out = StringBuffer();
         /*  Simplified version, useful for comparisons
         out.write(line.toString());

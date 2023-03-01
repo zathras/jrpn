@@ -522,7 +522,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// Just the imaginary part of x
   Value get xImaginary => _imaginaryStack![0];
 
-  set x(Value v) {
+  set xPreserveCLX(Value v) {
     if (identical(v, Value.fInfinity)) {
       floatOverflow = true;
       v = Value.fMaxValue;
@@ -534,9 +534,13 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     if (!_clxDone) {
       _imaginaryStack?[0] = Value.zero;
     }
-    _clxDone = false;
     needsSave = true;
     display.window = 0;
+  }
+
+  set x(Value v) {
+    xPreserveCLX = v;
+    _clxDone = false;
   }
 
   ///
@@ -939,7 +943,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ///
   /// Negate the value in x like the CHS key does.  The behavior varies
   /// according to the current sign mode.  In complex mode, it leaves the
-  /// imaginary part alone.
+  /// imaginary part alone, and does not change the CLX status.
   ///
   void chsX() {
     _stack[0] = signMode.negate(x, this);
