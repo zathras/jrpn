@@ -773,7 +773,7 @@ class Operations15 extends Operations {
       arg: RegisterWriteOpArg(
           maxDigit: 19,
           f: (m, reg, x) {
-            m.xF = reg;
+            m.x = reg;
             return x;
           }),
       name: 'x<->');
@@ -781,35 +781,36 @@ class Operations15 extends Operations {
       maxOneByteOpcodes: 4,
       arg: RegisterWriteOpArg(
           maxDigit: 19,
-          f: (m, double r, double x) {
-            return _skipIf(m, r, (n, x) => n > x, (n, y) => n - y);
+          f: (m, Value r, Value x) {
+            return _skipIf(m, r, (n, x) => n <= x, (n, y) => n - y);
           }),
       name: 'DSE');
   static final NormalArgOperation isg = NormalArgOperation(
       maxOneByteOpcodes: 4,
       arg: RegisterWriteOpArg(
           maxDigit: 19,
-          f: (m, double r, double x) {
-            return _skipIf(m, r, (n, x) => n <= x, (n, y) => n + y);
+          f: (m, Value r, Value x) {
+            return _skipIf(m, r, (n, x) => n > x, (n, y) => n + y);
           }),
       name: 'ISG');
 
-  static double _skipIf(Model m, double val,
-      bool Function(double n, int x) skip, double Function(double n, int y) f) {
-    double n = val.truncateToDouble();
-    final double fracD = (val - n).abs();
-    final int frac = (fracD * 100000).truncate();
+  static Value _skipIf(Model m, Value val, bool Function(double n, int x) skip,
+      double Function(double n, int y) f) {
+    double n = val.intOp().asDouble;
+    final int frac =
+        val.fracOp().timesTenTo(5).intOp().asDouble.truncate().abs();
     final int x = frac ~/ 100;
     final int y = frac % 100;
-    n = f(n, y);
+    n = f(n, max(1, y));
     if (skip(n, x)) {
       m.program.incrementCurrentLine(); // Even if not running
     }
     if (n > 0) {
-      return n + fracD;
+      n = n * 100000 + frac;
     } else {
-      return n - fracD;
+      n = n * 100000 - frac;
     }
+    return Value.fromDouble(n).timesTenTo(-5);
   }
 
   static final NormalArgOperation integrate = RunProgramOperation(
@@ -1268,19 +1269,23 @@ class Operations15 extends Operations {
         KeyArg(
             key: Operations15.plus,
             child: RegisterWriteOpArg(
-                maxDigit: 19, f: (m, double r, double x) => r + x)),
+                maxDigit: 19,
+                f: (m, r, x) => Value.fromDouble(r.asDouble + x.asDouble))),
         KeyArg(
             key: Operations15.minus,
             child: RegisterWriteOpArg(
-                maxDigit: 19, f: (m, double r, double x) => r - x)),
+                maxDigit: 19,
+                f: (m, r, x) => Value.fromDouble(r.asDouble - x.asDouble))),
         KeyArg(
             key: Operations15.mult,
             child: RegisterWriteOpArg(
-                maxDigit: 19, f: (m, double r, double x) => r * x)),
+                maxDigit: 19,
+                f: (m, r, x) => Value.fromDouble(r.asDouble * x.asDouble))),
         KeyArg(
             key: Operations15.div,
             child: RegisterWriteOpArg(
-                maxDigit: 19, f: (m, double r, double x) => r / x)),
+                maxDigit: 19,
+                f: (m, r, x) => Value.fromDouble(r.asDouble / x.asDouble))),
         KeyArg(
             key: Operations15.cosInverse, // That's g (i)
             child: ArgDone((m) {
@@ -1544,7 +1549,7 @@ class RegisterReadOpArg extends ArgAlternates {
 }
 
 class RegisterWriteOpArg extends ArgAlternates {
-  final double Function(Model m, double reg, double x) f;
+  final Value Function(Model m, Value reg, Value x) f;
 
   RegisterWriteOpArg({required int maxDigit, required this.f})
       : super(synonyms: Operations15._letterAndRegisterISynonyms, children: [
@@ -1553,8 +1558,8 @@ class RegisterWriteOpArg extends ArgAlternates {
               child: ArgDone((m) {
                 final mi = m.memory.registers.index.asMatrix;
                 if (mi == null) {
-                  m.memory.registers.indirectIndex = Value.fromDouble(
-                      f(m, m.memory.registers.indirectIndex.asDouble, m.xF));
+                  m.memory.registers.indirectIndex =
+                      f(m, m.memory.registers.indirectIndex, m.x);
                 } else {
                   // See bottom of page 173
                   _forMatrix(m as Model15, mi, f);
@@ -1562,12 +1567,12 @@ class RegisterWriteOpArg extends ArgAlternates {
               })),
           KeyArg(
               key: Arg.kI,
-              child: ArgDone((m) => m.memory.registers.index = Value.fromDouble(
-                  f(m, m.memory.registers.index.asDouble, m.xF)))),
+              child: ArgDone((m) => m.memory.registers.index =
+                  f(m, m.memory.registers.index, m.x))),
           DigitArg(
               max: maxDigit,
-              calc: (m, i) => m.memory.registers[i] =
-                  Value.fromDouble(f(m, m.memory.registers[i].asDouble, m.xF))),
+              calc: (m, i) =>
+                  m.memory.registers[i] = f(m, m.memory.registers[i], m.x)),
           ...List.generate(
               _letterLabelsList.length,
               (i) => KeyArg(
@@ -1578,12 +1583,12 @@ class RegisterWriteOpArg extends ArgAlternates {
         ]);
 
   static void _forMatrix(
-      Model15 m, int mi, final double Function(Model, double, double) f) {
+      Model15 m, int mi, final Value Function(Model, Value, Value) f) {
     final mat = m.matrices[mi];
     int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
     int row = toI(0) - 1;
     int col = toI(1) - 1;
-    mat.setF(row, col, f(m, mat.getF(row, col), m.xF));
+    mat.set(row, col, f(m, mat.get(row, col), m.x));
   }
 }
 

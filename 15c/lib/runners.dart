@@ -72,7 +72,17 @@ abstract class NontrivialProgramRunner extends ProgramRunner {
     }
     model.setXYZT(Value.fromDouble(arg));
     await caller.runProgramLoop();
-    return model.xF;
+    assert(returnStackStartPos == model.program.returnStackPos + 1);
+    if (model.getFlag(9)) {
+      model.setFlag(9, false);
+      if (model.xF > 0) {
+        return double.infinity;
+      } else {
+        return double.negativeInfinity;
+      }
+    } else {
+      return model.xF;
+    }
   }
 
   @override
@@ -129,6 +139,16 @@ class SolveProgramRunner extends NontrivialProgramRunner {
 
     double resultX0 = await runSubroutine(x0);
     double resultX1 = await runSubroutine(x1);
+    if (resultX0.isInfinite || resultX1.isInfinite) {
+      if (resultX0.isInfinite) {
+        model.zF = resultX0;
+      } else {
+        model.zF = resultX1;
+      }
+      model.yF = x0;
+      model.xF = x1;
+      return false;
+    }
     for (;;) {
       double slope;
       if (resultX1 - resultX0 != 0) {
@@ -140,10 +160,9 @@ class SolveProgramRunner extends NontrivialProgramRunner {
         slope = 0.5001;
       }
       double x2 = x1 - resultX1 * slope;
-
       // Optimization 1 (see TCL source)
       if ((x2 - x1).abs() > 100 * (x0 - x1).abs()) {
-        x2 = (x0 + x1) / 2;
+        x2 = x1 - 100 * (x0 - x1);
       }
 
       // Optimization 2 (see TCL source)
@@ -151,6 +170,17 @@ class SolveProgramRunner extends NontrivialProgramRunner {
         x2 = (x0 + x1) / 2;
       }
       double resultX2 = await runSubroutine(x2);
+      while (resultX2.isInfinite && ii < cntmax) {
+        // Oops!  Try a less agressive estimate, by backing off the slope.
+        // "4" is a guess.  FWIW, this made
+        // "HP-15C_4.4.00_Programs/Users/Eddie Shore/Reactance chart solver.15c"
+        // work with the given example, and trying something when we get
+        // infinity from the function we call won't hurt.
+        slope /= 4;
+        x2 = x1 - resultX1 * slope;
+        resultX2 = await runSubroutine(x2);
+        cntmax++;
+      }
       x0 = x1;
       resultX0 = resultX1;
       x1 = x2;

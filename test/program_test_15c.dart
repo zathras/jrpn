@@ -105,28 +105,94 @@ const _programs = [
   _Program('Users/D.G. Simpson/Projectile Problem.15c', ''),
   _Program('Users/D.G. Simpson/Hyperbolic Kepler’s Equation.15C', ''),
   _Program('Users/D.G. Simpson/Pendulum Period.15C', ''),
-  _Program('Users/Eddie Shore/Prime Factorization.15c', ''),
-  _Program('Users/Eddie Shore/Sign Function.15c', ''),
-  _Program('Users/Eddie Shore/Digital Root.15c', ''),
-  _Program('Users/Eddie Shore/Prime Factor.15c', ''),
-  _Program('Users/Eddie Shore/Pascal\'s Triangle.15c', ''),
-  _Program('Users/Eddie Shore/Quadratic formula.15c', ''),
+  _Program('Users/Eddie Shore/Prime Factorization.15c',
+      '150 GSB B -> 2 R/S -> 3 R/S -> 5 R/S -> 5 R/S -> 150'),
+  _Program(
+      'Users/Eddie Shore/Sign Function.15c',
+      '52 CHS C -> -1 '
+          '0 C -> 0 '
+          '36 C -> 1 '),
+  _Program(
+      'Users/Eddie Shore/Digital Root.15c',
+      '4514 A -> 5 '
+          '9376 A -> 7 '
+          '636088 A -> 4 '
+          '761997 A -> 3 '),
+  _Program('Users/Eddie Shore/Prime Factor.15c',
+      '150 GSB B -> 2 R/S -> 3 R/S -> 5 R/S -> 5 R/S -> 150'),
+  _Program(
+      'Users/Eddie Shore/Pascal\'s Triangle.15c',
+      '4 A  -> 1 R/S -> 4 R/S -> 6 R/S -> 4 R/S -> 1 '
+          '8 A -> 1 R/S -> 8 R/S -> 28 R/S -> 56 R/S -> 70 '
+          'R/S -> 56 R/S -> 28 R/S -> 8 R/S -> 1'),
+  _Program(
+      'Users/Eddie Shore/Quadratic formula.15c',
+      '1 STO 1 4 STO 2 6 STO 3 A '
+          '-> -8 R/S -> -2 R/S -> 1.4142 '
+          '1 STO 1 5 CHS STO 2 3 STO 3 A '
+          '-> 13 R/S -> 4.3028 R/S -> 0.6972 '),
   _Program('Users/Eddie Shore/Countdown.15c', ''),
   _Program('Users/Eddie Shore/Summation.15c', ''),
-  _Program('Users/Eddie Shore/Volume of a Cylinder.15c', ''),
+  _Program(
+      'Users/Eddie Shore/Volume of a Cylinder.15c',
+      '1000 STO 3 10 STO 2 1 STO I 0 ENTER 1000 f SOLVE A '
+          '-> 5.6419 '
+          '2498.65 STO 3 39.43 STO 1 2 STO I 0 ENTER 1000 f SOLVE A '
+          '-> 0.5116'),
   _Program('Users/Eddie Shore/The Game of Bust.15c', ''),
   _Program(
-      'Users/Eddie Shore/Quadratic Equation with Complex Coefficients.15C', ''),
-  _Program('Users/Eddie Shore/Extended Statistics Program.15c', ''),
-  _Program('Users/Eddie Shore/Modulus Function.15c', ''),
+      'Users/Eddie Shore/Quadratic Equation with Complex Coefficients.15C',
+      '2 STO 0 3 STO 1 3 CHS STO 2 4 CHS STO 3 0 STO 4 2 STO 5 '
+          'A -> 1.1268 R/S -> -0.4538 R/S -> 0.2578 R/S -> 0.3769 '),
+  _Program(
+      'Users/Eddie Shore/Extended Statistics Program.15c',
+      'CF 1 CF 2 '
+          'A 104.5 ENTER 40.5 f B -> 1 102 ENTER 38.6 f B -> 2 '
+          '100 ENTER 37.9 f B  -> 3 97.5 ENTER 36.2 f B -> 4 '
+          '95.5 ENTER 35.1 f B -> 5 94 ENTER 34.6 f B -> 6 '
+          'C -> 33.5271 R/S -> 1.7601 R/S -> 0.9955 '
+          'SF 1 CF 2 '
+          'A 104.5 ENTER 40.5 f B -> 1 102 ENTER 38.6 f B -> 2 '
+          '100 ENTER 37.9 f B  -> 3 97.5 ENTER 36.2 f B -> 4 '
+          '95.5 ENTER 35.1 f B -> 5 94 ENTER 34.6 f B -> 6 '
+          'C -> -139.0086 R/S -> 65.8446 R/S -> 0.9965 '
+          'CF 1 SF 2 '
+          'A 104.5 ENTER 40.5 f B -> 1 102 ENTER 38.6 f B -> 2 '
+          '100 ENTER 37.9 f B  -> 3 97.5 ENTER 36.2 f B -> 4 '
+          '95.5 ENTER 35.1 f B -> 5 94 ENTER 34.6 f B -> 6 '
+          'C -> 51.1312 R/S -> 0.0177 R/S -> 0.9945 '
+          'SF 1 SF 2 '
+          'A 104.5 ENTER 40.5 f B -> 1 102 ENTER 38.6 f B -> 2 '
+          '100 ENTER 37.9 f B  -> 3 97.5 ENTER 36.2 f B -> 4 '
+          '95.5 ENTER 35.1 f B -> 5 94 ENTER 34.6 f B -> 6 '
+          'C -> 8.9731 R/S -> 0.6640 R/S -> 0.9959 '),
+  _Program(
+      'Users/Eddie Shore/Modulus Function.15c',
+      '48 ENTER 3 B -> 0 '
+          '41.3 ENTER 12 B -> 5.3 '
+          '48 ENTER 7 CHS B -> -1 '
+          '50.2 CHS ENTER 36 B -> 21.8 '),
   _Program('Users/Eddie Shore/Numerical Derivative.15c', ''),
-  _Program('Users/Eddie Shore/Reactance chart solver.15c', ''),
+  _Program('Users/Eddie Shore/Reactance chart solver.15c',
+      '60 STO 0 2.5 STO 1 2 STO I 0 ENTER 1 f SOLVE D -> 2.8145e-6'),
   _Program('Users/Eddie Shore/Coordinates on an Ellipse.15c', ''),
-  _Program('Conversion/Imperial to Metric.15c', ''),
-  _Program('Finance/Time_Money.15c', ''),
+  _Program(
+      'Conversion/Imperial to Metric.15c',
+      '10 GSB .2 -> 23.5215 '
+          '19 GSB 2 -> 12.3797 '
+          '213 GSB .3 -> 6.1186 '
+          '315 GSB 3 -> 9601.2000 '),
+  _Program(
+      'Finance/Time_Money.15c',
+      'f FIX 2 CF 0 30 ENTER 12 * A '
+          '5.85 ENTER 1 2 / B 50000 C '
+          'D R/S -> -294.97 '
+          'CLx D E R/S -> -287941.99'),
   _Program('HP-15C Matrix/HP-15C Owner\'s Handbook - Pages 157-159.15c', ''),
   _Program('HP-15C Matrix/HP-15C Owner\'s Handbook - Pages 169-171.15c', ''),
-  _Program('HP-15C Matrix/HP-15C Owner\'s Handbook - Pages 138-140.15c', ''),
+  _Program('HP-15C Matrix/HP-15C Owner\'s Handbook - Pages 138-140.15c',
+      'GSB 1 -> 8.2496',
+      pauseValues: [3.80, 7.20, 1.30, -0.90, 16.5, -22.1, -11.2887, -11.2887]),
   _Program('HP-15C Matrix/HP-15C Owner\'s Handbook - Pages 177-179.15c', ''),
   _Program('HP-15C Matrix/HP-15C Owner\'s Handbook - Pages 163-168.15c', ''),
   _Program(
@@ -303,6 +369,11 @@ class _ProgramRun {
     'DIM': Operations15.dim,
     '(i)': Operations15.parenI15,
     'I': Operations15.I15,
+    'CF': Operations15.cf,
+    'SF': Operations15.sf,
+    'R/S': Operations.rs,
+    'CLx': Operations.clx,
+    'SOLVE': Operations15.solve,
   };
 
   _ProgramRun(this.script, this.c, {required this.pauseValues})
@@ -394,12 +465,9 @@ class _ProgramRun {
     final v = double.parse(keys);
     if (c.model.formatValue(c.model.x) !=
         c.model.formatValue(Value.fromDouble(v))) {
-      final r = c.model.memory.registers;
-      for (int i = 0; i <= 34; i++) {
-        print("$i\t${r[i].asDouble}");
+      for (int i = 0; i <= 7; i++) {
+        print('  r$i: ${c.model.memory.registers[i]}');
       }
-
-      print("@@");
     }
     expect(c.model.formatValue(c.model.x),
         c.model.formatValue(Value.fromDouble(v)));

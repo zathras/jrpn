@@ -97,11 +97,18 @@ abstract class DisplayMode {
       r = s.substring(dp);
       s = s.substring(0, dp);
     }
+    final String sign;
+    if (s.startsWith('-')) {
+      sign = '-';
+      s = s.substring(1);
+    } else {
+      sign = '';
+    }
     while (s.trim().length > commaDistance) {
       r = ',${s.substring(s.length - commaDistance)}$r';
       s = s.substring(0, s.length - commaDistance);
     }
-    return s + r;
+    return sign + s + r;
   }
 
   String toJson() => _jsonName;
