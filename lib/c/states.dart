@@ -1249,7 +1249,7 @@ class Running extends ControllerState {
     model.display.current = ' ';
     program.runner = null;
     final onDone = _singleStepOnDone;
-    final err = _fake.pendingError;
+    final CalculatorError? err = _fake.pendingError;
     _fake.pendingError = null;
     if (onDone == null) {
       changeState(Resting(controller));
@@ -1265,7 +1265,8 @@ class Running extends ControllerState {
     }
   }
 
-  Future<void> runProgramLoop() async {
+  Future<void> runProgramLoop(
+      {Set<int> acceptableErrors = const <int>{}}) async {
     final ProgramListener listener = model.memory.program.programListener;
     final settings = controller.model.settings;
     final program = model.memory.program;
@@ -1364,6 +1365,10 @@ class Running extends ControllerState {
         break;
       } else if (err != null) {
         assert(_pushedRunner == null);
+        if (acceptableErrors.contains(err.num15)) {
+          _fake.pendingError = null;
+          throw err;
+        }
         listener.onError(err);
         _onDone();
         _stopNext = false;

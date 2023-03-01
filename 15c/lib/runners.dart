@@ -62,7 +62,11 @@ abstract class NontrivialProgramRunner extends ProgramRunner {
   ///
   Future<bool> runCalculation();
 
-  Future<double> runSubroutine(double arg) async {
+  Future<double> runSubroutine(double arg) =>
+      runSubroutineErrorsOK(arg, const {});
+
+  Future<double> runSubroutineErrorsOK(
+      double arg, Set<int> acceptableErrors) async {
     if (_subroutineStart == _subroutineNotStarted) {
       _subroutineStart = model.program.currentLine;
     } else {
@@ -71,7 +75,7 @@ abstract class NontrivialProgramRunner extends ProgramRunner {
       assert(returnStackStartPos == model.program.returnStackPos);
     }
     model.setXYZT(Value.fromDouble(arg));
-    await caller.runProgramLoop();
+    await caller.runProgramLoop(acceptableErrors: acceptableErrors);
     assert(returnStackStartPos == model.program.returnStackPos + 1);
     if (model.getFlag(9)) {
       model.setFlag(9, false);
@@ -114,6 +118,23 @@ class SolveProgramRunner extends NontrivialProgramRunner {
   @override
   fail() {
     throw CalculatorError(8);
+  }
+
+  @override
+  Future<double> runSubroutine(double arg) async {
+    const okErrors = {0, 1};
+    try {
+      final r = await super.runSubroutineErrorsOK(arg, okErrors);
+      return r;
+    } on CalculatorError catch (e) {
+      if (!okErrors.contains(e.num15)) {
+        rethrow;
+      }
+      while (returnStackStartPos < model.program.returnStackPos + 1) {
+        model.program.popReturnStack();
+      }
+      return double.infinity;
+    }
   }
 
   @override

@@ -167,12 +167,11 @@ class Operations {
 
   static final NormalOperation sqrtOp = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
-        try {
-          m.resultXF = sqrt(m.xF);
-          // ignore: avoid_catches_without_on_clauses
-        } catch (e) {
+        final x = m.xF;
+        if (x < 0) {
           throw CalculatorError(0);
         }
+        m.resultXF = sqrt(x);
       },
       complexCalc: (Model m) {
         m.resultXC = m.xC.sqrt();

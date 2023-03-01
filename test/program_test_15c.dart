@@ -86,25 +86,52 @@ const _programs = [
   _Program('Math/LnGammaComplex.15c', ''),
   _Program('Math/Sums of five lists.15c', ''),
   _Program('Math/Halley\'s Method.15c', ''),
-  _Program('Math/BinaryToDecimal.15c', ''),
+  _Program('Math/BinaryToDecimal.15c', '1010011010 D -> 666 101010 D -> 42'),
   _Program('Math/Complex Number Utilities.15c', ''),
-  _Program('Math/Bairstow\'s Method.15c', ''),
-  _Program('Math/Convert to Fraction.15c', ''),
-  _Program('Math/Little_Gauss.15c', ''),
-  _Program('Math/Calculating 208 digits of e.15c', ''),
-  _Program('Math/GCD_LCM.15c', ''),
-  _Program('Math/DecimalToBinary.15c', ''),
+  _Program(
+      'Math/Bairstow\'s Method.15c',
+      '2 STO 9 9 CHS STO .0 15 STO .1 65 STO .2 267 CHS STO .3 234 STO .4 '
+          '9.014 STO 8 1 STO 0 STO 1 A '
+          '-> -52 RCL 0 -> 1.5 RCL 1 -> -4.5 RCL 9 -> 2 RCL .0 -> -12 '
+          'RCL .1 -> 42 RCL .2 -> -52 GSB B -> 1.5 X<=>Y -> -3 '
+          'GSB A -> -4 RCL 0 -> -4 RCL 1 -> 13 RCL 9 -> 2 RCL .0 -> -4 '),
+  _Program('Math/Convert to Fraction.15c', '0.15625 GSB 1 -> 32',
+      pauseValues: [5]),
+  _Program('Math/Little_Gauss.15c',
+      '19 A -> 190 19 B -> 190 219 A -> 24090 219 B -> 24090'),
+  _Program(
+      'Math/Calculating 208 digits of e.15c', '2 DIM (i) 1 A -> -0.71828178',
+      pauseValues: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+  _Program(
+      'Math/GCD_LCM.15c',
+      '48 ENTER 180 A -> 12 '
+          '12 ENTER 44 B -> 132 '
+          'PI C -> 3.1429'),
+  _Program('Math/DecimalToBinary.15c', '42 B -> 101010 666 B -> 1010011010'),
   _Program('Users/Peter Sels/MasterMind2020.15c', ''),
   _Program('Users/Peter Sels/MasterMindGuessScoring.15c', ''),
   _Program('Users/Peter Sels/HigherLower_v1987.15c', ''),
-  _Program('Users/D.G. Simpson/Kepler’s Equation.15c', ''),
-  _Program('Users/D.G. Simpson/Helmert’s Equation.15C', ''),
-  _Program('Users/D.G. Simpson/Reduction of an Angle.15c', ''),
-  _Program('Users/D.G. Simpson/1D Perfectly Elastic Collisions.15C', ''),
-  _Program('Users/D.G. Simpson/Barker’s Equation.15c', ''),
-  _Program('Users/D.G. Simpson/Projectile Problem.15c', ''),
-  _Program('Users/D.G. Simpson/Hyperbolic Kepler’s Equation.15C', ''),
-  _Program('Users/D.G. Simpson/Pendulum Period.15C', ''),
+  _Program('Users/D.G. Simpson/Kepler’s Equation.15c',
+      '60 ENTER .15 f A -> 67.9667'),
+  _Program(
+      'Users/D.G. Simpson/Helmert’s Equation.15C',
+      // Doesn't give a sensible answer, but it agrees with a real 15C, and
+      // is within 0.2 of Torsten's simulator.
+      // I suspect a bug in the Helmert's program.
+      '0.025928 STO .1 9.80616 STO .2 6.9 EEX 5 STO .3 3.086 EEX 6 STO . 4 '
+          '38.898 ENTER 53 f A -> -163527156.2'),
+  _Program('Users/D.G. Simpson/Reduction of an Angle.15c', '5000 f A -> 320'),
+  _Program(
+      'Users/D.G. Simpson/1D Perfectly Elastic Collisions.15C',
+      '2 ENTER 7 ENTER 4 ENTER 5 CHS f A '
+          '-> -10 X<=>Y -> -1'),
+  _Program('Users/D.G. Simpson/Barker’s Equation.15c', '19.38 f A -> 149.0847'),
+  _Program('Users/D.G. Simpson/Projectile Problem.15c',
+      '30 ENTER 50 ENTER 20 ENTER 30 f A -> 41.5357'),
+  _Program('Users/D.G. Simpson/Hyperbolic Kepler’s Equation.15C',
+      '60 ENTER 1.15 f A -> 1.7502'),
+  _Program(
+      'Users/D.G. Simpson/Pendulum Period.15C', '1.2 ENTER 65 f A -> 2.3898'),
   _Program('Users/Eddie Shore/Prime Factorization.15c',
       '150 GSB B -> 2 R/S -> 3 R/S -> 5 R/S -> 5 R/S -> 150'),
   _Program(
@@ -374,6 +401,8 @@ class _ProgramRun {
     'R/S': Operations.rs,
     'CLx': Operations.clx,
     'SOLVE': Operations15.solve,
+    'X<=>Y': Operations.xy,
+    'PI': Operations15.piOp
   };
 
   _ProgramRun(this.script, this.c, {required this.pauseValues})
@@ -387,6 +416,7 @@ class _ProgramRun {
         await state(keys);
       }
     }
+    expect(pauseCount, pauseValues.length);
   }
 
   Future<void> normalState(String keys) async {
