@@ -82,10 +82,19 @@ const _programs = [
   _Program('Math/Gaussian Integration.15c', ''),
   _Program('Math/Quadratic_Equation.15c', ''),
   _Program('Math/Big_Factorial.15c', ''),
-  _Program('Math/Gamma function for complex numbers.15C', ''),
-  _Program('Math/LnGammaComplex.15c', ''),
-  _Program('Math/Sums of five lists.15c', ''),
-  _Program('Math/Halley\'s Method.15c', ''),
+  _Program('Math/Gamma function for complex numbers.15C',
+      'f FIX 9 0 ENTER 1 I A -> -0.154949828 Re<=>Im -> -0.498015669'),
+  _Program('Math/LnGammaComplex.15c',
+      '1.2 ENTER 3.4 I A -> -3.5627 Re<=>Im -> 1.8006'),
+  _Program(
+      'Math/Sums of five lists.15c',
+      'f MATRIX 0 g CF 1 f USER 250 A 150 A 525 A 275 A '
+          '300 A 10 B 10 B 2 B 100 B 10 B GSB 1 -> 1500 '
+          'R/S -> 132 R/S -> 0',
+      pauseValues: ['a      5  1', 'b      5  1']),
+  _Program('Math/Halley\'s Method.15c',
+      'f FIX 9 RCL MATRIX argB STO I EEX 4 CHS STO 0 2 A -> 1.854105968',
+      pauseValues: [0.148589460, 0.002695411, 0.000000017, 0]),
   _Program('Math/BinaryToDecimal.15c', '1010011010 D -> 666 101010 D -> 42'),
   _Program('Math/Complex Number Utilities.15c', ''),
   _Program(
@@ -319,7 +328,7 @@ class _Program {
   static const prefix = 'test/HP-15C_4.4.00_Programs/';
   final String sourcePath;
   final String script;
-  final List<double> pauseValues;
+  final List<Object> pauseValues;
 
   const _Program(this.sourcePath, this.script, {this.pauseValues = const []});
 
@@ -350,7 +359,7 @@ class _ProgramRun {
   String script;
   TestCalculator c;
   final StreamIterator<ProgramEvent> out;
-  final List<double> pauseValues;
+  final List<Object> pauseValues; // String or double
   int pauseCount = 0;
 
   static final letters = <String, Operation>{
@@ -402,7 +411,15 @@ class _ProgramRun {
     'CLx': Operations.clx,
     'SOLVE': Operations15.solve,
     'X<=>Y': Operations.xy,
-    'PI': Operations15.piOp
+    'PI': Operations15.piOp,
+    'MATRIX': Operations15.matrix,
+    'USER': Operations15.userOp,
+    'argA': Operations15.letterLabelA,
+    'argB': Operations15.letterLabelB,
+    'argC': Operations15.letterLabelC,
+    'argD': Operations15.letterLabelD,
+    'argE': Operations15.letterLabelE,
+    'Re<=>Im': Operations15.reImSwap,
   };
 
   _ProgramRun(this.script, this.c, {required this.pauseValues})
@@ -462,8 +479,13 @@ class _ProgramRun {
         expect(out.current, ProgramEvent.stop);
         break;
       } else if (out.current.pauseValue != null) {
-        expect(c.model.formatValue(out.current.pauseValue!),
-            c.model.formatValue(Value.fromDouble(pauseValues[pauseCount++])));
+        final pv = pauseValues[pauseCount++];
+        if (pv is num) {
+          expect(c.model.formatValue(out.current.pauseValue!),
+              c.model.formatValue(Value.fromDouble(pv.toDouble())));
+        } else {
+          expect(c.model.formatValue(out.current.pauseValue!), pv);
+        }
         c.resume();
       } else {
         expect(out.current, ProgramEvent.done);

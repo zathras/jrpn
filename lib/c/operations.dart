@@ -195,9 +195,7 @@ class Operations {
       calc: (Model m) => m.display.displayX());
 
   static final NormalOperation clx = NormalOperation(
-      calc: (Model m) => m.x = Value.zero,
-      stackLift: StackLift.disable,
-      name: 'CLx');
+      calc: (Model m) => m.clx(), stackLift: StackLift.disable, name: 'CLx');
 
   static final BranchingOperation xLEy = BranchingOperation(
       name: 'x<=y',

@@ -472,6 +472,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   bool get userMode => false;
 
+  bool _clxDone = false; // Only set by clx command
+
   ///
   /// Create an instance of the model-specific ProgramInstruction subtype
   ///
@@ -529,7 +531,10 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       v = Value.fMinValue;
     }
     _stack[0] = v;
-    _imaginaryStack?[0] = Value.zero;
+    if (!_clxDone) {
+      _imaginaryStack?[0] = Value.zero;
+    }
+    _clxDone = false;
     needsSave = true;
     display.window = 0;
   }
@@ -556,7 +561,10 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set xF(double v) => x = Value.fromDouble(v);
 
   /// Set x from a complex value
-  set xC(Complex v) => _setComplex(0, v);
+  set xC(Complex v) {
+    _setComplex(0, v);
+    _clxDone = false;
+  }
 
   /// Pop the stack and set X, setting lastX
   // ignore: avoid_setters_without_getters
@@ -647,6 +655,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     if (im != null) {
       im[3] = im[2] = im[1] = im[0] = Value.zero;
     }
+    _clxDone = false;
     needsSave = true;
   }
 
@@ -654,6 +663,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Value? _lastXImaginary;
 
   Value get lastX => _lastX;
+  Value get lastXImaginary => _lastXImaginary!;
   Complex get lastXC => Complex(_lastX.asDouble, _lastXImaginary!.asDouble);
   set lastX(Value v) {
     _lastX = v;
@@ -785,6 +795,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     f(_imaginaryStack);
     display.window = 0;
     needsSave = true;
+    _clxDone = false;
   }
 
   void swapXY() {
@@ -800,6 +811,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     f(_imaginaryStack);
     display.window = 0;
     needsSave = true;
+    _clxDone = false;
   }
 
   /// "lift" stack, after which one can write to x
@@ -815,6 +827,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     f(_stack);
     f(_imaginaryStack);
     needsSave = true;
+    _clxDone = false;
   }
 
   /// the R<down arrow> key
@@ -833,6 +846,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     f(_imaginaryStack);
     display.window = 0;
     needsSave = true;
+    _clxDone = false;
   }
 
   /// The R<up arrow> key
@@ -851,6 +865,18 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     f(_imaginaryStack);
     display.window = 0;
     needsSave = true;
+    _clxDone = false;
+  }
+
+  void clx() {
+    if (isComplexMode) {
+      final tmp = xImaginary;
+      x = Value.zero;
+      xImaginary = tmp;
+    } else {
+      x = Value.zero;
+    }
+    _clxDone = true;
   }
 
   /// The float overflow flag, which is stored as gFlag on the 16C.  On the 15C,

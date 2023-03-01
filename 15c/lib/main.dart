@@ -748,7 +748,7 @@ class Operations15 extends Operations {
         KeyArg(
             key: Operations15.parenI15,
             child: ArgDone((m) => (m as Model15).memory.numRegisters =
-                m.x.intOp().asDouble.abs().toInt() + 1)),
+                max(m.x.intOp().asDouble.abs().toInt(), 1) + 1)),
       ]),
       name: 'DIM');
 
@@ -847,6 +847,18 @@ class Operations15 extends Operations {
         m.resultXF = (m as Model15).rand.nextValue;
       },
       name: 'RAN #');
+  static final NormalOperation lstx15 = NormalOperation.floatOnly(
+      pressed: (ActiveState s) => s.liftStackIfEnabled(),
+      floatCalc: (Model m) {
+        m.x = m.lastX;
+        m.display.displayX();
+      },
+      complexCalc: (Model m) {
+        m.x = m.lastX;
+        m.xImaginary = m.lastXImaginary;
+        m.display.displayX();
+      },
+      name: 'LSTx');
   static final NormalOperation toR = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         double r = m.xF;
@@ -1061,8 +1073,15 @@ class Operations15 extends Operations {
         reg[5] = Value.fromDouble(reg[5].asDouble + y);
         reg[4] = Value.fromDouble(reg[4].asDouble + x * x);
         reg[3] = Value.fromDouble(reg[3].asDouble + x);
-        m.lastX = m.x;
-        m.x = reg[2] = Value.fromDouble(reg[2].asDouble + 1);
+        final newReg = reg[2].asDouble + 1;
+        reg[2] = Value.fromDouble(newReg);
+        if (m.isComplexMode) {
+          m.lastXC = m.xC;
+          m.xC = Complex(m.xF, newReg);
+        } else {
+          m.lastX = m.x;
+          m.x = reg[2];
+        }
       },
       name: 'E+');
   static final NormalOperation sigmaMinus = NormalOperation.floatOnly(
@@ -1076,8 +1095,15 @@ class Operations15 extends Operations {
         reg[5] = Value.fromDouble(reg[5].asDouble - y);
         reg[4] = Value.fromDouble(reg[4].asDouble - x * x);
         reg[3] = Value.fromDouble(reg[3].asDouble - x);
-        m.lastX = m.x;
-        m.x = reg[2] = Value.fromDouble(reg[2].asDouble - 1);
+        final newReg = reg[2].asDouble - 1;
+        reg[2] = Value.fromDouble(newReg);
+        if (m.isComplexMode) {
+          m.lastXC = m.xC;
+          m.xC = Complex(m.xF, newReg);
+        } else {
+          m.lastX = m.x;
+          m.x = reg[2];
+        }
       },
       name: 'E-');
   static final NormalOperation pYX = NormalOperation.floatOnly(
@@ -1127,7 +1153,8 @@ class Operations15 extends Operations {
 
     int row = toI(r) - 1;
     int col = toI(c) - 1;
-    _showMatrixR0R1(m, matrix);
+    matrix.checkIndices(row, col);
+    _showMatrix(m, matrix, row, col);
     m.deferToButtonUp = DeferredFunction(m, () {
       m.xF; // Throws exception if matrix
       if (row == 1 && col == 1) {
@@ -1862,7 +1889,7 @@ class ButtonLayout15 extends ButtonLayout {
       'LSTx',
       Operations.enter,
       Operations15.ranNum,
-      Operations.lstx,
+      Operations15.lstx15,
       '\n\r',
       extraHeight: factory.height * _totalButtonHeight / _buttonHeight,
       acceleratorLabel: ' \u23ce');
@@ -2262,7 +2289,7 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
     MKey(Operations.rDown, Operations.clearPrgm, Operations.rUp),
     MKey(Operations.xy, Operations.clearReg, Operations15.rnd),
     MKey(Operations.bsp, Operations.clearPrefix, Operations.clx),
-    MKey(Operations.enter, Operations15.ranNum, Operations.lstx),
+    MKey(Operations.enter, Operations15.ranNum, Operations15.lstx15),
     MKey(Operations.n1, Operations15.toR, Operations15.toP),
     MKey(Operations.n2, Operations15.toHMS, Operations15.toH),
     MKey(Operations.n3, Operations15.toRad, Operations15.toDeg),

@@ -394,6 +394,10 @@ class _Float extends SignMode {
 
   @override
   int valueToLabel(Value v, Model<ProgramOperation> m) {
+    int? mat = v.asMatrix;
+    if (mat != null) {
+      return mat + 20;
+    }
     final bigLabel = v.asDouble.abs();
     if (bigLabel > 1000) {
       return 1000; // avoid overflow

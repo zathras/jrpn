@@ -1308,7 +1308,7 @@ class Running extends ControllerState {
           program.currentLine = oldLine;
         }
       }
-      if (settings.traceProgramToStdout || false /* @@ */) {
+      if (settings.traceProgramToStdout || true /* @@ */) {
         final out = StringBuffer();
         /*  Simplified version, useful for comparisons
         out.write(line.toString());
@@ -1339,6 +1339,9 @@ class Running extends ControllerState {
         }
         debugPrint(out.toString());
         // @@ debugPrint(program.debugReturnStack());
+        if (_fake.pendingError != null) {
+          debugPrint("*********** ${_fake.pendingError}");
+        }
       }
       pendingDelay =
           settings.msPerInstruction / ((instr.op.numericValue == null) ? 1 : 5);
