@@ -80,8 +80,15 @@ const _programs = [
       'HP-15C Owner\'s Handbook/HP-15C Owner\'s Handbook - Pages 014-016.15c',
       ''),
   _Program('Math/Gaussian Integration.15c', ''),
-  _Program('Math/Quadratic_Equation.15c', ''),
-  _Program('Math/Big_Factorial.15c', ''),
+  _Program(
+      'Math/Quadratic_Equation.15c',
+      '3.3 ENTER 2.2 ENTER 1.1 E -> -0.3333 RE<=>IM -> -0.4714 '
+          'X<=>Y -> -0.3333 RE<=>IM -> 0.4714 '
+          '3.3 ENTER 2.2 ENTER 1.1 E -> -0.3628 RE<=>IM -> -0.5781 '
+          'X<=>Y -> -0.3039 RE<=>IM -> 0.5781 ',
+      pauseValues: [-9.68, -14.52, 1.4832]),
+  _Program('Math/Big_Factorial.15c', '235 A -> 456 X<=>Y -> 5.3275',
+      pauseValues: [5.3275]),
   _Program('Math/Gamma function for complex numbers.15C',
       'f FIX 9 0 ENTER 1 I A -> -0.154949828 Re<=>Im -> -0.498015669'),
   _Program('Math/LnGammaComplex.15c',
@@ -411,6 +418,7 @@ class _ProgramRun {
     'CLx': Operations.clx,
     'SOLVE': Operations15.solve,
     'X<=>Y': Operations.xy,
+    'RE<=>IM': Operations15.reImSwap,
     'PI': Operations15.piOp,
     'MATRIX': Operations15.matrix,
     'USER': Operations15.userOp,
@@ -479,6 +487,8 @@ class _ProgramRun {
         expect(out.current, ProgramEvent.stop);
         break;
       } else if (out.current.pauseValue != null) {
+        expect(pauseCount < pauseValues.length, true,
+            reason: '${out.current.pauseValue} $pauseCount $pauseValues');
         final pv = pauseValues[pauseCount++];
         if (pv is num) {
           expect(c.model.formatValue(out.current.pauseValue!),
@@ -486,6 +496,7 @@ class _ProgramRun {
         } else {
           expect(c.model.formatValue(out.current.pauseValue!), pv);
         }
+        print("@@ Paused at ${out.current.pauseValue}");
         c.resume();
       } else {
         expect(out.current, ProgramEvent.done);

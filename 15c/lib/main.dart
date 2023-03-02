@@ -1541,8 +1541,9 @@ class RegisterReadOpArg extends ArgAlternates {
               child: RegisterReadOpArgDone((m) {
                 final mi = m.memory.registers.index.asMatrix;
                 if (mi == null) {
-                  m.xF = f(m.xF, m.memory.registers.indirectIndex.asDouble);
-                  // Do not set LastX, as per real 15C's behavior
+                  m.xRealF = f(m.xF, m.memory.registers.indirectIndex.asDouble);
+                  // Do not set LastX, as per real 15C's behavior, so no resultX
+                  // Do not alter imaginary part
                 } else {
                   // See bottom of page 173
                   _forMatrix(m as Model15, mi, f);
@@ -1550,10 +1551,12 @@ class RegisterReadOpArg extends ArgAlternates {
               })),
           KeyArg(key: Arg.kI, child: RegisterReadOpArgDone(
               // Do not set LastX, as per real 15C's behavior
-              (m) => m.xF = f(m.xF, m.memory.registers.index.asDouble))),
+              (m) => m.xRealF = f(m.xF, m.memory.registers.index.asDouble))),
           DigitArg(
               max: maxDigit,
-              calc: (m, i) => m.xF = f(m.xF, m.memory.registers[i].asDouble),
+              calc: (m, i) =>
+                  m.xRealF = f(m.xF, m.memory.registers[i].asDouble),
+              // Weird!  It doesn't do real complex operation, it just maintains IM part.  Oopsie!'
               // Do not set LastX, as per real 15C's behavior
               argDoneFactory: (calc) => RegisterReadOpArgDone(calc)),
           ...List.generate(

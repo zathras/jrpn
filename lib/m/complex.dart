@@ -52,7 +52,11 @@ class Complex {
         (imaginary * other.real - real * other.imaginary) / mag);
   }
 
-  Complex sqrt() => Complex(dart.sqrt(r), 0) * (Complex(0, theta / 2)).exp();
+  Complex sqrt() {
+    final rr = r;
+    return Complex(dart.sqrt((real + rr) / 2),
+        (imaginary < 0 ? -1 : 1) * dart.sqrt((-real + rr) / 2));
+  }
 
   ///
   /// Compute e^this
