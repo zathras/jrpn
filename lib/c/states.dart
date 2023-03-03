@@ -262,7 +262,7 @@ class Resting extends ActiveState {
   @override
   void handleBackspace() {
     stackLiftEnabled = false;
-    model.clx(); // @@ TODO:  Test behavior against 15C
+    model.clx();
     model.display.displayX();
   }
 
@@ -1311,7 +1311,7 @@ class Running extends ControllerState {
           program.currentLine = oldLine;
         }
       }
-      if (settings.traceProgramToStdout || true /* @@ */) {
+      if (settings.traceProgramToStdout || false /* @@ */) {
         final out = StringBuffer();
         if (false) {
           // Simplified version, useful for comparisons

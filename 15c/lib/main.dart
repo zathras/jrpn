@@ -1556,8 +1556,11 @@ class RegisterReadOpArg extends ArgAlternates {
               max: maxDigit,
               calc: (m, i) =>
                   m.xRealF = f(m.xF, m.memory.registers[i].asDouble),
-              // Weird!  It doesn't do real complex operation, it just maintains IM part.  Oopsie!'
-              // Do not set LastX, as per real 15C's behavior
+              // The 15C doesn't doesn't do real complex operation, it just
+              // maintains imaginary part.  So, if x contains 1+2i, and you
+              // multiply by a register containing 3, you get 3+2i.  Oopsie!'
+              //
+              // Also, here we do not set LastX, as per real 15C's behavior.
               argDoneFactory: (calc) => RegisterReadOpArgDone(calc)),
           ...List.generate(
               _letterLabelsList.length,

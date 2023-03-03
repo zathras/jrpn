@@ -21,6 +21,7 @@ dependencies:
   archive: ^3.1.2
   url_launcher: ^6.0.3
   vector_math: ^2.1.0
+  desktop_multi_window: ^0.2.0
   jovial_svg: ^1.0.2
 
 dev_dependencies:

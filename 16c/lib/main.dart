@@ -1117,6 +1117,8 @@ void _doubleIntRemainder(Model m) {
   if (quotient.abs() > _maxU64) {
     // Page 54 of the manual says "if it exceeds 64 bits."  I assume they're
     // doing that part unsigned, since it's internal.
+    print('@@ ${quotient.toRadixString(16)}');
+    print('@@ ${_maxU64.toRadixString(16)}');
     throw CalculatorError(0);
   }
   m.popStack();

@@ -472,7 +472,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   bool get userMode => false;
 
-  bool _clxDone = false; // Only set by clx command
+  bool _clxDone = false;
+  //Only set by clx command
 
   ///
   /// Create an instance of the model-specific ProgramInstruction subtype
@@ -522,7 +523,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// Just the imaginary part of x
   Value get xImaginary => _imaginaryStack![0];
 
-  set xPreserveCLX(Value v) {
+  /// Just set the real part of X.  All x setters come here.
+  set _justSetXReal(Value v) {
     if (identical(v, Value.fInfinity)) {
       floatOverflow = true;
       v = Value.fMaxValue;
@@ -531,11 +533,15 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       v = Value.fMinValue;
     }
     _stack[0] = v;
+    needsSave = true;
+    display.window = 0;
+  }
+
+  set xPreserveCLX(Value v) {
+    _justSetXReal = v;
     if (!_clxDone) {
       _imaginaryStack?[0] = Value.zero;
     }
-    needsSave = true;
-    display.window = 0;
   }
 
   set x(Value v) {
@@ -556,6 +562,13 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       v = Value.fMinValue;
     }
     _imaginaryStack![0] = v;
+  }
+
+  /// Set the real part of X, leaving the imaginary part alone, and not
+  /// setting LastX.  Clear clxDone.  The 15C's stack management is simple!  ;-)
+  set xRealF(double v) {
+    _justSetXReal = Value.fromDouble(v);
+    _clxDone = false;
   }
 
   /// Set x from a signed BigInt

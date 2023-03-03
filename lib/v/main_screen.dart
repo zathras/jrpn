@@ -48,6 +48,9 @@ final _filesWork = kIsWeb ||
     Platform.isLinux ||
     Platform.isMacOS;
 
+final _canLaunchWindow =
+    Platform.isLinux || Platform.isLinux || Platform.isMacOS;
+
 const _topSilverColor = Color(0xffcdcdcd);
 
 /// A utility to to position something in absolute positions on the screen,
@@ -528,6 +531,17 @@ class _HelpMenu extends StatelessWidget {
                   showDialog(context: context, builder: _showNonWarranty));
             },
             child: const Text('Non-warranty')),
+        ...(_canLaunchWindow
+            ? [
+                PopupMenuItem(
+                    value: () {
+                      Navigator.pop<void>(context);
+                      unawaited(
+                          launchInternalStateWindow(context, controller.model));
+                    },
+                    child: const Text('See Calculator Internals')),
+              ]
+            : []),
         PopupMenuItem(
             value: () {
               Navigator.pop<void>(context);
@@ -601,6 +615,11 @@ class _SettingsMenu extends StatefulWidget {
 
   @override
   __SettingsMenuState createState() => __SettingsMenuState();
+}
+
+Future<void> launchInternalStateWindow(
+    BuildContext context, Model<Operation> model) async {
+  // final window = await DesktopMultiWindow.createWindow('');
 }
 
 class __SettingsMenuState extends State<_SettingsMenu> {
@@ -976,11 +995,11 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
 
   Future<void> _importFromFile(BuildContext context) async {
     final model = widget.app.model;
-    final typeGroup = XTypeGroup(label: 'JRPN Program', extensions: [
-      model.modelName.toLowerCase(),
-      model.modelName.toUpperCase()
-    ]);
-    final file = await openFile(acceptedTypeGroups: [typeGroup]);
+    final ext = '${model.modelName.toLowerCase()}';
+    final typeGroup = XTypeGroup(
+        label: 'JRPN Program (.$ext)', extensions: [ext, ext.toUpperCase()]);
+    const any = XTypeGroup(label: 'JRPN Program (any extension)');
+    final file = await openFile(acceptedTypeGroups: [typeGroup, any]);
     if (file == null) {
       return;
     }
@@ -1167,10 +1186,12 @@ class __FileReadMenuState extends State<_FileReadMenu> {
 
   Future<void> _readFromFile(BuildContext context) async {
     final model = widget.app.model;
+    final ext = 'j${model.modelName.toLowerCase()}';
     final typeGroup = XTypeGroup(
-        label: 'Calculator State',
-        extensions: ['j${model.modelName.toLowerCase()}']);
-    final file = await openFile(acceptedTypeGroups: [typeGroup]);
+        label: 'Calculator State (.$ext)',
+        extensions: [ext, ext.toUpperCase()]);
+    const any = XTypeGroup(label: 'Calculator State (any extension)');
+    final file = await openFile(acceptedTypeGroups: [typeGroup, any]);
     if (file == null) {
       return;
     }
