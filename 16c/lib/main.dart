@@ -27,13 +27,16 @@ import 'package:jrpn/generic_main.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/v/buttons.dart';
 import 'package:jrpn/v/main_screen.dart';
+import 'package:jrpn/v/isw.dart';
 
 import 'back_panel16c.dart';
 import 'tests16c.dart';
 
-void main() async {
-  runStaticInitialization16();
-  genericMain(Jrpn(Controller16(Model16())));
+void main(List<String> args) async {
+  if (!await InternalStateWindow.takeControl(args)) {
+    runStaticInitialization16();
+    genericMain(Jrpn(Controller16(Model16())));
+  }
 }
 
 void runStaticInitialization16() {
@@ -1117,8 +1120,6 @@ void _doubleIntRemainder(Model m) {
   if (quotient.abs() > _maxU64) {
     // Page 54 of the manual says "if it exceeds 64 bits."  I assume they're
     // doing that part unsigned, since it's internal.
-    print('@@ ${quotient.toRadixString(16)}');
-    print('@@ ${_maxU64.toRadixString(16)}');
     throw CalculatorError(0);
   }
   m.popStack();

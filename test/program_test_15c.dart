@@ -79,7 +79,8 @@ const _programs = [
   _Program(
       'HP-15C Owner\'s Handbook/HP-15C Owner\'s Handbook - Pages 014-016.15c',
       ''),
-  _Program('Math/Gaussian Integration.15c', ''),
+  _Program(
+      'Math/Gaussian Integration.15c', 'RAD 5 STO I 1 ENTER 3 A -> 0.9026'),
   _Program(
       'Math/Quadratic_Equation.15c',
       '3.3 ENTER 2.2 ENTER 1.1 E -> -0.3333 RE<=>IM -> -0.4714 '
@@ -407,6 +408,7 @@ class _ProgramRun {
     '–': Operations15.minus,
     'x↔y': Operations.xy,
     'DEG': Operations15.deg,
+    'RAD': Operations15.rad,
     'FIX': Operations15.fix,
     '→H': Operations15.toH,
     'DIM': Operations15.dim,

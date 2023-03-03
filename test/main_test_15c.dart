@@ -78,6 +78,7 @@ Future<void> main() async {
     await SelfTests15(inCalculator: false).runAll();
   });
   test('15C opcode test', opcodeTest15C);
+  test('15C lastX test', lastX15C);
   test15cPrograms();
 }
 
@@ -302,8 +303,14 @@ class AdvancedFunctionTests {
       _play([l.fShift, l.dot]); // yhat, r - estimate y
       expect(m.x, Value.fromDouble(7.5615));
       expect(m.y, Value.fromDouble(0.9879548276));
-      expect(m.z, Value.fromDouble(70));
-      expect(m.t, Value.fromDouble(8));
+      if (enterOrNot.isEmpty) {
+        expect(m.z, Value.fromDouble(8));
+        expect(m.t, Value.fromDouble(9));
+      } else {
+        // Yep - verified with real 15C
+        expect(m.z, Value.fromDouble(70));
+        expect(m.t, Value.fromDouble(8));
+      }
 
       m.xF = 58.3;
       _play([l.fShift, l.dot]); // yhat, r - estimate y
@@ -2133,4 +2140,105 @@ String formatDouble(double v, int digits) {
     }
   }
   return r;
+}
+
+Future<void> lastX15C() async {
+  final c = TestCalculator(for15C: true);
+  final controller = c.controller;
+  final model = c.model;
+  void _play(List<Operation> script) {
+    for (final b in script) {
+      controller.buttonDown(b);
+      controller.buttonUp();
+    }
+  }
+
+  _play(
+      [Operations.n1, Operations.enter, Operations.n2, Operations15.sigmaPlus]);
+  _play(
+      [Operations.n3, Operations.enter, Operations.n4, Operations15.sigmaPlus]);
+
+  for (final complex in [false, true]) {
+    c.model.isComplexMode = complex;
+
+    /// Single argument operations:
+    for (final op in [
+      Operations15.sqrtOp15,
+      Operations15.xSquared,
+      Operations15.eX15,
+      Operations15.lnOp,
+      Operations15.tenX15,
+      Operations15.logOp,
+      Operations15.percent,
+      Operations15.reciprocal15,
+      Operations15.deltaPercent,
+      Operations.abs,
+      Operations15.sin,
+      Operations15.sinh,
+      Operations15.sinInverse,
+      Operations15.sinhInverse,
+      Operations15.cos,
+      Operations15.cosh,
+      Operations15.cosInverse,
+      Operations15.coshInverse,
+      Operations15.tan,
+      Operations15.tanh,
+      Operations15.tanInverse,
+      Operations15.tanhInverse,
+      Operations15.toR,
+      Operations15.toP,
+      Operations15.toHMS,
+      Operations15.toH,
+      Operations15.toRad,
+      Operations15.toDeg,
+      Operations15.fracOp,
+      Operations15.intOp,
+      Operations15.xFactorial,
+      Operations15.yHatR
+    ]) {
+      _play([Operations.n9, Operations.enter, Operations15.plus]);
+      _play([Operations.dot, Operations.n1, Operations.enter]);
+      _play([Operations.dot, Operations.n2, Operations.enter]);
+      _play([Operations.dot, Operations.n3, Operations.enter]);
+      _play([Operations.dot, Operations.n4]);
+      expect(model.lastX, Value.fromDouble(9));
+      _play([op]);
+      if (op == Operations15.yHatR) {
+        expect(model.t, Value.fromDouble(.2), reason: 't for $op $complex');
+        expect(model.z, Value.fromDouble(.3), reason: 'z for $op $complex');
+      } else {
+        expect(model.t, Value.fromDouble(.1), reason: 't for $op $complex');
+        expect(model.z, Value.fromDouble(.2), reason: 'z for $op $complex');
+        if (!{Operations15.toR, Operations15.toP}.contains(op)) {
+          expect(model.y, Value.fromDouble(.3), reason: 'y for $op $complex');
+        }
+      }
+      expect(model.lastX, Value.fromDouble(.4),
+          reason: 'lastX for $op $complex');
+    }
+
+    /// Two argument operations:
+    for (final op in [
+      Operations15.yX15,
+      Operations15.div,
+      Operations15.mult,
+      Operations15.minus,
+      Operations15.plus,
+      Operations15.pYX,
+      Operations15.cYX
+    ]) {
+      _play([Operations.n9, Operations.enter, Operations15.plus]);
+      _play([Operations.n4, Operations.enter]);
+      _play([Operations.n3, Operations.enter]);
+      _play([Operations.n2, Operations.enter]);
+      _play([Operations.n1]);
+      expect(model.lastX, Value.fromDouble(9));
+      _play([op]);
+      expect(model.t, Value.fromDouble(4));
+      expect(model.z, Value.fromDouble(4), reason: 'z for $op $complex');
+      expect(model.y, Value.fromDouble(3));
+      expect(model.lastX, Value.fromDouble(1),
+          reason: 'lastX for $op $complex');
+    }
+  }
 }

@@ -1344,7 +1344,7 @@ class Running extends ControllerState {
         }
         // ignore: avoid_print
         print(out.toString());
-        // @@ debugPrint(program.debugReturnStack());
+        // @@ print(program.debugReturnStack());
         if (_fake.pendingError != null) {
           // ignore: avoid_print
           print("*********** ${_fake.pendingError}");

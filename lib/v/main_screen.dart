@@ -27,6 +27,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,7 @@ import '../c/controller.dart';
 import '../m/model.dart';
 import '../generic_main.dart';
 import 'buttons.dart';
+import 'isw.dart';
 import 'lcd_display.dart';
 
 // See the library comments, above!  (Android Studio  hides them by default.)
@@ -536,8 +538,8 @@ class _HelpMenu extends StatelessWidget {
                 PopupMenuItem(
                     value: () {
                       Navigator.pop<void>(context);
-                      unawaited(
-                          launchInternalStateWindow(context, controller.model));
+                      unawaited(InternalStateWindow.launch(
+                          context, controller.model));
                     },
                     child: const Text('See Calculator Internals')),
               ]
@@ -615,11 +617,6 @@ class _SettingsMenu extends StatefulWidget {
 
   @override
   __SettingsMenuState createState() => __SettingsMenuState();
-}
-
-Future<void> launchInternalStateWindow(
-    BuildContext context, Model<Operation> model) async {
-  // final window = await DesktopMultiWindow.createWindow('');
 }
 
 class __SettingsMenuState extends State<_SettingsMenu> {

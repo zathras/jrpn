@@ -31,6 +31,7 @@ import 'package:jrpn/m/complex.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/v/buttons.dart';
 import 'package:jrpn/v/main_screen.dart';
+import 'package:jrpn/v/isw.dart';
 
 import 'back_panel15c.dart';
 import 'matrix.dart';
@@ -40,9 +41,11 @@ import 'model15c.dart';
 import 'linear_algebra.dart' as linalg;
 import 'more_math.dart';
 
-void main() async {
-  runStaticInitialization15();
-  genericMain(Jrpn(Controller15(createModel15())));
+void main(List<String> args) async {
+  if (!await InternalStateWindow.takeControl(args)) {
+    runStaticInitialization15();
+    genericMain(Jrpn(Controller15(createModel15())));
+  }
   // @@ TODO:  Calculator test should only turn on 15C LCD stuff
 }
 
@@ -600,7 +603,7 @@ class Operations15 extends Operations {
       pressed: (LimitedState c) => c.handleShift(ShiftKey.none), name: 'HYP-1');
   static final NormalOperation sin = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.xF = dart.sin(m.xF * m.trigMode.scaleFactor);
+        m.resultXF = dart.sin(m.xF * m.trigMode.scaleFactor);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -609,7 +612,7 @@ class Operations15 extends Operations {
       name: 'SIN');
   static final NormalOperation sinInverse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.xF = dart.asin(m.xF) / m.trigMode.scaleFactor;
+        m.resultXF = dart.asin(m.xF) / m.trigMode.scaleFactor;
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -618,7 +621,7 @@ class Operations15 extends Operations {
       name: 'SIN-1');
   static final NormalOperation cos = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.xF = dart.cos(m.xF * m.trigMode.scaleFactor);
+        m.resultXF = dart.cos(m.xF * m.trigMode.scaleFactor);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -629,7 +632,7 @@ class Operations15 extends Operations {
       argShift: Operations.gShift,
       programListingArgName: 'g (i)',
       floatCalc: (Model m) {
-        m.xF = dart.acos(m.xF) / m.trigMode.scaleFactor;
+        m.resultXF = dart.acos(m.xF) / m.trigMode.scaleFactor;
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -638,7 +641,7 @@ class Operations15 extends Operations {
       name: 'COS-1');
   static final NormalOperation tan = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.xF = dart.tan(m.xF * m.trigMode.scaleFactor);
+        m.resultXF = dart.tan(m.xF * m.trigMode.scaleFactor);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -647,7 +650,7 @@ class Operations15 extends Operations {
       name: 'TAN');
   static final NormalOperation tanInverse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.xF = dart.atan(m.xF) / m.trigMode.scaleFactor;
+        m.resultXF = dart.atan(m.xF) / m.trigMode.scaleFactor;
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -656,7 +659,7 @@ class Operations15 extends Operations {
       name: 'TAN-1');
   static final NormalOperation sinh = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.xF = Real.sinh(m.xF);
+        m.resultXF = Real.sinh(m.xF);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -665,7 +668,7 @@ class Operations15 extends Operations {
       name: 'SINH');
   static final NormalOperation sinhInverse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.xF = Real.asinh(m.xF);
+        m.resultXF = Real.asinh(m.xF);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -674,7 +677,7 @@ class Operations15 extends Operations {
       name: 'SINH-1');
   static final NormalOperation cosh = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.xF = Real.cosh(m.xF);
+        m.resultXF = Real.cosh(m.xF);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -683,7 +686,7 @@ class Operations15 extends Operations {
       name: 'COSH');
   static final NormalOperation coshInverse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.xF = Real.acosh(m.xF);
+        m.resultXF = Real.acosh(m.xF);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -692,7 +695,7 @@ class Operations15 extends Operations {
       name: 'COSH-1');
   static final NormalOperation tanh = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.xF = Real.tanh(m.xF);
+        m.resultXF = Real.tanh(m.xF);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -701,7 +704,7 @@ class Operations15 extends Operations {
       name: 'TANH');
   static final NormalOperation tanhInverse = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.xF = Real.atanh(m.xF);
+        m.resultXF = Real.atanh(m.xF);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -863,12 +866,13 @@ class Operations15 extends Operations {
       floatCalc: (Model m) {
         double r = m.xF;
         double theta = m.yF;
-        m.xF = r * dart.cos(theta * m.trigMode.scaleFactor);
+        m.resultXF = r * dart.cos(theta * m.trigMode.scaleFactor);
         m.yF = r * dart.sin(theta * m.trigMode.scaleFactor);
       },
       complexCalc: (Model m) {
         Complex v = m.xC;
-        m.xC = Complex(v.real * dart.cos(v.imaginary * m.trigMode.scaleFactor),
+        m.resultXC = Complex(
+            v.real * dart.cos(v.imaginary * m.trigMode.scaleFactor),
             v.real * dart.sin(v.imaginary * m.trigMode.scaleFactor));
       },
       name: '->R');
@@ -876,12 +880,12 @@ class Operations15 extends Operations {
       floatCalc: (Model m) {
         double x = m.xF;
         double y = m.yF;
-        m.xF = sqrt(x * x + y * y);
+        m.resultXF = sqrt(x * x + y * y);
         m.yF = atan2(y, x) / m.trigMode.scaleFactor;
       },
       complexCalc: (Model m) {
         Complex v = m.xC;
-        m.xC = Complex(sqrt(v.real * v.real + v.imaginary * v.imaginary),
+        m.resultXC = Complex(sqrt(v.real * v.real + v.imaginary * v.imaginary),
             atan2(v.imaginary, v.real) / m.trigMode.scaleFactor);
       },
       name: '->P');
@@ -1002,31 +1006,32 @@ class Operations15 extends Operations {
   static final NormalOperation xBar = StackLiftingNormalOperation.floatOnly(
       floatCalc: (Model m) {
         final denom = m.memory.registers[2].asDouble;
-        m.resultXF = m.memory.registers[5].asDouble / denom;
+        m.xF = m.memory.registers[5].asDouble / denom;
+        // Don't set LastX - checked on 15C
         m.pushStack();
         m.xF = m.memory.registers[3].asDouble / denom;
       },
       needsStackLiftIfEnabled: _statsLift,
       name: 'xBar');
-  static final NormalOperation yHatR = StackLiftingNormalOperation.floatOnly(
+  static final NormalOperation yHatR = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         final lr = LinearRegression(m.memory.registers);
         final x = m.xF;
         m.resultXF = lr.r;
+        // Do set LastX - checked on 15C.
         m.pushStack();
-        m.resultXF = lr.yHat(x);
-      },
-      needsStackLiftIfEnabled: (m) {
-        m.xF;
-        LinearRegression(m.memory.registers); // Throw exception if error
-        return true;
+        // We do push the stack, without regard to stack lift.  This is how
+        // the real 15C behaves, and is checked with a regression test.
+        m.yF = lr.r;
+        m.xF = lr.yHat(x);
       },
       name: 'yHat,r');
   static final NormalOperation stdDeviation =
       StackLiftingNormalOperation.floatOnly(
           floatCalc: (Model m) {
             final n = m.memory.registers[2].asDouble;
-            m.resultX = _stdDev(m.memory.registers, 5, 6, n);
+            m.x = _stdDev(m.memory.registers, 5, 6, n);
+            // Don't set LastX - checked on 15C
             m.pushStack();
             m.x = _stdDev(m.memory.registers, 3, 4, n);
           },
@@ -1052,9 +1057,10 @@ class Operations15 extends Operations {
       StackLiftingNormalOperation.floatOnly(
           floatCalc: (Model m) {
             final lr = LinearRegression(m.memory.registers);
-            m.resultXF = lr.slope;
+            m.xF = lr.slope;
+            // Don't set LastX - checked on 15C
             m.pushStack();
-            m.resultXF = lr.yIntercept;
+            m.xF = lr.yIntercept;
           },
           needsStackLiftIfEnabled: (m) {
             LinearRegression(m.memory.registers); // Throw exception if error
