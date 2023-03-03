@@ -2240,5 +2240,24 @@ Future<void> lastX15C() async {
       expect(model.lastX, Value.fromDouble(1),
           reason: 'lastX for $op $complex');
     }
+
+    // Stuff that doesn't touch LastX:
+    for (final op in [
+      Operations15.xBar,
+      Operations15.stdDeviation,
+      Operations15.linearRegression
+    ]) {
+      _play([Operations.n9, Operations.enter, Operations15.plus]);
+      _play([Operations.n4, Operations.enter]);
+      _play([Operations.n3, Operations.enter]);
+      _play([Operations.n2, Operations.enter]);
+      _play([Operations.n1]);
+      expect(model.lastX, Value.fromDouble(9));
+      _play([op]);
+      expect(model.t, Value.fromDouble(2));
+      expect(model.z, Value.fromDouble(1), reason: 'z for $op $complex');
+      expect(model.lastX, Value.fromDouble(9),
+          reason: 'lastX for $op $complex');
+    }
   }
 }
