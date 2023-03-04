@@ -479,7 +479,6 @@ class _ProgramRun {
     state = normalState;
     for (final keys in script.split(' ')) {
       if (keys.isNotEmpty) {
-        print(' @@ $keys @@');
         await state(keys);
       }
     }
@@ -541,7 +540,6 @@ class _ProgramRun {
         } else {
           expect(c.model.formatValue(out.current.pauseValue!), pv);
         }
-        print("@@ Paused at ${out.current.pauseValue}");
         c.resume();
       } else {
         expect(out.current, ProgramEvent.done);

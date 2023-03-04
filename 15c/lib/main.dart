@@ -46,7 +46,6 @@ void main(List<String> args) async {
     runStaticInitialization15();
     genericMain(Jrpn(Controller15(createModel15())));
   }
-  // @@ TODO:  Calculator test should only turn on 15C LCD stuff
 }
 
 void runStaticInitialization15() {
