@@ -257,6 +257,7 @@ class Resting extends ActiveState {
     }
     model.chsX();
     model.display.displayX();
+    stackLiftEnabled = true;
   }
 
   @override

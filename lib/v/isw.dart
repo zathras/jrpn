@@ -108,7 +108,7 @@ class _TextViewerState extends State<_TextViewer> {
               style: const TextStyle(
                 fontSize: 16.0,
                 fontFamily: 'Courier',
-                color: Colors.white,
+                color: Colors.amberAccent,
                 decoration: TextDecoration.none,
               ),
             )));

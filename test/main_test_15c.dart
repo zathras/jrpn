@@ -2201,7 +2201,8 @@ Future<void> lastX15C() async {
       play([Operations.dot, Operations.n2, Operations.enter]);
       play([Operations.dot, Operations.n3, Operations.enter]);
       play([Operations.dot, Operations.n4]);
-      expect(model.lastX, Value.fromDouble(9));
+      expect(model.lastX, Value.fromDouble(9),
+          reason: 'lastX for $op $complex');
       play([op]);
       if (op == Operations15.yHatR) {
         expect(model.t, Value.fromDouble(.2), reason: 't for $op $complex');
@@ -2259,5 +2260,18 @@ Future<void> lastX15C() async {
       expect(model.lastX, Value.fromDouble(9),
           reason: 'lastX for $op $complex');
     }
+
+    // CHS and the stack (not really lastX related)
+    play([Operations.n1, Operations.enter, Operations.n2, Operations.xy]);
+    play([Operations.enter, Operations.chs]);
+    expect(model.xF, -1);
+    expect(model.yF, 1);
+    expect(model.z.asDouble, 2);
+    play([Operations.n4]);
+    expect(model.xF, 4);
+    expect(model.yF, -1);
+    expect(model.z.asDouble, 1);
+    expect(model.t.asDouble, 2);
+    play([Operations.clx]);
   }
 }

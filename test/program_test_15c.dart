@@ -32,54 +32,74 @@ import 'package:jrpn15c/main.dart';
 import 'programs.dart';
 
 const _programs = [
-  _Program('Date and Time/Julian Date from Gregorian Date.15c', ''),
-  _Program('Date and Time/Delta Days.15C', ''),
-  _Program('HP Journal/HP Journal - 08.1980 p23 - W.M. Kahan.15c', ''),
+  _Program('Date and Time/Julian Date from Gregorian Date.15c',
+      '7 STO 1 23 STO 2 1982 STO 3 A -> 2445174'),
+  _Program(
+      'Date and Time/Delta Days.15C',
+      'CF 0 04.122007 ENTER 12.072021 A -> 5353.0000 '
+          'SF 0 04.122007 ENTER 12.072021 A -> 4969.0000'),
+  _Program('HP Journal/HP Journal - 08.1980 p23 - W.M. Kahan.15c',
+      '0 ENTER 1 INTEGRATE A -> 1.8130 X<=>Y -> 9.6089e-7'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 067-069.15c',
-      ''),
+      '100 ENTER 1 A -> 1 RE<=>IM -> 0 RE<=>IM '
+          'R/S -> 0.9980 RE<=>IM -> 0.0628 50 STO I '
+          '0 ENTER ENTER ENTER RCL I -> 50 '
+          'R/S -> -1 RE<=>IM -> 1.2246e-16'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 051-055.15c',
-      ''),
+      '20 f B → 2.7536e-89 1.234 A -> 8.914e-1 .5 E -> 0.5205 '
+          '2 ENTER 2.151 - 1.085 / f A → 4.447e-1 STO 3 '
+          '3 ENTER 2.151 - 1.085 / f A → 7.830e-1 '
+          'RCL 3 - -> 0.3384'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 013-016.15c',
-      ''),
+      'GSB 1 1 ENTER 32 SOLVE A -> 7.5137 rDown rDown -> 0'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 034-038.15c',
-      ''),
+      '5 f DIM (i) f USER 3 ENTER 2 f DIM argC f MATRIX 1 '
+          '4000 CHS STO argC 1 STO argC 125 STO argC 1 STO argC 4100 STO argC '
+          '1 STO argC B → 2.8168'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 069-072.15c',
-      ''),
+      '0 A -> 1.6279 B -> -0.1487 B -> -0.1497 B -> -0.1497 '
+          'RE<=>IM -> 2.8319 RE<=>IM C -> 1e-10 X<=>Y -> -0.1497'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 056-058.15c',
-      ''),
+      'B 4.2 A -> 2.0486 FIX 9 -> 2.048555637 3.2 x! -> 7.756689536 '
+          'LN -> 2.048555637 1 ENTER 5 I A -> -6.130324145 RE<=>IM 3.815898575'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 018-021.15c',
-      ''),
+      'g RAD 2 g PI * .6 × STO 0 COS STO 1 CHS 1 + 1/x STO 2 '
+          '10 f ->RAD 60 ->RAD f SOLVE 0 -> 0.4899 '
+          'rDown rDown -> 5.5279e-11 rUp rUp ->DEG -> 28.0680'),
   _Program(
       'HP-15C Owner\'s Handbook/HP-15C Owner\'s Handbook - Pages 070-074.15c',
       ''),
   _Program(
       'HP-15C Owner\'s Handbook/HP-15C Owner\'s Handbook - Pages 181-184.15c',
-      ''),
+      'A -> 5 B -> -2'),
   _Program(
       'HP-15C Owner\'s Handbook/HP-15C Owner\'s Handbook - Pages 189-190.15c',
       ''),
   _Program(
       'HP-15C Owner\'s Handbook/HP-15C Owner\'s Handbook - Pages 102-103.15c',
-      ''),
+      '0.52 ENTER 1.25 GSB 9 -> 1.1507 '
+          '1 CHS ENTER 1 GSB 9 -> -0.8415 '
+          '0.81 ENTER 0.98 GSB 9 -> 1.1652'),
   _Program(
       'HP-15C Owner\'s Handbook/HP-15C Owner\'s Handbook - Pages 093-094.15c',
-      ''),
+      '2 STO 0 100 STO 1 50 STO 2 A -> 50',
+      pauseValues: [2, 84.0896, 5, 64.8420, 8, 50]),
   _Program(
       'HP-15C Owner\'s Handbook/HP-15C Owner\'s Handbook - Pages 104-104.15c',
-      ''),
+      '8 ENTER 1.3 ENTER 7.9 ENTER 4.3 GSB .4 -> 12.1074'),
   _Program(
       'HP-15C Owner\'s Handbook/HP-15C Owner\'s Handbook - Pages 184-186.15c',
-      ''),
+      '5 ENTER SOLVE A -> 9.2843'),
   _Program(
       'HP-15C Owner\'s Handbook/HP-15C Owner\'s Handbook - Pages 014-016.15c',
-      ''),
+      '300.51 f A → 7.8313'),
   _Program(
       'Math/Gaussian Integration.15c', 'RAD 5 STO I 1 ENTER 3 A -> 0.9026'),
   _Program(
@@ -220,7 +240,15 @@ const _programs = [
   _Program('Users/Eddie Shore/Numerical Derivative.15c', ''),
   _Program('Users/Eddie Shore/Reactance chart solver.15c',
       '60 STO 0 2.5 STO 1 2 STO I 0 ENTER 1 f SOLVE D -> 2.8145e-6'),
-  _Program('Users/Eddie Shore/Coordinates on an Ellipse.15c', ''),
+  _Program(
+      'Users/Eddie Shore/Coordinates on an Ellipse.15c',
+      '7 STO 0 2 STO 1 3 STO 2 B -> 0 R/S -> 2 R/S -> 0 '
+          'R/S -> 1 R/S -> 1.2470 R/S -> 2.3455 '
+          'R/S -> 2 R/S -> -0.4450 R/S -> 2.9248 '
+          'R/S -> 3 R/S -> -1.8019 R/S -> 1.3017 '
+          'R/S -> 4 R/S -> -1.8019 R/S -> -1.3017 '
+          'R/S -> 5 R/S -> -0.4450 R/S -> -2.9248 '
+          'R/S -> 6 R/S -> 1.2470 R/S -> -2.3455 '),
   _Program(
       'Conversion/Imperial to Metric.15c',
       '10 GSB .2 -> 23.5215 '
@@ -409,7 +437,9 @@ class _ProgramRun {
     '–': Operations15.minus,
     'x↔y': Operations.xy,
     'DEG': Operations15.deg,
+    '->DEG': Operations15.toDeg,
     'RAD': Operations15.rad,
+    '->RAD': Operations15.toRad,
     'FIX': Operations15.fix,
     '→H': Operations15.toH,
     'DIM': Operations15.dim,
@@ -431,6 +461,15 @@ class _ProgramRun {
     'argD': Operations15.letterLabelD,
     'argE': Operations15.letterLabelE,
     'Re<=>Im': Operations15.reImSwap,
+    'INTEGRATE': Operations15.integrate,
+    'x!': Operations15.xFactorial,
+    'LN': Operations15.lnOp,
+    '1/x': Operations15.reciprocal15,
+    'COS': Operations15.cos,
+    'SIN': Operations15.sin,
+    'TAN': Operations15.tan,
+    'rDown': Operations.rDown,
+    'rUp': Operations.rUp,
   };
 
   _ProgramRun(this.script, this.c, {required this.pauseValues})
@@ -458,6 +497,9 @@ class _ProgramRun {
       await state(keys);
     } else if (keys == '->' || keys == '→') {
       state = expectState;
+    } else if (keys == 'SOLVE') {
+      state = gsbState;
+      play(Operations15.solve);
     } else if (keys == 'GSB') {
       state = gsbState;
       play(Operations15.gsb);
@@ -551,5 +593,3 @@ void test15cPrograms() {
     test(p.sourcePath, p.run);
   }
 }
-
-// @@ TODO:  Run programs
