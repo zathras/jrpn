@@ -313,7 +313,7 @@ packages:
     source: hosted
     version: "1.0.4"
   jovial_misc:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: jovial_misc
       sha256: f6e64f789ee311025bb367be9c9afe9759f76dd8209070b7f38e735b5f529eb1

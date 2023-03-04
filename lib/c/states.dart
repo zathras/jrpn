@@ -1311,8 +1311,12 @@ class Running extends ControllerState {
           program.currentLine = oldLine;
         }
       }
+      model.addProgramTraceToSnapshot(
+          () => '   ${line.toString().padLeft(3, '0')}'
+              ' ${instr.programListing.padRight(14)}');
       if (settings.traceProgramToStdout || false /* @@ */) {
         final out = StringBuffer();
+        // ignore: dead_code
         if (false) {
           // Simplified version, useful for comparisons
           out.write(line.toString());

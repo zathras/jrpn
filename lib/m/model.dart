@@ -44,6 +44,7 @@ import 'dart:io' show Platform;
 import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:jovial_misc/circular_buffer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'complex.dart';
@@ -438,7 +439,9 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   late final display = DisplayModel(this);
   late final settings = Settings(this);
   @protected
-  bool needsSave = false;
+  bool _needsSave = false;
+  Observable<ModelSnapshot>? _internalSnapshot;
+
   ShiftKey _shift = ShiftKey.none;
   int _wordSize;
   BigInt _wordMask;
@@ -694,6 +697,29 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     _lastX = Value.fromDouble(v.real);
     _lastXImaginary = Value.fromDouble(v.imaginary);
     needsSave = true;
+  }
+
+  bool get needsSave => _needsSave;
+  set needsSave(bool v) {
+    _needsSave = v;
+    if (v) {
+      _internalSnapshot?.value = _createSnapshot();
+    }
+  }
+
+  Observable<ModelSnapshot> get internalSnapshot {
+    final r = _internalSnapshot;
+    if (r == null) {
+      return _internalSnapshot = Observable(_createSnapshot());
+    } else {
+      return r;
+    }
+  }
+
+  void optimizeInternalSnapshot() {
+    if (_internalSnapshot?.hasObservers == false) {
+      _internalSnapshot = null;
+    }
   }
 
   String formatValue(Value v) => displayMode.format(v, this);
@@ -1163,7 +1189,77 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     }
   }
 
+  void addProgramTraceToSnapshot(String Function() f) {
+    final s = _internalSnapshot;
+    if (s != null) {
+      s.value.program.add(f());
+      s.value = _createSnapshot();
+    }
+  }
+
+  ModelSnapshot _createSnapshot() {
+    final buf = StringBuffer();
+    if (isComplexMode) {
+      buf.writeln('     X:  $x + ${_imaginaryStack![0]}i');
+      buf.writeln('     Y:  $y + ${_imaginaryStack![1]}i');
+      buf.writeln('     Z:  $z + ${_imaginaryStack![2]}i');
+      buf.writeln('     T:  $t + ${_imaginaryStack![3]}i');
+      buf.writeln();
+      buf.writeln('Last X:  $lastX + ${_lastXImaginary}i');
+    } else {
+      buf.writeln('     X:  $x');
+      buf.writeln('     Y:  $y');
+      buf.writeln('     Z:  $z');
+      buf.writeln('     T:  $t');
+      buf.writeln();
+      buf.writeln('Last X:  $lastX');
+    }
+    buf.writeln();
+    int maxRegister = -1;
+    for (int i = 0;; i++) {
+      try {
+        if (memory.registers[i] != Value.zero) {
+          maxRegister = i;
+        }
+      } on CalculatorError {
+        break;
+      }
+    }
+    for (int i = 0; i <= maxRegister; i++) {
+      buf.writeln(
+          'r[${i.toString().padLeft(2, '0')}] = ${memory.registers[i]}');
+    }
+    final program = _internalSnapshot?.value.program;
+    if (program != null && program.isNotEmpty) {
+      buf.writeln();
+      buf.write('Program Trace:');
+      bool first = true;
+      for (final p in program) {
+        if (first) {
+          first = false;
+        } else {
+          buf.write('              ');
+        }
+        buf.writeln(p);
+      }
+      buf.writeln();
+    }
+    addStuffToSnapshot(buf);
+    return ModelSnapshot(_internalSnapshot?.value, buf.toString());
+  }
+
+  @protected
+  void addStuffToSnapshot(StringBuffer buf) {}
+
   LcdContents selfTestContents();
+}
+
+class ModelSnapshot {
+  final CircularBuffer<String> program;
+  final String text;
+
+  ModelSnapshot(ModelSnapshot? other, this.text)
+      : program = other?.program ?? CircularBuffer<String>.create(10, '');
 }
 
 ///
@@ -1273,6 +1369,8 @@ class Observable<T> {
     bool ok = _observers.remove(o);
     assert(ok);
   }
+
+  bool get hasObservers => _observers.isNotEmpty;
 
   void _notifyAll() {
     for (final f in _observers) {

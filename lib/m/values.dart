@@ -254,13 +254,18 @@ class Value {
 
   @override
   String toString() {
-    double d;
+    String more;
     try {
-      d = asDouble;
+      more = ', $asDouble';
     } catch (ignored) {
-      d = double.nan;
+      final m = asMatrix;
+      if (m == null) {
+        more = '';
+      } else {
+        more = ', Matrix ${['A', 'B', 'C', 'D', 'E'][m]}';
+      }
     }
-    return 'Value(0x${internal.toRadixString(16)}, $d)';
+    return 'Value(0x${internal.toRadixString(16).padLeft(16, '0')}$more)';
   }
 
   static Value fromJson(String v, {BigInt? maxInternal}) {

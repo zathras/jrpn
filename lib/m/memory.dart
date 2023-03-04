@@ -195,9 +195,6 @@ class Registers {
       value = (value << 4) | BigInt.from(_memory.storage.getUint8(++addr));
     }
     final result = Value.fromInternal(value);
-    if (_model.isFloatMode) {
-      result.asDouble; // Throw exception if not valid float
-    }
     return result;
   }
 
@@ -247,14 +244,15 @@ class Registers {
 
   void resetI() {
     _indexValue = Value.zero;
+    _model.needsSave = true;
   }
 
   void clear() {
-    resetI();
     final maxMem = _memory.totalNybbles;
     for (int addr = _memory.programNybbles; addr < maxMem; addr++) {
       _memory.storage.setUint8(addr, 0);
     }
+    resetI();
   }
 
   bool isZeroI(Value v) => _model.signMode.isZero(helper68, v);

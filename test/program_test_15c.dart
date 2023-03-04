@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 /*
 Copyright (c) 2023 William Foote
 
@@ -21,7 +23,6 @@ this program; if not, see https://www.gnu.org/licenses/ .
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/c/operations.dart';

@@ -252,7 +252,6 @@ class Matrix extends AMatrix {
       throw CalculatorError(10);
     }
     m.memory.policy.checkAvailable(rows * columns - length);
-    m.setNeedsSave();
     isLU = false;
     final values = List<Value>.filled(rows * columns, Value.zero);
     for (int i = 0; i < values.length && i < _values.length; i++) {
@@ -260,6 +259,7 @@ class Matrix extends AMatrix {
     }
     _columns = (rows == 0) ? 0 : columns;
     _values = values;
+    m.needsSave = true;
   }
 
   void copyFrom(Model15 m, Matrix other) {
@@ -267,7 +267,6 @@ class Matrix extends AMatrix {
       return;
     }
     resize(m, other.rows, other.columns);
-    m.setNeedsSave();
     for (int i = 0; i < length; i++) {
       _values[i] = other._values[i];
     }
@@ -277,6 +276,7 @@ class Matrix extends AMatrix {
     } else {
       _rowSwaps = List.generate(ors.length, (i) => ors[i], growable: false);
     }
+    m.needsSave = true;
   }
 
   void checkIndices(int row, int col) {

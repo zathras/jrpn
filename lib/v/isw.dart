@@ -1,41 +1,40 @@
 library view.isw;
 
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
-import 'package:file_selector/file_selector.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jovial_svg/jovial_svg.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import '../c/controller.dart';
 import '../m/model.dart';
-import '../generic_main.dart';
-import 'buttons.dart';
-import 'lcd_display.dart';
 
 class InternalStateWindow extends StatelessWidget {
   final state = Observable<String>('');
 
   InternalStateWindow({super.key});
 
-  static Future<void> launch(
-      BuildContext context, Model<Operation> model) async {
+  static Future<void> launch(BuildContext context, Model model) async {
     final WindowController window = await DesktopMultiWindow.createWindow('');
-    await window.setFrame(const Offset(0, 0) & const Size(1280, 720));
+    await window.setFrame(const Offset(0, 0) & const Size(600, 720));
     await window.center();
     await window.setTitle('JRPN Calculator Internals');
     await window.show();
-    unawaited(() async {
-      for (;;) {
-        await Future<void>.delayed(Duration(seconds: 5));
-        await DesktopMultiWindow.invokeMethod(window.windowId, 'frob', 'glorp');
+
+    late final void Function(void) observerRef;
+
+    void observer(void _) async {
+      try {
+        await DesktopMultiWindow.invokeMethod(
+            window.windowId, 'frob', model.internalSnapshot.value.text);
+      } catch (ex) {
+        model.internalSnapshot.removeObserver(observerRef);
+        model.optimizeInternalSnapshot();
       }
-    }());
+    }
+
+    observerRef = observer;
+
+    model.internalSnapshot.addObserver(observerRef);
   }
 
   static Future<bool> takeControl(List<String> args) async {
@@ -56,7 +55,6 @@ class InternalStateWindow extends StatelessWidget {
   Future<void> _handler(MethodCall call, int fromWindowID) async {
     // Could check call.method, but we only get the update call
     state.value = call.arguments as String;
-    print("@@ ISW got $call from $fromWindowID");
   }
 
   @override
@@ -64,6 +62,55 @@ class InternalStateWindow extends StatelessWidget {
     return MaterialApp(
         title: 'JRPN Internal State',
         theme: ThemeData(),
-        home: Container(color: Colors.blue));
+        home: _TextViewer(state));
+  }
+}
+
+class _TextViewer extends StatefulWidget {
+  final Observable<String> text;
+
+  const _TextViewer(this.text);
+
+  @override
+  State<_TextViewer> createState() => _TextViewerState();
+}
+
+class _TextViewerState extends State<_TextViewer> {
+  @override
+  void initState() {
+    super.initState();
+    widget.text.addObserver(_newText);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.text.removeObserver(_newText);
+  }
+
+  void _newText(String text) {
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: const EdgeInsets.fromLTRB(10, 25, 10, 10),
+        child: InteractiveViewer(
+            constrained: false,
+            minScale: 0.25,
+            maxScale: 10,
+            boundaryMargin: const EdgeInsets.all(double.infinity),
+            child: Text(
+              widget.text.value,
+              softWrap: false,
+              overflow: TextOverflow.visible,
+              style: const TextStyle(
+                fontSize: 16.0,
+                fontFamily: 'Courier',
+                color: Colors.white,
+                decoration: TextDecoration.none,
+              ),
+            )));
   }
 }

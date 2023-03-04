@@ -27,7 +27,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -992,7 +991,7 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
 
   Future<void> _importFromFile(BuildContext context) async {
     final model = widget.app.model;
-    final ext = '${model.modelName.toLowerCase()}';
+    final ext = model.modelName.toLowerCase();
     final typeGroup = XTypeGroup(
         label: 'JRPN Program (.$ext)', extensions: [ext, ext.toUpperCase()]);
     const any = XTypeGroup(label: 'JRPN Program (any extension)');

@@ -128,7 +128,6 @@ class Operations15 extends Operations {
             if (x != r) {
               r.resize(m, y.rows, y.columns);
             }
-            m.setNeedsSave();
             try {
               linalg.solve(x, y, r);
             } on linalg.MatrixOverflow {
@@ -136,6 +135,7 @@ class Operations15 extends Operations {
             }
           });
         }
+        m.needsSave = true;
       },
       complexCalc: (Model m) {
         if (m.x.asMatrix != null || m.y.asMatrix != null) {
@@ -414,21 +414,21 @@ class Operations15 extends Operations {
             child: ArgDone((m) {
               final mat = _getMatrixFromValue(m as Model15, m.x);
               mat.convertToZTilde(m);
-              m.setNeedsSave();
+              m.needsSave = true;
             })),
         KeyArg(
             key: Operations.n3,
             child: ArgDone((m) {
               final mat = _getMatrixFromValue(m as Model15, m.x);
               mat.convertFromZTilde(m);
-              m.setNeedsSave();
+              m.needsSave = true;
             })),
         KeyArg(
             key: Operations.n4,
             child: ArgDone((m) {
               final mat = _getMatrixFromValue(m as Model15, m.x);
               mat.transpose();
-              m.setNeedsSave();
+              m.needsSave = true;
             })),
         KeyArg(
             key: Operations.n5,
@@ -1119,7 +1119,7 @@ class Operations15 extends Operations {
           m.popSetResultXF = permutations(m.yF, m.xF);
         } else {
           (m as Model15).matrices[mx].convertToZP();
-          m.setNeedsSave();
+          m.needsSave = true;
         }
       },
       name: 'Py,x');
@@ -1130,7 +1130,7 @@ class Operations15 extends Operations {
           m.popSetResultXF = binomialCoefficient(m.yF, m.xF);
         } else {
           (m as Model15).matrices[mx].convertToZC();
-          m.setNeedsSave();
+          m.needsSave = true;
         }
       },
       name: 'Cy,x');
@@ -1167,7 +1167,7 @@ class Operations15 extends Operations {
         matrix.isLU = false;
       }
       matrix.set(row, col, m.x);
-      m.setNeedsSave();
+      m.needsSave = true;
       if (increment) {
         _incrementR0R1(m, row, col, matrix);
       }

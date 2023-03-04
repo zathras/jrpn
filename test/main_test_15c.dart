@@ -2146,16 +2146,16 @@ Future<void> lastX15C() async {
   final c = TestCalculator(for15C: true);
   final controller = c.controller;
   final model = c.model;
-  void _play(List<Operation> script) {
+  void play(List<Operation> script) {
     for (final b in script) {
       controller.buttonDown(b);
       controller.buttonUp();
     }
   }
 
-  _play(
+  play(
       [Operations.n1, Operations.enter, Operations.n2, Operations15.sigmaPlus]);
-  _play(
+  play(
       [Operations.n3, Operations.enter, Operations.n4, Operations15.sigmaPlus]);
 
   for (final complex in [false, true]) {
@@ -2196,13 +2196,13 @@ Future<void> lastX15C() async {
       Operations15.xFactorial,
       Operations15.yHatR
     ]) {
-      _play([Operations.n9, Operations.enter, Operations15.plus]);
-      _play([Operations.dot, Operations.n1, Operations.enter]);
-      _play([Operations.dot, Operations.n2, Operations.enter]);
-      _play([Operations.dot, Operations.n3, Operations.enter]);
-      _play([Operations.dot, Operations.n4]);
+      play([Operations.n9, Operations.enter, Operations15.plus]);
+      play([Operations.dot, Operations.n1, Operations.enter]);
+      play([Operations.dot, Operations.n2, Operations.enter]);
+      play([Operations.dot, Operations.n3, Operations.enter]);
+      play([Operations.dot, Operations.n4]);
       expect(model.lastX, Value.fromDouble(9));
-      _play([op]);
+      play([op]);
       if (op == Operations15.yHatR) {
         expect(model.t, Value.fromDouble(.2), reason: 't for $op $complex');
         expect(model.z, Value.fromDouble(.3), reason: 'z for $op $complex');
@@ -2227,13 +2227,13 @@ Future<void> lastX15C() async {
       Operations15.pYX,
       Operations15.cYX
     ]) {
-      _play([Operations.n9, Operations.enter, Operations15.plus]);
-      _play([Operations.n4, Operations.enter]);
-      _play([Operations.n3, Operations.enter]);
-      _play([Operations.n2, Operations.enter]);
-      _play([Operations.n1]);
+      play([Operations.n9, Operations.enter, Operations15.plus]);
+      play([Operations.n4, Operations.enter]);
+      play([Operations.n3, Operations.enter]);
+      play([Operations.n2, Operations.enter]);
+      play([Operations.n1]);
       expect(model.lastX, Value.fromDouble(9));
-      _play([op]);
+      play([op]);
       expect(model.t, Value.fromDouble(4));
       expect(model.z, Value.fromDouble(4), reason: 'z for $op $complex');
       expect(model.y, Value.fromDouble(3));
@@ -2247,13 +2247,13 @@ Future<void> lastX15C() async {
       Operations15.stdDeviation,
       Operations15.linearRegression
     ]) {
-      _play([Operations.n9, Operations.enter, Operations15.plus]);
-      _play([Operations.n4, Operations.enter]);
-      _play([Operations.n3, Operations.enter]);
-      _play([Operations.n2, Operations.enter]);
-      _play([Operations.n1]);
+      play([Operations.n9, Operations.enter, Operations15.plus]);
+      play([Operations.n4, Operations.enter]);
+      play([Operations.n3, Operations.enter]);
+      play([Operations.n2, Operations.enter]);
+      play([Operations.n1]);
       expect(model.lastX, Value.fromDouble(9));
-      _play([op]);
+      play([op]);
       expect(model.t, Value.fromDouble(2));
       expect(model.z, Value.fromDouble(1), reason: 'z for $op $complex');
       expect(model.lastX, Value.fromDouble(9),

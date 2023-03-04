@@ -37,7 +37,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   int get resultMatrix => _resultMatrix;
   set resultMatrix(int v) {
     _resultMatrix = v;
-    setNeedsSave();
+    needsSave = true;
   }
 
   final ProgramInstruction<OT> Function(OT, ArgDone) _newProgramInstructionF;
@@ -138,11 +138,11 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
       memory.policy.checkAvailable(5);
       // Might throw CalculatorError
     }
-    super.setFlag(8, v);
     if (v != isComplexMode) {
       setupComplex(
           v ? List<Value>.filled(4, Value.zero, growable: false) : null);
     }
+    super.setFlag(8, v);
   }
 
   @override
@@ -212,7 +212,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
       rightJustify: false,
       bits: 64,
       sign: SignMode.unsigned,
-      wordSize: 64,
+      wordSize: null,
       gFlag: true,
       prgmFlag: true,
       shift: ShiftKey.g,
@@ -220,8 +220,14 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
       userMode: true,
       extraShift: ShiftKey.f);
 
-  void setNeedsSave() {
-    needsSave = true;
+  @override
+  addStuffToSnapshot(StringBuffer buf) {
+    for (final m in matrices) {
+      if (m.length > 0) {
+        buf.writeln();
+        buf.writeln(m.toString());
+      }
+    }
   }
 }
 
@@ -363,7 +369,7 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
       registers[i] = Value.zero;
     }
     _numRegisters = v;
-    model.setNeedsSave();
+    model.needsSave = true;
   }
 
   /// Number of uncommitted registers available in the pool.
