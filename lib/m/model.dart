@@ -205,6 +205,18 @@ class Settings {
   OrientationSetting _orientation = OrientationSetting.auto;
   bool _systemOverlaysDisabled = false;
 
+  static const _gKeyColorDefault = 0xff00afef;
+  int _gKeyColor = _gKeyColorDefault;
+
+  static const _gTextColorDefault = 0xff12cdff;
+  int _gTextColor = _gTextColorDefault;
+
+  static const _fKeyColorDefault = 0xfff58634;
+  int _fKeyColor = _fKeyColorDefault;
+
+  static const _fTextColorDefault = 0xfff98c35;
+  int _fTextColor = _fTextColorDefault;
+
   Settings(this._model) {
     menuEnabled.addObserver((_) => _model.needsSave = true);
     showAccelerators.addObserver((_) => _model.needsSave = true);
@@ -224,6 +236,10 @@ class Settings {
     _setPlatformOrientation();
     _systemOverlaysDisabled = false;
     _setPlatformOverlays();
+    gKeyColor = null;
+    gTextColor = null;
+    fKeyColor = null;
+    fTextColor = null;
   }
 
   ///
@@ -357,6 +373,18 @@ class Settings {
     unawaited(SystemChrome.setPreferredOrientations(orientations));
   }
 
+  int get gKeyColor => _gKeyColor;
+  set gKeyColor(int? v) => _gKeyColor = v ?? _gKeyColorDefault;
+
+  int get gTextColor => _gTextColor;
+  set gTextColor(int? v) => _gTextColor = v ?? _gTextColorDefault;
+
+  int get fKeyColor => _fKeyColor;
+  set fKeyColor(int? v) => _fKeyColor = v ?? _fKeyColorDefault;
+
+  int get fTextColor => _fTextColor;
+  set fTextColor(int? v) => _fTextColor = v ?? _fTextColorDefault;
+
   ///
   /// Convert to a data structure that can be serialized as JSON.
   ///
@@ -379,6 +407,18 @@ class Settings {
     }
     if (_traceProgramToStdout) {
       r['traceProgramToStdout'] = _traceProgramToStdout;
+    }
+    if (fTextColor != _fTextColorDefault) {
+      r['fTextColor'] = fTextColor;
+    }
+    if (fKeyColor != _fKeyColorDefault) {
+      r['fKeyColor'] = fKeyColor;
+    }
+    if (gTextColor != _gTextColorDefault) {
+      r['gTextColor'] = gTextColor;
+    }
+    if (gKeyColor != _gKeyColorDefault) {
+      r['gKeyColor'] = gKeyColor;
     }
     return r;
   }
@@ -409,6 +449,10 @@ class Settings {
     }
     _setPlatformOrientation();
     _traceProgramToStdout = (json['traceProgramToStdout'] as bool?) ?? false;
+    fKeyColor = json['fKeyColor'] as int?;
+    fTextColor = json['fTextColor'] as int?;
+    gKeyColor = json['gKeyColor'] as int?;
+    gTextColor = json['gTextColor'] as int?;
   }
 }
 
@@ -1214,6 +1258,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       buf.writeln();
       buf.writeln('Last X:  $lastX');
     }
+    buf.writeln('     I:  ${memory.registers.index}');
     buf.writeln();
     int maxRegister = -1;
     for (int i = 0;; i++) {

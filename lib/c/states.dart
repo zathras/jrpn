@@ -1134,9 +1134,16 @@ class OnOffKeyPressed extends DoNothing {
       changeState(DoNothing(controller));
       Future<void> runTests() async {
         try {
+          DateTime start = DateTime.now();
           model.display.current = 'RuNNING  ';
           model.display.update(blink: BlinkMode.justDigits);
           await controller.newSelfTests(inCalculator: true).runAll();
+          DateTime now = DateTime.now();
+          Duration sleep =
+              (const Duration(milliseconds: 2500)) - now.difference(start);
+          if (!sleep.isNegative) {
+            await Future<void>.delayed(sleep);
+          }
           changeState(Resting(controller));
           model.display.show(model.selfTestContents());
           changeState(MessageShowing(Resting(controller)));

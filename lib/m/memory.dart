@@ -215,7 +215,10 @@ class Registers {
 
   Value get index => Value.fromInternal(_indexValue.internal & _model.wordMask);
 
-  set index(Value v) => _indexValue = helper68.signExtendFrom(v);
+  set index(Value v) {
+    _indexValue = helper68.signExtendFrom(v);
+    _model.needsSave = true;
+  }
 
   Value get indirectIndex => this[_regIasIndex];
   set indirectIndex(Value v) => this[_regIasIndex] = v;

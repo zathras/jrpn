@@ -27,6 +27,8 @@ this program; if not, see https://www.gnu.org/licenses/ .
 /// See [CalculatorButton] for more details.
 library view.buttons;
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../c/controller.dart';
@@ -42,6 +44,7 @@ abstract class ButtonFactory {
   final BuildContext context;
   final ScreenPositioner screen;
   final RealController controller;
+  Settings get settings => controller.model.settings;
 
   // All sizes are based on a hypothetical 122x136 button.  This is
   // scaled to screen pixels in the painter.
@@ -61,24 +64,26 @@ abstract class ButtonFactory {
   final Offset gKeyTextOffset = const Offset(0, 39);
   final Offset onKeyTextOffset = const Offset(0, 66);
   final Offset enterKeyTextOffset = const Offset(0, 53);
-  final TextStyle fTextStyle = const TextStyle(
+  late final TextStyle fTextStyle = TextStyle(
       fontSize: 26,
       fontFamily: 'KeyLabelFont',
       fontWeight: FontWeight.bold,
-      color: Color(0xfff98c35));
-  final TextStyle fTextSmallLabelStyle = const TextStyle(
+      color: Color(settings.fTextColor));
+  late final TextStyle fTextSmallLabelStyle = TextStyle(
       fontSize: 17,
       fontFamily: 'KeyLabelFont',
       fontWeight: FontWeight.bold,
-      color: Color(0xfff98c35));
+      color: Color(settings.fTextColor));
   Offset get fTextOffset => const Offset(0, -2);
-  final TextStyle gTextStyle = const TextStyle(
-      fontSize: 26, fontFamily: 'KeyLabelFont', color: Color(0xff12cdff));
-  final TextStyle gTextStyleForLJ = const TextStyle(
+  late final TextStyle gTextStyle = TextStyle(
+      fontSize: 26,
+      fontFamily: 'KeyLabelFont',
+      color: Color(settings.gTextColor));
+  late final TextStyle gTextStyleForLJ = TextStyle(
       fontFamily: 'LogoFont',
       fontWeight: FontWeight.w500,
       fontSize: 26,
-      color: Color(0xff12cdff));
+      color: Color(settings.gTextColor));
   final Offset gTextOffset = const Offset(0, 92);
   final TextStyle specialButtonTextStyle = const TextStyle(
       fontSize: 42,
@@ -256,8 +261,8 @@ class UpperLabel extends CustomPainter {
 
   UpperLabel(this.text, this.style, this.height);
 
-  final Paint linePaint = Paint()
-    ..color = const Color(0xfff98c35)
+  late final Paint linePaint = Paint()
+    ..color = style.color!
     ..style = PaintingStyle.stroke
     ..strokeWidth = 3
     ..strokeCap = StrokeCap.butt;
@@ -661,6 +666,22 @@ abstract class CalculatorShiftButton extends CalculatorButton {
   String get extraAcceleratorName;
 
   @override
+  late final Color upperSurfaceColorPressed =
+      _brighter(upperSurfaceColor, 0.04);
+  @override
+  late final Color innerBorderColor = _brighter(upperSurfaceColor, 0.05);
+  @override
+  late final Color lowerSurfaceColor = _brighter(upperSurfaceColor, -0.19);
+  @override
+  late final Color lowerSurfaceColorPressed =
+      _brighter(upperSurfaceColor, -0.12);
+
+  static Color _brighter(Color src, double factor) {
+    final h = HSVColor.fromColor(src);
+    return h.withValue(max(0, min(1, h.value * (1 + factor)))).toColor();
+  }
+
+  @override
   void drawKeyboardAccelerator(Canvas canvas) {
     super.drawKeyboardAccelerator(canvas);
     const s = TextStyle(
@@ -697,15 +718,7 @@ class CalculatorFButton extends CalculatorShiftButton {
             acceleratorLabel: acceleratorLabel, key: key);
 
   @override
-  Color get innerBorderColor => const Color(0xfffc8f3b);
-  @override
-  Color get lowerSurfaceColor => const Color(0xffb66b34);
-  @override
-  Color get lowerSurfaceColorPressed => const Color(0xffbf7238);
-  @override
-  Color get upperSurfaceColor => const Color(0xfff58634);
-  @override
-  Color get upperSurfaceColorPressed => const Color(0xfffd8b38);
+  late final upperSurfaceColor = Color(bFactory.settings.fKeyColor);
   @override
   Offset get keyTextOffset => bFactory.fKeyTextOffset;
   @override
@@ -735,15 +748,7 @@ class CalculatorGButton extends CalculatorShiftButton {
             acceleratorLabel: acceleratorLabel, key: key);
 
   @override
-  Color get innerBorderColor => const Color(0xff30bfdf);
-  @override
-  Color get lowerSurfaceColor => const Color(0xff008ebd);
-  @override
-  Color get lowerSurfaceColorPressed => const Color(0xff0099e2);
-  @override
-  Color get upperSurfaceColor => const Color(0xff00afef);
-  @override
-  Color get upperSurfaceColorPressed => const Color(0xff00b7f7);
+  late final Color upperSurfaceColor = Color(bFactory.settings.gKeyColor);
   @override
   Offset get keyTextOffset => bFactory.gKeyTextOffset;
   @override

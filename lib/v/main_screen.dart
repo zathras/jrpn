@@ -498,7 +498,7 @@ class _MainMenuState extends State<MainMenu> {
                 value: () {}, child: _FileMenu('File', widget.main.app)),
             PopupMenuItem(
                 value: () {},
-                child: _SettingsMenu('Settings', model, controller)),
+                child: _SettingsMenu('Settings', widget.main.app)),
             // PopupMenuDivider(),
             PopupMenuItem(
                 value: () {},
@@ -566,7 +566,7 @@ class _HelpMenu extends StatelessWidget {
                   applicationIcon: ScalableImageWidget(si: icon, scale: 0.15),
                   applicationName: 'JRPN ${controller.model.modelName}',
                   applicationVersion: 'Version $applicationVersion',
-                  applicationLegalese: '© 2021, 2022 Bill Foote',
+                  applicationLegalese: '© 2021-2023 Bill Foote',
                   children: [
                     const SizedBox(height: 40),
                     InkWell(
@@ -609,10 +609,11 @@ Widget _showNonWarranty(BuildContext context) => AlertDialog(
 
 class _SettingsMenu extends StatefulWidget {
   final String title;
-  final Model model;
-  final RealController controller;
-  const _SettingsMenu(this.title, this.model, this.controller, {Key? key})
-      : super(key: key);
+  final Jrpn app;
+  const _SettingsMenu(this.title, this.app, {Key? key}) : super(key: key);
+
+  Model get model => app.model;
+  RealController get controller => app.controller;
 
   @override
   __SettingsMenuState createState() => __SettingsMenuState();
@@ -683,13 +684,6 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                   !settings.showAccelerators.value;
             },
             child: const Text('Show Accelerators (toggle with "?")')),
-        CheckedPopupMenuItem(
-            checked: widget.model.captureDebugLog,
-            value: () {
-              widget.model.captureDebugLog = !widget.model.captureDebugLog;
-              widget.model.display.update();
-            },
-            child: const Text('Capture Debug Log')),
         ...(settings.isMobilePlatform
             ? [
                 CheckedPopupMenuItem(
@@ -723,17 +717,7 @@ class __SettingsMenuState extends State<_SettingsMenu> {
               ]
             : []),
         PopupMenuItem(
-            child: ListTile(
-                leading: SizedBox(
-                    width: 40,
-                    child: _TextEntry(
-                        initial: settings.msPerInstruction
-                            .toString()
-                            .replaceFirst(RegExp('.0\$'), ''),
-                        onDone: (v) {
-                          settings.msPerInstruction = double.tryParse(v);
-                        })),
-                title: const Text('ms/Program Instruction'))),
+            child: _SystemSettingsMenu('System Settings', widget.app)),
       ],
       child: Row(
         children: [
@@ -1200,6 +1184,124 @@ class __FileReadMenuState extends State<_FileReadMenu> {
       if (mounted) {
         return showErrorDialog(context, 'Bad data in file', e);
       }
+    }
+  }
+}
+
+class _SystemSettingsMenu extends StatefulWidget {
+  final String title;
+  final Jrpn app;
+
+  const _SystemSettingsMenu(this.title, this.app, {Key? key}) : super(key: key);
+
+  @override
+  _SystemSettingsMenuState createState() => _SystemSettingsMenuState();
+}
+
+class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
+  Model get model => widget.app.model;
+  Settings get settings => model.settings;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<Future<void> Function()>(
+      // how much the submenu should offset from parent.
+      offset: const Offset(-100, 0),
+      onSelected: (Future<void> Function() action) async {
+        await action();
+        setState(() {});
+        if (mounted) {
+          Navigator.pop(context, () {});
+        }
+      },
+      onCanceled: () => Navigator.pop(context),
+      itemBuilder: (BuildContext context) => [
+        PopupMenuItem(
+            child: ListTile(
+                leading: SizedBox(
+                    width: 70,
+                    child: _TextEntry(
+                        initial: _formatColor(settings.fKeyColor),
+                        onDone: (v) {
+                          settings.fKeyColor = _toColor(v);
+                          widget.app.setChanged();
+                        })),
+                title: const Text('f Key Color'))),
+        PopupMenuItem(
+            child: ListTile(
+                leading: SizedBox(
+                    width: 70,
+                    child: _TextEntry(
+                        initial: _formatColor(settings.fTextColor),
+                        onDone: (v) {
+                          settings.fTextColor = _toColor(v);
+                          widget.app.setChanged();
+                        })),
+                title: const Text('f Text Color'))),
+        PopupMenuItem(
+            child: ListTile(
+                leading: SizedBox(
+                    width: 70,
+                    child: _TextEntry(
+                        initial: _formatColor(settings.gKeyColor),
+                        onDone: (v) {
+                          settings.gKeyColor = _toColor(v);
+                          widget.app.setChanged();
+                        })),
+                title: const Text('g Key Color'))),
+        PopupMenuItem(
+            child: ListTile(
+                leading: SizedBox(
+                    width: 70,
+                    child: _TextEntry(
+                        initial: _formatColor(settings.gTextColor),
+                        onDone: (v) {
+                          settings.gTextColor = _toColor(v);
+                          widget.app.setChanged();
+                        })),
+                title: const Text('g Text Color'))),
+        PopupMenuItem(
+            child: ListTile(
+                leading: SizedBox(
+                    width: 70,
+                    child: _TextEntry(
+                        initial: settings.msPerInstruction
+                            .toString()
+                            .replaceFirst(RegExp('.0\$'), ''),
+                        onDone: (v) {
+                          settings.msPerInstruction = double.tryParse(v);
+                        })),
+                title: const Text('ms/Program Instruction'))),
+        CheckedPopupMenuItem(
+            checked: model.captureDebugLog,
+            value: () async {
+              model.captureDebugLog = !model.captureDebugLog;
+              model.display.update();
+            },
+            child: Row(children: const [
+              SizedBox(width: 30),
+              Text('Capture Debug\nLog')
+            ])),
+      ],
+      child: Row(
+        children: [
+          const SizedBox(width: 65),
+          Text(widget.title),
+          const Spacer(),
+          const Icon(Icons.arrow_right, size: 30.0),
+        ],
+      ),
+    );
+  }
+
+  String _formatColor(int value) =>
+      (value & 0xffffff).toRadixString(16).padLeft(6, '0');
+  int? _toColor(String v) {
+    final int? i = int.tryParse(v, radix: 16);
+    if (i == null) {
+      return null;
+    } else {
+      return i | 0xff000000;
     }
   }
 }

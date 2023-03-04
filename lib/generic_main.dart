@@ -775,7 +775,9 @@ class Jrpn extends StatefulWidget {
   /// and in the Model referenced by the controller.
   final RealController controller;
 
-  const Jrpn(this.controller, {Key? key}) : super(key: key);
+  final Observable<void> _changed = Observable(null);
+
+  Jrpn(this.controller, {Key? key}) : super(key: key);
 
   Model get model => controller.model;
 
@@ -822,6 +824,8 @@ class Jrpn extends StatefulWidget {
     return out.toString();
   }
 
+  void setChanged() => _changed.value = null;
+
   @override
   JrpnState createState() => JrpnState();
 }
@@ -835,6 +839,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   Object? _pendingError;
   late final FocusNode keyboard;
   late final ScalableImage icon;
+  late void Function(void) _uiChangeObserver;
 
   JrpnState();
 
@@ -845,15 +850,22 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     super.initState();
     keyboard = FocusNode(
         onKey: (FocusNode _, RawKeyEvent e) => controller.keyboard.onKey(e));
+    _uiChangeObserver = _uiChanged;
+    widget._changed.addObserver(_uiChangeObserver);
     unawaited(_init());
   }
 
   @override
   void dispose() {
     super.dispose();
+    widget._changed.removeObserver(_uiChangeObserver);
     WidgetsBinding.instance.removeObserver(this);
     _disposed = true;
     _linksSubscription?.cancel();
+  }
+
+  void _uiChanged(void _) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
