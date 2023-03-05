@@ -1555,11 +1555,12 @@ class DisplayModel {
   void update(
       {bool flash = false,
       BlinkMode blink = BlinkMode.none,
-      bool disableWindow = false}) {
+      bool disableWindow = false,
+      bool neverReformat = false}) {
     if (ignoreUpdates) {
       return;
     }
-    if (_showingX) {
+    if (_showingX && !neverReformat) {
       currentShowingX = model.formatValue(model.x);
       // In case window enabled setting changed
     }
@@ -1599,7 +1600,10 @@ class DisplayModel {
   /// disableWindow applies to the first display of X.  If there's a delayed
   /// value, it reverts to disableWindow being false.
   void displayX(
-      {bool flash = true, bool delayed = false, bool disableWindow = false}) {
+      {bool flash = true,
+      bool delayed = false,
+      bool disableWindow = false,
+      int? setWindow}) {
     final String newNumber = model.formatValue(model.x);
     if (delayed) {
       final initial = model._newLcdContents(disableWindow: disableWindow);
@@ -1607,6 +1611,9 @@ class DisplayModel {
       final delayed = model._newLcdContents(disableWindow: false);
       final t = Timer(const Duration(milliseconds: 1400), () {
         show(delayed);
+        if (setWindow != null) {
+          window = setWindow;
+        }
       });
       delayed._myTimer = t;
       initial._myTimer = t;

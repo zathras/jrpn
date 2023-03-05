@@ -312,12 +312,20 @@ class Resting extends ActiveState {
     if (model.isFloatMode) {
       return;
     }
-    if (model.displayMode != mode) {
-      model.display.window = 0;
-      model.display.current = mode.format(model.x, model);
-      model.display.update();
+    int lastWindow = 0;
+    int show() {
+      lastWindow = model.display.window;
+      if (model.displayMode != mode) {
+        model.display.window = 0;
+      }
+      model.display.currentShowingX = mode.format(model.x, model);
+      model.display.update(neverReformat: true);
+      return lastWindow;
     }
-    changeState(ShowState(this));
+
+    if (!controller.delayForShow(show)) {
+      changeState(ShowState(this, window: lastWindow));
+    }
   }
 
   @override
@@ -1052,11 +1060,13 @@ class ShowState extends ControllerState {
   final bool disableWindow;
   final bool delayed;
   final bool fromProgramEntry;
+  final int? window;
 
   ShowState(this._last,
       {this.disableWindow = false,
       this.delayed = true,
-      this.fromProgramEntry = false})
+      this.fromProgramEntry = false,
+      this.window})
       : super(_last.controller);
 
   @override
@@ -1064,7 +1074,8 @@ class ShowState extends ControllerState {
     if (fromProgramEntry) {
       model.memory.program.displayCurrent(delayed: delayed);
     } else {
-      model.display.displayX(delayed: delayed, disableWindow: disableWindow);
+      model.display.displayX(
+          delayed: delayed, disableWindow: disableWindow, setWindow: window);
     }
     changeState(_last);
   }
@@ -1135,7 +1146,7 @@ class OnOffKeyPressed extends DoNothing {
       Future<void> runTests() async {
         try {
           DateTime start = DateTime.now();
-          model.display.current = 'RuNNING  ';
+          model.display.current = '  RuNNING';
           model.display.update(blink: BlinkMode.justDigits);
           await controller.newSelfTests(inCalculator: true).runAll();
           DateTime now = DateTime.now();
@@ -1204,8 +1215,10 @@ class Running extends ControllerState {
 
   @override
   void buttonUp(Operation key) {
-    model.displayDisabled = true;
-    unawaited(_run());
+    if (!_stopNext) {
+      model.displayDisabled = true;
+      unawaited(_run());
+    }
   }
 
   /// We delay the showing of the blinking running a little bit, so that
@@ -1214,7 +1227,7 @@ class Running extends ControllerState {
   Timer _showRunning() => Timer(const Duration(milliseconds: 20), () {
         assert(model.displayDisabled);
         model.displayDisabled = false;
-        model.display.current = 'RuNNING  ';
+        model.display.current = '  RuNNING';
         model.display.update(blink: BlinkMode.justDigits);
         model.displayDisabled = true;
       });
@@ -1368,14 +1381,18 @@ class Running extends ControllerState {
       // are a lot faster than most other operations on a real calculator,
       // and they might be pretty common.  At a guess, we say 5x faster.
       final err = _fake.pendingError;
-      if (_fake.pause && err == null && !_stopNext) {
+      if (_fake.pause != null && err == null && !_stopNext) {
         // PSE instruction, show-BIN, etc.
-        _fake.pause = false;
+        final updateDisplay = _fake.pause!;
+        _fake.pause = null;
         listener.onPause();
         showRunningTimer.cancel();
         model.displayDisabled = false;
-        model.display.displayX(flash: false);
+        int? window = updateDisplay();
         await listener.resumeFromPause();
+        if (window != null) {
+          model.display.window = window;
+        }
         model.displayDisabled = true;
         showRunningTimer = _showRunning();
       }

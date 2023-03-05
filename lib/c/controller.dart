@@ -182,6 +182,8 @@ abstract class Controller {
 
   NormalArgOperation get gsbOperation;
   NormalArgOperation get gtoOperation;
+
+  bool delayForShow(int Function() updateDisplay);
 }
 
 ///
@@ -288,6 +290,12 @@ abstract class RealController extends Controller {
   }
 
   @override
+  bool delayForShow(int Function() updateDisplay) {
+    updateDisplay();
+    return false;
+  }
+
+  @override
   bool _branchingOperationCalcDisabled() => true;
 
   ButtonLayout getButtonLayout(
@@ -312,7 +320,7 @@ abstract class RealController extends Controller {
 ///
 class RunningController extends Controller {
   final RealController real;
-  bool pause = false; // Pause to show user what's on display
+  int? Function()? pause; // Pause to show user what's on display
   CalculatorError? pendingError;
   ArgDone _argValue = _dummy;
 
@@ -367,7 +375,16 @@ class RunningController extends Controller {
   @override
   void handlePSE() {
     super.handlePSE();
-    pause = true;
+    pause = () {
+      model.display.displayX(flash: false);
+      return null;
+    };
+  }
+
+  @override
+  bool delayForShow(int Function() updateDisplay) {
+    pause = updateDisplay;
+    return true;
   }
 
   @override

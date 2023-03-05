@@ -369,21 +369,21 @@ class Operations16 extends Operations {
       calc: null,
       pressed: (ActiveState cs) => cs.handleShow(DisplayMode.decimal),
       stackLift: StackLift.neutral,
-      endsDigitEntry: false, // Not in float moad
+      endsDigitEntry: false, // Not in float mode
       name: 'SHOW DEC');
 
   static final NormalOperation showOct = NormalOperation(
       calc: null,
       pressed: (ActiveState cs) => cs.handleShow(DisplayMode.oct),
       stackLift: StackLift.neutral,
-      endsDigitEntry: false, // Not in float moad
+      endsDigitEntry: false, // Not in float mode
       name: 'SHOW OCT');
 
   static final NormalOperation showBin = NormalOperation(
       calc: null,
       pressed: (ActiveState cs) => cs.handleShow(DisplayMode.bin),
       stackLift: StackLift.neutral,
-      endsDigitEntry: false, // Not in float moad
+      endsDigitEntry: false, // Not in float mode
       name: 'SHOW BIN');
 
   static final NormalOperation sb = NormalOperation.intOnly(

@@ -47,6 +47,7 @@ Future<void> main() async {
   test('JSON format / opcodes', opcodeTest16C);
   test('negative gosub', testNegativeGosub);
   test('float stack lift', testFloatStackLift);
+  test('bug 21', testBug21);
   appendixA();
   test('Towers of Hanoi', towersOfHanoi);
   // Do this last, because it leaves a timer pending:
@@ -500,4 +501,37 @@ Future<void> testFloatStackLift() async {
   expect(m.x, Value.fromDouble(7));
   expect(m.y, Value.fromDouble(8));
   expect(m.z, Value.fromDouble(0));
+}
+
+Future<void> testBug21() async {
+  for (final program in [false, true]) {
+    final tc = TestCalculator();
+    final c = tc.controller;
+    final m = tc.model;
+    if (program) {
+      enter(c, Operations.pr);
+      enter(c, Operations16.lbl);
+      enter(c, Operations16.letterA);
+    }
+    enter(c, Operations.n1);
+    enter(c, Operations.enter);
+    enter(c, Operations.enter);
+    enter(c, Operations.enter);
+    enter(c, Operations16.plus);
+    enter(c, Operations16.showBin);
+    enter(c, Operations16.plus);
+    if (program) {
+      enter(c, Operations.rtn);
+      enter(c, Operations.pr);
+      final out = StreamIterator<ProgramEvent>(tc.output.stream);
+      enter(c, Operations16.gsb);
+      enter(c, Operations16.letterA);
+      expect(await out.moveNext(), true);
+      expect(out.current.pauseValue != null, true);
+      tc.resume();
+      expect(await out.moveNext(), true);
+      expect(out.current, ProgramEvent.done);
+    }
+    expect(m.xI, BigInt.from(3));
+  }
 }

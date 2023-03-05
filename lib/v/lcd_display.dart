@@ -120,7 +120,7 @@ class _DisplayPainter extends CustomPainter {
       ..color = Color(0xff000000 | (0x908d88 * 0.75).floor())
       ..style = PaintingStyle.fill;
     final lcdBase = Paint()
-      ..color = const Color(0xff979980) // that's argb
+      ..color = const Color(0xffacaf98) // that's argb
       ..style = PaintingStyle.fill;
     // Note that, by default, we are not clipped to our size
     final outlineW = size.width / 20;
