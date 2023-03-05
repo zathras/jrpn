@@ -139,8 +139,10 @@ abstract class Controller {
 
   void resetAll() {
     reset();
+    state.abort();
     state = Resting(this);
     model.displayDisabled = false;
+    model.display.displayX();
   }
 
   /// Perform a single step action by running one instruction, and then

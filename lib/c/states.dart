@@ -88,6 +88,8 @@ abstract class ControllerState {
   void unreachable() {
     assert(false);
   }
+
+  void abort() {}
 }
 
 ///
@@ -1437,6 +1439,17 @@ class Running extends ControllerState {
     model.program.suspendedProgram = null;
     model.displayDisabled = true;
     _stopNext = singleStepOnDone != null;
+  }
+
+  @override
+  void abort() {
+    super.abort();
+    _stopNext = true;
+    _fake.real.suspendedProgramRunner?.abort();
+    model.program.suspendedProgram?.abort();
+    model.program.suspendedProgram = null;
+    model.program.runner?.abort();
+    model.program.runner = null;
   }
 }
 

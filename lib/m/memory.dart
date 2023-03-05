@@ -791,6 +791,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     for (final instr in program) {
       insert(instr);
     }
+    currentLine = 0;
   }
 
   void importProgramFromFile(Uint8List original) {

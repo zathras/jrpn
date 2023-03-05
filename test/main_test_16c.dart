@@ -519,6 +519,9 @@ Future<void> testBug21() async {
     enter(c, Operations.enter);
     enter(c, Operations16.plus);
     enter(c, Operations16.showBin);
+    enter(c, Operations16.showHex);
+    enter(c, Operations16.showOct);
+    enter(c, Operations16.showDec);
     enter(c, Operations16.plus);
     if (program) {
       enter(c, Operations.rtn);
@@ -526,6 +529,15 @@ Future<void> testBug21() async {
       final out = StreamIterator<ProgramEvent>(tc.output.stream);
       enter(c, Operations16.gsb);
       enter(c, Operations16.letterA);
+      expect(await out.moveNext(), true);
+      expect(out.current.pauseValue != null, true);
+      tc.resume();
+      expect(await out.moveNext(), true);
+      expect(out.current.pauseValue != null, true);
+      tc.resume();
+      expect(await out.moveNext(), true);
+      expect(out.current.pauseValue != null, true);
+      tc.resume();
       expect(await out.moveNext(), true);
       expect(out.current.pauseValue != null, true);
       tc.resume();

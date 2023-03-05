@@ -650,7 +650,7 @@ class __SettingsMenuState extends State<_SettingsMenu> {
               display.update();
             },
             child: Text(widget.controller.menus15C
-                ? 'Full display of SCI 9'
+                ? 'Display Long Numbers'
                 : 'Enable Window')),
         ...(widget.controller.menus15C
             ? []
@@ -952,6 +952,7 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
   }
 
   Future<void> _importFromClipboard(BuildContext context) async {
+    widget.app.controller.resetAll();
     final String? cd;
     try {
       cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
@@ -983,8 +984,9 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
     if (file == null) {
       return;
     }
-    final data = await file.readAsBytes();
+    widget.app.controller.resetAll();
     try {
+      final data = await file.readAsBytes();
       widget.app.model.program.importProgramFromFile(data);
     } catch (e, s) {
       debugPrint('\n\n$e\n\n$s');
@@ -1144,6 +1146,7 @@ class __FileReadMenuState extends State<_FileReadMenu> {
 
   Future<void> _pasteFromClipboard(BuildContext context) async {
     final String? cd;
+    widget.app.controller.resetAll();
     try {
       cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
     } catch (e) {
@@ -1175,8 +1178,9 @@ class __FileReadMenuState extends State<_FileReadMenu> {
     if (file == null) {
       return;
     }
-    final data = await file.readAsString();
     try {
+      widget.app.controller.resetAll();
+      final data = await file.readAsString();
       widget.app.model.initializeFromJsonOrUri(data);
     } catch (e, s) {
       debugPrint('\n\n$e\n\n$s');
