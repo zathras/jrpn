@@ -1269,6 +1269,28 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                 leading: SizedBox(
                     width: 70,
                     child: _TextEntry(
+                        initial: _formatColor(settings.lcdBackgroundColor),
+                        onDone: (v) {
+                          settings.lcdBackgroundColor = _toColor(v);
+                          widget.app.setChanged();
+                        })),
+                title: const Text('LCD Background Color'))),
+        PopupMenuItem(
+            child: ListTile(
+                leading: SizedBox(
+                    width: 70,
+                    child: _TextEntry(
+                        initial: _formatColor(settings.lcdForegroundColor),
+                        onDone: (v) {
+                          settings.lcdForegroundColor = _toColor(v);
+                          widget.app.setChanged();
+                        })),
+                title: const Text('LCD Foreground Color'))),
+        PopupMenuItem(
+            child: ListTile(
+                leading: SizedBox(
+                    width: 70,
+                    child: _TextEntry(
                         initial: settings.msPerInstruction
                             .toString()
                             .replaceFirst(RegExp('.0\$'), ''),

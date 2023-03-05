@@ -217,6 +217,12 @@ class Settings {
   static const _fTextColorDefault = 0xfff98c35;
   int _fTextColor = _fTextColorDefault;
 
+  static const _lcdBackgroundColorDefault = 0xffacaf98;
+  int _lcdBackgroundColor = _lcdBackgroundColorDefault;
+
+  static const _lcdForegroundColorDefault = 0xff000000;
+  int _lcdForegroundColor = _lcdForegroundColorDefault;
+
   Settings(this._model) {
     menuEnabled.addObserver((_) => _model.needsSave = true);
     showAccelerators.addObserver((_) => _model.needsSave = true);
@@ -240,6 +246,8 @@ class Settings {
     gTextColor = null;
     fKeyColor = null;
     fTextColor = null;
+    lcdBackgroundColor = null;
+    lcdForegroundColor = null;
   }
 
   ///
@@ -385,6 +393,14 @@ class Settings {
   int get fTextColor => _fTextColor;
   set fTextColor(int? v) => _fTextColor = v ?? _fTextColorDefault;
 
+  int get lcdBackgroundColor => _lcdBackgroundColor;
+  set lcdBackgroundColor(int? v) =>
+      _lcdBackgroundColor = v ?? _lcdBackgroundColorDefault;
+
+  int get lcdForegroundColor => _lcdForegroundColor;
+  set lcdForegroundColor(int? v) =>
+      _lcdForegroundColor = v ?? _lcdForegroundColorDefault;
+
   ///
   /// Convert to a data structure that can be serialized as JSON.
   ///
@@ -420,6 +436,12 @@ class Settings {
     if (gKeyColor != _gKeyColorDefault) {
       r['gKeyColor'] = gKeyColor;
     }
+    if (lcdBackgroundColor != _lcdBackgroundColorDefault) {
+      r['lcdBackgroundColor'] = lcdBackgroundColor;
+    }
+    if (lcdForegroundColor != _lcdForegroundColorDefault) {
+      r['lcdForegroundColor'] = lcdForegroundColor;
+    }
     return r;
   }
 
@@ -453,6 +475,8 @@ class Settings {
     fTextColor = json['fTextColor'] as int?;
     gKeyColor = json['gKeyColor'] as int?;
     gTextColor = json['gTextColor'] as int?;
+    lcdBackgroundColor = json['lcdBackgroundColor'] as int?;
+    lcdForegroundColor = json['lcdForegroundColor'] as int?;
   }
 }
 

@@ -98,14 +98,16 @@ class _LcdDisplayState extends State<LcdDisplay> {
             onTapDown: (TapDownDetails details) =>
                 _tapOffset = details.globalPosition,
             onTap: () => unawaited(widget.showMenu(context, _tapOffset)),
-            child: CustomPaint(painter: _DisplayPainter(_contents))));
+            child: CustomPaint(
+                painter: _DisplayPainter(_contents, widget.model.settings))));
   }
 }
 
 class _DisplayPainter extends CustomPainter {
   LcdContents contents;
+  Settings settings;
 
-  _DisplayPainter(this.contents);
+  _DisplayPainter(this.contents, this.settings);
 
   static const double heightTweak = LcdDisplay.heightTweak;
 
@@ -113,6 +115,8 @@ class _DisplayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final lcdForeground = Color(settings.lcdForegroundColor);
+    final lcdBackground = Color(settings.lcdBackgroundColor);
     final lcdFrame = Paint()
       ..color = const Color(0xff908d88)
       ..style = PaintingStyle.fill;
@@ -120,7 +124,7 @@ class _DisplayPainter extends CustomPainter {
       ..color = Color(0xff000000 | (0x908d88 * 0.75).floor())
       ..style = PaintingStyle.fill;
     final lcdBase = Paint()
-      ..color = const Color(0xffacaf98) // that's argb
+      ..color = lcdBackground
       ..style = PaintingStyle.fill;
     // Note that, by default, we are not clipped to our size
     final outlineW = size.width / 20;
@@ -147,7 +151,7 @@ class _DisplayPainter extends CustomPainter {
     final TextStyle aStyle = TextStyle(
         fontSize: size.height / heightTweak / 7,
         fontFamily: 'KeyLabelFont',
-        color: Colors.black);
+        color: lcdForeground);
 
     const double annY = 0.82 * heightTweak;
 
@@ -276,7 +280,7 @@ class _DisplayPainter extends CustomPainter {
     canvas.translate(x, y);
     canvas.scale(width / (Segments.instance.width * 11.5));
     final digits = (contents.euroComma) ? Digit.euroDigits : Digit.digits;
-    Digit.paint(canvas, contents.mainText, digits,
+    Digit.paint(canvas, contents.mainText, digits, lcdForeground,
         rightJustify: contents.rightJustify);
     canvas.restore();
   }
@@ -351,8 +355,10 @@ class Digit {
     ..color = Colors.black
     ..style = PaintingStyle.fill;
 
-  static void paint(Canvas c, String message, Map<int, Digit> digits,
+  static void paint(
+      Canvas c, String message, Map<int, Digit> digits, Color lcdForeground,
       {required bool rightJustify}) {
+    _paint.color = lcdForeground;
     final Iterable<Digit> values = message.codeUnits.map(((ch) {
       final d = digits[ch];
       assert(d != null,
