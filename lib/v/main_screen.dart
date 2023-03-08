@@ -1225,6 +1225,18 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                 leading: SizedBox(
                     width: 70,
                     child: _TextEntry(
+                        initial: settings.msPerInstruction
+                            .toString()
+                            .replaceFirst(RegExp('.0\$'), ''),
+                        onDone: (v) {
+                          settings.msPerInstruction = double.tryParse(v);
+                        })),
+                title: const Text('ms/Program Instruction'))),
+        PopupMenuItem(
+            child: ListTile(
+                leading: SizedBox(
+                    width: 70,
+                    child: _TextEntry(
                         initial: _formatColor(settings.fKeyColor),
                         onDone: (v) {
                           settings.fKeyColor = _toColor(v);
@@ -1286,18 +1298,6 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                           widget.app.setChanged();
                         })),
                 title: const Text('LCD Foreground Color'))),
-        PopupMenuItem(
-            child: ListTile(
-                leading: SizedBox(
-                    width: 70,
-                    child: _TextEntry(
-                        initial: settings.msPerInstruction
-                            .toString()
-                            .replaceFirst(RegExp('.0\$'), ''),
-                        onDone: (v) {
-                          settings.msPerInstruction = double.tryParse(v);
-                        })),
-                title: const Text('ms/Program Instruction'))),
         CheckedPopupMenuItem(
             checked: model.captureDebugLog,
             value: () async {

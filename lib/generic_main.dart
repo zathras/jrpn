@@ -771,6 +771,9 @@ Stream<LicenseEntry> _getLicenses() async* {
 }
 
 class Jrpn extends StatefulWidget {
+  static ScalableImage? _tryzub;
+  static ScalableImage get tryzub => _tryzub!;
+
   /// The state for a calculator instance is held both in the Controller,
   /// and in the Model referenced by the controller.
   final RealController controller;
@@ -839,6 +842,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   Object? _pendingError;
   late final FocusNode keyboard;
   late final ScalableImage icon;
+  late final ScalableImage tryzub;
   late void Function(void) _uiChangeObserver;
 
   JrpnState();
@@ -993,6 +997,9 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     }
     try {
       icon = await ScalableImage.fromSIAsset(rootBundle, 'assets/jupiter.si');
+      Jrpn._tryzub ??= await ScalableImage.fromSIAsset(
+          rootBundle, 'assets/Тризуб.si',
+          currentColor: MainScreen.keyFrameSilver);
       String? link;
       bool done = false;
       try {

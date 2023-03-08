@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021,2022 William Foote
+Copyright (c) 2021-2023 William Foote
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -28,20 +28,8 @@ import 'package:jrpn/v/back_panel.dart';
 ///
 /// The calculator's back panel.
 ///
-class BackPanel15 extends BackPanel {
-  const BackPanel15({Key? key}) : super(key: key);
-
-  @override
-  Widget buildPortrait(BuildContext context, final ScreenPositioner screen) {
-    return GestureDetector(
-        onTap: () => Navigator.pop(context),
-        child: Container(
-            alignment: Alignment.center,
-            color: MainScreen.deadZoneColor,
-            child: AspectRatio(
-                aspectRatio: screen.width / screen.height,
-                child: buildBackPanelPortrait(context, screen))));
-  }
+class BackPanel16 extends BackPanel {
+  BackPanel16({Key? key}) : super(key: key);
 
   @override
   Widget buildBackPanelPortrait(
@@ -50,23 +38,13 @@ class BackPanel15 extends BackPanel {
         Container(color: MainScreen.keyboardBaseColor),
         screen.box(Rect.fromLTWH(screen.width - 0.8, 0.0, 0.8, 0.8),
             const Icon(Icons.arrow_back, color: Colors.white)),
+        screen.box(const Rect.fromLTWH(0.1, 0.1, 5.03 * 0.7, 1.98 * 0.7),
+            Image.asset('assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
         screen.box(
-            const Rect.fromLTWH(1.175, 1.5, 5.65, 6.5), operationTable(5.65)),
+            const Rect.fromLTWH(1.175, 1.8, 5.65, 6.5), operationTable(5.65)),
         screen.box(const Rect.fromLTWH(0.45, 8.5, 4.97, 4), errorTable(4.97)),
         screen.box(const Rect.fromLTWH(6.0, 8.5, 1.57, 3), flagTable(1.57)),
       ]);
-
-  @override
-  Widget buildLandscape(BuildContext context, final ScreenPositioner screen) {
-    return GestureDetector(
-        onTap: () => Navigator.pop(context),
-        child: Container(
-            alignment: Alignment.center,
-            color: MainScreen.deadZoneColor,
-            child: AspectRatio(
-                aspectRatio: screen.width / screen.height,
-                child: buildBackPanelLandscape(context, screen))));
-  }
 
   @override
   Widget buildBackPanelLandscape(
@@ -75,13 +53,15 @@ class BackPanel15 extends BackPanel {
         Container(color: MainScreen.keyboardBaseColor),
         screen.box(const Rect.fromLTWH(11.8, 0.0, 0.8, 0.8),
             const Icon(Icons.arrow_back, color: Colors.white)),
+        screen.box(const Rect.fromLTWH(0.1, 0.1, 5.03 * 0.7, 1.98 * 0.7),
+            Image.asset('assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
         screen.box(const Rect.fromLTWH(0.10, 3, 4.97, 4), errorTable(4.97)),
         screen.box(Rect.fromLTWH(5.225, 1.1, 5.65, screen.height - 1.5),
             operationTable(5.65)),
         screen.box(const Rect.fromLTWH(11.03, 3, 1.57, 3), flagTable(1.57)),
       ]);
 
-  Widget errorTable(double widthCM) => BPTable(widthCM, [
+  Widget errorTable(double widthCM) => table(widthCM, [
         row([cell(space(3)), cell(text('Error', align: bpCenter))]),
         row([
           cell(text('0', align: bpCenter)),
@@ -128,7 +108,7 @@ class BackPanel15 extends BackPanel {
         ]),
       ]);
 
-  Widget operationTable(double widthCM) => BPTable(widthCM, [
+  Widget operationTable(double widthCM) => table(widthCM, [
         row([
           cell(space(0)),
           cell(text('C', align: bpCenter)),
@@ -261,20 +241,20 @@ class BackPanel15 extends BackPanel {
           cell(text('--', align: bpCenter)),
           cellEB(list([
             space(2.0),
-            BPCustomItem(1.9, (Canvas c, BPTablePainter p) {
-              const double ym = BPRow.heightMM / 2;
+            BPCustomItem(1.9, (Canvas c, BPItemPainter p) {
+              final double ym = rowHeightMM / 2;
               var path = Path()
                 ..moveTo(1.9, ym)
                 ..lineTo(0, ym)
-                ..lineTo(0, BPRow.heightMM + 0.1)
-                ..lineTo(2.9, BPRow.heightMM + 0.1)
-                ..lineTo(2.9, BPRow.heightMM - 0.8);
+                ..lineTo(0, rowHeightMM + 0.1)
+                ..lineTo(2.9, rowHeightMM + 0.1)
+                ..lineTo(2.9, rowHeightMM - 0.8);
               c.drawPath(path, p.thinLine);
               path = Path()
                 ..addPolygon([
-                  const Offset(2.9, BPRow.heightMM - 0.7),
-                  const Offset(2.45, BPRow.heightMM - 0.2),
-                  const Offset(3.35, BPRow.heightMM - 0.2),
+                  Offset(2.9, rowHeightMM - 0.7),
+                  Offset(2.45, rowHeightMM - 0.2),
+                  Offset(3.35, rowHeightMM - 0.2),
                 ], true);
               c.drawPath(path, p.fill);
             }),
@@ -303,12 +283,12 @@ class BackPanel15 extends BackPanel {
             carry(),
             space(2.3),
             point(),
-            BPCustomItem(0, (Canvas c, BPTablePainter p) {
-              const double ym = BPRow.heightMM / 2;
+            BPCustomItem(0, (Canvas c, BPItemPainter p) {
+              final double ym = rowHeightMM / 2;
               var path = Path()
                 ..moveTo(0, ym)
-                ..lineTo(0, BPRow.heightMM - 0.45)
-                ..lineTo(25, BPRow.heightMM - 0.45)
+                ..lineTo(0, rowHeightMM - 0.45)
+                ..lineTo(25, rowHeightMM - 0.45)
                 ..lineTo(25, ym)
                 ..lineTo(23.4, ym);
               c.drawPath(path, p.thinLine);
@@ -331,13 +311,13 @@ class BackPanel15 extends BackPanel {
             space(3.9),
             arrowRight(0),
             space(-1.9),
-            BPCustomItem(1.9, (Canvas c, BPTablePainter p) {
-              const double ym = BPRow.heightMM / 2;
+            BPCustomItem(1.9, (Canvas c, BPItemPainter p) {
+              final double ym = rowHeightMM / 2;
               var path = Path()
                 ..moveTo(1.9, ym)
                 ..lineTo(0, ym)
-                ..lineTo(0, BPRow.heightMM - 0.45)
-                ..lineTo(27.3, BPRow.heightMM - 0.45)
+                ..lineTo(0, rowHeightMM - 0.45)
+                ..lineTo(27.3, rowHeightMM - 0.45)
                 ..lineTo(27.3, ym);
               c.drawPath(path, p.thinLine);
             }),
@@ -368,13 +348,13 @@ class BackPanel15 extends BackPanel {
             space(4),
             carry(),
             space(2.3),
-            BPCustomItem(0, (Canvas c, BPTablePainter p) {
-              const double ym = BPRow.heightMM / 2;
+            BPCustomItem(0, (Canvas c, BPItemPainter p) {
+              final double ym = rowHeightMM / 2;
               var path = Path()
                 ..moveTo(-4.3, ym)
                 ..lineTo(-6.4, ym)
-                ..lineTo(-6.4, BPRow.heightMM - 0.45)
-                ..lineTo(25, BPRow.heightMM - 0.45)
+                ..lineTo(-6.4, rowHeightMM - 0.45)
+                ..lineTo(25, rowHeightMM - 0.45)
                 ..lineTo(25, ym)
                 ..lineTo(23.4, ym);
               c.drawPath(path, p.thinLine);
@@ -397,14 +377,14 @@ class BackPanel15 extends BackPanel {
             space(3.9),
             arrowRight(0),
             space(-1.9),
-            BPCustomItem(1.9, (Canvas c, BPTablePainter p) {
-              const double ym = BPRow.heightMM / 2;
+            BPCustomItem(1.9, (Canvas c, BPItemPainter p) {
+              final double ym = rowHeightMM / 2;
               var path = Path()
                 ..moveTo(1.9, ym)
                 ..lineTo(0, ym)
-                ..lineTo(0, BPRow.heightMM - 0.45)
-                ..lineTo(30.9, BPRow.heightMM - 0.45)
-                ..lineTo(30.9, BPRow.heightMM - .9);
+                ..lineTo(0, rowHeightMM - 0.45)
+                ..lineTo(30.9, rowHeightMM - 0.45)
+                ..lineTo(30.9, rowHeightMM - .9);
               c.drawPath(path, p.thinLine);
             }),
             registerBox(
@@ -421,7 +401,7 @@ class BackPanel15 extends BackPanel {
         ]),
       ]);
 
-  Widget flagTable(double widthCM) => BPTable(widthCM, [
+  Widget flagTable(double widthCM) => table(widthCM, [
         row([cell(space(3)), cell(text('SF', align: bpCenter))]),
         row([cell(text('0', align: bpCenter)), cell(space(0))]),
         row([cell(text('1', align: bpCenter)), cell(space(0))]),

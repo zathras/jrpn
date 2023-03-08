@@ -1940,7 +1940,7 @@ class ButtonLayout15 extends ButtonLayout {
       factory,
       '\u2219',
       'y\u0302,r',
-      'x\u22600',
+      's',
       Operations.dot,
       Operations15.yHatR,
       Operations15.stdDeviation,
@@ -2211,7 +2211,7 @@ class Controller15 extends RealController {
       ButtonLayout15(factory, totalHeight, totalButtonHeight);
 
   @override
-  BackPanel15 getBackPanel() => const BackPanel15();
+  BackPanel15 getBackPanel() => BackPanel15();
 
   @override
   LandscapeButtonFactory getLandscapeButtonFactory(

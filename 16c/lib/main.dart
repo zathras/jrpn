@@ -1050,7 +1050,7 @@ class Controller16 extends RealController {
       ButtonLayout16(factory, totalHeight, totalButtonHeight);
 
   @override
-  BackPanel15 getBackPanel() => const BackPanel15();
+  BackPanel16 getBackPanel() => BackPanel16();
 
   @override
   LandscapeButtonFactory getLandscapeButtonFactory(
