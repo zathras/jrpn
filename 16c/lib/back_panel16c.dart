@@ -40,6 +40,7 @@ class BackPanel16 extends BackPanel {
             const Icon(Icons.arrow_back, color: Colors.white)),
         screen.box(const Rect.fromLTWH(0.1, 0.1, 5.03 * 0.7, 1.98 * 0.7),
             Image.asset('assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
+        screen.box(const Rect.fromLTWH(4.15, -.7, .75, 3), tryzub(1)),
         screen.box(
             const Rect.fromLTWH(1.175, 1.8, 5.65, 6.5), operationTable(5.65)),
         screen.box(const Rect.fromLTWH(0.45, 8.5, 4.97, 4), errorTable(4.97)),
@@ -55,7 +56,8 @@ class BackPanel16 extends BackPanel {
             const Icon(Icons.arrow_back, color: Colors.white)),
         screen.box(const Rect.fromLTWH(0.1, 0.1, 5.03 * 0.7, 1.98 * 0.7),
             Image.asset('assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
-        screen.box(const Rect.fromLTWH(0.10, 3, 4.97, 4), errorTable(4.97)),
+        screen.box(const Rect.fromLTWH(1.55, .8, .75, 3), tryzub(1)),
+        screen.box(const Rect.fromLTWH(0.10, 3.4, 4.97, 4), errorTable(4.97)),
         screen.box(Rect.fromLTWH(5.225, 1.1, 5.65, screen.height - 1.5),
             operationTable(5.65)),
         screen.box(const Rect.fromLTWH(11.03, 3, 1.57, 3), flagTable(1.57)),
