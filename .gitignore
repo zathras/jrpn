@@ -1,6 +1,7 @@
 # Miscellaneous
 coverage
 scratch
+*.snap
 *.class
 *.log
 *.pyc

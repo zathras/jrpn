@@ -10,6 +10,12 @@ description: |
 
 grade: devel # must be 'stable' to release into candidate/stable channels
 
+slots:
+    dbus-jrpn15:
+        interface: dbus
+        bus: session
+        name: com.jovial.jrpn15
+
 confinement: strict
 
 build-packages:
@@ -19,6 +25,10 @@ apps:
     jrpn15:
         command: jrpn15
         extensions: [flutter-master]
+        plugs:
+        - home
+        slots:
+        - dbus-jrpn15
 
 parts:
     jrpn15:
