@@ -532,17 +532,21 @@ class _HelpMenu extends StatelessWidget {
                   showDialog(context: context, builder: _showNonWarranty));
             },
             child: const Text('Non-warranty')),
-        ...(_canLaunchWindow
-            ? [
-                PopupMenuItem(
-                    value: () {
-                      Navigator.pop<void>(context);
-                      unawaited(InternalStateWindow.launch(
-                          context, controller.model));
-                    },
-                    child: const Text('See Calculator Internals')),
-              ]
-            : []),
+        PopupMenuItem(
+            value: () {
+              Navigator.pop<void>(context);
+              if (_canLaunchWindow) {
+                unawaited(
+                    InternalStateWindow.launch(context, controller.model));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                        builder: (context) =>
+                            InternalStatePanel(controller.model)));
+              }
+            },
+            child: const Text('See Calculator Internals')),
         PopupMenuItem(
             value: () {
               Navigator.pop<void>(context);
@@ -641,6 +645,38 @@ class __SettingsMenuState extends State<_SettingsMenu> {
               settings.menuEnabled.value = !settings.menuEnabled.value;
             },
             child: const Text('Show Menu Icon')),
+        ...(settings.isMobilePlatform
+            ? [
+                CheckedPopupMenuItem(
+                    checked: settings.systemOverlaysDisabled,
+                    value: () => settings.systemOverlaysDisabled =
+                        !settings.systemOverlaysDisabled,
+                    child: const Text('Disable System UI Overlays')),
+                PopupMenuItem(
+                    child: Row(children: [
+                  DropdownButton(
+                      value: settings.orientation,
+                      onChanged: (OrientationSetting? v) {
+                        if (v != null) {
+                          settings.orientation = v;
+                          Navigator.pop(context, () {});
+                        }
+                      },
+                      items: const [
+                        DropdownMenuItem(
+                            value: OrientationSetting.auto,
+                            child: Text('Automatic')),
+                        DropdownMenuItem(
+                            value: OrientationSetting.portrait,
+                            child: Text('Portrait')),
+                        DropdownMenuItem(
+                            value: OrientationSetting.landscape,
+                            child: Text('Landscape'))
+                      ]),
+                  const Text('    Orientation')
+                ]))
+              ]
+            : []),
         CheckedPopupMenuItem(
             checked: widget.controller.menus15C
                 ? !settings.windowEnabled
@@ -684,38 +720,6 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                   !settings.showAccelerators.value;
             },
             child: const Text('Show Accelerators (toggle with "?")')),
-        ...(settings.isMobilePlatform
-            ? [
-                CheckedPopupMenuItem(
-                    checked: settings.systemOverlaysDisabled,
-                    value: () => settings.systemOverlaysDisabled =
-                        !settings.systemOverlaysDisabled,
-                    child: const Text('Disable System UI Overlays')),
-                PopupMenuItem(
-                    child: Row(children: [
-                  DropdownButton(
-                      value: settings.orientation,
-                      onChanged: (OrientationSetting? v) {
-                        if (v != null) {
-                          settings.orientation = v;
-                          Navigator.pop(context, () {});
-                        }
-                      },
-                      items: const [
-                        DropdownMenuItem(
-                            value: OrientationSetting.auto,
-                            child: Text('Automatic')),
-                        DropdownMenuItem(
-                            value: OrientationSetting.portrait,
-                            child: Text('Portrait')),
-                        DropdownMenuItem(
-                            value: OrientationSetting.landscape,
-                            child: Text('Landscape'))
-                      ]),
-                  const Text('    Orientation')
-                ]))
-              ]
-            : []),
         PopupMenuItem(
             child: _SystemSettingsMenu('System Settings', widget.app)),
       ],
@@ -733,8 +737,11 @@ class __SettingsMenuState extends State<_SettingsMenu> {
 class _TextEntry extends StatefulWidget {
   final void Function(String) onDone;
   final String initial;
+  final bool text;
 
-  const _TextEntry({required this.initial, required this.onDone}) : super();
+  const _TextEntry(
+      {required this.initial, required this.onDone, required this.text})
+      : super();
 
   @override
   _TextEntryState createState() => _TextEntryState();
@@ -761,7 +768,9 @@ class _TextEntryState extends State<_TextEntry> {
   Widget build(BuildContext context) => TextField(
         textAlign: TextAlign.right,
         controller: controller,
-        keyboardType: TextInputType.number,
+        onTap: () => controller.selection = TextSelection(
+            baseOffset: 0, extentOffset: controller.value.text.length),
+        keyboardType: widget.text ? TextInputType.text : TextInputType.number,
         // We could do an onSubmitted: here, if the
         // virtual keyboard is covering the entered value, the user never
         // gets to see the entry.  On desktop (April 2021, before desktop
@@ -1225,6 +1234,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                 leading: SizedBox(
                     width: 70,
                     child: _TextEntry(
+                        text: false,
                         initial: settings.msPerInstruction
                             .toString()
                             .replaceFirst(RegExp('.0\$'), ''),
@@ -1237,6 +1247,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                 leading: SizedBox(
                     width: 70,
                     child: _TextEntry(
+                        text: true,
                         initial: _formatColor(settings.fKeyColor),
                         onDone: (v) {
                           settings.fKeyColor = _toColor(v);
@@ -1248,6 +1259,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                 leading: SizedBox(
                     width: 70,
                     child: _TextEntry(
+                        text: true,
                         initial: _formatColor(settings.fTextColor),
                         onDone: (v) {
                           settings.fTextColor = _toColor(v);
@@ -1259,6 +1271,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                 leading: SizedBox(
                     width: 70,
                     child: _TextEntry(
+                        text: true,
                         initial: _formatColor(settings.gKeyColor),
                         onDone: (v) {
                           settings.gKeyColor = _toColor(v);
@@ -1270,6 +1283,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                 leading: SizedBox(
                     width: 70,
                     child: _TextEntry(
+                        text: true,
                         initial: _formatColor(settings.gTextColor),
                         onDone: (v) {
                           settings.gTextColor = _toColor(v);
@@ -1281,6 +1295,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                 leading: SizedBox(
                     width: 70,
                     child: _TextEntry(
+                        text: true,
                         initial: _formatColor(settings.lcdBackgroundColor),
                         onDone: (v) {
                           settings.lcdBackgroundColor = _toColor(v);
@@ -1292,6 +1307,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                 leading: SizedBox(
                     width: 70,
                     child: _TextEntry(
+                        text: true,
                         initial: _formatColor(settings.lcdForegroundColor),
                         onDone: (v) {
                           settings.lcdForegroundColor = _toColor(v);

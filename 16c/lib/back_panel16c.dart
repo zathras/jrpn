@@ -52,12 +52,12 @@ class BackPanel16 extends BackPanel {
           BuildContext context, final ScreenPositioner screen) =>
       Stack(fit: StackFit.expand, children: [
         Container(color: MainScreen.keyboardBaseColor),
-        screen.box(const Rect.fromLTWH(11.8, 0.0, 0.8, 0.8),
+        screen.box(const Rect.fromLTWH(11.8, 0.4, 0.8, 0.8),
             const Icon(Icons.arrow_back, color: Colors.white)),
-        screen.box(const Rect.fromLTWH(0.1, 0.1, 5.03 * 0.7, 1.98 * 0.7),
+        screen.box(const Rect.fromLTWH(0.1, 0.5, 5.03 * 0.7, 1.98 * 0.7),
             Image.asset('assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
-        screen.box(const Rect.fromLTWH(1.55, .8, .75, 3), tryzub(1)),
-        screen.box(const Rect.fromLTWH(0.10, 3.4, 4.97, 4), errorTable(4.97)),
+        screen.box(const Rect.fromLTWH(1.55, 1.2, .75, 3), tryzub(1)),
+        screen.box(const Rect.fromLTWH(0.10, 3.8, 4.97, 4), errorTable(4.97)),
         screen.box(Rect.fromLTWH(5.225, 1.1, 5.65, screen.height - 1.5),
             operationTable(5.65)),
         screen.box(const Rect.fromLTWH(11.03, 3, 1.57, 3), flagTable(1.57)),

@@ -8,8 +8,11 @@ import 'package:flutter/services.dart';
 
 import '../m/model.dart';
 
+/**
+ * A separate (desktop) window showing the internal state
+ */
 class InternalStateWindow extends StatelessWidget {
-  final state = Observable<String>('');
+  final state = Observable<ModelSnapshot>(ModelSnapshot(null, ''));
 
   InternalStateWindow({super.key});
 
@@ -21,19 +24,22 @@ class InternalStateWindow extends StatelessWidget {
     await window.show();
 
     late final void Function(void) observerRef;
-
+    bool hasLaunched = false;
     void observer(void _) async {
       try {
         await DesktopMultiWindow.invokeMethod(
             window.windowId, 'frob', model.internalSnapshot.value.text);
+        hasLaunched = true;
       } catch (ex) {
-        model.internalSnapshot.removeObserver(observerRef);
-        model.optimizeInternalSnapshot();
+        if (hasLaunched) {
+          model.internalSnapshot.removeObserver(observerRef);
+          model.optimizeInternalSnapshot();
+          hasLaunched = false;
+        }
       }
     }
 
     observerRef = observer;
-
     model.internalSnapshot.addObserver(observerRef);
   }
 
@@ -54,7 +60,7 @@ class InternalStateWindow extends StatelessWidget {
 
   Future<void> _handler(MethodCall call, int fromWindowID) async {
     // Could check call.method, but we only get the update call
-    state.value = call.arguments as String;
+    state.value = ModelSnapshot(null, call.arguments as String);
   }
 
   @override
@@ -66,29 +72,55 @@ class InternalStateWindow extends StatelessWidget {
   }
 }
 
-class _TextViewer extends StatefulWidget {
-  final Observable<String> text;
+/**
+ * A panel showing the internal state, for platforms where a separate window
+ * can't be launched.
+ */
+class InternalStatePanel extends StatelessWidget {
+  final Model model;
 
-  const _TextViewer(this.text);
+  InternalStatePanel(this.model, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: Stack(children: [
+          Align(
+              alignment: FractionalOffset(.95, .07),
+              child: const Icon(Icons.arrow_back, color: Colors.white)),
+          _TextViewer(model.internalSnapshot, directModel: model)
+        ]));
+  }
+}
+
+class _TextViewer extends StatefulWidget {
+  final Observable<ModelSnapshot> text;
+  final Model? directModel;
+
+  const _TextViewer(this.text, {this.directModel});
 
   @override
   State<_TextViewer> createState() => _TextViewerState();
 }
 
 class _TextViewerState extends State<_TextViewer> {
+  late final _newTextRef = _newText;
+
   @override
   void initState() {
     super.initState();
-    widget.text.addObserver(_newText);
+    widget.text.addObserver(_newTextRef);
   }
 
   @override
   void dispose() {
     super.dispose();
-    widget.text.removeObserver(_newText);
+    widget.text.removeObserver(_newTextRef);
+    widget.directModel?.optimizeInternalSnapshot();
   }
 
-  void _newText(String text) {
+  void _newText(ModelSnapshot text) {
     setState(() {});
   }
 
@@ -102,7 +134,7 @@ class _TextViewerState extends State<_TextViewer> {
             maxScale: 10,
             boundaryMargin: const EdgeInsets.all(double.infinity),
             child: Text(
-              widget.text.value,
+              widget.text.value.text,
               softWrap: false,
               overflow: TextOverflow.visible,
               style: const TextStyle(

@@ -241,7 +241,7 @@ class Settings {
     _orientation = OrientationSetting.auto;
     _setPlatformOrientation();
     _systemOverlaysDisabled = false;
-    _setPlatformOverlays();
+    setPlatformOverlays();
     gKeyColor = null;
     gTextColor = null;
     fKeyColor = null;
@@ -330,17 +330,15 @@ class Settings {
       return;
     }
     _systemOverlaysDisabled = v;
-    _setPlatformOverlays();
+    setPlatformOverlays();
     _model.needsSave = true;
   }
 
-  void _setPlatformOverlays() {
+  void setPlatformOverlays() {
     if (systemOverlaysDisabled) {
       unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive));
     } else if (!kIsWeb && Platform.isIOS) {
-      // Get rid of ugly black bar along bottom.  It doesn't seem to do
-      // anything -- maybe to be functional it has to be configured
-      // somehow?
+      // Get rid of ugly black bar along bottom.
       unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
           overlays: [SystemUiOverlay.top]));
     } else {
@@ -462,7 +460,7 @@ class Settings {
     _traceProgramToStdout = (json['traceProgramToStdout'] as bool?) ?? false;
     _systemOverlaysDisabled =
         (json['systemOverlaysDisabled'] as bool?) ?? false;
-    _setPlatformOverlays();
+    setPlatformOverlays();
     int? ov = json['orientation'] as int?;
     if (ov == null || ov < 0 || ov > OrientationSetting.values.length) {
       _orientation = OrientationSetting.auto;

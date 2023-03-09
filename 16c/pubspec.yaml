@@ -1,9 +1,9 @@
 name: jrpn16c
-description: Jovial RPN, a calculator simulator inspired by the HP-16C "Computer Scientist" Calculator
+description: Jovial RPN 16C Beta, a calculator simulator inspired by the HP-16C "Computer Scientist" Calculator
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.0.2+7
+version: 2.1.0+8    # See also lib/generic_main.dart
 
 environment:
   sdk: '>=2.17.0 <3.0.0'
@@ -16,30 +16,35 @@ dependencies:
   meta: ^1.7.0
   shared_preferences: ^2.0.5
   share_plus: ^6.3.0
+  desktop_multi_window: ^0.2.0
   uni_links: ^0.5.1
   uni_links_web: ^0.1.0
-  desktop_multi_window: ^0.2.0
   archive: ^3.1.2
   url_launcher: ^6.0.3
   vector_math: ^2.1.0
   jovial_svg: ^1.0.2
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.9.0
-  flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.12.0
+  flutter_lints: ^2.0.1
   flutter_test:
     sdk: flutter
   test: ^1.16.5
-  msix: ^2.0.0
+  msix: ^3.7.0
 
 flutter_icons:
   image_path: assets_16/icon256.png
   image_path_ios:  assets_16/icon_ios.png
-  android: true
-  macos: true
-  linux: true
-  ios: true
-  windows: true
+  android:
+    generate: true
+  macos:
+    generate: true
+  linux:
+    generate: true
+  windows:
+    generate: true
+  ios:
+    generate: true
   # If changed, "flutter pub run flutter_launcher_icons:main"
   # See https://pub.dev/packages/flutter_launcher_icons
 

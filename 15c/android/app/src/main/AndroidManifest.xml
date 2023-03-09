@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.jrpn15">
+    package="com.jovial.jrpn15">
    <application
-        android:label="jrpn15"
+        android:label="JRPN 15C"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

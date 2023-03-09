@@ -67,11 +67,11 @@ class BackPanel15 extends BackPanel {
           BuildContext context, final ScreenPositioner screen) =>
       Stack(fit: StackFit.expand, children: [
         Container(color: MainScreen.keyboardBaseColor),
-        screen.box(const Rect.fromLTWH(11.8, 0.0, 0.8, 0.8),
+        screen.box(const Rect.fromLTWH(11.8, 0.4, 0.8, 0.8),
             const Icon(Icons.arrow_back, color: Colors.white)),
-        screen.box(const Rect.fromLTWH(0.1, 0.1, 5.03 * 0.57, 1.98 * 0.57),
+        screen.box(const Rect.fromLTWH(0.1, 0.5, 5.03 * 0.57, 1.98 * 0.57),
             Image.asset('assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
-        screen.box(const Rect.fromLTWH(1.05, .6, .75, 3), tryzub(1)),
+        screen.box(const Rect.fromLTWH(1.05, 1.0, .75, 3), tryzub(1)),
         screen.box(const Rect.fromLTWH(0.2, 3.96, 1.6, 2.2), sigmaTable(1.6)),
         screen.box(const Rect.fromLTWH(1.43, 3.76, 5, 3.4), drawingTable(5)),
         ...jumpTableList(screen, 3.49, 0.7),
@@ -525,8 +525,6 @@ class _JumpTablePainter extends BPItemPainter {
   void paint(Canvas canvas, Size size) {
     // Set the scale so one "pixel" is 1mm at the real caluclator's size
     final thickW = panel.thickLineWidth;
-    final thinW = panel.thinLineWidth;
-    final heightMM = panel.rowHeightMM;
     canvas.scale(size.width / table.widthMM);
 
     RRect frame = RRect.fromLTRBR(
@@ -693,6 +691,11 @@ class _TableWithDrawingPainter extends BPTablePainter {
     canvas.drawArc(const Rect.fromLTRB(-14, -14, 14, 14), 0, -dart.atan(theta),
         false, thinLine);
     thetaT.paint(canvas, const Offset(11.4, -4.7));
+    canvas.save();
+    canvas.translate(7.8, -8.4);
+    canvas.rotate(-theta);
+    rT.paint(canvas, const Offset(0, .2));
+    canvas.restore();
     canvas.save();
     canvas.translate(14 * dart.cos(.86 * theta), -14 * dart.sin(.86 * theta));
     canvas.rotate(1.3 * theta + 2 * dart.pi / 2);
