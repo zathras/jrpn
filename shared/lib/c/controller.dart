@@ -42,8 +42,8 @@ library controller;
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:jrpn/v/buttons.dart';
-import 'package:jrpn/v/main_screen.dart';
+import '../v/buttons.dart';
+import '../v/main_screen.dart';
 
 import '../m/model.dart';
 import 'operations.dart';

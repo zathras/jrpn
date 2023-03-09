@@ -149,7 +149,8 @@ class _TextViewerState extends State<_TextViewer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.fromLTRB(10, 25, 10, 10),
+        padding: const EdgeInsets.fromLTRB(10, 25, 10, 10),
+        color: Colors.black,
         child: InteractiveViewer(
             constrained: false,
             minScale: 0.25,
@@ -164,6 +165,7 @@ class _TextViewerState extends State<_TextViewer> {
                 fontFamily: 'Courier',
                 fontFamilyFallback: ['LiberationMono'],
                 color: Colors.amberAccent,
+                backgroundColor: Colors.black,
                 decoration: TextDecoration.none,
               ),
             )));

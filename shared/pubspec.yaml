@@ -32,9 +32,9 @@ dev_dependencies:
   test: ^1.16.5
   msix: ^3.6.2
   jrpn15c:
-    path: '15c'
+    path: 'jrpn15'
   jrpn16c:
-    path: '16c'
+    path: 'jrpn16'
 
 flutter:
   uses-material-design: true

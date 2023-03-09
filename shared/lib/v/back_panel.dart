@@ -27,7 +27,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:jovial_svg/jovial_svg.dart';
-import 'package:jrpn/v/main_screen.dart';
+import 'main_screen.dart';
 
 import '../generic_main.dart';
 

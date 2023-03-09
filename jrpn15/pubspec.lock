@@ -226,10 +226,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_launcher_icons
-      sha256: ce0e501cfc258907842238e4ca605e74b7fd1cdf04b3b43e86c43f3e40a1592c
+      sha256: "02dcaf49d405f652b7160e882bacfc02cb497041bb2eab2a49b1c393cf9aac12"
       url: "https://pub.dev"
     source: hosted
-    version: "0.11.0"
+    version: "0.12.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -300,10 +300,10 @@ packages:
     dependency: transitive
     description:
       name: image
-      sha256: "8e9d133755c3e84c73288363e6343157c383a0c6c56fc51afcc5d4d7180306d6"
+      sha256: "483a389d6ccb292b570c31b3a193779b1b0178e7eb571986d9a49904b6861227"
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.0"
+    version: "4.0.15"
   io:
     dependency: transitive
     description:
@@ -313,7 +313,7 @@ packages:
     source: hosted
     version: "1.0.4"
   jovial_misc:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: jovial_misc
       sha256: f6e64f789ee311025bb367be9c9afe9759f76dd8209070b7f38e735b5f529eb1
@@ -328,20 +328,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.12"
-  jrpn15c:
-    dependency: "direct dev"
+  jrpn:
+    dependency: "direct main"
     description:
-      path: "15c"
+      path: "../shared"
       relative: true
     source: path
-    version: "2.1.0+8"
-  jrpn16c:
-    dependency: "direct dev"
-    description:
-      path: "16c"
-      relative: true
-    source: path
-    version: "2.1.0+8"
+    version: "2.0.1+6"
   js:
     dependency: transitive
     description:
@@ -410,10 +403,10 @@ packages:
     dependency: "direct dev"
     description:
       name: msix
-      sha256: e3de4d9f52543ad6e4b0f534991e1303cbd379d24be28dd241ac60bd9439a201
+      sha256: "765e6b4d9f571956014d85062614468993d9e4b998bb57f2b727845b6d99c6f1"
       url: "https://pub.dev"
     source: hosted
-    version: "3.7.0"
+    version: "3.8.2"
   node_preamble:
     dependency: transitive
     description:

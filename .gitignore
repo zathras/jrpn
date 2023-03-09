@@ -33,8 +33,8 @@ scratch
 .pub-cache/
 .pub/
 /build/
-/16c/build/
-/15c/build/
+/jrpn16/build/
+/jrpn15/build/
 
 # Web related
 lib/generated_plugin_registrant.dart
