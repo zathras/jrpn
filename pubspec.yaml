@@ -40,3 +40,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/jupiter.si
+    - assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg
+    - assets/Тризуб.si
