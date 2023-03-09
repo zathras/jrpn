@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2022 William Foote
+Copyright (c) 2022-2023 William Foote
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software

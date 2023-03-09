@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021,2022 William Foote
+Copyright (c) 2021-2023 William Foote
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -1118,7 +1118,7 @@ class OnOffKeyPressed extends DoNothing {
             // Current version on Linux dumps core on pop.
             // Current version on Windows keeps window there.
             exit(0);
-          } else if (!kIsWeb) {
+          } else {
             await SystemNavigator.pop();
             // That kills us on some platforms, but it doesn't make sense on
             // web.  It's a NOP on iOS, because apps terminating themselves
@@ -1126,9 +1126,9 @@ class OnOffKeyPressed extends DoNothing {
             // make a bit of sense if you're turning a calculator off, but
             // whatever.)  So, on platforms were we can't go away, we blank
             // the LCD display and wait for the ON button to be pressed.
+            model.display.show(LcdContents.blank());
+            changeState(CalculatorOff(controller));
           }
-          model.display.show(LcdContents.blank());
-          changeState(CalculatorOff(controller));
         }
       }();
       unawaited(res);

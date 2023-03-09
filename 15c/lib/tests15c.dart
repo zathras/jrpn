@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021,2022 William Foote
+Copyright (c) 2021-2023 William Foote
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -37,6 +37,9 @@ class SelfTests15 extends SelfTests {
 
   @override
   Controller newController() => Controller15(createModel15());
+
+  @override
+  int get pauseEvery => 4;
 
   Future<void> _testOneArgComplex(
       Model15 m, NormalOperation op, Complex arg, Complex result,

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021,2022 William Foote
+Copyright (c) 2021-2023 William Foote
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -1315,6 +1315,9 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                         })),
                 title: const Text('LCD Foreground Color'))),
         CheckedPopupMenuItem(
+            padding: EdgeInsets.only(
+                // Space for the virtual keyboard on Android:
+                bottom: model.settings.isMobilePlatform ? 150 : 0),
             checked: model.captureDebugLog,
             value: () async {
               model.captureDebugLog = !model.captureDebugLog;

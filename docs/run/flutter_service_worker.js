@@ -3,32 +3,38 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "version.json": "c699318193b4c9e1762b18c2189909c0",
-"index.html": "c8c0da845ce1248438366fca7531c83f",
-"/": "c8c0da845ce1248438366fca7531c83f",
-"main.dart.js": "804fec72755cfd6fdbb6f31d5d3c625e",
+  "version.json": "8776a8984b83168d0fb698b157b46fb6",
+"index.html": "fed7bc9020d5efcf09427d35d71f94a9",
+"/": "fed7bc9020d5efcf09427d35d71f94a9",
+"main.dart.js": "59791da07dea5c19c4edcbef91f9c67e",
+"flutter.js": "a85fcf6324d3c4d3ae3be1ae4931e9c5",
 "favicon.png": "62caf7572bf369bab8b162642ac2c4b1",
 "icons/Icon-192.png": "c2f8dfd1fd44e78beda6ff2636329ca2",
 "icons/Icon-512.png": "227a751d4448ced2d6d280bb4d89962f",
-"manifest.json": "e730071a654bcb7b1877cc4ff7ae2299",
-"assets/AssetManifest.json": "5258ec07c338cb6bbf21c4da6a43b533",
-"assets/NOTICES": "376fda6d40c18a9843f9f294822910e4",
+"manifest.json": "78318780088dd7a9f491342c324eeb86",
+"assets/AssetManifest.json": "e7777f5c8da9ec123fbc708ae28687d1",
+"assets/NOTICES": "d1a2c8d5f57b87ce7ac539a2202e843c",
 "assets/FontManifest.json": "8e25f0a17fea26fcd4edf7fd974a6e8b",
+"assets/packages/jrpn/assets/jupiter.si": "490dc46ebb19c3155c30f68a4283771a",
 "assets/fonts/WorkSans-Regular.ttf": "994cac96cbeaeb5b5a91d8a01ebc6788",
-"assets/fonts/deja_vu_sans.ttf": "477b826efab0c50483d7c9449c992855",
+"assets/fonts/deja_vu_sans.ttf": "0ad020e98f42b98ec4e7f265a03735ef",
 "assets/fonts/WorkSans-Medium.ttf": "94cebfaf787544370e9b8d3650f7b2f1",
-"assets/fonts/deja_vu_sans_bold.ttf": "20ff0a26d40cf5ca6304da7eb33739e3",
-"assets/fonts/MaterialIcons-Regular.otf": "4e6447691c9509f7acdbf8a931a85ca1",
-"assets/assets/jupiter.si": "49e82013c76ef1cb161d835091125b5c"
+"assets/fonts/deja_vu_sans_bold.ttf": "7f8e69bd2ba12f74e4ea74c50593fc26",
+"assets/fonts/MaterialIcons-Regular.otf": "e7069dfd19b331be16bed984668fe080",
+"assets/assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg": "b03df863b8332049196525ed8dd74382",
+"assets/assets/%25D0%25A2%25D1%2580%25D0%25B8%25D0%25B7%25D1%2583%25D0%25B1.si": "43804a94b36561c951e10a0035bf7659",
+"assets/assets/jupiter.si": "490dc46ebb19c3155c30f68a4283771a",
+"canvaskit/canvaskit.js": "97937cb4c2c2073c968525a3e08c86a3",
+"canvaskit/profiling/canvaskit.js": "c21852696bc1cc82e8894d851c01921a",
+"canvaskit/profiling/canvaskit.wasm": "371bc4e204443b0d5e774d64a046eb99",
+"canvaskit/canvaskit.wasm": "3de12d898ec208a5f31362cc00f09b9e"
 };
 
 // The application shell files that are downloaded before a service worker can
 // start.
 const CORE = [
-  "/",
-"main.dart.js",
+  "main.dart.js",
 "index.html",
-"assets/NOTICES",
 "assets/AssetManifest.json",
 "assets/FontManifest.json"];
 // During install, the TEMP cache is populated with the application shell files.
@@ -127,9 +133,11 @@ self.addEventListener("fetch", (event) => {
     .then((cache) =>  {
       return cache.match(event.request).then((response) => {
         // Either respond with the cached resource, or perform a fetch and
-        // lazily populate the cache.
+        // lazily populate the cache only if the resource was successfully fetched.
         return response || fetch(event.request).then((response) => {
-          cache.put(event.request, response.clone());
+          if (response && Boolean(response.ok)) {
+            cache.put(event.request, response.clone());
+          }
           return response;
         });
       })

@@ -1,3 +1,23 @@
+/*
+Copyright (c) 2021-2023 William Foote
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 3 of the License, or (at your option) any later
+version.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, see https://www.gnu.org/licenses/ .
+*/
+
 ///
 /// The back panel of the calculator.
 ///
@@ -123,8 +143,10 @@ abstract class BackPanel extends OrientedScreen {
       _RegisterBoxItem(width, content, this);
   BPItem point() => _PointItem(this);
   BPItem sqrtText(String text,
-          {bool box = false, Offset offset = Offset.zero}) =>
-      _SqrtTextItem(text, this, box: box, offset: offset);
+          {bool box = false,
+          Offset boxOffset = Offset.zero,
+          Offset offset = Offset.zero}) =>
+      _SqrtTextItem(text, this, box: box, boxOffset: boxOffset, offset: offset);
   BPItem carry() =>
       registerBox(2.1, text('c', scale: 0.72, offset: const Offset(.62, -.08)));
   Widget tryzub(double width) => ScalableImageWidget(si: Jrpn.tryzub);
@@ -536,14 +558,17 @@ class _TextItem extends BPItem {
 
 class _SqrtTextItem extends _TextItem {
   _SqrtTextItem._p(TextPainter painter, BackPanel panel, bool box, double scale,
-      double width, Offset offset)
-      : super._p(painter, panel, box, scale, width, offset, Offset.zero);
+      double width, Offset offset, Offset boxOffset)
+      : super._p(painter, panel, box, scale, width, offset, boxOffset);
 
   factory _SqrtTextItem(String text, BackPanel panel,
-      {bool box = false, Offset offset = Offset.zero}) {
-    final init = _TextItem(text, panel, scale: 0.75, box: box, offset: offset);
-    return _SqrtTextItem._p(
-        init.painter, panel, init.box, init.scale, init.width, init.offset);
+      {bool box = false,
+      Offset boxOffset = Offset.zero,
+      Offset offset = Offset.zero}) {
+    final init = _TextItem(text, panel,
+        scale: 0.75, box: box, boxOffset: boxOffset, offset: offset);
+    return _SqrtTextItem._p(init.painter, panel, init.box, init.scale,
+        init.width, init.offset, init.boxOffset);
   }
 
   @override

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021,2022 William Foote
+Copyright (c) 2021-2023 William Foote
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -44,7 +44,7 @@ SOFTWARE.
 ''';
 
 const gnuLicense = '''
-Copyright (c) 2021,2022 William Foote
+Copyright (c) 2021-2023 William Foote
 
 Program includes portions derived from other sources, as specified
 in the relevant source files.  Source is available in the repository

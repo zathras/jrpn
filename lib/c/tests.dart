@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021,2022 William Foote
+Copyright (c) 2021-2023 William Foote
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -43,6 +43,7 @@ abstract class SelfTests {
   int _expectsSeen = 0;
   DateTime _lastPause = DateTime.now();
   static const _minSleep = Duration(milliseconds: 4); // min JS resolution
+  int get pauseEvery => 500;
 
   SelfTests({this.inCalculator = true});
 
@@ -54,7 +55,7 @@ abstract class SelfTests {
   @protected
   Future<void> expect(Object? val, Object? expected, {String? reason}) async {
     if (inCalculator) {
-      if (_expectsSeen++ % 500 == 0) {
+      if (_expectsSeen++ % pauseEvery == 0) {
         DateTime now = DateTime.now();
         Duration sleep =
             (const Duration(milliseconds: 16)) - now.difference(_lastPause);

@@ -119,9 +119,15 @@ class BackPanel16 extends BackPanel {
         ]),
         row([
           cell(center(list([
-            text('+', offset: const Offset(0.3, 0), box: true),
+            text('+',
+                offset: const Offset(0.3, -.1),
+                boxOffset: const Offset(-.2, 0),
+                box: true),
             space(1.2),
-            text('\u2212', offset: const Offset(0.3, 0), box: true)
+            text('\u2212',
+                offset: const Offset(0.3, 0),
+                boxOffset: const Offset(-.2, 0),
+                box: true)
           ]))),
           cell(text('x', align: bpCenter)),
           cell(text('x', align: bpCenter)),
@@ -129,14 +135,18 @@ class BackPanel16 extends BackPanel {
         ]),
         row([
           cell(center(text('\u00D7',
-              box: true, offset: const Offset(0.3, 0)))), // multiply
+              box: true,
+              boxOffset: const Offset(-0.2, 0),
+              offset: const Offset(0.3, 0)))), // multiply
           cell(text('--', align: bpCenter)),
           cell(text('x', align: bpCenter)),
           cell(space(0))
         ]),
         row([
           cell(center(text('\u00F7',
-              box: true, offset: const Offset(0.3, 0)))), //  divide
+              boxOffset: const Offset(-.2, 0),
+              box: true,
+              offset: const Offset(0.3, -.1)))), //  divide
           cell(text('x', align: bpCenter)),
           cell(text('x', align: bpCenter)),
           cell(list(
@@ -144,7 +154,9 @@ class BackPanel16 extends BackPanel {
         ]),
         row([
           cell(center(sqrtText('\u221Ax',
-              box: true, offset: const Offset(0.1, 0.3)))), // sqrt(x)
+              boxOffset: const Offset(-.25, .08),
+              box: true,
+              offset: const Offset(0.1, 0.3)))), // sqrt(x)
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
           cell(list(
@@ -154,7 +166,10 @@ class BackPanel16 extends BackPanel {
           cell(center(list([
             space(0.7),
             text('\u200aCHS',
-                offset: const Offset(0.2, 0), box: true, scale: 0.75),
+                offset: const Offset(0.2, 0),
+                boxOffset: const Offset(-.1, 0),
+                box: true,
+                scale: 0.75),
             text(','),
             text(' ABS', offset: const Offset(-0.1, 0), box: true, scale: 0.75),
             space(0.7)
@@ -165,6 +180,7 @@ class BackPanel16 extends BackPanel {
         ]),
         row([
           cell(center(text('DBL\u00D7',
+              boxOffset: const Offset(0, .07),
               offset: const Offset(0.5, 0.1),
               box: true,
               scale: 0.9))), // multiply
@@ -174,6 +190,7 @@ class BackPanel16 extends BackPanel {
         ]),
         row([
           cell(center(text('DBL\u00F7',
+              boxOffset: const Offset(0, 0.07),
               offset: const Offset(0.5, 0.1),
               box: true,
               scale: 0.91))), // multiply
@@ -193,7 +210,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('\u200aSL',
               offset: const Offset(0.0, 0.0),
               box: true,
-              boxOffset: const Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -212,7 +229,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('SR',
               offset: const Offset(0.20, 0.0),
               box: true,
-              boxOffset: const Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -237,7 +254,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('\u200aASR',
               offset: const Offset(-0.07, 0.0),
               box: true,
-              boxOffset: const Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -276,7 +293,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('\u200aRL',
               offset: const Offset(-0.10, -0.04),
               box: true,
-              boxOffset: const Offset(0, -0.15),
+              boxOffset: const Offset(.07, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -305,7 +322,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('RR',
               offset: const Offset(0.10, -0.04),
               box: true,
-              boxOffset: const Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -342,7 +359,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('\u200aRLC',
               offset: const Offset(-0.10, -0.04),
               box: true,
-              boxOffset: const Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -371,7 +388,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('RRC',
               offset: const Offset(0.10, -0.04),
               box: true,
-              boxOffset: const Offset(0, -0.15),
+              boxOffset: const Offset(0, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),

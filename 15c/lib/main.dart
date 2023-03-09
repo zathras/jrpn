@@ -1951,7 +1951,7 @@ class ButtonLayout15 extends ButtonLayout {
       factory,
       '\u03a3+',
       'L.R.',
-      '\u03a3-',
+      '\u03a3\u2212',
       Operations15.sigmaPlus,
       Operations15.linearRegression,
       Operations15.sigmaMinus,
