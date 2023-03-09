@@ -92,10 +92,10 @@ class InternalStateWindow extends StatelessWidget {
   }
 }
 
-/**
- * A panel showing the internal state, for platforms where a separate window
- * can't be launched.
- */
+///
+/// A panel showing the internal state, for platforms where a separate window
+/// can't be launched.
+///
 class InternalStatePanel extends StatelessWidget {
   final Model model;
 
@@ -109,7 +109,9 @@ class InternalStatePanel extends StatelessWidget {
           Align(
               alignment: FractionalOffset(.95, .07),
               child: const Icon(Icons.arrow_back, color: Colors.white)),
-          _TextViewer(model.internalSnapshot, directModel: model)
+          Container(
+              color: Colors.black,
+              child: _TextViewer(model.internalSnapshot, directModel: model))
         ]));
   }
 }
@@ -160,6 +162,7 @@ class _TextViewerState extends State<_TextViewer> {
               style: const TextStyle(
                 fontSize: 16.0,
                 fontFamily: 'Courier',
+                fontFamilyFallback: ['LiberationMono'],
                 color: Colors.amberAccent,
                 decoration: TextDecoration.none,
               ),

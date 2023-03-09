@@ -71,3 +71,9 @@ flutter:
         - asset: fonts/WorkSans-Medium.ttf
           style: normal
           weight: 500
+    - family: LiberationMono
+      fonts:
+        - asset: fonts/LiberationMono.ttf
+          style: normal
+          weight: 400
+            # Really, flutter web?  No built-in Courier?

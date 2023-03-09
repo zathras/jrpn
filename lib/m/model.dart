@@ -1175,9 +1175,11 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     this.needsSave = needsSave;
   }
 
+  String get _persistentStorageKey =>
+      modelName == '16C' ? 'init' : 'init${modelName}';
   Future<void> readFromPersistentStorage() async {
     final storage = await SharedPreferences.getInstance();
-    String? js = storage.getString('init');
+    String? js = storage.getString(_persistentStorageKey);
     if (js != null) {
       try {
         decodeJson(json.decode(js) as Map<String, dynamic>, needsSave: false);
@@ -1199,7 +1201,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     needsSave = false;
     final storage = await SharedPreferences.getInstance();
     String js = json.encode(toJson());
-    await storage.setString('init', js);
+    await storage.setString(_persistentStorageKey, js);
   }
 
   ///
