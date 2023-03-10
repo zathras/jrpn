@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
-set(BINARY_NAME "jrpn")
+set(BINARY_NAME "jrpn16")
 set(APPLICATION_ID "com.jovial.jrpn")
 
 cmake_policy(SET CMP0063 NEW)

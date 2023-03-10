@@ -14,7 +14,7 @@ slots:
     dbus-jrpn16:
         interface: dbus
         bus: session
-        name: com.jovial.jrpn16
+        name: com.jovial.jrpn
 
 confinement: strict
 
