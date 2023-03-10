@@ -2,6 +2,7 @@
 coverage
 scratch
 *.snap
+*.gradle
 *.class
 *.log
 *.pyc

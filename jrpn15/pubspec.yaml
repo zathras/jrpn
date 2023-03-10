@@ -16,7 +16,7 @@ dependencies:
       url: https://github.com/zathras/jrpn.git
       path: shared
       ref: main
-#    path: ../shared
+    # path: ../shared/
   meta: ^1.7.0
   shared_preferences: ^2.0.5
   share_plus: ^6.3.0
@@ -55,30 +55,25 @@ flutter_icons:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/jupiter.si
-    - assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg
-    - assets/Тризуб.si
   fonts:
     - family: KeyLabelFont
       fonts:
-          - asset: fonts/deja_vu_sans.ttf
+          - asset: packages/jrpn/fonts/deja_vu_sans.ttf
             style: normal
             weight: 400
-          - asset: fonts/deja_vu_sans_bold.ttf
+          - asset: packages/jrpn/fonts/deja_vu_sans_bold.ttf
             style: normal
             weight: 700
     - family: LogoFont
       fonts:
-        - asset: fonts/WorkSans-Regular.ttf
+        - asset: packages/jrpn/fonts/WorkSans-Regular.ttf
           style: normal
           weight: 400
-        - asset: fonts/WorkSans-Medium.ttf
+        - asset: packages/jrpn/fonts/WorkSans-Medium.ttf
           style: normal
           weight: 500
     - family: LiberationMono
       fonts:
-        - asset: fonts/LiberationMono.ttf
+        - asset: packages/jrpn/fonts/LiberationMono.ttf
           style: normal
           weight: 400
-            # Really, flutter web?  No built-in Courier?

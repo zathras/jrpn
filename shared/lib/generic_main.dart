@@ -998,9 +998,9 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       return;
     }
     try {
-      icon = await ScalableImage.fromSIAsset(rootBundle, 'assets/jupiter.si');
+      icon = await ScalableImage.fromSIAsset(rootBundle, 'packages/jrpn/assets/jupiter.si');
       Jrpn._tryzub ??= await ScalableImage.fromSIAsset(
-          rootBundle, 'assets/Тризуб.si',
+          rootBundle, 'packages/jrpn/assets/Тризуб.si',
           currentColor: MainScreen.keyFrameSilver);
       String? link;
       bool done = false;

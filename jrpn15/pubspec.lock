@@ -331,11 +331,9 @@ packages:
   jrpn:
     dependency: "direct main"
     description:
-      path: shared
-      ref: main
-      resolved-ref: "1e8336673937dd8608b48d659553c35f5aad5f91"
-      url: "https://github.com/zathras/jrpn.git"
-    source: git
+      path: "../shared"
+      relative: true
+    source: path
     version: "2.0.1+6"
   js:
     dependency: transitive
