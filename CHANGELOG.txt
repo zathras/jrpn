@@ -1,4 +1,16 @@
 
+Both, version2.1.0:
+  * Created 15C simulator using a common codebase.
+  * Deploying to Microsoft app store and Linux snap store, in addition to
+    Google's Android store.
+  * Added "view calculator internals" screen.
+  * Added program import/export feature.
+  * Audible key press feedback on Android, if enabled in system settings.
+  * In 16C integer mode, made comma display an option that defaults to off,
+    to align with real 16C (issue 19)
+  * Made the colors of the F and G keys and the LCD display configurable.
+  * Various small bugfixes (issues 13, 15, 21, 22, 28).
+  
 
 16C 2.0.2:
   *  Improved handling of floating point overflow
