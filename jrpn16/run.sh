@@ -1,2 +1,2 @@
 #!/bin/zsh -x
-flutter run -t lib/main16c.dart -d macos
+flutter run -t lib/main.dart -d macos

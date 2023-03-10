@@ -1,0 +1,37 @@
+name: jrpn16
+base: core18
+version: '2.1.0-beta'
+summary: Simulator inspired by the HP-16C Computer Scientist Calculator
+description: |
+  Calculator simulator inspired by the HP-16C "computer scientist".
+  Written in Flutter, so UI scales to any screen size, and the same
+  code is used for versions for Android, MacOS and Windows.
+  store.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+
+slots:
+    dbus-jrpn16:
+        interface: dbus
+        bus: session
+        name: com.jovial.jrpn16
+
+confinement: strict
+
+build-packages:
+    - dirmngr
+
+apps:
+    jrpn16:
+        command: jrpn16
+        extensions: [flutter-master]
+        plugs:
+        - home
+        slots:
+        - dbus-jrpn16
+
+parts:
+    jrpn16:
+        plugin: flutter
+        source: .
+        flutter-target: lib/main.dart
