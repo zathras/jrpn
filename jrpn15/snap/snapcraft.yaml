@@ -35,5 +35,3 @@ parts:
         plugin: flutter
         source: .
         flutter-target: lib/main.dart
-    shared:
-        source: ../shared
