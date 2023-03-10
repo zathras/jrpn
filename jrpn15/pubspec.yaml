@@ -12,11 +12,11 @@ dependencies:
   flutter:
     sdk: flutter
   jrpn:
+    path: ../shared/
     # git:
     # url: https://github.com/zathras/jrpn.git
     # path: shared
     # ref: main
-    path: ../shared/
   meta: ^1.7.0
   shared_preferences: ^2.0.5
   share_plus: ^6.3.0
@@ -77,3 +77,12 @@ flutter:
         - asset: packages/jrpn/fonts/LiberationMono.ttf
           style: normal
           weight: 400
+
+msix_config:
+  display_name: JRPN 15C
+  publisher_display_name: Jovial Software
+  identity_name: com.jovial.jrpn15
+  msix_version: 1.0.0.0
+  file-extension: .15c, .j15c
+  execution_alias: jrpn15
+  store: false
