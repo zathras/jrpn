@@ -106,12 +106,12 @@ class InternalStatePanel extends StatelessWidget {
     return GestureDetector(
         onTap: () => Navigator.pop(context),
         child: Stack(children: [
-          Align(
-              alignment: FractionalOffset(.95, .07),
-              child: const Icon(Icons.arrow_back, color: Colors.white)),
           Container(
               color: Colors.black,
-              child: _TextViewer(model.internalSnapshot, directModel: model))
+              child: _TextViewer(model.internalSnapshot, directModel: model)),
+          Align(
+              alignment: FractionalOffset(.95, .07),
+              child: const Icon(Icons.arrow_back, color: Colors.white))
         ]));
   }
 }
