@@ -77,3 +77,13 @@ flutter:
         - asset: packages/jrpn/fonts/LiberationMono.ttf
           style: normal
           weight: 400
+
+# "flutter pub run msix:create"
+msix_config:
+  display_name: JRPN 16C
+  publisher_display_name: Jovial Software
+  identity_name: com.jovial.jrpn
+  msix_version: 1.0.0.0
+  file-extension: .16c, .j16c
+  execution_alias: jrpn16
+  store: false

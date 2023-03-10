@@ -78,6 +78,7 @@ flutter:
           style: normal
           weight: 400
 
+# "flutter pub run msix:create"
 msix_config:
   display_name: JRPN 15C
   publisher_display_name: Jovial Software
