@@ -833,8 +833,7 @@ class Jrpn extends StatefulWidget {
   JrpnState createState() => JrpnState();
 }
 
-// ignore: prefer_mixin
-class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
+class JrpnState extends State<Jrpn> {
   bool _initDone = false;
   bool _disposed = false;
   StreamSubscription? _linksSubscription;
@@ -863,7 +862,6 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   void dispose() {
     super.dispose();
     widget._changed.removeObserver(_uiChangeObserver);
-    WidgetsBinding.instance.removeObserver(this);
     _disposed = true;
     _linksSubscription?.cancel();
   }
@@ -998,7 +996,8 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       return;
     }
     try {
-      icon = await ScalableImage.fromSIAsset(rootBundle, 'packages/jrpn/assets/jupiter.si');
+      icon = await ScalableImage.fromSIAsset(
+          rootBundle, 'packages/jrpn/assets/jupiter.si');
       Jrpn._tryzub ??= await ScalableImage.fromSIAsset(
           rootBundle, 'packages/jrpn/assets/Тризуб.si',
           currentColor: MainScreen.keyFrameSilver);
@@ -1054,13 +1053,6 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       } catch (e) {
         debugPrint('uni_links ignoring stream subscription error');
       }
-    }
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      unawaited(widget.controller.model.writeToPersistentStorage());
     }
   }
 }
