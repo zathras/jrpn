@@ -8,7 +8,7 @@
             "package_name": "com.jovial.jrpn2",
             "sha256_cert_fingerprints": [
                 "49:7D:1B:85:D2:64:C5:9D:08:3C:16:82:04:6C:D6:A0:41:61:18:26:D2:2E:90:56:8F:B4:22:3E:C7:06:83:C8"
-]
+            ]
         }
     },
     {
@@ -20,7 +20,31 @@
             "package_name": "com.jovial.jrpn2",
             "sha256_cert_fingerprints": [
                 "69:A5:F4:26:17:45:E7:65:80:F7:D1:3A:FD:D7:3F:FB:3F:7D:F4:40:C3:40:BA:07:C1:DF:A6:C0:35:2C:9F:F9"
-]
+            ]
+        }
+    },
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.jovial.jrpn15",
+            "sha256_cert_fingerprints": [
+                "49:7D:1B:85:D2:64:C5:9D:08:3C:16:82:04:6C:D6:A0:41:61:18:26:D2:2E:90:56:8F:B4:22:3E:C7:06:83:C8"
+            ]
+        }
+    },
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.jovial.jrpn15",
+            "sha256_cert_fingerprints": [
+                "69:A5:F4:26:17:45:E7:65:80:F7:D1:3A:FD:D7:3F:FB:3F:7D:F4:40:C3:40:BA:07:C1:DF:A6:C0:35:2C:9F:F9"
+            ]
         }
     }
 ]
