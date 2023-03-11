@@ -80,9 +80,12 @@
   <pre class="language-dart"><code class="language-dart">@override
 void onChangedTo() {
   if (program.currentLine == 0 &amp;&amp; program.lines &gt; 0) {
-    program.currentLine = 1;
-    stackLiftEnabled = true;
-    changeState(Resting(_fake));
+    final spr = _fake.real.suspendedProgramRunner;
+    if (spr?.runImplicitRtnOnSST != true) {
+      program.currentLine = 1;
+      stackLiftEnabled = true;
+      changeState(Resting(_fake));
+    }
   }
   program.displayCurrent();
   model.displayDisabled = true;
@@ -125,6 +128,7 @@ void onChangedTo() {
           <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
 
         <li class="section-title"><a href="../../controller.states/SingleStepping-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ControllerState/abort.html">abort</a></li>
           <li><a href="../../controller.states/SingleStepping/buttonDown.html">buttonDown</a></li>
           <li><a href="../../controller.states/SingleStepping/buttonUp.html">buttonUp</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/changeState.html">changeState</a></li>

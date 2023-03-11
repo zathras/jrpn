@@ -107,14 +107,6 @@ by a <a href="../controller/RealController-class.html">RealController</a> for no
 which manages a running calculator program.
 </dd>
 
-        <dt id="GosubOperation">
-  <span class="name "><a href="../controller/GosubOperation-class.html">GosubOperation</a></span> 
-
-</dt>
-<dd>
-  
-</dd>
-
         <dt id="KeyboardController">
   <span class="name "><a href="../controller/KeyboardController-class.html">KeyboardController</a></span> 
 
@@ -195,6 +187,15 @@ argument to LBL, GTO or GSB.  The letters on the 16C are unshifted, so
 this doesn't come up there.
 </dd>
 
+        <dt id="NormalOperationShiftedArg">
+  <span class="name "><a href="../controller/NormalOperationShiftedArg-class.html">NormalOperationShiftedArg</a></span> 
+
+</dt>
+<dd>
+  A <a href="../controller/NormalOperation-class.html">NormalOperation</a> that is shifted (by fShift or gShift), and that
+is used as an argument.
+</dd>
+
         <dt id="NumberEntry">
   <span class="name "><a href="../controller/NumberEntry-class.html">NumberEntry</a></span> 
 
@@ -230,6 +231,14 @@ stops.
   A controller for when a program is running.
 </dd>
 
+        <dt id="RunProgramOperation">
+  <span class="name "><a href="../controller/RunProgramOperation-class.html">RunProgramOperation</a></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
         <dt id="SelfTests">
   <span class="name "><a href="../controller/SelfTests-class.html">SelfTests</a></span> 
 
@@ -241,6 +250,14 @@ a way of easily running some of the tests involving integer and floating
 point behavior in different browsers. This might be a bit of a pain point
 for Dart, since the numeric types behave differently given JavaScript's
 deficiencies in ths regard.
+</dd>
+
+        <dt id="ShiftOperation">
+  <span class="name "><a href="../controller/ShiftOperation-class.html">ShiftOperation</a></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
         <dt id="StackLift">
@@ -262,6 +279,14 @@ Stack Lift" in Appendix B of the 16C's manual.
   A type that can be used by states to access the library-private
 <a href="../controller/RealController-class.html">RealController</a> <code>_stackLiftEnabled</code> flag.  This provides enhanced
 encapsulation, by explicitly marking states that do this.
+</dd>
+
+        <dt id="StackLiftingNormalOperation">
+  <span class="name "><a href="../controller/StackLiftingNormalOperation-class.html">StackLiftingNormalOperation</a></span> 
+
+</dt>
+<dd>
+  A <a href="../controller/NormalOperation-class.html">NormalOperation</a> that might lift this stack, if enabled
 </dd>
 
       </dl>
@@ -297,10 +322,22 @@ encapsulation, by explicitly marking states that do this.
       <li><a href="../controller/controller-library.html">controller</a></li>
       <li><a href="../controller.operations/controller.operations-library.html">controller.operations</a></li>
       <li><a href="../controller.states/controller.states-library.html">controller.states</a></li>
-      <li><a href="../generic_main/generic_main-library.html">generic_main</a></li>
+      <li><a href="../jrpn15.back_panel/jrpn15.back_panel-library.html">jrpn15.back_panel</a></li>
+      <li><a href="../jrpn15.linalg/jrpn15.linalg-library.html">jrpn15.linalg</a></li>
+      <li><a href="../jrpn15.main/jrpn15.main-library.html">jrpn15.main</a></li>
+      <li><a href="../jrpn15.matrix/jrpn15.matrix-library.html">jrpn15.matrix</a></li>
+      <li><a href="../jrpn15.model15c/jrpn15.model15c-library.html">jrpn15.model15c</a></li>
+      <li><a href="../jrpn15.more_math/jrpn15.more_math-library.html">jrpn15.more_math</a></li>
+      <li><a href="../jrpn15.runners/jrpn15.runners-library.html">jrpn15.runners</a></li>
+      <li><a href="../jrpn15.tests/jrpn15.tests-library.html">jrpn15.tests</a></li>
+      <li><a href="../jrpn16.back_panel/jrpn16.back_panel-library.html">jrpn16.back_panel</a></li>
+      <li><a href="../jrpn16.main/jrpn16.main-library.html">jrpn16.main</a></li>
+      <li><a href="../jrpn16.tests/jrpn16.tests-library.html">jrpn16.tests</a></li>
+      <li><a href="../main/main-library.html">main</a></li>
       <li><a href="../model/model-library.html">model</a></li>
       <li><a href="../view.back_panel/view.back_panel-library.html">view.back_panel</a></li>
       <li><a href="../view.buttons/view.buttons-library.html">view.buttons</a></li>
+      <li><a href="../view.isw/view.isw-library.html">view.isw</a></li>
       <li><a href="../view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
       <li><a href="../view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
 </ol>
@@ -314,7 +351,6 @@ encapsulation, by explicitly marking states that do this.
         <li><a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></li>
         <li><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></li>
         <li><a href="../controller/Controller-class.html">Controller</a></li>
-        <li><a href="../controller/GosubOperation-class.html">GosubOperation</a></li>
         <li><a href="../controller/KeyboardController-class.html">KeyboardController</a></li>
         <li><a href="../controller/LetterLabel-class.html">LetterLabel</a></li>
         <li><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></li>
@@ -324,13 +360,17 @@ encapsulation, by explicitly marking states that do this.
         <li><a href="../controller/NormalArgOperationWithBeforeCalc-class.html">NormalArgOperationWithBeforeCalc</a></li>
         <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
         <li><a href="../controller/NormalOperationOrLetter-class.html">NormalOperationOrLetter</a></li>
+        <li><a href="../controller/NormalOperationShiftedArg-class.html">NormalOperationShiftedArg</a></li>
         <li><a href="../controller/NumberEntry-class.html">NumberEntry</a></li>
         <li><a href="../controller/Operation-class.html">Operation</a></li>
         <li><a href="../controller/RealController-class.html">RealController</a></li>
         <li><a href="../controller/RunningController-class.html">RunningController</a></li>
+        <li><a href="../controller/RunProgramOperation-class.html">RunProgramOperation</a></li>
         <li><a href="../controller/SelfTests-class.html">SelfTests</a></li>
+        <li><a href="../controller/ShiftOperation-class.html">ShiftOperation</a></li>
         <li><a href="../controller/StackLift-class.html">StackLift</a></li>
         <li><a href="../controller/StackLiftEnabledUser-class.html">StackLiftEnabledUser</a></li>
+        <li><a href="../controller/StackLiftingNormalOperation-class.html">StackLiftingNormalOperation</a></li>
 
 
 

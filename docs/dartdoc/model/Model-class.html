@@ -75,6 +75,11 @@ structure.  Extended by Model15 and Model16.</p>
   </dd>
         
 
+        <dt>Implementers</dt>
+        <dd><ul class="comma-separated clazz-relationships">
+          <li><a href="../jrpn15.model15c/Model15-class.html">Model15</a></li>
+          <li><a href="../jrpn16.main/Model16-class.html">Model16</a></li>
+        </ul></dd>
 
 
         
@@ -248,6 +253,28 @@ it causes errorFlash to be true.
 
 </dd>
 
+        <dt id="internalSnapshot" class="property">
+  <span class="name"><a href="../model/Model/internalSnapshot.html">internalSnapshot</a></span>
+  <span class="signature">&#8594; <a href="../model/Observable-class.html">Observable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ModelSnapshot-class.html">ModelSnapshot</a></span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">read-only</span></div>
+
+</dd>
+
+        <dt id="is15C" class="property">
+  <span class="name"><a href="../model/Model/is15C.html">is15C</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">read-only</span></div>
+
+</dd>
+
         <dt id="isComplexMode" class="property">
   <span class="name"><a href="../model/Model/isComplexMode.html">isComplexMode</a></span>
   <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
@@ -289,6 +316,17 @@ it causes errorFlash to be true.
 <dd>
   
   <div class="features"><span class="feature">read / write</span></div>
+
+</dd>
+
+        <dt id="lastXImaginary" class="property">
+  <span class="name"><a href="../model/Model/lastXImaginary.html">lastXImaginary</a></span>
+  <span class="signature">&#8594; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">read-only</span></div>
 
 </dd>
 
@@ -424,7 +462,7 @@ landscape orientation.
 
 </dt>
 <dd>
-  
+  Are we entering a program?
   <div class="features"><span class="feature">read / write</span></div>
 
 </dd>
@@ -561,6 +599,17 @@ landscape orientation.
 
 </dd>
 
+        <dt id="t" class="property">
+  <span class="name"><a href="../model/Model/t.html">t</a></span>
+  <span class="signature">&#8596; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">read / write</span></div>
+
+</dd>
+
         <dt id="trigMode" class="property">
   <span class="name"><a href="../model/Model/trigMode.html">trigMode</a></span>
   <span class="signature">&#8596; <a href="../model/TrigMode-class.html">TrigMode</a></span> 
@@ -661,6 +710,29 @@ size.  A size of 0 is interpreted as 64, as per the 16C.
 
 </dd>
 
+        <dt id="xPreserveCLX" class="property">
+  <span class="name"><a href="../model/Model/xPreserveCLX.html">xPreserveCLX</a></span>
+  <span class="signature">&#8592; <a href="../model/Value-class.html">Value</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">write-only</span></div>
+
+</dd>
+
+        <dt id="xRealF" class="property">
+  <span class="name"><a href="../model/Model/xRealF.html">xRealF</a></span>
+  <span class="signature">&#8592; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> 
+
+</dt>
+<dd>
+  Set the real part of X, leaving the imaginary part alone, and not
+setting LastX.  Clear clxDone.  The 15C's stack management is simple!  ;-)
+  <div class="features"><span class="feature">write-only</span></div>
+
+</dd>
+
         <dt id="y" class="property">
   <span class="name"><a href="../model/Model/y.html">y</a></span>
   <span class="signature">&#8596; <a href="../model/Value-class.html">Value</a></span> 
@@ -707,12 +779,12 @@ size.  A size of 0 is interpreted as 64, as per the 16C.
 
         <dt id="z" class="property">
   <span class="name"><a href="../model/Model/z.html">z</a></span>
-  <span class="signature">&#8594; <a href="../model/Value-class.html">Value</a></span> 
+  <span class="signature">&#8596; <a href="../model/Value-class.html">Value</a></span> 
 
 </dt>
 <dd>
   
-  <div class="features"><span class="feature">read-only</span></div>
+  <div class="features"><span class="feature">read / write</span></div>
 
 </dd>
 
@@ -727,6 +799,17 @@ size.  A size of 0 is interpreted as 64, as per the 16C.
 
 </dd>
 
+        <dt id="zF" class="property">
+  <span class="name"><a href="../model/Model/zF.html">zF</a></span>
+  <span class="signature">&#8592; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">write-only</span></div>
+
+</dd>
+
       </dl>
     </section>
 
@@ -736,6 +819,32 @@ size.  A size of 0 is interpreted as 64, as per the 16C.
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
+        <dt id="addProgramTraceToSnapshot" class="callable">
+  <span class="name"><a href="../model/Model/addProgramTraceToSnapshot.html">addProgramTraceToSnapshot</a></span><span class="signature">(<wbr><span class="parameter" id="addProgramTraceToSnapshot-param-f"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">f</span>()</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="addStuffToSnapshot" class="callable">
+  <span class="name"><a href="../model/Model/addStuffToSnapshot.html">addStuffToSnapshot</a></span><span class="signature">(<wbr><span class="parameter" id="addStuffToSnapshot-param-buf"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/StringBuffer-class.html">StringBuffer</a></span> <span class="parameter-name">buf</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
         <dt id="chsX" class="callable">
   <span class="name"><a href="../model/Model/chsX.html">chsX</a></span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; void</span>
@@ -746,7 +855,20 @@ size.  A size of 0 is interpreted as 64, as per the 16C.
 <dd>
   Negate the value in x like the CHS key does.  The behavior varies
 according to the current sign mode.  In complex mode, it leaves the
-imaginary part alone.
+imaginary part alone, and does not change the CLX status.
+  
+
+</dd>
+
+        <dt id="clx" class="callable">
+  <span class="name"><a href="../model/Model/clx.html">clx</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
   
 
 </dd>
@@ -882,6 +1004,19 @@ for -0 -- cf. Memory.isZeroI()
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
   <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="optimizeInternalSnapshot" class="callable">
+  <span class="name"><a href="../model/Model/optimizeInternalSnapshot.html">optimizeInternalSnapshot</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
 
 </dd>
 
@@ -1028,6 +1163,19 @@ for -0 -- cf. Memory.isZeroI()
 
 </dd>
 
+        <dt id="setXYZT" class="callable">
+  <span class="name"><a href="../model/Model/setXYZT.html">setXYZT</a></span><span class="signature">(<wbr><span class="parameter" id="setXYZT-param-v"><span class="type-annotation"><a href="../model/Value-class.html">Value</a></span> <span class="parameter-name">v</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
         <dt id="setYZT" class="callable">
   <span class="name"><a href="../model/Model/setYZT.html">setYZT</a></span><span class="signature">(<wbr><span class="parameter" id="setYZT-param-v"><span class="type-annotation"><a href="../model/Value-class.html">Value</a></span> <span class="parameter-name">v</span></span>)
     <span class="returntype parameter">&#8594; void</span>
@@ -1055,7 +1203,7 @@ for -0 -- cf. Memory.isZeroI()
 </dd>
 
         <dt id="toJson" class="callable">
-  <span class="name"><a href="../model/Model/toJson.html">toJson</a></span><span class="signature">(<wbr><span class="parameter" id="toJson-param-comments">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">comments</span> = <span class="default-value">false</span>}</span>)
+  <span class="name"><a href="../model/Model/toJson.html">toJson</a></span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
   </span>
   
@@ -1177,6 +1325,8 @@ Value on success.
         <li><a href="../model/MKey-class.html">MKey</a></li>
         <li><a href="../model/MKeyExtensionOp-class.html">MKeyExtensionOp</a></li>
         <li><a href="../model/Model-class.html">Model</a></li>
+        <li><a href="../model/ModelSnapshot-class.html">ModelSnapshot</a></li>
+        <li><a href="../model/MProgramRunner-class.html">MProgramRunner</a></li>
         <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
         <li><a href="../model/NumStatus68-class.html">NumStatus68</a></li>
         <li><a href="../model/Observable-class.html">Observable</a></li>
@@ -1192,6 +1342,7 @@ Value on success.
         <li><a href="../model/Settings-class.html">Settings</a></li>
         <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
         <li><a href="../model/SignMode-class.html">SignMode</a></li>
+        <li><a href="../model/StackLiftingArgDone-class.html">StackLiftingArgDone</a></li>
         <li><a href="../model/TrigMode-class.html">TrigMode</a></li>
         <li><a href="../model/Value-class.html">Value</a></li>
 
@@ -1203,6 +1354,7 @@ Value on success.
 
 
       <li class="section-title"><a href="../model/model-library.html#enums">Enums</a></li>
+        <li><a href="../model/BlinkMode.html">BlinkMode</a></li>
         <li><a href="../model/OrientationSetting.html">OrientationSetting</a></li>
 
       <li class="section-title"><a href="../model/model-library.html#typedefs">Typedefs</a></li>
@@ -1235,10 +1387,13 @@ Value on success.
           <li class="inherited"><a href="../model/NumStatus/gFlag.html">gFlag</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../model/Model/integerSignMode.html">integerSignMode</a></li>
+          <li><a href="../model/Model/internalSnapshot.html">internalSnapshot</a></li>
+          <li><a href="../model/Model/is15C.html">is15C</a></li>
           <li><a href="../model/Model/isComplexMode.html">isComplexMode</a></li>
           <li><a href="../model/Model/isFloatMode.html">isFloatMode</a></li>
           <li><a href="../model/Model/lastX.html">lastX</a></li>
           <li><a href="../model/Model/lastXC.html">lastXC</a></li>
+          <li><a href="../model/Model/lastXImaginary.html">lastXImaginary</a></li>
           <li><a href="../model/Model/logicalKeys.html">logicalKeys</a></li>
           <li><a href="../model/Model/maxInt.html">maxInt</a></li>
           <li><a href="../model/Model/memory.html">memory</a></li>
@@ -1263,6 +1418,7 @@ Value on success.
           <li><a href="../model/Model/shift.html">shift</a></li>
           <li><a href="../model/Model/signMask.html">signMask</a></li>
           <li><a href="../model/Model/signMode.html">signMode</a></li>
+          <li><a href="../model/Model/t.html">t</a></li>
           <li><a href="../model/Model/trigMode.html">trigMode</a></li>
           <li><a href="../model/Model/userMode.html">userMode</a></li>
           <li><a href="../model/Model/wordMask.html">wordMask</a></li>
@@ -1272,15 +1428,21 @@ Value on success.
           <li><a href="../model/Model/xF.html">xF</a></li>
           <li><a href="../model/Model/xI.html">xI</a></li>
           <li><a href="../model/Model/xImaginary.html">xImaginary</a></li>
+          <li><a href="../model/Model/xPreserveCLX.html">xPreserveCLX</a></li>
+          <li><a href="../model/Model/xRealF.html">xRealF</a></li>
           <li><a href="../model/Model/y.html">y</a></li>
           <li><a href="../model/Model/yC.html">yC</a></li>
           <li><a href="../model/Model/yF.html">yF</a></li>
           <li><a href="../model/Model/yI.html">yI</a></li>
           <li><a href="../model/Model/z.html">z</a></li>
           <li><a href="../model/Model/zC.html">zC</a></li>
+          <li><a href="../model/Model/zF.html">zF</a></li>
 
         <li class="section-title"><a href="../model/Model-class.html#instance-methods">Methods</a></li>
+          <li><a href="../model/Model/addProgramTraceToSnapshot.html">addProgramTraceToSnapshot</a></li>
+          <li><a href="../model/Model/addStuffToSnapshot.html">addStuffToSnapshot</a></li>
           <li><a href="../model/Model/chsX.html">chsX</a></li>
+          <li><a href="../model/Model/clx.html">clx</a></li>
           <li><a href="../model/Model/compare.html">compare</a></li>
           <li><a href="../model/Model/decodeJson.html">decodeJson</a></li>
           <li><a href="../model/Model/formatValue.html">formatValue</a></li>
@@ -1291,6 +1453,7 @@ Value on success.
           <li><a href="../model/Model/isZero.html">isZero</a></li>
           <li><a href="../model/Model/newProgramInstruction.html">newProgramInstruction</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../model/Model/optimizeInternalSnapshot.html">optimizeInternalSnapshot</a></li>
           <li><a href="../model/Model/popStack.html">popStack</a></li>
           <li><a href="../model/Model/pushStack.html">pushStack</a></li>
           <li><a href="../model/Model/readFromPersistentStorage.html">readFromPersistentStorage</a></li>
@@ -1302,6 +1465,7 @@ Value on success.
           <li><a href="../model/Model/selfTestContents.html">selfTestContents</a></li>
           <li><a href="../model/Model/setFlag.html">setFlag</a></li>
           <li><a href="../model/Model/setupComplex.html">setupComplex</a></li>
+          <li><a href="../model/Model/setXYZT.html">setXYZT</a></li>
           <li><a href="../model/Model/setYZT.html">setYZT</a></li>
           <li><a href="../model/Model/swapXY.html">swapXY</a></li>
           <li><a href="../model/Model/toJson.html">toJson</a></li>

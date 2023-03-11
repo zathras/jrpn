@@ -59,8 +59,9 @@
 
 <span class="returntype">void</span>
 <span class="name ">update</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="update-param-flash">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">flash</span> = <span class="default-value">false</span>, </span></li>
-<li><span class="parameter" id="update-param-blink"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">blink</span> = <span class="default-value">false</span>, </span></li>
-<li><span class="parameter" id="update-param-disableWindow"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disableWindow</span> = <span class="default-value">false</span>}</span></li>
+<li><span class="parameter" id="update-param-blink"><span class="type-annotation"><a href="../../model/BlinkMode.html">BlinkMode</a></span> <span class="parameter-name">blink</span> = <span class="default-value">BlinkMode.none</span>, </span></li>
+<li><span class="parameter" id="update-param-disableWindow"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disableWindow</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="update-param-neverReformat"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">neverReformat</span> = <span class="default-value">false</span>}</span></li>
 </ol>)
 
       
@@ -73,16 +74,25 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void update(
-    {bool flash = false, bool blink = false, bool disableWindow = false}) {
+    {bool flash = false,
+    BlinkMode blink = BlinkMode.none,
+    bool disableWindow = false,
+    bool neverReformat = false}) {
   if (ignoreUpdates) {
     return;
   }
-  final LcdContents c = model._newLcdContents(disableWindow: disableWindow);
-  if (blink || model.errorBlink) {
+  if (_showingX &amp;&amp; !neverReformat) {
+    currentShowingX = model.formatValue(model.x);
+    &#47;&#47; In case window enabled setting changed
+  }
+  final LcdContents c = (blink == BlinkMode.justDigits)
+      ? model._newLcdContentsJustDigits()
+      : model._newLcdContents(disableWindow: disableWindow);
+  if (blink.blinking || model.errorBlink) {
     bool on = true;
     final blank = LcdContents.blank();
     final Duration d;
-    if (blink) {
+    if (blink.blinking) {
       d = const Duration(milliseconds: 400);
     } else {
       d = const Duration(milliseconds: 200);
@@ -137,8 +147,8 @@
           <a href="../../model/DisplayModel-class.html#instance-properties">Properties</a>
         </li>
           <li><a href="../../model/DisplayModel/current.html">current</a></li>
+          <li><a href="../../model/DisplayModel/currentShowingX.html">currentShowingX</a></li>
           <li><a href="../../model/DisplayModel/currentWithoutWindow.html">currentWithoutWindow</a></li>
-          <li><a href="../../model/DisplayModel/currentWithWindow.html">currentWithWindow</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../model/DisplayModel/ignoreUpdates.html">ignoreUpdates</a></li>
           <li><a href="../../model/DisplayModel/model.html">model</a></li>

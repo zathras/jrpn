@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the testIntOperations method from the SelfTests16 class, for the Dart programming language.">
+  <title>testIntOperations method - SelfTests16 class - jrpn16.tests library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jrpn</a></li>
+    <li><a href="../../jrpn16.tests/jrpn16.tests-library.html">jrpn16.tests</a></li>
+    <li><a href="../../jrpn16.tests/SelfTests16-class.html">SelfTests16</a></li>
+    <li class="self-crumb">testIntOperations method</li>
+  </ol>
+  <div class="self-name">testIntOperations</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">testIntOperations</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">testIntOperations</span>(<wbr>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; testIntOperations() async {
+  await test(&quot;2&#39;s complement int operations&quot;, () async {
+    Model m = newModel();
+    m.wordSize = 16;
+    m.displayMode = DisplayMode.decimal;
+    m.integerSignMode = SignMode.twosComplement;
+
+    &#47;&#47; -1 + 1 = 0, set carry
+    m.cFlag = false;
+    m.yI = BigInt.from(-1);
+    m.xI = BigInt.from(1);
+    Operations16.plus.intCalc!(m);
+    await expect(m.xI, BigInt.zero);
+    await expect(m.cFlag, true);
+
+    &#47;&#47; 0 + 1 = 1, clear carry
+    m.cFlag = true;
+    m.yI = BigInt.from(0);
+    m.xI = BigInt.from(1);
+    Operations16.plus.intCalc!(m);
+    await expect(m.xI, BigInt.one);
+    await expect(m.cFlag, false);
+
+    &#47;&#47; 32767 * 2 = 32766, set overflow
+    m.gFlag = false;
+    m.yI = BigInt.from(32767);
+    m.xI = BigInt.from(2);
+    Operations16.mult.intCalc!(m);
+    await expect(m.xI, BigInt.from(32766));
+    await expect(m.gFlag, true);
+
+    &#47;&#47; 1440 &#47; -12 = -120, clear carry
+    m.cFlag = true;
+    m.yI = BigInt.from(1440);
+    m.xI = BigInt.from(-12);
+    Operations16.div.intCalc!(m);
+    await expect(m.xI, BigInt.from(-120));
+    await expect(m.cFlag, false);
+  });
+
+  await test(&quot;1&#39;s complement int operations&quot;, () async {
+    Model m = newModel();
+    m.wordSize = 16;
+    m.integerSignMode = SignMode.onesComplement;
+    m.wordSize = 4;
+
+    &#47;&#47; -1 + -1 = -2, set carry
+    m.cFlag = true;
+    m.yI = BigInt.from(-1);
+    m.xI = BigInt.from(-1);
+    Operations16.plus.intCalc!(m);
+    await expect(m.xI, BigInt.from(-2));
+    await expect(m.cFlag, true);
+
+    &#47;&#47; 3 - 4 = -1, set borrow (that is, cFlag)
+    m.cFlag = false;
+    m.yI = BigInt.from(3);
+    m.xI = BigInt.from(4);
+    Operations16.minus.intCalc!(m);
+    await expect(m.xI, BigInt.from(-1));
+    await expect(m.cFlag, true);
+
+    &#47;&#47; -3 + 3 = 0, no carry
+    m.cFlag = true;
+    m.yI = BigInt.from(-3);
+    m.xI = BigInt.from(3);
+    Operations16.plus.intCalc!(m);
+    await expect(m.xI, BigInt.from(0));
+    await expect(m.cFlag, false);
+
+    &#47;&#47; 6 - 5 = 1, no borrow
+    m.cFlag = true;
+    m.yI = BigInt.from(6);
+    m.xI = BigInt.from(5);
+    Operations16.minus.intCalc!(m);
+    await expect(m.xI, BigInt.from(1));
+    await expect(m.cFlag, false);
+  });
+
+  await test(&quot;subtraction carry, 1&#39;s and 2&#39;s complement&quot;, () async {
+    Model m = newModel();
+    m.wordSize = 4;
+    for (final c in [SignMode.onesComplement, SignMode.twosComplement]) {
+      m.integerSignMode = c;
+
+      &#47;&#47; -6 - -4 = -2, carry set
+      m.cFlag = false;
+      m.yI = BigInt.from(-6);
+      m.xI = BigInt.from(-4);
+      Operations16.minus.intCalc!(m);
+      await expect(m.xI, BigInt.from(-2));
+      await expect(m.cFlag, true);
+
+      &#47;&#47; 6 - 1 = 5, carry cleared
+      m.cFlag = true;
+      m.yI = BigInt.from(6);
+      m.xI = BigInt.from(1);
+      Operations16.minus.intCalc!(m);
+      await expect(m.xI, BigInt.from(5));
+      await expect(m.cFlag, false);
+    }
+  });
+  await test(&quot;2&#39;s complement range&quot;, () async {
+    Model m = newModel();
+    m.wordSize = 4;
+
+    &#47;&#47; 7 + 6 = -3, G set, C cleared
+    m.cFlag = true;
+    m.gFlag = false;
+    m.yI = BigInt.from(7);
+    m.xI = BigInt.from(6);
+    Operations16.plus.intCalc!(m);
+    await expect(m.xI, BigInt.from(-3));
+    await expect(m.cFlag, false);
+    await expect(m.gFlag, true);
+  });
+
+  await test(&#39;int rmd&#39;, () async {
+    Model m = newModel();
+    m.yI = BigInt.from(0x66);
+    m.xI = BigInt.from(7);
+    Operations16.div.intCalc!(m);
+    await expect(m.xI, BigInt.from(0xe));
+    m.pushStack();
+    m.xI = BigInt.from(2);
+    Operations16.div.intCalc!(m);
+    await expect(m.xI, BigInt.from(0x7));
+    m.pushStack();
+    m.xI = BigInt.from(4);
+    Operations16.rmd.intCalc!(m);
+    await expect(m.xI, BigInt.from(0x3));
+  });
+  await test(&#39;logical operations&#39;, () async {
+    &#47;&#47; Not
+    Model m = newModel();
+    await expect(m.wordSize, 16); &#47;&#47; default
+    m.displayMode = DisplayMode.bin;
+    m.x = m.tryParseValue(&#39;11111111&#39;)!;
+    Operations16.not.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;1111111100000000&#39;));
+
+    &#47;&#47; and
+    m.y = m.tryParseValue(&#39;10101&#39;)!;
+    m.x = m.tryParseValue(&#39;10011&#39;)!;
+    Operations16.and.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;10001&#39;));
+
+    &#47;&#47; or
+    m.y = m.tryParseValue(&#39;10101&#39;)!;
+    m.x = m.tryParseValue(&#39;10011&#39;)!;
+    Operations16.or.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;10111&#39;));
+
+    &#47;&#47; xor
+    m.y = m.tryParseValue(&#39;1010101&#39;)!;
+    m.x = m.tryParseValue(&#39;1011101&#39;)!;
+    Operations16.xor.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;1000&#39;));
+
+    &#47;&#47; sl (shift left)
+    m.wordSize = 8;
+    m.x = m.tryParseValue(&#39;10011100&#39;)!;
+    Operations16.sl.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;00111000&#39;));
+    await expect(m.cFlag, true);
+    Operations16.sl.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;01110000&#39;));
+    await expect(m.cFlag, false);
+
+    &#47;&#47; sr (shift right)
+    Operations16.sr.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;00111000&#39;));
+    await expect(m.cFlag, false);
+    Operations16.sr.intCalc!(m);
+    await expect(m.cFlag, false);
+    Operations16.sr.intCalc!(m);
+    await expect(m.cFlag, false);
+    Operations16.sr.intCalc!(m);
+    await expect(m.cFlag, false);
+    Operations16.sr.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;00000011&#39;));
+    await expect(m.cFlag, true);
+
+    &#47;&#47; lj (left justify)
+    m.xI = BigInt.from(0);
+    Operations16.lj.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;0&#39;));
+    await expect(m.y, m.tryParseValue(&#39;0&#39;));
+    m.x = m.tryParseValue(&#39;1111&#39;)!;
+    Operations16.lj.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;100&#39;));
+    await expect(m.y, m.tryParseValue(&#39;11110000&#39;));
+
+    &#47;&#47; asr
+    m.integerSignMode = SignMode.unsigned;
+    m.x = m.tryParseValue(&#39;10011100&#39;)!;
+    Operations16.asr.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;01001110&#39;));
+    m.integerSignMode = SignMode.twosComplement;
+    m.x = m.tryParseValue(&#39;10011100&#39;)!;
+    Operations16.asr.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;11001110&#39;));
+
+    &#47;&#47; rl
+    m.x = m.tryParseValue(&#39;10011100&#39;)!;
+    m.cFlag = false;
+    Operations16.rl.intCalc!(m);
+    await expect(m.cFlag, true);
+    await expect(m.x, m.tryParseValue(&#39;00111001&#39;));
+    Operations16.rl.intCalc!(m);
+    await expect(m.cFlag, false);
+    await expect(m.x, m.tryParseValue(&#39;01110010&#39;));
+
+    &#47;&#47; rr
+    Operations16.rr.intCalc!(m);
+    await expect(m.cFlag, false);
+    await expect(m.x, m.tryParseValue(&#39;00111001&#39;));
+    Operations16.rr.intCalc!(m);
+    await expect(m.cFlag, true);
+    await expect(m.x, m.tryParseValue(&#39;10011100&#39;));
+    Operations16.rr.intCalc!(m);
+    await expect(m.cFlag, false);
+    await expect(m.x, m.tryParseValue(&#39;01001110&#39;));
+
+    &#47;&#47; rlc
+    m.x = m.tryParseValue(&#39;10011100&#39;)!;
+    m.cFlag = false;
+    Operations16.rlc.intCalc!(m);
+    await expect(m.cFlag, true);
+    await expect(m.x, m.tryParseValue(&#39;00111000&#39;));
+    Operations16.rlc.intCalc!(m);
+    await expect(m.cFlag, false);
+    await expect(m.x, m.tryParseValue(&#39;01110001&#39;));
+
+    &#47;&#47; rrc
+    Operations16.rrc.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;00111000&#39;));
+    m.cFlag = true;
+    Operations16.rrc.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;10011100&#39;));
+    await expect(m.cFlag, false);
+    Operations16.rrc.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;01001110&#39;));
+    await expect(m.cFlag, false);
+
+    &#47;&#47; rln
+    m.x = m.tryParseValue(&#39;10011100&#39;)!;
+    m.pushStack();
+    m.xI = BigInt.one;
+    m.cFlag = false;
+    Operations16.rln.intCalc!(m);
+    await expect(m.cFlag, true);
+    await expect(m.x, m.tryParseValue(&#39;00111001&#39;));
+
+    m.x = m.tryParseValue(&#39;10011100&#39;)!;
+    m.pushStack();
+    m.xI = BigInt.two;
+    m.cFlag = true;
+    Operations16.rln.intCalc!(m);
+    await expect(m.cFlag, false);
+    await expect(m.x, m.tryParseValue(&#39;01110010&#39;));
+
+    &#47;&#47; rrn
+    m.x = m.tryParseValue(&#39;01110010&#39;)!;
+    m.pushStack();
+    m.xI = BigInt.one;
+    Operations16.rrn.intCalc!(m);
+    await expect(m.cFlag, false);
+    await expect(m.x, m.tryParseValue(&#39;00111001&#39;));
+
+    m.x = m.tryParseValue(&#39;01110010&#39;)!;
+    m.pushStack();
+    m.xI = BigInt.two;
+    Operations16.rrn.intCalc!(m);
+    await expect(m.cFlag, true);
+    await expect(m.x, m.tryParseValue(&#39;10011100&#39;));
+
+    m.x = m.tryParseValue(&#39;01110010&#39;)!;
+    m.pushStack();
+    m.xI = BigInt.from(3);
+    Operations16.rrn.intCalc!(m);
+    await expect(m.cFlag, false);
+    await expect(m.x, m.tryParseValue(&#39;01001110&#39;));
+
+    &#47;&#47; rlcn
+    m.x = m.tryParseValue(&#39;10011100&#39;)!;
+    m.cFlag = false;
+    m.pushStack();
+    m.xI = BigInt.one;
+    Operations16.rlcn.intCalc!(m);
+    await expect(m.cFlag, true);
+    await expect(m.x, m.tryParseValue(&#39;00111000&#39;));
+
+    m.x = m.tryParseValue(&#39;10011100&#39;)!;
+    m.cFlag = false;
+    m.pushStack();
+    m.xI = BigInt.two;
+    Operations16.rlcn.intCalc!(m);
+    await expect(m.cFlag, false);
+    await expect(m.x, m.tryParseValue(&#39;01110001&#39;));
+
+    &#47;&#47; rrcn
+    m.x = m.tryParseValue(&#39;01110001&#39;)!;
+    m.cFlag = false;
+    m.pushStack();
+    m.xI = BigInt.one;
+    Operations16.rrcn.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;00111000&#39;));
+    await expect(m.cFlag, true);
+
+    m.x = m.tryParseValue(&#39;01110001&#39;)!;
+    m.cFlag = false;
+    m.pushStack();
+    m.xI = BigInt.two;
+    Operations16.rrcn.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;10011100&#39;));
+    await expect(m.cFlag, false);
+
+    m.x = m.tryParseValue(&#39;01110001&#39;)!;
+    m.cFlag = false;
+    m.pushStack();
+    m.xI = BigInt.from(3);
+    Operations16.rrcn.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;01001110&#39;));
+    await expect(m.cFlag, false);
+
+    &#47;&#47; cb
+    m.y = m.tryParseValue(&#39;11111111&#39;)!;
+    m.x = m.tryParseValue(&#39;00000011&#39;)!;
+    Operations16.cb.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;11110111&#39;));
+
+    &#47;&#47; sb
+    m.y = m.tryParseValue(&#39;01110000&#39;)!;
+    m.x = m.tryParseValue(&#39;00000000&#39;)!;
+    Operations16.sb.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;01110001&#39;));
+
+    m.pushStack();
+    m.xI = BigInt.from(7);
+    Operations16.sb.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;11110001&#39;));
+
+    &#47;&#47; maskr
+    m.xI = BigInt.from(4);
+    Operations16.maskr.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;00001111&#39;));
+    m.xI = BigInt.from(0);
+    Operations16.maskr.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;00000000&#39;));
+    m.xI = BigInt.from(8);
+    Operations16.maskr.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;11111111&#39;));
+
+    &#47;&#47; maskl
+    m.xI = BigInt.from(3);
+    Operations16.maskl.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;11100000&#39;));
+    m.xI = BigInt.from(0);
+    Operations16.maskl.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;00000000&#39;));
+    m.xI = BigInt.from(7);
+    Operations16.maskl.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;11111110&#39;));
+    m.xI = BigInt.from(8);
+    Operations16.maskl.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;11111111&#39;));
+
+    &#47;&#47; #b
+    m.x = m.tryParseValue(&#39;01011101&#39;)!;
+    Operations16.poundB.intCalc!(m);
+    await expect(m.xI, BigInt.from(5));
+    m.x = m.tryParseValue(&#39;00000000&#39;)!;
+    Operations16.poundB.intCalc!(m);
+    await expect(m.xI, BigInt.from(0));
+    m.x = m.tryParseValue(&#39;11111111&#39;)!;
+    Operations16.poundB.intCalc!(m);
+    await expect(m.xI, BigInt.from(8));
+  });
+  await test(&#39;double operations&#39;, () async {
+    Model m = newModel();
+    m.wordSize = 5;
+    await expect(m.signMode, SignMode.twosComplement); &#47;&#47; default
+    m.displayMode = DisplayMode.bin;
+
+    &#47;&#47; double multiply:  7*6 = 42
+    m.y = m.tryParseValue(&#39;00111&#39;)!;
+    m.x = m.tryParseValue(&#39;00110&#39;)!;
+    Operations16.dblx.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;00001&#39;));
+    await expect(m.y, m.tryParseValue(&#39;01010&#39;));
+
+    &#47;&#47; double divide:  -88 &#47; 11
+    m.x = m.tryParseValue(&#39;01000&#39;)!; &#47;&#47; Z
+    m.pushStack();
+    m.x = m.tryParseValue(&#39;11101&#39;)!; &#47;&#47; Y, YZ is -88
+    m.pushStack();
+    m.x = m.tryParseValue(&#39;01011&#39;)!; &#47;&#47; X, 11
+    Operations16.dblDiv.intCalc!(m);
+    await expect(m.x, m.tryParseValue(&#39;11000&#39;));
+
+    &#47;&#47; double remainder: -87 remainder 11 = -10
+    m.x = m.tryParseValue(&#39;01001&#39;)!; &#47;&#47; Z
+    m.pushStack();
+    m.x = m.tryParseValue(&#39;11101&#39;)!; &#47;&#47; Y, YZ is -87
+    m.pushStack();
+    m.x = m.tryParseValue(&#39;01011&#39;)!; &#47;&#47; X, 11
+    Operations16.dblr.intCalc!(m);
+    await expect(m.xI, BigInt.from(-10));
+
+    &#47;&#47; double multiply:  Unsigned f723eb313f123827 * a20175becabcde06
+    &#47;&#47;          is 9c6623a4aff98347_8e11697b49c322ea
+    m.wordSize = 64;
+    m.integerSignMode = SignMode.unsigned;
+    m.gFlag = true;
+    m.xI = BigInt.parse(&#39;f723eb313f123827&#39;, radix: 16);
+    m.yI = BigInt.parse(&#39;a20175becabcde06&#39;, radix: 16);
+    Operations16.dblx.intCalc!(m);
+    await expect(m.xI, BigInt.parse(&#39;9c6623a4aff98347&#39;, radix: 16));
+    await expect(m.yI, BigInt.parse(&#39;8e11697b49c322ea&#39;, radix: 16));
+    await expect(m.gFlag, false);
+
+    &#47;&#47; double divide with above numbers
+    m.pushStack();
+    m.xI = BigInt.parse(&#39;a20175becabcde06&#39;, radix: 16);
+    Operations16.dblDiv.intCalc!(m);
+    await expect(m.xI, BigInt.parse(&#39;f723eb313f123827&#39;, radix: 16));
+
+    &#47;&#47; double remainder with big numbers
+    m.xI = BigInt.parse(&#39;8e11697b49c322ec&#39;, radix: 16);
+    m.pushStack();
+    m.xI = BigInt.parse(&#39;9c6623a4aff98347&#39;, radix: 16);
+    m.pushStack();
+    m.xI = BigInt.parse(&#39;f723eb313f123827&#39;, radix: 16);
+    Operations16.dblr.intCalc!(m);
+    await expect(m.xI, BigInt.from(2));
+  });
+  await test(&#39;Unsigned add and subtract&#39;, _testUnsigned);
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">jrpn</a></li>
+  <li><a href="../../jrpn16.tests/jrpn16.tests-library.html">jrpn16.tests</a></li>
+  <li><a href="../../jrpn16.tests/SelfTests16-class.html">SelfTests16</a></li>
+  <li class="self-crumb">testIntOperations method</li>
+</ol>
+
+
+    <h5>SelfTests16 class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../jrpn16.tests/SelfTests16-class.html#constructors">Constructors</a></li>
+          <li><a href="../../jrpn16.tests/SelfTests16/SelfTests16.html">SelfTests16</a></li>
+
+
+        <li class="section-title inherited">
+          <a href="../../jrpn16.tests/SelfTests16-class.html#instance-properties">Properties</a>
+        </li>
+          <li class="inherited"><a href="../../controller/SelfTests/errorsSeen.html">errorsSeen</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/inCalculator.html">inCalculator</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/pauseEvery.html">pauseEvery</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/testsRun.html">testsRun</a></li>
+
+        <li class="section-title"><a href="../../jrpn16.tests/SelfTests16-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/expect.html">expect</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/fd.html">fd</a></li>
+          <li><a href="../../jrpn16.tests/SelfTests16/newController.html">newController</a></li>
+          <li><a href="../../jrpn16.tests/SelfTests16/newModel.html">newModel</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../jrpn16.tests/SelfTests16/runAll.html">runAll</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/test.html">test</a></li>
+          <li><a href="../../jrpn16.tests/SelfTests16/testFloatConvert.html">testFloatConvert</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/testFloatValues.html">testFloatValues</a></li>
+          <li><a href="../../jrpn16.tests/SelfTests16/testIntOperations.html">testIntOperations</a></li>
+          <li><a href="../../jrpn16.tests/SelfTests16/testIntValues.html">testIntValues</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/testJson.html">testJson</a></li>
+          <li><a href="../../jrpn16.tests/SelfTests16/testNumbers.html">testNumbers</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+        <li class="section-title inherited"><a href="../../jrpn16.tests/SelfTests16-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      2.0.1+6
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

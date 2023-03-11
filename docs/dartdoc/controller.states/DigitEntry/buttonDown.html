@@ -78,6 +78,7 @@
   <pre class="language-dart"><code class="language-dart">@override
 void buttonDown(Operation key) {
   if (key.endsDigitEntry) {
+    model.x = model.x; &#47;&#47; Clear CLX status
     changeState(Resting(controller)).buttonDown(key);
   } else {
     key.pressed(this);
@@ -120,6 +121,7 @@ void buttonDown(Operation key) {
           <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
 
         <li class="section-title"><a href="../../controller.states/DigitEntry-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ControllerState/abort.html">abort</a></li>
           <li><a href="../../controller.states/DigitEntry/buttonDown.html">buttonDown</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/changeState.html">changeState</a></li>

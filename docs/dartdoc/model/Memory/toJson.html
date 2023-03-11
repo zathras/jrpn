@@ -58,8 +58,7 @@
       
 
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
-<span class="name ">toJson</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="toJson-param-comments">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">comments</span> = <span class="default-value">false</span>}</span></li>
-</ol>)
+<span class="name ">toJson</span>(<wbr>)
 
       
 
@@ -70,19 +69,16 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Map&lt;String, Object&gt; toJson({bool comments = false}) {
+  <pre class="language-dart"><code class="language-dart">Map&lt;String, Object&gt; toJson() {
   final st = StringBuffer();
-  for (int i = 0; i &lt; storage.lengthInBytes; i++) {
+  for (int i = 0; i &lt; totalNybbles; i++) {
     st.write(storage.getUint8(i).toRadixString(16));
   }
   final r = &lt;String, Object&gt;{
     &#39;storage&#39;: st.toString(),
-    &#39;program&#39;: program,
+    &#39;program&#39;: program.toJson(),
     &#39;I&#39;: registers._indexValue.toJson()
   };
-  if (comments) {
-    r[&#39;commentProgramListing&#39;] = program.listing;
-  }
   return r;
 }</code></pre>
 </section>

@@ -58,8 +58,7 @@
       
 
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>
-<span class="name ">toJson</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="toJson-param-comments">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">comments</span> = <span class="default-value">false</span>}</span></li>
-</ol>)
+<span class="name ">toJson</span>(<wbr>)
 
       
 
@@ -73,22 +72,43 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Map&lt;String, dynamic&gt; toJson({bool comments = false}) {
+  <pre class="language-dart"><code class="language-dart">Map&lt;String, dynamic&gt; toJson() {
   final r = &lt;String, dynamic&gt;{
     &#39;menuEnabled&#39;: menuEnabled.value,
     &#39;windowEnabled&#39;: _windowEnabled,
     &#39;euroComma&#39;: _euroComma,
-    &#39;hideComplement&#39;: _hideComplement,
-    &#39;showWordSize&#39;: _showWordSize,
     &#39;showAccelerators&#39;: showAccelerators.value,
     &#39;systemOverlaysDisabled&#39;: systemOverlaysDisabled,
     &#39;orientation&#39;: orientation.index
   };
+  if (_model.modelName != &#39;15C&#39;) {
+    r[&#39;showWordSize&#39;] = _showWordSize;
+    r[&#39;hideComplement&#39;] = _hideComplement;
+    r[&#39;integerModeCommas&#39;] = _integerModeCommas;
+  }
   if (_msPerInstruction != null) {
     r[&#39;msPerInstruction&#39;] = _msPerInstruction;
   }
-  if (comments || _traceProgramToStdout) {
+  if (_traceProgramToStdout) {
     r[&#39;traceProgramToStdout&#39;] = _traceProgramToStdout;
+  }
+  if (fTextColor != _fTextColorDefault) {
+    r[&#39;fTextColor&#39;] = fTextColor;
+  }
+  if (fKeyColor != _fKeyColorDefault) {
+    r[&#39;fKeyColor&#39;] = fKeyColor;
+  }
+  if (gTextColor != _gTextColorDefault) {
+    r[&#39;gTextColor&#39;] = gTextColor;
+  }
+  if (gKeyColor != _gKeyColorDefault) {
+    r[&#39;gKeyColor&#39;] = gKeyColor;
+  }
+  if (lcdBackgroundColor != _lcdBackgroundColorDefault) {
+    r[&#39;lcdBackgroundColor&#39;] = lcdBackgroundColor;
+  }
+  if (lcdForegroundColor != _lcdForegroundColorDefault) {
+    r[&#39;lcdForegroundColor&#39;] = lcdForegroundColor;
   }
   return r;
 }</code></pre>
@@ -123,9 +143,16 @@
           <a href="../../model/Settings-class.html#instance-properties">Properties</a>
         </li>
           <li><a href="../../model/Settings/euroComma.html">euroComma</a></li>
+          <li><a href="../../model/Settings/fKeyColor.html">fKeyColor</a></li>
+          <li><a href="../../model/Settings/fTextColor.html">fTextColor</a></li>
+          <li><a href="../../model/Settings/gKeyColor.html">gKeyColor</a></li>
+          <li><a href="../../model/Settings/gTextColor.html">gTextColor</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../model/Settings/hideComplement.html">hideComplement</a></li>
+          <li><a href="../../model/Settings/integerModeCommas.html">integerModeCommas</a></li>
           <li><a href="../../model/Settings/isMobilePlatform.html">isMobilePlatform</a></li>
+          <li><a href="../../model/Settings/lcdBackgroundColor.html">lcdBackgroundColor</a></li>
+          <li><a href="../../model/Settings/lcdForegroundColor.html">lcdForegroundColor</a></li>
           <li><a href="../../model/Settings/menuEnabled.html">menuEnabled</a></li>
           <li><a href="../../model/Settings/msPerInstruction.html">msPerInstruction</a></li>
           <li><a href="../../model/Settings/orientation.html">orientation</a></li>
@@ -139,6 +166,7 @@
         <li class="section-title"><a href="../../model/Settings-class.html#instance-methods">Methods</a></li>
           <li><a href="../../model/Settings/decodeJson.html">decodeJson</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../model/Settings/setPlatformOverlays.html">setPlatformOverlays</a></li>
           <li><a href="../../model/Settings/toJson.html">toJson</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
 

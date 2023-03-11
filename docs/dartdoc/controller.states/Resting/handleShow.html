@@ -80,12 +80,20 @@ void handleShow(IntegerDisplayMode mode) {
   if (model.isFloatMode) {
     return;
   }
-  if (model.displayMode != mode) {
-    model.display.window = 0;
-    model.display.current = mode.format(model.x, model);
-    model.display.update();
+  int lastWindow = 0;
+  int show() {
+    lastWindow = model.display.window;
+    if (model.displayMode != mode) {
+      model.display.window = 0;
+    }
+    model.display.currentShowingX = mode.format(model.x, model);
+    model.display.update(neverReformat: true);
+    return lastWindow;
   }
-  changeState(ShowState(this));
+
+  if (!controller.delayForShow(show)) {
+    changeState(ShowState(this, window: lastWindow));
+  }
 }</code></pre>
 </section>
 
@@ -124,6 +132,7 @@ void handleShow(IntegerDisplayMode mode) {
           <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
 
         <li class="section-title"><a href="../../controller.states/Resting-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ControllerState/abort.html">abort</a></li>
           <li><a href="../../controller.states/Resting/buttonDown.html">buttonDown</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
           <li><a href="../../controller.states/Resting/calculate.html">calculate</a></li>

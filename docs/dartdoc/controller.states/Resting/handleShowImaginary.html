@@ -79,10 +79,12 @@ void handleShowImaginary() {
   if (!model.isComplexMode) {
     throw CalculatorError(3);
   }
-  final tmp = model.xC;
-  model.x = model.xImaginary;
+  final tmpR = model.x;
+  final tmpI = model.xImaginary;
+  model.xPreserveCLX = tmpI;
   model.display.displayX();
-  model.xC = tmp;
+  model.xPreserveCLX = tmpR;
+  model.xImaginary = tmpI;
   changeState(ShowState(this));
 }</code></pre>
 </section>
@@ -122,6 +124,7 @@ void handleShowImaginary() {
           <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
 
         <li class="section-title"><a href="../../controller.states/Resting-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ControllerState/abort.html">abort</a></li>
           <li><a href="../../controller.states/Resting/buttonDown.html">buttonDown</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
           <li><a href="../../controller.states/Resting/calculate.html">calculate</a></li>

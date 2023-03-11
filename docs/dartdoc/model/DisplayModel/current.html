@@ -85,7 +85,7 @@
       &#47;&#47; If, for example, the base changed out from under us, like in
       &#47;&#47; https:&#47;&#47;github.com&#47;zathras&#47;jrpn&#47;issues&#47;12
     }
-    final int window = (_suspendWindow) ? 0 : _window;
+    final int window = (_showingX) ? _window : 0;
     final int count = _numDigits;
     if (count &lt;= 8) {
       return _current;
@@ -149,7 +149,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">set current(String v) {
   _current = v;
-  _suspendWindow = true;
+  _showingX = false;
 }</code></pre>
 </section>
 
@@ -183,8 +183,8 @@
           <a href="../../model/DisplayModel-class.html#instance-properties">Properties</a>
         </li>
           <li><a href="../../model/DisplayModel/current.html">current</a></li>
+          <li><a href="../../model/DisplayModel/currentShowingX.html">currentShowingX</a></li>
           <li><a href="../../model/DisplayModel/currentWithoutWindow.html">currentWithoutWindow</a></li>
-          <li><a href="../../model/DisplayModel/currentWithWindow.html">currentWithWindow</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../model/DisplayModel/ignoreUpdates.html">ignoreUpdates</a></li>
           <li><a href="../../model/DisplayModel/model.html">model</a></li>

@@ -113,6 +113,18 @@ part of the controller.</p>
 
 </dd>
 
+        <dt id="argShift" class="property">
+  <span class="name"><a href="../model/ProgramOperation/argShift.html">argShift</a></span>
+  <span class="signature">&#8594; <a href="../model/ProgramOperation-class.html">ProgramOperation</a>?</span> 
+
+</dt>
+<dd>
+  If used as an argument, the shift key needed for that argument.
+Rare:  sto g <letter> and rcl g <letter> do this.</letter></letter>
+  <div class="features"><span class="feature">read-only</span></div>
+
+</dd>
+
         <dt id="debugLogId" class="property">
   <span class="name"><a href="../model/ProgramOperation/debugLogId.html">debugLogId</a></span>
   <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
@@ -132,6 +144,17 @@ part of the controller.</p>
 <dd class="inherited">
   The hash code for this object.
   <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="isShift" class="property">
+  <span class="name"><a href="../model/ProgramOperation/isShift.html">isShift</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+  Is this the f or g shift key?
+  <div class="features"><span class="feature">read-only</span></div>
 
 </dd>
 
@@ -309,6 +332,8 @@ default.
         <li><a href="../model/MKey-class.html">MKey</a></li>
         <li><a href="../model/MKeyExtensionOp-class.html">MKeyExtensionOp</a></li>
         <li><a href="../model/Model-class.html">Model</a></li>
+        <li><a href="../model/ModelSnapshot-class.html">ModelSnapshot</a></li>
+        <li><a href="../model/MProgramRunner-class.html">MProgramRunner</a></li>
         <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
         <li><a href="../model/NumStatus68-class.html">NumStatus68</a></li>
         <li><a href="../model/Observable-class.html">Observable</a></li>
@@ -324,6 +349,7 @@ default.
         <li><a href="../model/Settings-class.html">Settings</a></li>
         <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
         <li><a href="../model/SignMode-class.html">SignMode</a></li>
+        <li><a href="../model/StackLiftingArgDone-class.html">StackLiftingArgDone</a></li>
         <li><a href="../model/TrigMode-class.html">TrigMode</a></li>
         <li><a href="../model/Value-class.html">Value</a></li>
 
@@ -335,6 +361,7 @@ default.
 
 
       <li class="section-title"><a href="../model/model-library.html#enums">Enums</a></li>
+        <li><a href="../model/BlinkMode.html">BlinkMode</a></li>
         <li><a href="../model/OrientationSetting.html">OrientationSetting</a></li>
 
       <li class="section-title"><a href="../model/model-library.html#typedefs">Typedefs</a></li>
@@ -355,8 +382,10 @@ default.
           <a href="../model/ProgramOperation-class.html#instance-properties">Properties</a>
         </li>
           <li><a href="../model/ProgramOperation/arg.html">arg</a></li>
+          <li><a href="../model/ProgramOperation/argShift.html">argShift</a></li>
           <li><a href="../model/ProgramOperation/debugLogId.html">debugLogId</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li><a href="../model/ProgramOperation/isShift.html">isShift</a></li>
           <li><a href="../model/ProgramOperation/maxOneByteOpcodes.html">maxOneByteOpcodes</a></li>
           <li><a href="../model/ProgramOperation/name.html">name</a></li>
           <li><a href="../model/ProgramOperation/numericValue.html">numericValue</a></li>

@@ -72,24 +72,27 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void calculate(Operation op, ArgDone arg) {
-  op.pressed(this);
-  final f = op.calcDisabled(controller) ? null : getCalculation(arg);
-  if (f != null) {
-    try {
+  try {
+    op.pressed(this);
+    final f = op.calcDisabled(controller) ? null : getCalculation(arg);
+    if (f != null) {
       &#47;&#47; Give the argument a chance to veto or defer the beforeCalculate
       &#47;&#47; step.  This is needed for operations with a timeout, like the
       &#47;&#47; 15C&#39;s STO to matrix.
       arg.handleOpBeforeCalculate(model, () =&gt; op.beforeCalculate(this));
+      if (arg.liftStackIfEnabled(model)) {
+        liftStackIfEnabled();
+      }
       f(model);
       model.display.displayX();
-    } on CalculatorError catch (e, stack) {
-      controller.showCalculatorError(e, stack);
-      &#47;&#47; ignore: avoid_catches_without_on_clauses
-    } catch (e, s) {
-      debugPrint(&#39;Unexpected exception $e\n\n$s&#39;);
-      controller.showCalculatorError(CalculatorError(9), s);
+      op.possiblyAlterStackLift(controller);
     }
-    op.possiblyAlterStackLift(controller);
+  } on CalculatorError catch (e, stack) {
+    controller.showCalculatorError(e, stack);
+    &#47;&#47; ignore: avoid_catches_without_on_clauses
+  } catch (e, s) {
+    debugPrint(&#39;Unexpected exception $e\n\n$s&#39;);
+    controller.showCalculatorError(CalculatorError(9), s);
   }
 }</code></pre>
 </section>
@@ -129,6 +132,7 @@
           <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
 
         <li class="section-title"><a href="../../controller.states/Resting-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ControllerState/abort.html">abort</a></li>
           <li><a href="../../controller.states/Resting/buttonDown.html">buttonDown</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
           <li><a href="../../controller.states/Resting/calculate.html">calculate</a></li>

@@ -80,7 +80,7 @@
   <pre class="language-dart"><code class="language-dart">@protected
 Future&lt;void&gt; expect(Object? val, Object? expected, {String? reason}) async {
   if (inCalculator) {
-    if (_expectsSeen++ % 500 == 0) {
+    if (_expectsSeen++ % pauseEvery == 0) {
       DateTime now = DateTime.now();
       Duration sleep =
           (const Duration(milliseconds: 16)) - now.difference(_lastPause);
@@ -94,7 +94,7 @@ Future&lt;void&gt; expect(Object? val, Object? expected, {String? reason}) async
   }
   if (val != expected) {
     debugPrint(&#39;&#39;);
-    debugPrint(&#39;*** Error in self-test:  $val != $expected&#39;);
+    debugPrint(&#39;*** Error in self-test:  $val != expected $expected&#39;);
     if (reason != null) {
       debugPrint(&#39;  $reason&#39;);
       debugPrint(&#39;&#39;);
@@ -135,6 +135,7 @@ Future&lt;void&gt; expect(Object? val, Object? expected, {String? reason}) async
           <li><a href="../../controller/SelfTests/errorsSeen.html">errorsSeen</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../controller/SelfTests/inCalculator.html">inCalculator</a></li>
+          <li><a href="../../controller/SelfTests/pauseEvery.html">pauseEvery</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
           <li><a href="../../controller/SelfTests/testsRun.html">testsRun</a></li>
 

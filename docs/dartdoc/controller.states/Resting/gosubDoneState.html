@@ -63,7 +63,9 @@
   </div>
 
 <span class="returntype"><a href="../../controller.states/ControllerState-class.html">ControllerState</a></span>
-<span class="name ">gosubDoneState</span>(<wbr>)
+<span class="name ">gosubDoneState</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="gosubDoneState-param-runner"><span class="type-annotation"><a href="../../controller.states/ProgramRunner-class.html">ProgramRunner</a></span> <span class="parameter-name">runner</span>(<ol class="parameter-list"></ol>
+)</span></li>
+</ol>)
 
       <div class="features"><span class="feature">override</span></div>
 
@@ -75,7 +77,8 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
-ControllerState gosubDoneState() =&gt; Running(controller as RealController);</code></pre>
+ControllerState gosubDoneState(ProgramRunner Function() runner) =&gt;
+    Running(controller as RealController, runner());</code></pre>
 </section>
 
 
@@ -113,6 +116,7 @@ ControllerState gosubDoneState() =&gt; Running(controller as RealController);</c
           <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
 
         <li class="section-title"><a href="../../controller.states/Resting-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ControllerState/abort.html">abort</a></li>
           <li><a href="../../controller.states/Resting/buttonDown.html">buttonDown</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
           <li><a href="../../controller.states/Resting/calculate.html">calculate</a></li>

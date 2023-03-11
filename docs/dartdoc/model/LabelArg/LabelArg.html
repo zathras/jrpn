@@ -63,7 +63,8 @@
 </ol>
 ), </span></li>
 <li><span class="parameter" id="-param-indirect"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">indirect</span> = <span class="default-value">false</span>, </span></li>
-<li><span class="parameter" id="-param-iFirst"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">iFirst</span> = <span class="default-value">false</span>}</span></li>
+<li><span class="parameter" id="-param-iFirst"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">iFirst</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="-param-noI"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">noI</span> = <span class="default-value">false</span>}</span></li>
 </ol>)
     </section>
 
@@ -78,10 +79,12 @@
     List&lt;ProgramOperation&gt; letters = const [],
     required void Function(Model m, int? v) f,
     bool indirect = false,
-    bool iFirst = false})
+    bool iFirst = false,
+    bool noI = false})
     : super(
-          synonyms: Arg.registerISynonyms,
-          children: _makeChildren(maxDigit, indirect, iFirst, letters, f));</code></pre>
+          synonyms: Arg.gsbLabelSynonyms,
+          children:
+              _makeChildren(maxDigit, indirect, iFirst, noI, letters, f));</code></pre>
 </section>
 
 

@@ -225,7 +225,7 @@ CHS on the 15C).
 
         <dt id="pause" class="property">
   <span class="name"><a href="../controller/RunningController/pause.html">pause</a></span>
-  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+  <span class="signature">&#8596; (<a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>? Function<span class="signature">()</span>?)</span> 
 
 </dt>
 <dd>
@@ -324,6 +324,19 @@ for some keys, like SST, show-hex and clear-prefix.
 <dd class="inherited">
   
   <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="delayForShow" class="callable">
+  <span class="name"><a href="../controller/RunningController/delayForShow.html">delayForShow</a></span><span class="signature">(<wbr><span class="parameter" id="delayForShow-param-updateDisplay"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">updateDisplay</span>()</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
@@ -562,7 +575,6 @@ determined by the executed instruction).
         <li><a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></li>
         <li><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></li>
         <li><a href="../controller/Controller-class.html">Controller</a></li>
-        <li><a href="../controller/GosubOperation-class.html">GosubOperation</a></li>
         <li><a href="../controller/KeyboardController-class.html">KeyboardController</a></li>
         <li><a href="../controller/LetterLabel-class.html">LetterLabel</a></li>
         <li><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></li>
@@ -572,13 +584,17 @@ determined by the executed instruction).
         <li><a href="../controller/NormalArgOperationWithBeforeCalc-class.html">NormalArgOperationWithBeforeCalc</a></li>
         <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
         <li><a href="../controller/NormalOperationOrLetter-class.html">NormalOperationOrLetter</a></li>
+        <li><a href="../controller/NormalOperationShiftedArg-class.html">NormalOperationShiftedArg</a></li>
         <li><a href="../controller/NumberEntry-class.html">NumberEntry</a></li>
         <li><a href="../controller/Operation-class.html">Operation</a></li>
         <li><a href="../controller/RealController-class.html">RealController</a></li>
         <li><a href="../controller/RunningController-class.html">RunningController</a></li>
+        <li><a href="../controller/RunProgramOperation-class.html">RunProgramOperation</a></li>
         <li><a href="../controller/SelfTests-class.html">SelfTests</a></li>
+        <li><a href="../controller/ShiftOperation-class.html">ShiftOperation</a></li>
         <li><a href="../controller/StackLift-class.html">StackLift</a></li>
         <li><a href="../controller/StackLiftEnabledUser-class.html">StackLiftEnabledUser</a></li>
+        <li><a href="../controller/StackLiftingNormalOperation-class.html">StackLiftingNormalOperation</a></li>
 
 
 
@@ -622,6 +638,7 @@ determined by the executed instruction).
           <li class="inherited"><a href="../controller/Controller/buttonDown.html">buttonDown</a></li>
           <li><a href="../controller/RunningController/buttonUp.html">buttonUp</a></li>
           <li class="inherited"><a href="../controller/Controller/buttonWidgetDown.html">buttonWidgetDown</a></li>
+          <li><a href="../controller/RunningController/delayForShow.html">delayForShow</a></li>
           <li><a href="../controller/RunningController/getArgsAndRun.html">getArgsAndRun</a></li>
           <li><a href="../controller/RunningController/getErrorNumber.html">getErrorNumber</a></li>
           <li><a href="../controller/RunningController/handlePSE.html">handlePSE</a></li>

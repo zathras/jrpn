@@ -48,96 +48,6 @@
 
   <div id="dartdoc-main-content" class="main-content">
       
-<section class="desc markdown">
-  <h1 id="jrpn">JRPN</h1>
-<p><img src="dartdoc/screenshot.png" alt=""></p>
-<p>JRPN is a clean-room calculator simulator inspired by the HP-16C.
-It uses a simulated seven-segment LCD for display, and
-generally tries to remain faithful to the look-and-feel
-of a real 16C.  I think of the 16C as the "vi" of calculators,
-but the simulator is a bit like a modern Harley Davidson
-motorcycle - I rented one once, and they engineer in a
-certain amount of vibration and engine noise that are
-totally unnecessary, but that make you feel like you're
-"taming the iron horse."  In a similar way, this simulator
-includes a slight delay and a bit of a blink on the LCD
-when you do a calculator operation, and in other ways it
-attempts to simulate a 1982-vintage calculator.</p>
-<p>The calculator has some interesting features:</p>
-<ul>
-<li>
-<p>You can disable the windowing function.  If you do,
-then the digits on the LCD shrink so that they all fit.
-They get pretty small on a 64 bit binary number!  You can
-disable windowing from settings, or temporarily by pressing
-clear-prefix in integer mode.</p>
-</li>
-<li>
-<p>You can copy the contents of the display to the clipboard.</p>
-</li>
-<li>
-<p>From the menu, you can share the calculator state, either
-to/from the clipboard, or to an application.</p>
-</li>
-<li>
-<p>The app can interpret a URL that contains an encoding of
-the calculator state.  This works in the web version, and
-also on the mobile versions:  Both iOS and Android apps
-register to intercept navigation to the calculator's domain.</p>
-</li>
-<li>
-<p>If you want calculator programs to run faster, there's a setting
-for that.  But watching the 7-segment flashing "running" message
-is, to my mind, part of the fun!</p>
-</li>
-<li>
-<p>The self-test function is implemented, and it actually does
-something!  I put some of the unit tests in the calculator --
-notably, the ones involving float and integer calculations,
-since JavaScript is a little crippled in that regard.</p>
-</li>
-<li>
-<p>Programs and registers are stored in a common 406-nybble
-storage area, to faithfully reproduce the limitations of
-the 16C, and the behavior of registers when the word
-size is changed.  See <code>Memory</code> under <code>model</code> for some
-words about that implementation.</p>
-</li>
-</ul>
-<p>The design is a pretty has a pretty strict MVC separation.
-Notably, the model doesn't have API dependencies on the
-view or the controller.  It uses the classical MVC structure,
-often imprecisely pictured like this:</p>
-<p><img src="dartdoc/mvc.png" alt=""></p>
-<p>There are even top-level classes called <code>m.Model</code> and <code>c.Controller</code>.
-They're abstract; for the 16C the concrete subclasses are <code>Model16</code>
-and <code>Controller16</code>.  The top-level widget is <code>Jrpn</code>, but the real
-top-level view class is called <code>MainScreen</code>.  <code>c.Controller</code> does
-<em>not</em> update the view directly.  A more precise top-level structure
-in UML is as follows:</p>
-<p><img src="dartdoc/toplevel.svg" alt=""></p>
-<p>The state model of the 16C is pretty complicated -- they really
-made the most out of a small package!  This complexity is managed
-though extensive use of the GoF state pattern, especially in
-<code>controller</code> and <code>controller.states</code>.  The controller uses the
-command pattern to manage the complexity of the operations.
-Check out <code>controller.operations</code> for details.</p>
-<p>The LCD display is created using some trig.  The drawings where I
-worked this out are fun -- see <code>Segments</code> under <code>view.lcd_display</code>.</p>
-<p>As a general statement, I tried to provide good overviews, and
-design documentation.  I find that this helps me to refine the
-design and spot problems, but I this case I thought there might
-be some value in using this project as a sort of design clinic.
-It's a good size for that:  At about 10K LOC it's big enough to
-have an interesting design, but not so big as to be overwhelming.
-It ends up using a fair number of OO design idioms, and it's pretty
-faithful to the standard GoF patterns.</p>
-<p>This app pushes the Dart type system a bit -- Dart's (mostly)
-sound static typing was a big help in getting the code right,
-but it did expose one place where Dart's unsound covariance
-rules hurt some.  See <code>DisplayModeSelector</code> under <code>model</code>
-for more details on that.</p>
-</section>
 
 
       <section class="summary">
@@ -179,8 +89,85 @@ are a large number of additional states, such as argument input,
 or running a program.  The full hierarchy looks like this:
 </dd>
 
-          <dt id="generic_main">
-  <span class="name"><a href="generic_main/generic_main-library.html">generic_main</a></span> 
+          <dt id="jrpn15.back_panel">
+  <span class="name"><a href="jrpn15.back_panel/jrpn15.back_panel-library.html">jrpn15.back_panel</a></span> 
+
+</dt>
+<dd>The back panel of the calculator.
+</dd>
+
+          <dt id="jrpn15.linalg">
+  <span class="name"><a href="jrpn15.linalg/jrpn15.linalg-library.html">jrpn15.linalg</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="jrpn15.main">
+  <span class="name"><a href="jrpn15.main/jrpn15.main-library.html">jrpn15.main</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="jrpn15.matrix">
+  <span class="name"><a href="jrpn15.matrix/jrpn15.matrix-library.html">jrpn15.matrix</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="jrpn15.model15c">
+  <span class="name"><a href="jrpn15.model15c/jrpn15.model15c-library.html">jrpn15.model15c</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="jrpn15.more_math">
+  <span class="name"><a href="jrpn15.more_math/jrpn15.more_math-library.html">jrpn15.more_math</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="jrpn15.runners">
+  <span class="name"><a href="jrpn15.runners/jrpn15.runners-library.html">jrpn15.runners</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="jrpn15.tests">
+  <span class="name"><a href="jrpn15.tests/jrpn15.tests-library.html">jrpn15.tests</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="jrpn16.back_panel">
+  <span class="name"><a href="jrpn16.back_panel/jrpn16.back_panel-library.html">jrpn16.back_panel</a></span> 
+
+</dt>
+<dd>The back panel of the calculator.
+</dd>
+
+          <dt id="jrpn16.main">
+  <span class="name"><a href="jrpn16.main/jrpn16.main-library.html">jrpn16.main</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="jrpn16.tests">
+  <span class="name"><a href="jrpn16.tests/jrpn16.tests-library.html">jrpn16.tests</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="main">
+  <span class="name"><a href="main/main-library.html">main</a></span> 
 
 </dt>
 <dd>
@@ -211,6 +198,13 @@ and the <a href="model/SignMode-class.html">SignMode</a>.  The overall structure
 <dd>Buttons for the keyboard.  When pressed, buttons consult the <a href="model/Model-class.html">Model</a> to see
 if a shift key has been pressed, and dispatch an appropriate
 <a href="controller/Operation-class.html">Operation</a> to the <a href="controller/Controller-class.html">Controller</a>.
+</dd>
+
+          <dt id="view.isw">
+  <span class="name"><a href="view.isw/view.isw-library.html">view.isw</a></span> 
+
+</dt>
+<dd>
 </dd>
 
           <dt id="view.lcd_display">
@@ -254,10 +248,22 @@ exactly position widgets, and scale them to the screen size.
       <li><a href="controller/controller-library.html">controller</a></li>
       <li><a href="controller.operations/controller.operations-library.html">controller.operations</a></li>
       <li><a href="controller.states/controller.states-library.html">controller.states</a></li>
-      <li><a href="generic_main/generic_main-library.html">generic_main</a></li>
+      <li><a href="jrpn15.back_panel/jrpn15.back_panel-library.html">jrpn15.back_panel</a></li>
+      <li><a href="jrpn15.linalg/jrpn15.linalg-library.html">jrpn15.linalg</a></li>
+      <li><a href="jrpn15.main/jrpn15.main-library.html">jrpn15.main</a></li>
+      <li><a href="jrpn15.matrix/jrpn15.matrix-library.html">jrpn15.matrix</a></li>
+      <li><a href="jrpn15.model15c/jrpn15.model15c-library.html">jrpn15.model15c</a></li>
+      <li><a href="jrpn15.more_math/jrpn15.more_math-library.html">jrpn15.more_math</a></li>
+      <li><a href="jrpn15.runners/jrpn15.runners-library.html">jrpn15.runners</a></li>
+      <li><a href="jrpn15.tests/jrpn15.tests-library.html">jrpn15.tests</a></li>
+      <li><a href="jrpn16.back_panel/jrpn16.back_panel-library.html">jrpn16.back_panel</a></li>
+      <li><a href="jrpn16.main/jrpn16.main-library.html">jrpn16.main</a></li>
+      <li><a href="jrpn16.tests/jrpn16.tests-library.html">jrpn16.tests</a></li>
+      <li><a href="main/main-library.html">main</a></li>
       <li><a href="model/model-library.html">model</a></li>
       <li><a href="view.back_panel/view.back_panel-library.html">view.back_panel</a></li>
       <li><a href="view.buttons/view.buttons-library.html">view.buttons</a></li>
+      <li><a href="view.isw/view.isw-library.html">view.isw</a></li>
       <li><a href="view.lcd_display/view.lcd_display-library.html">view.lcd_display</a></li>
       <li><a href="view.main_screen/view.main_screen-library.html">view.main_screen</a></li>
 </ol>

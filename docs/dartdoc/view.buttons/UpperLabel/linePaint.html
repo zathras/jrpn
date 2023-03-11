@@ -58,7 +58,7 @@
           
           <a href="https://api.flutter.dev/flutter/dart-ui/Paint-class.html">Paint</a>
           <span class="name ">linePaint</span>
-          <div class="features"><span class="feature">final</span></div>
+          <div class="features"><span class="feature">late</span><span class="feature">final</span></div>
 
         </section>
         
@@ -66,8 +66,8 @@
         
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">final Paint linePaint = Paint()
-  ..color = const Color(0xfff98c35)
+  <pre class="language-dart"><code class="language-dart">late final Paint linePaint = Paint()
+  ..color = style.color!
   ..style = PaintingStyle.stroke
   ..strokeWidth = 3
   ..strokeCap = StrokeCap.butt;</code></pre>

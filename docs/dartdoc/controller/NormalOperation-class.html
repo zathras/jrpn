@@ -90,6 +90,8 @@ calculation, or otherwise manipulate the model.</p>
           <li><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></li>
           <li><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></li>
           <li><a href="../controller/NormalOperationOrLetter-class.html">NormalOperationOrLetter</a></li>
+          <li><a href="../controller/NormalOperationShiftedArg-class.html">NormalOperationShiftedArg</a></li>
+          <li><a href="../controller/StackLiftingNormalOperation-class.html">StackLiftingNormalOperation</a></li>
         </ul></dd>
 
 
@@ -144,6 +146,18 @@ calculation, or otherwise manipulate the model.</p>
   A description of this arguments operation, or ArgDone if there is none.
 For example, the STO operation has an argument to indicate which register
 to store to.
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="argShift" class="property inherited">
+  <span class="name"><a href="../model/ProgramOperation/argShift.html">argShift</a></span>
+  <span class="signature">&#8594; <a href="../model/ProgramOperation-class.html">ProgramOperation</a>?</span> 
+
+</dt>
+<dd class="inherited">
+  If used as an argument, the shift key needed for that argument.
+Rare:  sto g <letter> and rcl g <letter> do this.</letter></letter>
   <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
@@ -211,6 +225,17 @@ to store to.
 <dd>
   The calculation performed when the calculator is in integer mode.
   <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="isShift" class="property inherited">
+  <span class="name"><a href="../model/ProgramOperation/isShift.html">isShift</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd class="inherited">
+  Is this the f or g shift key?
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -393,6 +418,19 @@ can be overridden to do that.
 
 </dd>
 
+        <dt id="liftStackIfEnabled" class="callable">
+  <span class="name"><a href="../controller/NormalOperation/liftStackIfEnabled.html">liftStackIfEnabled</a></span><span class="signature">(<wbr><span class="parameter" id="liftStackIfEnabled-param-m"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">m</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
         <dt id="makeInputState" class="callable inherited">
   <span class="name"><a href="../controller/Operation/makeInputState.html">makeInputState</a></span><span class="signature">(<wbr><span class="parameter" id="makeInputState-param-arg"><span class="type-annotation"><a href="../model/Arg-class.html">Arg</a></span> <span class="parameter-name">arg</span>, </span><span class="parameter" id="makeInputState-param-c"><span class="type-annotation"><a href="../controller/Controller-class.html">Controller</a></span> <span class="parameter-name">c</span>, </span><span class="parameter" id="makeInputState-param-fromState"><span class="type-annotation"><a href="../controller.states/LimitedState-class.html">LimitedState</a></span> <span class="parameter-name">fromState</span></span>)
     <span class="returntype parameter">&#8594; <a href="../controller.states/ControllerState-class.html">ControllerState</a></span>
@@ -524,7 +562,6 @@ or on its argument).
         <li><a href="../controller/BranchingArgOperation-class.html">BranchingArgOperation</a></li>
         <li><a href="../controller/BranchingOperation-class.html">BranchingOperation</a></li>
         <li><a href="../controller/Controller-class.html">Controller</a></li>
-        <li><a href="../controller/GosubOperation-class.html">GosubOperation</a></li>
         <li><a href="../controller/KeyboardController-class.html">KeyboardController</a></li>
         <li><a href="../controller/LetterLabel-class.html">LetterLabel</a></li>
         <li><a href="../controller/LimitedOperation-class.html">LimitedOperation</a></li>
@@ -534,13 +571,17 @@ or on its argument).
         <li><a href="../controller/NormalArgOperationWithBeforeCalc-class.html">NormalArgOperationWithBeforeCalc</a></li>
         <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
         <li><a href="../controller/NormalOperationOrLetter-class.html">NormalOperationOrLetter</a></li>
+        <li><a href="../controller/NormalOperationShiftedArg-class.html">NormalOperationShiftedArg</a></li>
         <li><a href="../controller/NumberEntry-class.html">NumberEntry</a></li>
         <li><a href="../controller/Operation-class.html">Operation</a></li>
         <li><a href="../controller/RealController-class.html">RealController</a></li>
         <li><a href="../controller/RunningController-class.html">RunningController</a></li>
+        <li><a href="../controller/RunProgramOperation-class.html">RunProgramOperation</a></li>
         <li><a href="../controller/SelfTests-class.html">SelfTests</a></li>
+        <li><a href="../controller/ShiftOperation-class.html">ShiftOperation</a></li>
         <li><a href="../controller/StackLift-class.html">StackLift</a></li>
         <li><a href="../controller/StackLiftEnabledUser-class.html">StackLiftEnabledUser</a></li>
+        <li><a href="../controller/StackLiftingNormalOperation-class.html">StackLiftingNormalOperation</a></li>
 
 
 
@@ -567,12 +608,14 @@ or on its argument).
           <a href="../controller/NormalOperation-class.html#instance-properties">Properties</a>
         </li>
           <li class="inherited"><a href="../controller/NoArgOperation/arg.html">arg</a></li>
+          <li class="inherited"><a href="../model/ProgramOperation/argShift.html">argShift</a></li>
           <li><a href="../controller/NormalOperation/complexCalc.html">complexCalc</a></li>
           <li class="inherited"><a href="../model/ProgramOperation/debugLogId.html">debugLogId</a></li>
           <li><a href="../controller/NormalOperation/endsDigitEntry.html">endsDigitEntry</a></li>
           <li><a href="../controller/NormalOperation/floatCalc.html">floatCalc</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../controller/NormalOperation/intCalc.html">intCalc</a></li>
+          <li class="inherited"><a href="../model/ProgramOperation/isShift.html">isShift</a></li>
           <li><a href="../controller/NormalOperation/maxOneByteOpcodes.html">maxOneByteOpcodes</a></li>
           <li class="inherited"><a href="../controller/Operation/name.html">name</a></li>
           <li class="inherited"><a href="../model/ProgramOperation/numericValue.html">numericValue</a></li>
@@ -589,6 +632,7 @@ or on its argument).
           <li><a href="../controller/NormalOperation/getCalculation.html">getCalculation</a></li>
           <li class="inherited"><a href="../controller/NoArgOperation/handleOpBeforeCalculate.html">handleOpBeforeCalculate</a></li>
           <li class="inherited"><a href="../controller/NoArgOperation/init.html">init</a></li>
+          <li><a href="../controller/NormalOperation/liftStackIfEnabled.html">liftStackIfEnabled</a></li>
           <li class="inherited"><a href="../controller/Operation/makeInputState.html">makeInputState</a></li>
           <li class="inherited"><a href="../controller/NoArgOperation/matches.html">matches</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>

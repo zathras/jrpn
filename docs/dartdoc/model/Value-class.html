@@ -190,9 +190,31 @@ Not valid for infinity or -infinity.
   The calculator's internal representation of a value, as an <em>unsigned</em>
 integer of (up to) 64 bits in normal operation (128 for the double
 integer operations).  It's a BigInt rather than an int because
-Javascript Is Evil (tm).  That said, it does let us handle the double
-integer operations easily.
+Javascript Is Evil (tm).  That said, using BigInt does let us handle the
+double integer operations easily.
   <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="isNegative" class="property">
+  <span class="name"><a href="../model/Value/isNegative.html">isNegative</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">read-only</span></div>
+
+</dd>
+
+        <dt id="isPositive" class="property">
+  <span class="name"><a href="../model/Value/isPositive.html">isPositive</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">read-only</span></div>
 
 </dd>
 
@@ -229,6 +251,32 @@ integer operations easily.
 
 </dd>
 
+        <dt id="fracOp" class="callable">
+  <span class="name"><a href="../model/Value/fracOp.html">fracOp</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../model/Value-class.html">Value</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="intOp" class="callable">
+  <span class="name"><a href="../model/Value/intOp.html">intOp</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../model/Value-class.html">Value</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
         <dt id="isZero" class="callable">
   <span class="name"><a href="../model/Value/isZero.html">isZero</a></span><span class="signature">(<wbr><span class="parameter" id="isZero-param-m"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">m</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
@@ -252,7 +300,7 @@ integer operations easily.
 </dt>
 <dd>
   Give one digit of the mantissa, where 0 is the MSD, and 9 is the LSD.
--1 gives the carry digit (9 is negative, 0 is positive).
+-1 gives the sign digit (9 is negative, 0 is positive).
   
 
 </dd>
@@ -280,6 +328,19 @@ integer operations easily.
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
   <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="timesTenTo" class="callable">
+  <span class="name"><a href="../model/Value/timesTenTo.html">timesTenTo</a></span><span class="signature">(<wbr><span class="parameter" id="timesTenTo-param-power"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">power</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../model/Value-class.html">Value</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
 
 </dd>
 
@@ -482,6 +543,8 @@ integer operations easily.
         <li><a href="../model/MKey-class.html">MKey</a></li>
         <li><a href="../model/MKeyExtensionOp-class.html">MKeyExtensionOp</a></li>
         <li><a href="../model/Model-class.html">Model</a></li>
+        <li><a href="../model/ModelSnapshot-class.html">ModelSnapshot</a></li>
+        <li><a href="../model/MProgramRunner-class.html">MProgramRunner</a></li>
         <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
         <li><a href="../model/NumStatus68-class.html">NumStatus68</a></li>
         <li><a href="../model/Observable-class.html">Observable</a></li>
@@ -497,6 +560,7 @@ integer operations easily.
         <li><a href="../model/Settings-class.html">Settings</a></li>
         <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
         <li><a href="../model/SignMode-class.html">SignMode</a></li>
+        <li><a href="../model/StackLiftingArgDone-class.html">StackLiftingArgDone</a></li>
         <li><a href="../model/TrigMode-class.html">TrigMode</a></li>
         <li><a href="../model/Value-class.html">Value</a></li>
 
@@ -508,6 +572,7 @@ integer operations easily.
 
 
       <li class="section-title"><a href="../model/model-library.html#enums">Enums</a></li>
+        <li><a href="../model/BlinkMode.html">BlinkMode</a></li>
         <li><a href="../model/OrientationSetting.html">OrientationSetting</a></li>
 
       <li class="section-title"><a href="../model/model-library.html#typedefs">Typedefs</a></li>
@@ -534,14 +599,19 @@ integer operations easily.
           <li><a href="../model/Value/floatPrefix.html">floatPrefix</a></li>
           <li><a href="../model/Value/hashCode.html">hashCode</a></li>
           <li><a href="../model/Value/internal.html">internal</a></li>
+          <li><a href="../model/Value/isNegative.html">isNegative</a></li>
+          <li><a href="../model/Value/isPositive.html">isPositive</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
 
         <li class="section-title"><a href="../model/Value-class.html#instance-methods">Methods</a></li>
           <li><a href="../model/Value/changeBitSize.html">changeBitSize</a></li>
+          <li><a href="../model/Value/fracOp.html">fracOp</a></li>
+          <li><a href="../model/Value/intOp.html">intOp</a></li>
           <li><a href="../model/Value/isZero.html">isZero</a></li>
           <li><a href="../model/Value/mantissaDigit.html">mantissaDigit</a></li>
           <li><a href="../model/Value/negateAsFloat.html">negateAsFloat</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../model/Value/timesTenTo.html">timesTenTo</a></li>
           <li><a href="../model/Value/toJson.html">toJson</a></li>
           <li><a href="../model/Value/toString.html">toString</a></li>
 

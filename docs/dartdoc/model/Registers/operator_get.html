@@ -80,9 +80,6 @@
     value = (value &lt;&lt; 4) | BigInt.from(_memory.storage.getUint8(++addr));
   }
   final result = Value.fromInternal(value);
-  if (_model.isFloatMode) {
-    result.asDouble; &#47;&#47; Throw exception if not valid float
-  }
   return result;
 }</code></pre>
 </section>

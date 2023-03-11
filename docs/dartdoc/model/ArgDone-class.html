@@ -74,9 +74,13 @@
 
         <dt>Implementers</dt>
         <dd><ul class="comma-separated clazz-relationships">
+          <li><a href="../jrpn15.main/DeferredRclArg-class.html">DeferredRclArg</a></li>
           <li><a href="../controller/NoArgOperation-class.html">NoArgOperation</a></li>
           <li><a href="../controller/NonProgrammableOperation-class.html">NonProgrammableOperation</a></li>
           <li><a href="../controller/NormalOperation-class.html">NormalOperation</a></li>
+          <li><a href="../jrpn15.main/RclIndirectArg-class.html">RclIndirectArg</a></li>
+          <li><a href="../jrpn15.main/RegisterReadOpArgDone-class.html">RegisterReadOpArgDone</a></li>
+          <li><a href="../model/StackLiftingArgDone-class.html">StackLiftingArgDone</a></li>
         </ul></dd>
 
 
@@ -209,6 +213,19 @@ can be overridden to do that.
 
 </dd>
 
+        <dt id="liftStackIfEnabled" class="callable">
+  <span class="name"><a href="../model/ArgDone/liftStackIfEnabled.html">liftStackIfEnabled</a></span><span class="signature">(<wbr><span class="parameter" id="liftStackIfEnabled-param-m"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">m</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
         <dt id="matches" class="callable">
   <span class="name"><a href="../model/ArgDone/matches.html">matches</a></span><span class="signature">(<wbr><span class="parameter" id="matches-param-key"><span class="type-annotation"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span> <span class="parameter-name">key</span>, </span><span class="parameter" id="matches-param-userMode"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">userMode</span></span>)
     <span class="returntype parameter">&#8594; <a href="../model/Arg-class.html">Arg</a>?</span>
@@ -318,6 +335,8 @@ can be overridden to do that.
         <li><a href="../model/MKey-class.html">MKey</a></li>
         <li><a href="../model/MKeyExtensionOp-class.html">MKeyExtensionOp</a></li>
         <li><a href="../model/Model-class.html">Model</a></li>
+        <li><a href="../model/ModelSnapshot-class.html">ModelSnapshot</a></li>
+        <li><a href="../model/MProgramRunner-class.html">MProgramRunner</a></li>
         <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
         <li><a href="../model/NumStatus68-class.html">NumStatus68</a></li>
         <li><a href="../model/Observable-class.html">Observable</a></li>
@@ -333,6 +352,7 @@ can be overridden to do that.
         <li><a href="../model/Settings-class.html">Settings</a></li>
         <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
         <li><a href="../model/SignMode-class.html">SignMode</a></li>
+        <li><a href="../model/StackLiftingArgDone-class.html">StackLiftingArgDone</a></li>
         <li><a href="../model/TrigMode-class.html">TrigMode</a></li>
         <li><a href="../model/Value-class.html">Value</a></li>
 
@@ -344,6 +364,7 @@ can be overridden to do that.
 
 
       <li class="section-title"><a href="../model/model-library.html#enums">Enums</a></li>
+        <li><a href="../model/BlinkMode.html">BlinkMode</a></li>
         <li><a href="../model/OrientationSetting.html">OrientationSetting</a></li>
 
       <li class="section-title"><a href="../model/model-library.html#typedefs">Typedefs</a></li>
@@ -373,6 +394,7 @@ can be overridden to do that.
           <li><a href="../model/ArgDone/getCalculation.html">getCalculation</a></li>
           <li><a href="../model/ArgDone/handleOpBeforeCalculate.html">handleOpBeforeCalculate</a></li>
           <li><a href="../model/ArgDone/init.html">init</a></li>
+          <li><a href="../model/ArgDone/liftStackIfEnabled.html">liftStackIfEnabled</a></li>
           <li><a href="../model/ArgDone/matches.html">matches</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the invert function from the jrpn15.linalg library, for the Dart programming language.">
+  <title>invert function - jrpn15.linalg library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jrpn</a></li>
+    <li><a href="../jrpn15.linalg/jrpn15.linalg-library.html">jrpn15.linalg</a></li>
+    <li class="self-crumb">invert function</li>
+  </ol>
+  <div class="self-name">invert</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-function">invert</span> function 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    <section class="multi-line-signature">
+        
+
+<span class="returntype">void</span>
+<span class="name ">invert</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="invert-param-m"><span class="type-annotation"><a href="../jrpn15.matrix/Matrix-class.html">Matrix</a></span> <span class="parameter-name">m</span></span></li>
+</ol>)
+
+        
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Invert m in place.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">void invert(final Matrix m) {
+  if (!m.isLU) {
+    decomposeLU(m);
+  }
+  &#47;&#47; Clone the matrix to a native double matrix, for better internal precision.
+  &#47;&#47; This seems to give results closer to the real 15C than the version that
+  &#47;&#47; did the internal math using Value&#39;s precision, in a quick test.  I suspect
+  &#47;&#47; that the 15C may be using a more clever algorithm, but brute force works,
+  &#47;&#47; too!
+  final dm = List&lt;List&lt;double&gt;&gt;.generate(m.rows,
+      (row) =&gt; List&lt;double&gt;.generate(m.columns, (col) =&gt; m.getF(row, col)));
+
+  &#47;&#47;&#47; Now use A^-1 = U^-1 * l^-1 * P, as per HP 15C Advanced Functions p. 83
+
+  &#47;&#47; Calculate U^-1.  Adapted from dtri2.f in LAPACK from www.netlib.org.
+  for (int j = 0; j &lt; m.rows; j++) {
+    final ajj = -1 &#47; dm[j][j];
+    dm[j][j] = -ajj;
+    &#47;&#47; Compute elements 0..j-1 of the jth column
+    &#47;&#47; DTRMV call:
+    for (int jj = 0; jj &lt; j; jj++) {
+      final temp = dm[jj][j];
+      for (int i = 0; i &lt; jj; i++) {
+        dm[i][j] = dm[i][j] + temp * dm[i][jj];
+      }
+      dm[jj][j] = dm[jj][j] * dm[jj][jj];
+    }
+    &#47;&#47; DSCAL call:
+    for (int i = 0; i &lt; j; i++) {
+      dm[i][j] = dm[i][j] * ajj;
+    }
+  }
+
+  &#47;&#47; Calculate L^-1, adapted from dtri2.f.
+  for (int j = m.rows - 2; j &gt;= 0; j--) {
+    const ajj = -1;
+    &#47;&#47; DTRMV call:
+    for (int jj = m.rows - 2 - j; jj &gt;= 0; jj--) {
+      final temp = dm[j + jj + 1][j];
+      for (int i = m.rows - 2 - j; i &gt; jj; i--) {
+        dm[j + 1 + i][j] = dm[j + 1 + i][j] + temp * dm[j + i + 1][j + jj + 1];
+      }
+    }
+    &#47;&#47; DSCAL call:
+    for (int i = j + 1; i &lt; m.rows; i++) {
+      dm[i][j] = dm[i][j] * ajj;
+    }
+  }
+
+  &#47;&#47; Calculate m = U^-1 dot L^-1 in-place:
+  for (int r = 0; r &lt; m.rows; r++) {
+    for (int c = 0; c &lt; m.columns; c++) {
+      double v = 0;
+      for (int k = max(r, c); k &lt; m.columns; k++) {
+        assert(r &lt;= k); &#47;&#47; Otherwise U is zero
+        assert(c &lt;= k); &#47;&#47; Otherwise L is zero;
+        final uv = dm[r][k];
+        final lv = (k == c) ? 1 : dm[k][c];
+        v += uv * lv;
+      }
+      dm[r][c] = v;
+    }
+  }
+  &#47;&#47; Now copy back into m...
+  m.visit((r, c) =&gt; m.setF(r, c, dm[r][c]));
+  m.dotByP();
+  m.isLU = false;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li><a href="../jrpn15.linalg/jrpn15.linalg-library.html">jrpn15.linalg</a></li>
+  <li class="self-crumb">invert function</li>
+</ol>
+
+
+    <h5>jrpn15.linalg library</h5>
+    <ol>
+      <li class="section-title"><a href="../jrpn15.linalg/jrpn15.linalg-library.html#classes">Classes</a></li>
+        <li><a href="../jrpn15.linalg/MatrixOverflow-class.html">MatrixOverflow</a></li>
+
+
+
+
+
+      <li class="section-title"><a href="../jrpn15.linalg/jrpn15.linalg-library.html#functions">Functions</a></li>
+        <li><a href="../jrpn15.linalg/decomposeLU.html">decomposeLU</a></li>
+        <li><a href="../jrpn15.linalg/determinant.html">determinant</a></li>
+        <li><a href="../jrpn15.linalg/frobeniusNorm.html">frobeniusNorm</a></li>
+        <li><a href="../jrpn15.linalg/invert.html">invert</a></li>
+        <li><a href="../jrpn15.linalg/rowNorm.html">rowNorm</a></li>
+        <li><a href="../jrpn15.linalg/solve.html">solve</a></li>
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-left-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      2.0.1+6
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

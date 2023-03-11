@@ -192,6 +192,7 @@ Widget build(BuildContext context) {
         factory.controller.buttonUp();
       },
       onTapDown: (TapDownDetails details) {
+        Feedback.forTap(context);
         setState(() {
           _pressed = true;
         });

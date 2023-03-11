@@ -58,7 +58,8 @@
       
 
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
-<span class="name ">addCommas</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="addCommas-param-s"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">s</span></span></li>
+<span class="name ">addCommas</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="addCommas-param-s"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">s</span>, </span></li>
+<li><span class="parameter" id="addCommas-param-intToo"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">intToo</span></span></li>
 </ol>)
 
       
@@ -70,18 +71,25 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">String addCommas(String s) {
+  <pre class="language-dart"><code class="language-dart">String addCommas(String s, bool intToo) {
   String r = &#39;&#39;;
   final int dp = s.indexOf(&#39;.&#39;);
   if (dp &gt; -1) {
     r = s.substring(dp);
     s = s.substring(0, dp);
   }
+  final String sign;
+  if (s.startsWith(&#39;-&#39;)) {
+    sign = &#39;-&#39;;
+    s = s.substring(1);
+  } else {
+    sign = &#39;&#39;;
+  }
   while (s.trim().length &gt; commaDistance) {
     r = &#39;,${s.substring(s.length - commaDistance)}$r&#39;;
     s = s.substring(0, s.length - commaDistance);
   }
-  return s + r;
+  return sign + s + r;
 }</code></pre>
 </section>
 
@@ -123,7 +131,9 @@
           <li><a href="../../model/DisplayMode/addCommas.html">addCommas</a></li>
           <li><a href="../../model/DisplayMode/convertValuesTo.html">convertValuesTo</a></li>
           <li><a href="../../model/DisplayMode/format.html">format</a></li>
+          <li><a href="../../model/DisplayMode/leastSignificantDigit.html">leastSignificantDigit</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../model/DisplayMode/round.html">round</a></li>
           <li><a href="../../model/DisplayMode/select.html">select</a></li>
           <li><a href="../../model/DisplayMode/setComplexMode.html">setComplexMode</a></li>
           <li><a href="../../model/DisplayMode/signMode.html">signMode</a></li>

@@ -21,6 +21,8 @@ this program; if not, see https://www.gnu.org/licenses/ .
 /// The back panel of the calculator.
 ///
 
+library jrpn16.back_panel;
+
 import 'package:flutter/material.dart';
 import 'package:jrpn/v/main_screen.dart';
 import 'package:jrpn/v/back_panel.dart';

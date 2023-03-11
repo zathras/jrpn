@@ -77,43 +77,26 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
 void buttonUp(Operation key) {
-  try {
-    if (program.lines &gt; 0) {
-      ProgramInstruction&lt;Operation&gt; instr = program[program.currentLine];
-      program.currentLine = (program.currentLine + 1) % (program.lines + 1);
-      &#47;&#47; That&#39;s what my 15C does
-      if (instr.op == Operations.rs) {
-        stackLiftEnabled = true;
-      } else {
-        model.memory.program.isRunning = true;
-        try {
-          _fake.setArg(instr.arg);
-          _fake.buttonDown(instr.op);
-          _fake.buttonUp();
-        } finally {
-          model.memory.program.isRunning = false;
-        }
-      }
-    }
-  } finally {
+  if (_running) {
+    return;
+  }
+  if (program.lines == 0) {
     model.displayDisabled = false;
-    CalculatorError? pendingError = _fake.pendingError;
-    if (pendingError != null) {
-      _fake.real.showCalculatorError(pendingError, null);
-      _fake.returnToParent(Resting(_fake.real));
+    _onDone(null);
+  } else {
+    _running = true;
+    final spr = _fake.real.suspendedProgramRunner;
+    ProgramInstruction&lt;Operation&gt; instr = program[program.currentLine];
+    if (instr.op == Operations.rs) {
+      stackLiftEnabled = true;
+    }
+    if (spr == null) {
+      assert(!program.isRunning);
+      program.adjustStackForRunStopStarting();
+      final s = Running.singleStep(_fake, GosubProgramRunner(), _onDone);
+      s.buttonUp(key);
     } else {
-      final DigitEntry? old = _fake.currentDigitEntryState;
-      if (old != null) {
-        final replacement = DigitEntry(_fake.real);
-        replacement.takeOverFrom(old);
-        &#47;&#47; We came from DigitEntryState in our parent.  If we&#39;re
-        &#47;&#47; still in DigitEntryState in the program, stay in digit entry
-        &#47;&#47; state, with whatever changes have been made.
-        _fake.returnToParent(replacement);
-      } else {
-        _fake.returnToParent(Resting(_fake.real));
-      }
-      model.display.displayX(flash: false);
+      spr.restart(_fake, singleStepOnDone: _onDone);
     }
   }
 }</code></pre>
@@ -155,6 +138,7 @@ void buttonUp(Operation key) {
           <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
 
         <li class="section-title"><a href="../../controller.states/SingleStepping-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ControllerState/abort.html">abort</a></li>
           <li><a href="../../controller.states/SingleStepping/buttonDown.html">buttonDown</a></li>
           <li><a href="../../controller.states/SingleStepping/buttonUp.html">buttonUp</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/changeState.html">changeState</a></li>

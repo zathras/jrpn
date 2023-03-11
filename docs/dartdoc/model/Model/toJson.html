@@ -58,8 +58,7 @@
       
 
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
-<span class="name ">toJson</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="toJson-param-comments">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">comments</span> = <span class="default-value">false</span>}</span></li>
-</ol>)
+<span class="name ">toJson</span>(<wbr>)
 
       
 
@@ -73,14 +72,11 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Map&lt;String, Object&gt; toJson({bool comments = false}) {
+  <pre class="language-dart"><code class="language-dart">Map&lt;String, Object&gt; toJson() {
   final r = &lt;String, Object&gt;{};
-  if (comments &amp;&amp; _comments != null) {
-    r[&#39;comments&#39;] = _comments!;
-  }
   r[&#39;version&#39;] = _jsonVersion;
   r[&#39;modelName&#39;] = modelName;
-  r[&#39;settings&#39;] = settings.toJson(comments: comments);
+  r[&#39;settings&#39;] = settings.toJson();
   final tm = trigMode.toJson();
   if (tm != null) {
     r[&#39;trigMode&#39;] = tm;
@@ -95,10 +91,10 @@
     r[&#39;lastXImaginary&#39;] = _lastXImaginary!.toJson();
   }
   r[&#39;flags&#39;] = _flags;
-  r[&#39;memory&#39;] = memory.toJson(comments: comments);
+  r[&#39;memory&#39;] = memory.toJson();
   final debugLog = _debugLog;
-  if (debugLog != null &amp;&amp; comments) {
-    r[&#39;debugLog&#39;] = debugLog.toJson(comments: comments);
+  if (debugLog != null) {
+    r[&#39;debugLog&#39;] = debugLog.toJson();
     r[&#39;endDisplay&#39;] = display.current;
   }
   return r;
@@ -146,10 +142,13 @@
           <li class="inherited"><a href="../../model/NumStatus/gFlag.html">gFlag</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../model/Model/integerSignMode.html">integerSignMode</a></li>
+          <li><a href="../../model/Model/internalSnapshot.html">internalSnapshot</a></li>
+          <li><a href="../../model/Model/is15C.html">is15C</a></li>
           <li><a href="../../model/Model/isComplexMode.html">isComplexMode</a></li>
           <li><a href="../../model/Model/isFloatMode.html">isFloatMode</a></li>
           <li><a href="../../model/Model/lastX.html">lastX</a></li>
           <li><a href="../../model/Model/lastXC.html">lastXC</a></li>
+          <li><a href="../../model/Model/lastXImaginary.html">lastXImaginary</a></li>
           <li><a href="../../model/Model/logicalKeys.html">logicalKeys</a></li>
           <li><a href="../../model/Model/maxInt.html">maxInt</a></li>
           <li><a href="../../model/Model/memory.html">memory</a></li>
@@ -174,6 +173,7 @@
           <li><a href="../../model/Model/shift.html">shift</a></li>
           <li><a href="../../model/Model/signMask.html">signMask</a></li>
           <li><a href="../../model/Model/signMode.html">signMode</a></li>
+          <li><a href="../../model/Model/t.html">t</a></li>
           <li><a href="../../model/Model/trigMode.html">trigMode</a></li>
           <li><a href="../../model/Model/userMode.html">userMode</a></li>
           <li><a href="../../model/Model/wordMask.html">wordMask</a></li>
@@ -183,15 +183,21 @@
           <li><a href="../../model/Model/xF.html">xF</a></li>
           <li><a href="../../model/Model/xI.html">xI</a></li>
           <li><a href="../../model/Model/xImaginary.html">xImaginary</a></li>
+          <li><a href="../../model/Model/xPreserveCLX.html">xPreserveCLX</a></li>
+          <li><a href="../../model/Model/xRealF.html">xRealF</a></li>
           <li><a href="../../model/Model/y.html">y</a></li>
           <li><a href="../../model/Model/yC.html">yC</a></li>
           <li><a href="../../model/Model/yF.html">yF</a></li>
           <li><a href="../../model/Model/yI.html">yI</a></li>
           <li><a href="../../model/Model/z.html">z</a></li>
           <li><a href="../../model/Model/zC.html">zC</a></li>
+          <li><a href="../../model/Model/zF.html">zF</a></li>
 
         <li class="section-title"><a href="../../model/Model-class.html#instance-methods">Methods</a></li>
+          <li><a href="../../model/Model/addProgramTraceToSnapshot.html">addProgramTraceToSnapshot</a></li>
+          <li><a href="../../model/Model/addStuffToSnapshot.html">addStuffToSnapshot</a></li>
           <li><a href="../../model/Model/chsX.html">chsX</a></li>
+          <li><a href="../../model/Model/clx.html">clx</a></li>
           <li><a href="../../model/Model/compare.html">compare</a></li>
           <li><a href="../../model/Model/decodeJson.html">decodeJson</a></li>
           <li><a href="../../model/Model/formatValue.html">formatValue</a></li>
@@ -202,6 +208,7 @@
           <li><a href="../../model/Model/isZero.html">isZero</a></li>
           <li><a href="../../model/Model/newProgramInstruction.html">newProgramInstruction</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../model/Model/optimizeInternalSnapshot.html">optimizeInternalSnapshot</a></li>
           <li><a href="../../model/Model/popStack.html">popStack</a></li>
           <li><a href="../../model/Model/pushStack.html">pushStack</a></li>
           <li><a href="../../model/Model/readFromPersistentStorage.html">readFromPersistentStorage</a></li>
@@ -213,6 +220,7 @@
           <li><a href="../../model/Model/selfTestContents.html">selfTestContents</a></li>
           <li><a href="../../model/Model/setFlag.html">setFlag</a></li>
           <li><a href="../../model/Model/setupComplex.html">setupComplex</a></li>
+          <li><a href="../../model/Model/setXYZT.html">setXYZT</a></li>
           <li><a href="../../model/Model/setYZT.html">setYZT</a></li>
           <li><a href="../../model/Model/swapXY.html">swapXY</a></li>
           <li><a href="../../model/Model/toJson.html">toJson</a></li>

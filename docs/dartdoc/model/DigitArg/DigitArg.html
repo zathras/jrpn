@@ -60,7 +60,12 @@
 <li><span class="parameter" id="-param-calc"><span>required</span> <span class="type-annotation">void</span> <span class="parameter-name">calc</span>(<ol class="parameter-list"><li><span class="parameter" id="param-"><span class="type-annotation"><a href="../../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span>, </span></li>
 <li><span class="parameter" id="param-"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span></span></li>
 </ol>
-)}</span></li>
+), </span></li>
+<li><span class="parameter" id="-param-argDoneFactory"><span class="type-annotation"><a href="../../model/ArgDone-class.html">ArgDone</a></span> <span class="parameter-name">argDoneFactory</span>(<ol class="parameter-list"><li><span class="parameter" id="param-"><span class="type-annotation">dynamic</span> <span class="parameter-name"></span>(<ol class="parameter-list"><li><span class="parameter" id="param-"><span class="type-annotation"><a href="../../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span></span></li>
+</ol>
+)</span></li>
+</ol>
+) = <span class="default-value">_defaultArgDoneFactory</span>}</span></li>
 </ol>)
     </section>
 
@@ -70,7 +75,10 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">DigitArg({required this.max, required this.calc});</code></pre>
+  <pre class="language-dart"><code class="language-dart">DigitArg(
+    {required this.max,
+    required this.calc,
+    this.argDoneFactory = _defaultArgDoneFactory});</code></pre>
 </section>
 
 
@@ -101,6 +109,7 @@
         <li class="section-title">
           <a href="../../model/DigitArg-class.html#instance-properties">Properties</a>
         </li>
+          <li><a href="../../model/DigitArg/argDoneFactory.html">argDoneFactory</a></li>
           <li><a href="../../model/DigitArg/calc.html">calc</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../model/DigitArg/max.html">max</a></li>

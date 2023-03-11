@@ -75,28 +75,29 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void insert(final ProgramInstruction&lt;OT&gt; instruction) {
   final needed = instruction.isExtended ? 2 : 1;
-  if (bytesToNextAllocation &gt; needed) {
+  if (bytesToNextAllocation &lt; needed) {
     memory.policy.checkExtendProgramMemory();
   }
   assert(_currentLine &gt;= 0 &amp;&amp; _currentLine &lt;= _lines);
+  final storage = memory.storage;
   _setCachedAddress(_currentLine + 1);
   int addr = _cachedAddress; &#47;&#47; stored as nybbles
   for (int a = _maxAddress; a &gt;= addr; a--) {
-    _registerStorage.setUint8(a + 2 * needed, _registerStorage.getUint8(a));
+    storage.setUint8(a + 2 * needed, storage.getUint8(a));
   }
   final int opcode = instruction.opcode;
   if (opcode &gt;= 0x100) {
     assert(needed == 2);
     final int pageCode = (opcode &gt;&gt; 8) - 1 + _extendedOpcode;
     assert(pageCode &gt;= _extendedOpcode &amp;&amp; pageCode &lt; 0x100);
-    _registerStorage.setUint8(addr++, pageCode &gt;&gt; 4);
-    _registerStorage.setUint8(addr++, pageCode &amp; 0xf);
+    storage.setUint8(addr++, pageCode &gt;&gt; 4);
+    storage.setUint8(addr++, pageCode &amp; 0xf);
     _extendedLines++;
   } else {
     assert(needed == 1);
   }
-  _registerStorage.setUint8(addr++, (opcode &gt;&gt; 4) &amp; 0xf);
-  _registerStorage.setUint8(addr++, opcode &amp; 0xf);
+  storage.setUint8(addr++, (opcode &gt;&gt; 4) &amp; 0xf);
+  storage.setUint8(addr++, opcode &amp; 0xf);
   _lines++;
   _currentLine++; &#47;&#47; Where we just inserted the instruction
 
@@ -142,19 +143,26 @@
           <li><a href="../../model/ProgramMemory/memory.html">memory</a></li>
           <li><a href="../../model/ProgramMemory/programBytes.html">programBytes</a></li>
           <li><a href="../../model/ProgramMemory/programListener.html">programListener</a></li>
+          <li><a href="../../model/ProgramMemory/returnStackPos.html">returnStackPos</a></li>
           <li><a href="../../model/ProgramMemory/returnStackUnderflow.html">returnStackUnderflow</a></li>
+          <li><a href="../../model/ProgramMemory/runner.html">runner</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+          <li><a href="../../model/ProgramMemory/suspendedProgram.html">suspendedProgram</a></li>
 
         <li class="section-title"><a href="../../model/ProgramMemory-class.html#instance-methods">Methods</a></li>
+          <li><a href="../../model/ProgramMemory/adjustStackForRunStopStarting.html">adjustStackForRunStopStarting</a></li>
+          <li><a href="../../model/ProgramMemory/debugReturnStack.html">debugReturnStack</a></li>
           <li><a href="../../model/ProgramMemory/decodeJson.html">decodeJson</a></li>
           <li><a href="../../model/ProgramMemory/deleteCurrent.html">deleteCurrent</a></li>
           <li><a href="../../model/ProgramMemory/displayCurrent.html">displayCurrent</a></li>
           <li><a href="../../model/ProgramMemory/doNextIf.html">doNextIf</a></li>
+          <li><a href="../../model/ProgramMemory/getAllInstructions.html">getAllInstructions</a></li>
           <li><a href="../../model/ProgramMemory/getCurrent.html">getCurrent</a></li>
           <li><a href="../../model/ProgramMemory/gosub.html">gosub</a></li>
           <li><a href="../../model/ProgramMemory/goto.html">goto</a></li>
           <li><a href="../../model/ProgramMemory/gotoOpCode.html">gotoOpCode</a></li>
-          <li><a href="../../model/ProgramMemory/handleRunStopKepyress.html">handleRunStopKepyress</a></li>
+          <li><a href="../../model/ProgramMemory/importProgram.html">importProgram</a></li>
+          <li><a href="../../model/ProgramMemory/importProgramFromFile.html">importProgramFromFile</a></li>
           <li><a href="../../model/ProgramMemory/incrementCurrentLine.html">incrementCurrentLine</a></li>
           <li><a href="../../model/ProgramMemory/insert.html">insert</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>

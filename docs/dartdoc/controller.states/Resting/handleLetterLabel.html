@@ -93,7 +93,8 @@ void handleLetterLabel(LetterLabel operation) {
     return;
   }
   program.displayCurrent();
-  final s = GosubArgInputState(gsb, gsb.arg, controller, this);
+  final s = RunProgramArgInputState(
+      gsb, gsb.arg, controller, this, () =&gt; GosubProgramRunner());
   s.isDone = true;
   &#47;&#47; Since we&#39;re telling the state it&#39;s done, it won&#39;t try to do the gosub.
   &#47;&#47; It will just wait for button up, then switch to gosubDoneState, which
@@ -137,6 +138,7 @@ void handleLetterLabel(LetterLabel operation) {
           <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
 
         <li class="section-title"><a href="../../controller.states/Resting-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ControllerState/abort.html">abort</a></li>
           <li><a href="../../controller.states/Resting/buttonDown.html">buttonDown</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
           <li><a href="../../controller.states/Resting/calculate.html">calculate</a></li>

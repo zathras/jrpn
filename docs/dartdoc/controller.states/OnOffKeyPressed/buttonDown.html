@@ -84,11 +84,11 @@ void buttonDown(Operation key) {
       try {
         await model.writeToPersistentStorage();
       } finally {
-        if (!kIsWeb &amp;&amp; (Platform.isLinux || Platform.isWindows)) {
+        if (!kIsWeb &amp;&amp; Platform.isLinux) {
           &#47;&#47; Current version on Linux dumps core on pop.
           &#47;&#47; Current version on Windows keeps window there.
           exit(0);
-        } else if (!kIsWeb) {
+        } else {
           await SystemNavigator.pop();
           &#47;&#47; That kills us on some platforms, but it doesn&#39;t make sense on
           &#47;&#47; web.  It&#39;s a NOP on iOS, because apps terminating themselves
@@ -96,9 +96,9 @@ void buttonDown(Operation key) {
           &#47;&#47; make a bit of sense if you&#39;re turning a calculator off, but
           &#47;&#47; whatever.)  So, on platforms were we can&#39;t go away, we blank
           &#47;&#47; the LCD display and wait for the ON button to be pressed.
+          model.display.show(LcdContents.blank());
+          changeState(CalculatorOff(controller));
         }
-        model.display.show(LcdContents.blank());
-        changeState(CalculatorOff(controller));
       }
     }();
     unawaited(res);
@@ -117,9 +117,16 @@ void buttonDown(Operation key) {
     changeState(DoNothing(controller));
     Future&lt;void&gt; runTests() async {
       try {
-        model.display.current = &#39;RuNNING  &#39;;
-        model.display.update(blink: true);
+        DateTime start = DateTime.now();
+        model.display.current = &#39;  RuNNING&#39;;
+        model.display.update(blink: BlinkMode.justDigits);
         await controller.newSelfTests(inCalculator: true).runAll();
+        DateTime now = DateTime.now();
+        Duration sleep =
+            (const Duration(milliseconds: 2500)) - now.difference(start);
+        if (!sleep.isNegative) {
+          await Future&lt;void&gt;.delayed(sleep);
+        }
         changeState(Resting(controller));
         model.display.show(model.selfTestContents());
         changeState(MessageShowing(Resting(controller)));
@@ -176,6 +183,7 @@ void buttonDown(Operation key) {
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
 
         <li class="section-title"><a href="../../controller.states/OnOffKeyPressed-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ControllerState/abort.html">abort</a></li>
           <li><a href="../../controller.states/OnOffKeyPressed/buttonDown.html">buttonDown</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/changeState.html">changeState</a></li>

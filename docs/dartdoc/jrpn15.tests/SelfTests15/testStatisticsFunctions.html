@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the testStatisticsFunctions method from the SelfTests15 class, for the Dart programming language.">
+  <title>testStatisticsFunctions method - SelfTests15 class - jrpn15.tests library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jrpn</a></li>
+    <li><a href="../../jrpn15.tests/jrpn15.tests-library.html">jrpn15.tests</a></li>
+    <li><a href="../../jrpn15.tests/SelfTests15-class.html">SelfTests15</a></li>
+    <li class="self-crumb">testStatisticsFunctions method</li>
+  </ol>
+  <div class="self-name">testStatisticsFunctions</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">testStatisticsFunctions</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">testStatisticsFunctions</span>(<wbr>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; testStatisticsFunctions() async {
+  await test(&#39;15c statistics functions&#39;, () async {
+    final m = newModel();
+    await _testOneArgFloat(m, Operations15.xFactorial, 0, 1);
+    await _testOneArgFloat(m, Operations15.xFactorial, 1, 1);
+    await _testOneArgFloat(m, Operations15.xFactorial, 9, 362880);
+    await _testOneArgFloat(m, Operations15.xFactorial, 0.5, 0.8862269255);
+    await _testOneArgFloat(m, Operations15.xFactorial, -0.7, 2.991568988);
+    await _testOneArgFloat(
+        m, Operations15.xFactorial, -31.2, -1.016536828e-32);
+    await _testOneArgFloat(m, Operations15.xFactorial, 57.3, 1.367681189e77);
+    await expect(m.getFlag(9), false);
+    await _testOneArgFloat(m, Operations15.xFactorial, 70, 9.999999999e+99);
+    await expect(m.getFlag(9), true);
+    m.setFlag(9, false);
+    await _testOneArgFloat(m, Operations15.xFactorial, 70.1, 9.999999999e+99);
+    await expect(m.getFlag(9), true);
+    m.setFlag(9, false);
+
+    await _testTwoArgFloat(m, Operations15.pYX, 1, 0, null, err: 0);
+    await _testTwoArgFloat(m, Operations15.pYX, 0, 1, 1);
+    await _testTwoArgFloat(m, Operations15.pYX, 0, 1.1, null, err: 0);
+    await _testTwoArgFloat(m, Operations15.pYX, 0, 5, 1);
+    await _testTwoArgFloat(m, Operations15.pYX, 1, 5, 5);
+    await _testTwoArgFloat(m, Operations15.pYX, 2, 5, 20);
+    await _testTwoArgFloat(m, Operations15.pYX, 3, 5, 60);
+    await _testTwoArgFloat(m, Operations15.pYX, 4, 5, 120);
+    await _testTwoArgFloat(m, Operations15.pYX, 5, 5, 120);
+    await expect(m.getFlag(9), false);
+    await _testTwoArgFloat(m, Operations15.pYX, 341, 357, 9.999999999e+99);
+    await expect(m.getFlag(9), true);
+    m.setFlag(9, false);
+    await _testTwoArgFloat(m, Operations15.pYX, 7, 101, 8.668605053e13);
+    await _testTwoArgFloat(m, Operations15.pYX, 15, 111, 1.777747078e30);
+    await _testTwoArgFloat(m, Operations15.pYX, 21, 213, 2.840246967e48);
+    await expect(m.getFlag(9), false);
+
+    await _testTwoArgFloat(m, Operations15.cYX, 1, 0, null, err: 0);
+    await _testTwoArgFloat(m, Operations15.cYX, 0, 1, 1);
+    await _testTwoArgFloat(m, Operations15.cYX, 0, 1.1, null, err: 0);
+    await _testTwoArgFloat(m, Operations15.cYX, 0, 5, 1);
+    await _testTwoArgFloat(m, Operations15.cYX, 1, 5, 5);
+    await _testTwoArgFloat(m, Operations15.cYX, 2, 5, 10);
+    await _testTwoArgFloat(m, Operations15.cYX, 3, 5, 10);
+    await _testTwoArgFloat(m, Operations15.cYX, 4, 5, 5);
+    await _testTwoArgFloat(m, Operations15.cYX, 5, 5, 1);
+    await _testTwoArgFloat(m, Operations15.cYX, 341, 357, 2.365542599e27);
+    await expect(m.getFlag(9), false);
+    await _testTwoArgFloat(m, Operations15.cYX, 3410, 3570, 9.999999999e99);
+    await expect(m.getFlag(9), true);
+    m.setFlag(9, false);
+    await _testTwoArgFloat(
+        m, Operations15.cYX, 10097, 10101, 433499141500425);
+    &#47;&#47; That&#39;s 10 places of accuracy, much more accurate than real 15C
+    await expect(m.getFlag(9), false);
+    await _testTwoArgFloat(m, Operations15.cYX, 10007, 10101, 9.999999999e99);
+    await expect(m.getFlag(9), true);
+    m.setFlag(9, false);
+  });
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">jrpn</a></li>
+  <li><a href="../../jrpn15.tests/jrpn15.tests-library.html">jrpn15.tests</a></li>
+  <li><a href="../../jrpn15.tests/SelfTests15-class.html">SelfTests15</a></li>
+  <li class="self-crumb">testStatisticsFunctions method</li>
+</ol>
+
+
+    <h5>SelfTests15 class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../jrpn15.tests/SelfTests15-class.html#constructors">Constructors</a></li>
+          <li><a href="../../jrpn15.tests/SelfTests15/SelfTests15.html">SelfTests15</a></li>
+
+
+        <li class="section-title">
+          <a href="../../jrpn15.tests/SelfTests15-class.html#instance-properties">Properties</a>
+        </li>
+          <li class="inherited"><a href="../../controller/SelfTests/errorsSeen.html">errorsSeen</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/inCalculator.html">inCalculator</a></li>
+          <li><a href="../../jrpn15.tests/SelfTests15/pauseEvery.html">pauseEvery</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/testsRun.html">testsRun</a></li>
+
+        <li class="section-title"><a href="../../jrpn15.tests/SelfTests15-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/expect.html">expect</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/fd.html">fd</a></li>
+          <li><a href="../../jrpn15.tests/SelfTests15/newController.html">newController</a></li>
+          <li><a href="../../jrpn15.tests/SelfTests15/newModel.html">newModel</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../jrpn15.tests/SelfTests15/runAll.html">runAll</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/test.html">test</a></li>
+          <li><a href="../../jrpn15.tests/SelfTests15/testComplexFunctions.html">testComplexFunctions</a></li>
+          <li><a href="../../jrpn15.tests/SelfTests15/testFloatFunctions.html">testFloatFunctions</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/testFloatValues.html">testFloatValues</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/testJson.html">testJson</a></li>
+          <li class="inherited"><a href="../../controller/SelfTests/testNumbers.html">testNumbers</a></li>
+          <li><a href="../../jrpn15.tests/SelfTests15/testStatisticsFunctions.html">testStatisticsFunctions</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+        <li class="section-title inherited"><a href="../../jrpn15.tests/SelfTests15-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      2.0.1+6
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

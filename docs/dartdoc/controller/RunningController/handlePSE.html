@@ -81,7 +81,10 @@ see p. 100</p>
   <pre class="language-dart"><code class="language-dart">@override
 void handlePSE() {
   super.handlePSE();
-  pause = true;
+  pause = () {
+    model.display.displayX(flash: false);
+    return null;
+  };
 }</code></pre>
 </section>
 
@@ -134,6 +137,7 @@ void handlePSE() {
           <li class="inherited"><a href="../../controller/Controller/buttonDown.html">buttonDown</a></li>
           <li><a href="../../controller/RunningController/buttonUp.html">buttonUp</a></li>
           <li class="inherited"><a href="../../controller/Controller/buttonWidgetDown.html">buttonWidgetDown</a></li>
+          <li><a href="../../controller/RunningController/delayForShow.html">delayForShow</a></li>
           <li><a href="../../controller/RunningController/getArgsAndRun.html">getArgsAndRun</a></li>
           <li><a href="../../controller/RunningController/getErrorNumber.html">getErrorNumber</a></li>
           <li><a href="../../controller/RunningController/handlePSE.html">handlePSE</a></li>

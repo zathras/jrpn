@@ -176,7 +176,7 @@ left-justified, like " 1.0       ".
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="addCommas" class="callable">
-  <span class="name"><a href="../model/DisplayMode/addCommas.html">addCommas</a></span><span class="signature">(<wbr><span class="parameter" id="addCommas-param-s"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">s</span></span>)
+  <span class="name"><a href="../model/DisplayMode/addCommas.html">addCommas</a></span><span class="signature">(<wbr><span class="parameter" id="addCommas-param-s"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">s</span>, </span><span class="parameter" id="addCommas-param-intToo"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">intToo</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   </span>
   
@@ -216,6 +216,22 @@ does interesting things with x and y here.
 
 </dd>
 
+        <dt id="leastSignificantDigit" class="callable">
+  <span class="name"><a href="../model/DisplayMode/leastSignificantDigit.html">leastSignificantDigit</a></span><span class="signature">(<wbr><span class="parameter" id="leastSignificantDigit-param-value"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">value</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Gives the least significant digit when value is displayed, where the units
+digit is 0, and negative is to the right of the decimal.  For example,
+for FIX-3, gives -3 (10^-3 is 0.001), unless the value is such that
+scientific notation would be used.
+  
+
+</dd>
+
         <dt id="noSuchMethod" class="callable inherited">
   <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
     <span class="returntype parameter">&#8594; dynamic</span>
@@ -226,6 +242,19 @@ does interesting things with x and y here.
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed.
   <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="round" class="callable">
+  <span class="name"><a href="../model/DisplayMode/round.html">round</a></span><span class="signature">(<wbr><span class="parameter" id="round-param-x"><span class="type-annotation"><a href="../model/Value-class.html">Value</a></span> <span class="parameter-name">x</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../model/Value-class.html">Value</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
 
 </dd>
 
@@ -502,6 +531,8 @@ display in scientific notation, as per the 16C manual, page 56.
         <li><a href="../model/MKey-class.html">MKey</a></li>
         <li><a href="../model/MKeyExtensionOp-class.html">MKeyExtensionOp</a></li>
         <li><a href="../model/Model-class.html">Model</a></li>
+        <li><a href="../model/ModelSnapshot-class.html">ModelSnapshot</a></li>
+        <li><a href="../model/MProgramRunner-class.html">MProgramRunner</a></li>
         <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
         <li><a href="../model/NumStatus68-class.html">NumStatus68</a></li>
         <li><a href="../model/Observable-class.html">Observable</a></li>
@@ -517,6 +548,7 @@ display in scientific notation, as per the 16C manual, page 56.
         <li><a href="../model/Settings-class.html">Settings</a></li>
         <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
         <li><a href="../model/SignMode-class.html">SignMode</a></li>
+        <li><a href="../model/StackLiftingArgDone-class.html">StackLiftingArgDone</a></li>
         <li><a href="../model/TrigMode-class.html">TrigMode</a></li>
         <li><a href="../model/Value-class.html">Value</a></li>
 
@@ -528,6 +560,7 @@ display in scientific notation, as per the 16C manual, page 56.
 
 
       <li class="section-title"><a href="../model/model-library.html#enums">Enums</a></li>
+        <li><a href="../model/BlinkMode.html">BlinkMode</a></li>
         <li><a href="../model/OrientationSetting.html">OrientationSetting</a></li>
 
       <li class="section-title"><a href="../model/model-library.html#typedefs">Typedefs</a></li>
@@ -557,7 +590,9 @@ display in scientific notation, as per the 16C manual, page 56.
           <li><a href="../model/DisplayMode/addCommas.html">addCommas</a></li>
           <li><a href="../model/DisplayMode/convertValuesTo.html">convertValuesTo</a></li>
           <li><a href="../model/DisplayMode/format.html">format</a></li>
+          <li><a href="../model/DisplayMode/leastSignificantDigit.html">leastSignificantDigit</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../model/DisplayMode/round.html">round</a></li>
           <li><a href="../model/DisplayMode/select.html">select</a></li>
           <li><a href="../model/DisplayMode/setComplexMode.html">setComplexMode</a></li>
           <li><a href="../model/DisplayMode/signMode.html">signMode</a></li>

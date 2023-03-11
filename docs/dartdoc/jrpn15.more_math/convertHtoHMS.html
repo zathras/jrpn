@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the convertHtoHMS function from the jrpn15.more_math library, for the Dart programming language.">
+  <title>convertHtoHMS function - jrpn15.more_math library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jrpn</a></li>
+    <li><a href="../jrpn15.more_math/jrpn15.more_math-library.html">jrpn15.more_math</a></li>
+    <li class="self-crumb">convertHtoHMS function</li>
+  </ol>
+  <div class="self-name">convertHtoHMS</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-function">convertHtoHMS</span> function 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    <section class="multi-line-signature">
+        
+
+<span class="returntype">void</span>
+<span class="name ">convertHtoHMS</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="convertHtoHMS-param-m"><span class="type-annotation"><a href="../model/Model-class.html">Model</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span>&gt;</span></span> <span class="parameter-name">m</span></span></li>
+</ol>)
+
+        
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">void convertHtoHMS(Model m) {
+  Value round(Value v, int digits) =&gt; FixFloatFormatter(digits).round(v);
+
+  final Value hr = m.x.intOp();
+  final int hrDigits = (hr == Value.zero) ? 0 : (hr.exponent + 1);
+  if (hrDigits &gt;= 10) {
+    m.resultX = m.x;
+    return;
+  }
+  Value min = Value.fromDouble(m.x.fracOp().asDouble * 60);
+  int digitsLeft = 10 - hrDigits; &#47;&#47; 1..10
+  if (hrDigits == 0 &amp;&amp; min.intOp() == Value.zero) {
+    final sec = round(Value.fromDouble(min.asDouble * 60), 7);
+    final secD = sec.asDouble;
+    if (secD &gt;= 60.0) {
+      m.resultX = Value.fromDouble(0.01);
+    } else if (secD &lt;= -60.0) {
+      m.resultX = Value.fromDouble(-0.01);
+    } else {
+      m.resultX = Value.fromDouble(secD).timesTenTo(-4);
+    }
+    return;
+  }
+  &#47;&#47; &gt;= 1 minute
+  if (digitsLeft != 10) {
+    min = round(min.timesTenTo(-2), digitsLeft).timesTenTo(2);
+  }
+  final minD = min.intOp().asDouble;
+  if (minD.abs() &gt;= 60.0) {
+    &#47;&#47; I believe this branch is impossible, but just to be extra paranoid...
+    final minSec = &quot;0.5959999999&quot;.substring(0, 2 + digitsLeft);
+    if (minD &gt; 0) {
+      m.resultX = Value.fromDouble(hr.asDouble + double.parse(minSec));
+    } else {
+      m.resultX = Value.fromDouble(hr.asDouble - double.parse(minSec));
+    }
+    return;
+  }
+  digitsLeft -= 2;
+  assert(minD &lt;= 59 &amp;&amp; minD &gt;= -59);
+  if (digitsLeft &lt;= 0) {
+    m.resultX = Value.fromDouble(hr.asDouble + min.timesTenTo(-2).asDouble);
+    return;
+  }
+  Value sec = Value.fromDouble(min.fracOp().asDouble * 60);
+  if (digitsLeft == 1) {
+    final tensSec = round(sec.timesTenTo(-1), 0).asDouble; &#47;&#47; tens of seconds
+    if (tensSec.abs() &gt;= 6) {
+      &#47;&#47; I believe this branch is impossible, too.
+      if (tensSec &gt; 0) {
+        m.resultX = Value.fromDouble(hr.asDouble + minD &#47; 100 + 0.005);
+      } else {
+        m.resultX = Value.fromDouble(hr.asDouble + minD &#47; 100 - 0.005);
+      }
+    } else {
+      m.resultX = Value.fromDouble(hr.asDouble + minD &#47; 100 + tensSec &#47; 1000);
+    }
+    return;
+  }
+  digitsLeft -= 2;
+  assert(digitsLeft &gt;= 0);
+  final secD = round(sec, digitsLeft).asDouble;
+  if (secD.abs() &gt;= 60) {
+    &#47;&#47; I believe this branch is impossible, but I&#39;m still paranoid.
+    final secStr = &quot;0.0059999999&quot;.substring(0, 4 + digitsLeft);
+    if (secD &gt; 0) {
+      m.resultX =
+          Value.fromDouble(hr.asDouble + minD &#47; 100 + double.parse(secStr));
+    } else {
+      m.resultX =
+          Value.fromDouble(hr.asDouble + minD &#47; 100 - double.parse(secStr));
+    }
+  } else {
+    m.resultX = Value.fromDouble(hr.asDouble + minD &#47; 100 + secD &#47; 10000);
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">jrpn</a></li>
+  <li><a href="../jrpn15.more_math/jrpn15.more_math-library.html">jrpn15.more_math</a></li>
+  <li class="self-crumb">convertHtoHMS function</li>
+</ol>
+
+
+    <h5>jrpn15.more_math library</h5>
+    <ol>
+      <li class="section-title"><a href="../jrpn15.more_math/jrpn15.more_math-library.html#classes">Classes</a></li>
+        <li><a href="../jrpn15.more_math/LinearRegression-class.html">LinearRegression</a></li>
+
+
+
+
+
+      <li class="section-title"><a href="../jrpn15.more_math/jrpn15.more_math-library.html#functions">Functions</a></li>
+        <li><a href="../jrpn15.more_math/binomialCoefficient.html">binomialCoefficient</a></li>
+        <li><a href="../jrpn15.more_math/convertHMStoH.html">convertHMStoH</a></li>
+        <li><a href="../jrpn15.more_math/convertHtoHMS.html">convertHtoHMS</a></li>
+        <li><a href="../jrpn15.more_math/factorial.html">factorial</a></li>
+        <li><a href="../jrpn15.more_math/laGamma.html">laGamma</a></li>
+        <li><a href="../jrpn15.more_math/permutations.html">permutations</a></li>
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-left-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      2.0.1+6
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

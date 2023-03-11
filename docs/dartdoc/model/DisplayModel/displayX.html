@@ -60,7 +60,8 @@
 <span class="returntype">void</span>
 <span class="name ">displayX</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="displayX-param-flash">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">flash</span> = <span class="default-value">true</span>, </span></li>
 <li><span class="parameter" id="displayX-param-delayed"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">delayed</span> = <span class="default-value">false</span>, </span></li>
-<li><span class="parameter" id="displayX-param-disableWindow"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disableWindow</span> = <span class="default-value">false</span>}</span></li>
+<li><span class="parameter" id="displayX-param-disableWindow"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disableWindow</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="displayX-param-setWindow"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">setWindow</span>}</span></li>
 </ol>)
 
       
@@ -78,20 +79,26 @@ value, it reverts to disableWindow being false.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void displayX(
-    {bool flash = true, bool delayed = false, bool disableWindow = false}) {
+    {bool flash = true,
+    bool delayed = false,
+    bool disableWindow = false,
+    int? setWindow}) {
   final String newNumber = model.formatValue(model.x);
   if (delayed) {
     final initial = model._newLcdContents(disableWindow: disableWindow);
-    currentWithWindow = newNumber;
+    currentShowingX = newNumber;
     final delayed = model._newLcdContents(disableWindow: false);
     final t = Timer(const Duration(milliseconds: 1400), () {
       show(delayed);
+      if (setWindow != null) {
+        window = setWindow;
+      }
     });
     delayed._myTimer = t;
     initial._myTimer = t;
     show(initial);
   } else {
-    currentWithWindow = newNumber;
+    currentShowingX = newNumber;
     update(flash: flash, disableWindow: disableWindow);
   }
 }</code></pre>
@@ -126,8 +133,8 @@ value, it reverts to disableWindow being false.</p>
           <a href="../../model/DisplayModel-class.html#instance-properties">Properties</a>
         </li>
           <li><a href="../../model/DisplayModel/current.html">current</a></li>
+          <li><a href="../../model/DisplayModel/currentShowingX.html">currentShowingX</a></li>
           <li><a href="../../model/DisplayModel/currentWithoutWindow.html">currentWithoutWindow</a></li>
-          <li><a href="../../model/DisplayModel/currentWithWindow.html">currentWithWindow</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../model/DisplayModel/ignoreUpdates.html">ignoreUpdates</a></li>
           <li><a href="../../model/DisplayModel/model.html">model</a></li>

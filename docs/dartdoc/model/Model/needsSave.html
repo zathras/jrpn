@@ -54,27 +54,54 @@
     <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
 </h1></div>
 
-        <section class="multi-line-signature">
-          
-  <div>
-    <ol class="annotation-list">
-        <li>@<a href="https://pub.dev/documentation/meta/1.8.0/meta/protected-constant.html">protected</a></li>
-    </ol>
-  </div>
-          <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>
-          <span class="name ">needsSave</span>
-          <div class="features"><span class="feature">read / write</span></div>
-
-        </section>
-        
 
         
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">@protected
-bool needsSave = false;</code></pre>
+<section id="getter">
+
+<section class="multi-line-signature">
+  
+  <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  <span class="name ">needsSave</span>
+  
+
 </section>
 
+
+
+
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">bool get needsSave =&gt; _needsSave;</code></pre>
+</section>
+
+</section>
+
+
+        
+<section id="setter">
+
+<section class="multi-line-signature">
+  
+  <span class="returntype">void</span>
+  <span class="name ">needsSave=</span><span class="signature">(<wbr><span class="parameter" id="needsSave=-param-v"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">v</span></span>)</span>
+  
+
+</section>
+
+
+
+
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">set needsSave(bool v) {
+  _needsSave = v;
+  if (v) {
+    _internalSnapshot?.value = _createSnapshot();
+  }
+}</code></pre>
+</section>
+
+</section>
 
   </div> <!-- /.main-content -->
 
@@ -116,10 +143,13 @@ bool needsSave = false;</code></pre>
           <li class="inherited"><a href="../../model/NumStatus/gFlag.html">gFlag</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../model/Model/integerSignMode.html">integerSignMode</a></li>
+          <li><a href="../../model/Model/internalSnapshot.html">internalSnapshot</a></li>
+          <li><a href="../../model/Model/is15C.html">is15C</a></li>
           <li><a href="../../model/Model/isComplexMode.html">isComplexMode</a></li>
           <li><a href="../../model/Model/isFloatMode.html">isFloatMode</a></li>
           <li><a href="../../model/Model/lastX.html">lastX</a></li>
           <li><a href="../../model/Model/lastXC.html">lastXC</a></li>
+          <li><a href="../../model/Model/lastXImaginary.html">lastXImaginary</a></li>
           <li><a href="../../model/Model/logicalKeys.html">logicalKeys</a></li>
           <li><a href="../../model/Model/maxInt.html">maxInt</a></li>
           <li><a href="../../model/Model/memory.html">memory</a></li>
@@ -144,6 +174,7 @@ bool needsSave = false;</code></pre>
           <li><a href="../../model/Model/shift.html">shift</a></li>
           <li><a href="../../model/Model/signMask.html">signMask</a></li>
           <li><a href="../../model/Model/signMode.html">signMode</a></li>
+          <li><a href="../../model/Model/t.html">t</a></li>
           <li><a href="../../model/Model/trigMode.html">trigMode</a></li>
           <li><a href="../../model/Model/userMode.html">userMode</a></li>
           <li><a href="../../model/Model/wordMask.html">wordMask</a></li>
@@ -153,15 +184,21 @@ bool needsSave = false;</code></pre>
           <li><a href="../../model/Model/xF.html">xF</a></li>
           <li><a href="../../model/Model/xI.html">xI</a></li>
           <li><a href="../../model/Model/xImaginary.html">xImaginary</a></li>
+          <li><a href="../../model/Model/xPreserveCLX.html">xPreserveCLX</a></li>
+          <li><a href="../../model/Model/xRealF.html">xRealF</a></li>
           <li><a href="../../model/Model/y.html">y</a></li>
           <li><a href="../../model/Model/yC.html">yC</a></li>
           <li><a href="../../model/Model/yF.html">yF</a></li>
           <li><a href="../../model/Model/yI.html">yI</a></li>
           <li><a href="../../model/Model/z.html">z</a></li>
           <li><a href="../../model/Model/zC.html">zC</a></li>
+          <li><a href="../../model/Model/zF.html">zF</a></li>
 
         <li class="section-title"><a href="../../model/Model-class.html#instance-methods">Methods</a></li>
+          <li><a href="../../model/Model/addProgramTraceToSnapshot.html">addProgramTraceToSnapshot</a></li>
+          <li><a href="../../model/Model/addStuffToSnapshot.html">addStuffToSnapshot</a></li>
           <li><a href="../../model/Model/chsX.html">chsX</a></li>
+          <li><a href="../../model/Model/clx.html">clx</a></li>
           <li><a href="../../model/Model/compare.html">compare</a></li>
           <li><a href="../../model/Model/decodeJson.html">decodeJson</a></li>
           <li><a href="../../model/Model/formatValue.html">formatValue</a></li>
@@ -172,6 +209,7 @@ bool needsSave = false;</code></pre>
           <li><a href="../../model/Model/isZero.html">isZero</a></li>
           <li><a href="../../model/Model/newProgramInstruction.html">newProgramInstruction</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../model/Model/optimizeInternalSnapshot.html">optimizeInternalSnapshot</a></li>
           <li><a href="../../model/Model/popStack.html">popStack</a></li>
           <li><a href="../../model/Model/pushStack.html">pushStack</a></li>
           <li><a href="../../model/Model/readFromPersistentStorage.html">readFromPersistentStorage</a></li>
@@ -183,6 +221,7 @@ bool needsSave = false;</code></pre>
           <li><a href="../../model/Model/selfTestContents.html">selfTestContents</a></li>
           <li><a href="../../model/Model/setFlag.html">setFlag</a></li>
           <li><a href="../../model/Model/setupComplex.html">setupComplex</a></li>
+          <li><a href="../../model/Model/setXYZT.html">setXYZT</a></li>
           <li><a href="../../model/Model/setYZT.html">setYZT</a></li>
           <li><a href="../../model/Model/swapXY.html">swapXY</a></li>
           <li><a href="../../model/Model/toJson.html">toJson</a></li>

@@ -71,8 +71,10 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void resetAll() {
   reset();
+  state.abort();
   state = Resting(this);
   model.displayDisabled = false;
+  model.display.displayX();
 }</code></pre>
 </section>
 
@@ -121,6 +123,7 @@
           <li><a href="../../controller/Controller/buttonDown.html">buttonDown</a></li>
           <li><a href="../../controller/Controller/buttonUp.html">buttonUp</a></li>
           <li><a href="../../controller/Controller/buttonWidgetDown.html">buttonWidgetDown</a></li>
+          <li><a href="../../controller/Controller/delayForShow.html">delayForShow</a></li>
           <li><a href="../../controller/Controller/getArgsAndRun.html">getArgsAndRun</a></li>
           <li><a href="../../controller/Controller/getErrorNumber.html">getErrorNumber</a></li>
           <li><a href="../../controller/Controller/handlePSE.html">handlePSE</a></li>

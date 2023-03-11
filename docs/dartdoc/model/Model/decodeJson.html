@@ -87,7 +87,6 @@ that causes bad behavior in the calculator.</p>
         &#39;Wrong calculator model.  This is a $modelName, not a $jModelName.&#39;);
   }
 
-  _comments = json[&#39;comments&#39;];
   settings.decodeJson(json[&#39;settings&#39;] as Map&lt;String, dynamic&gt;);
   trigMode = TrigMode.fromJson(json[&#39;trigMode&#39;]);
   integerSignMode =
@@ -122,12 +121,7 @@ that causes bad behavior in the calculator.</p>
     _flags[i++] = v as bool;
   }
   memory.decodeJson(json[&#39;memory&#39;] as Map&lt;String, dynamic&gt;);
-  Object? debugLog = json[&#39;debugLog&#39;];
-  if (debugLog == null) {
-    _debugLog = null;
-  } else {
-    _debugLog = DebugLog.fromJson(debugLog as Map&lt;String, dynamic&gt;, this);
-  }
+  _debugLog = null; &#47;&#47; Don&#39;t restore debug log, even if it was saved
   display.window = 0;
   this.needsSave = needsSave;
 }</code></pre>
@@ -174,10 +168,13 @@ that causes bad behavior in the calculator.</p>
           <li class="inherited"><a href="../../model/NumStatus/gFlag.html">gFlag</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../model/Model/integerSignMode.html">integerSignMode</a></li>
+          <li><a href="../../model/Model/internalSnapshot.html">internalSnapshot</a></li>
+          <li><a href="../../model/Model/is15C.html">is15C</a></li>
           <li><a href="../../model/Model/isComplexMode.html">isComplexMode</a></li>
           <li><a href="../../model/Model/isFloatMode.html">isFloatMode</a></li>
           <li><a href="../../model/Model/lastX.html">lastX</a></li>
           <li><a href="../../model/Model/lastXC.html">lastXC</a></li>
+          <li><a href="../../model/Model/lastXImaginary.html">lastXImaginary</a></li>
           <li><a href="../../model/Model/logicalKeys.html">logicalKeys</a></li>
           <li><a href="../../model/Model/maxInt.html">maxInt</a></li>
           <li><a href="../../model/Model/memory.html">memory</a></li>
@@ -202,6 +199,7 @@ that causes bad behavior in the calculator.</p>
           <li><a href="../../model/Model/shift.html">shift</a></li>
           <li><a href="../../model/Model/signMask.html">signMask</a></li>
           <li><a href="../../model/Model/signMode.html">signMode</a></li>
+          <li><a href="../../model/Model/t.html">t</a></li>
           <li><a href="../../model/Model/trigMode.html">trigMode</a></li>
           <li><a href="../../model/Model/userMode.html">userMode</a></li>
           <li><a href="../../model/Model/wordMask.html">wordMask</a></li>
@@ -211,15 +209,21 @@ that causes bad behavior in the calculator.</p>
           <li><a href="../../model/Model/xF.html">xF</a></li>
           <li><a href="../../model/Model/xI.html">xI</a></li>
           <li><a href="../../model/Model/xImaginary.html">xImaginary</a></li>
+          <li><a href="../../model/Model/xPreserveCLX.html">xPreserveCLX</a></li>
+          <li><a href="../../model/Model/xRealF.html">xRealF</a></li>
           <li><a href="../../model/Model/y.html">y</a></li>
           <li><a href="../../model/Model/yC.html">yC</a></li>
           <li><a href="../../model/Model/yF.html">yF</a></li>
           <li><a href="../../model/Model/yI.html">yI</a></li>
           <li><a href="../../model/Model/z.html">z</a></li>
           <li><a href="../../model/Model/zC.html">zC</a></li>
+          <li><a href="../../model/Model/zF.html">zF</a></li>
 
         <li class="section-title"><a href="../../model/Model-class.html#instance-methods">Methods</a></li>
+          <li><a href="../../model/Model/addProgramTraceToSnapshot.html">addProgramTraceToSnapshot</a></li>
+          <li><a href="../../model/Model/addStuffToSnapshot.html">addStuffToSnapshot</a></li>
           <li><a href="../../model/Model/chsX.html">chsX</a></li>
+          <li><a href="../../model/Model/clx.html">clx</a></li>
           <li><a href="../../model/Model/compare.html">compare</a></li>
           <li><a href="../../model/Model/decodeJson.html">decodeJson</a></li>
           <li><a href="../../model/Model/formatValue.html">formatValue</a></li>
@@ -230,6 +234,7 @@ that causes bad behavior in the calculator.</p>
           <li><a href="../../model/Model/isZero.html">isZero</a></li>
           <li><a href="../../model/Model/newProgramInstruction.html">newProgramInstruction</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../model/Model/optimizeInternalSnapshot.html">optimizeInternalSnapshot</a></li>
           <li><a href="../../model/Model/popStack.html">popStack</a></li>
           <li><a href="../../model/Model/pushStack.html">pushStack</a></li>
           <li><a href="../../model/Model/readFromPersistentStorage.html">readFromPersistentStorage</a></li>
@@ -241,6 +246,7 @@ that causes bad behavior in the calculator.</p>
           <li><a href="../../model/Model/selfTestContents.html">selfTestContents</a></li>
           <li><a href="../../model/Model/setFlag.html">setFlag</a></li>
           <li><a href="../../model/Model/setupComplex.html">setupComplex</a></li>
+          <li><a href="../../model/Model/setXYZT.html">setXYZT</a></li>
           <li><a href="../../model/Model/setYZT.html">setYZT</a></li>
           <li><a href="../../model/Model/swapXY.html">swapXY</a></li>
           <li><a href="../../model/Model/toJson.html">toJson</a></li>

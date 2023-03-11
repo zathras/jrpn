@@ -78,6 +78,8 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@protected
 String? formatFixed(Value v, int fractionDigits) {
+  assert(fractionDigits &gt;= 0 &amp;&amp; fractionDigits &lt; 11);
+  &#47;&#47; 10 is possible, when this is used for -&gt;H.MS
   int exp = v.exponent;
   &#47;&#47; First, try assuming no carry
   int mantissaDigits = min(10, exp + fractionDigits + 1);
@@ -93,18 +95,17 @@ String? formatFixed(Value v, int fractionDigits) {
     return null;
   }
   fractionDigits = mantissa.length - exp - 1;
-  if (fractionDigits &lt; 0 || fractionDigits &gt; 9) {
+  if (fractionDigits &lt; 0 || fractionDigits &gt; 10) {
     return null;
   }
   int i = mantissa.length - fractionDigits;
-  if (i &lt; 0) {
-    return null;
-  } else if (i == 0) {
-    mantissa = &#39;0$mantissa&#39;;
+  if (i &lt;= 0) {
+    mantissa = &#39;${&#39;&#39;.padLeft(1 - i, &#39;0&#39;)}$mantissa&#39;;
     i = 1;
   }
   String minus = v.mantissaDigit(-1) == 9 ? &#39;-&#39; : &#39;&#39;;
-  final sp = &#39;         &#39;.substring(mantissa.length - 1);
+  final sp = &#39;         &#39;.substring(min(9, mantissa.length - 1));
+  &#47;&#47; If eleven total digits (like 0.0100000000), don&#39;t blow up
   return &#39;$minus${mantissa.substring(0, i)}.${mantissa.substring(i)}$sp&#39;;
 }</code></pre>
 </section>
@@ -134,9 +135,10 @@ String? formatFixed(Value v, int fractionDigits) {
           <li><a href="../../model/FloatFormatter/FloatFormatter.html">FloatFormatter</a></li>
 
 
-        <li class="section-title inherited">
+        <li class="section-title">
           <a href="../../model/FloatFormatter-class.html#instance-properties">Properties</a>
         </li>
+          <li><a href="../../model/FloatFormatter/fractionDigits.html">fractionDigits</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
 
@@ -146,7 +148,9 @@ String? formatFixed(Value v, int fractionDigits) {
           <li><a href="../../model/FloatFormatter/formatFixed.html">formatFixed</a></li>
           <li><a href="../../model/FloatFormatter/formatMantissaU.html">formatMantissaU</a></li>
           <li><a href="../../model/FloatFormatter/formatScientific.html">formatScientific</a></li>
+          <li><a href="../../model/FloatFormatter/leastSignificantDigit.html">leastSignificantDigit</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../model/FloatFormatter/round.html">round</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
 
         <li class="section-title inherited"><a href="../../model/FloatFormatter-class.html#operators">Operators</a></li>

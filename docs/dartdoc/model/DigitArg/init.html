@@ -94,7 +94,7 @@ void init(int registerBase,
     arg = null;
   }
   _next = List.generate(min(max + 1, registerBase), (i) {
-    final a = ArgDone((m) =&gt; calc(m, i)); &#47;&#47; Function currying, baby
+    final a = argDoneFactory((m) =&gt; calc(m, i)); &#47;&#47; Function currying, baby
     a.init(registerBase,
         f: f,
         shift: shift,
@@ -111,7 +111,8 @@ void init(int registerBase,
         key: Arg.kDot,
         child: DigitArg(
             max: max - registerBase,
-            calc: (m, i) =&gt; calc(m, i + registerBase)));
+            calc: (m, i) =&gt; calc(m, i + registerBase),
+            argDoneFactory: argDoneFactory));
     &#47;&#47; Skip over ka, straight to its child:
     ka.child.init(registerBase,
         f: f, shift: shift, argDot: true, arg: arg, userMode: userMode);
@@ -148,6 +149,7 @@ void init(int registerBase,
         <li class="section-title">
           <a href="../../model/DigitArg-class.html#instance-properties">Properties</a>
         </li>
+          <li><a href="../../model/DigitArg/argDoneFactory.html">argDoneFactory</a></li>
           <li><a href="../../model/DigitArg/calc.html">calc</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../model/DigitArg/max.html">max</a></li>

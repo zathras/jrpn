@@ -10,17 +10,27 @@ cd `dirname $0`
 OUTPUT=`pwd`/docs/dartdoc
 rm -rf $OUTPUT
 echo "dart doc --output $OUTPUT"
-dart doc --output $OUTPUT
-cd lib
-for f in `find . -name 'dartdoc' -print` ; do
-    for g in $f/*; do
-        lib=`basename $g`
-        mkdir -p $OUTPUT/$lib/dartdoc/$lib/
-        cp -r $g/* $OUTPUT/$lib/dartdoc/$lib/
-        echo "    copied assets to $OUTPUT/$lib/dartdoc/$lib/"
+ln -s `pwd`/jrpn15/lib shared/lib/jrpn15
+ln -s `pwd`/jrpn16/lib shared/lib/jrpn16
+dart doc --output $OUTPUT shared
+if [ ! -e $OUTPUT/model ] ; then
+    exit 1
+fi
+rm shared/lib/jrpn15
+rm shared/lib/jrpn16
+
+for d in  shared jrpn15 jrpn16  ; do
+    cd $d
+    for f in `find . -name 'dartdoc' -print` ; do
+        for g in $f/*; do
+            lib=`basename $g`
+            mkdir -p $OUTPUT/$lib/dartdoc/$lib/
+            cp -r $g/* $OUTPUT/$lib/dartdoc/$lib/
+            echo "    copied assets to $OUTPUT/$lib/dartdoc/$lib/"
+        done
     done
+    cd ..
 done
-cd ..
 if [ -e dartdoc ] ; then
     cp -r dartdoc $OUTPUT/
     echo "    copied assets to $OUTPUT/dartdoc"

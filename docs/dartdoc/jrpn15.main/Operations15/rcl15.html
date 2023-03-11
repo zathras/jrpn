@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the rcl15 property from the Operations15 class, for the Dart programming language.">
+  <title>rcl15 property - Operations15 class - jrpn15.main library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jrpn</a></li>
+    <li><a href="../../jrpn15.main/jrpn15.main-library.html">jrpn15.main</a></li>
+    <li><a href="../../jrpn15.main/Operations15-class.html">Operations15</a></li>
+    <li class="self-crumb">rcl15 property</li>
+  </ol>
+  <div class="self-name">rcl15</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-property">rcl15</span> property 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+        <section class="multi-line-signature">
+          
+          <a href="../../controller/NormalArgOperation-class.html">NormalArgOperation</a>
+          <span class="name ">rcl15</span>
+          <div class="features"><span class="feature">final</span></div>
+
+        </section>
+        
+
+        
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static final NormalArgOperation rcl15 = NormalArgOperationWithBeforeCalc(
+    maxOneByteOpcodes: 47,
+    beforeCalculate: (Resting s) {
+      &#47;&#47; For the matrix operations, this is deferred to key release.  It is
+      &#47;&#47; not run if the operation is cancelled.
+      s.liftStackIfEnabled();
+      return StackLift.neutral;
+      &#47;&#47; But stack lift is still set after the calculation completes,
+      &#47;&#47; as with normal operations.
+    },
+    arg: ArgAlternates(synonyms: {
+      ..._matrixSynonymsPlusRandom,
+      Operations15.sin: Operations15.dim
+    }, children: [
+      RegisterReadArg(maxDigit: 19, noParenI: true, f: (m, v) =&gt; m.x = v),
+      KeyArg(
+          key: Operations15.ranNum,
+          child: ArgDone(((m) {
+            m.xF = (m as Model15).rand.lastValue;
+          }))),
+      &#47;&#47; g A..E
+      KeysArg(
+          keys: _letterLabelsGShifted,
+          generator: (i) =&gt; DeferredRclArg(
+              matrixNumber: i,
+              noStackLift: true,
+              pressed: (m, matrix) {
+                final int row = m.yF.truncate().abs() - 1;
+                final int col = m.xF.truncate().abs() - 1;
+                _showMatrix(m, matrix, row, col);
+              },
+              released: (m, matrix) {
+                final int row = m.yF.truncate().abs() - 1;
+                final int col = m.xF.truncate().abs() - 1;
+                m.popStack();
+                m.x = matrix.get(row, col);
+              })),
+      KeyArg(
+          key: Operations15.sigmaPlus,
+          child: StackLiftingArgDone((m) {
+            m.x = m.memory.registers[5]; &#47;&#47; Don&#39;t set lastX
+            m.pushStack();
+            m.x = m.memory.registers[3];
+          },
+              needsStackLiftIfEnabled: (m) =&gt;
+                  (m as Model15).memory.numRegisters &gt;= 6)),
+      KeyArg(
+          key: Operations15.dim,
+          child:
+              ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
+            KeysArg(
+                keys: _letterLabels,
+                generator: (i) =&gt; ArgDone((m) {
+                      final mat = (m as Model15).matrices[i];
+                      m.xF = mat.rows.toDouble();
+                      m.pushStack();
+                      m.xF = mat.columns.toDouble();
+                    })),
+            KeyArg(
+                key: Operations15.I15,
+                child: ArgDone((m) {
+                  final int? miv = m.memory.registers.index.asMatrix;
+                  if (miv == null) {
+                    throw CalculatorError(11);
+                  }
+                  final mat = (m as Model15).matrices[miv];
+                  m.xF = mat.rows.toDouble();
+                  m.pushStack();
+                  m.xF = mat.columns.toDouble();
+                })),
+            KeyArg(
+                key: Operations15.parenI15,
+                child: ArgDone((m) =&gt; m.xF =
+                    ((m as Model15).memory.numRegisters - 1).toDouble()))
+          ])),
+      KeyArg(
+          key: Operations15.resultOp,
+          child: ArgDone(
+              (m) =&gt; m.x = Value.fromMatrix((m as Model15).resultMatrix))),
+      KeyArg(
+          &#47;&#47; RCL MATRIX A..E.  These are one-byte opcodes.
+          key: Operations15.matrix,
+          child: KeysArg(
+              synonyms: _matrixSynonyms,
+              keys: _letterLabels,
+              generator: (i) =&gt; ArgDone((m) =&gt; m.x = Value.fromMatrix(i)))),
+      UserArg(
+          userMode: false,
+          child:
+              ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
+            KeysArg(
+                keys: _letterLabels,
+                generator: (i) =&gt; DeferredRclArg(
+                    matrixNumber: i,
+                    pressed: _showMatrixR0R1,
+                    released: (m, matrix) =&gt;
+                        _recallFromMatrix(m, matrix, false))),
+            KeyArg(
+                key: Operations15.parenI15,
+                child: RclIndirectArg(
+                    matPressed: _showMatrixR0R1,
+                    matReleased: (m, matrix) =&gt;
+                        _recallFromMatrix(m, matrix, false))),
+          ])),
+      UserArg(
+          userMode: true,
+          child:
+              ArgAlternates(synonyms: _letterAndRegisterISynonyms, children: [
+            KeysArg(
+                keys: _letterLabels,
+                generator: (i) =&gt; DeferredRclArg(
+                    matrixNumber: i,
+                    pressed: _showMatrixR0R1,
+                    released: (m, matrix) =&gt;
+                        _recallFromMatrix(m, matrix, true))),
+            KeyArg(
+                key: Operations15.parenI15,
+                child: RclIndirectArg(
+                    matPressed: _showMatrixR0R1,
+                    matReleased: (m, matrix) =&gt;
+                        _recallFromMatrix(m, matrix, true))),
+          ])),
+      KeyArg(
+          key: Operations15.plus,
+          child: RegisterReadOpArg(
+              maxDigit: 19, f: (double r, double x) =&gt; r + x)),
+      KeyArg(
+          key: Operations15.minus,
+          child: RegisterReadOpArg(
+              maxDigit: 19, f: (double r, double x) =&gt; r - x)),
+      KeyArg(
+          key: Operations15.mult,
+          child: RegisterReadOpArg(
+              maxDigit: 19, f: (double r, double x) =&gt; r * x)),
+      KeyArg(
+          key: Operations15.div,
+          child: RegisterReadOpArg(
+              maxDigit: 19, f: (double r, double x) =&gt; r &#47; x)),
+      KeyArg(
+          key: Operations15.cosInverse, &#47;&#47; That&#39;s g (i)
+          child: RclIndirectArg(
+              noStackLift: true,
+              matPressed: (m, matrix) {
+                final int row = m.yF.truncate().abs() - 1;
+                final int col = m.xF.truncate().abs() - 1;
+                _showMatrix(m, matrix, row, col);
+              },
+              matReleased: (m, matrix) {
+                final int row = m.yF.truncate().abs() - 1;
+                final int col = m.xF.truncate().abs() - 1;
+                m.popStack();
+                m.x = matrix.get(row, col);
+              })),
+    ]),
+    name: &#39;RCL&#39;);</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">jrpn</a></li>
+  <li><a href="../../jrpn15.main/jrpn15.main-library.html">jrpn15.main</a></li>
+  <li><a href="../../jrpn15.main/Operations15-class.html">Operations15</a></li>
+  <li class="self-crumb">rcl15 property</li>
+</ol>
+
+
+    <h5>Operations15 class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../jrpn15.main/Operations15-class.html#constructors">Constructors</a></li>
+          <li><a href="../../jrpn15.main/Operations15/Operations15.html">Operations15</a></li>
+
+
+        <li class="section-title inherited">
+          <a href="../../jrpn15.main/Operations15-class.html#instance-properties">Properties</a>
+        </li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+        <li class="section-title inherited"><a href="../../jrpn15.main/Operations15-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+        <li class="section-title inherited"><a href="../../jrpn15.main/Operations15-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+        <li class="section-title"><a href="../../jrpn15.main/Operations15-class.html#static-properties">Static properties</a></li>
+          <li><a href="../../jrpn15.main/Operations15/cf.html">cf</a></li>
+          <li><a href="../../jrpn15.main/Operations15/clearSigma.html">clearSigma</a></li>
+          <li><a href="../../jrpn15.main/Operations15/cos.html">cos</a></li>
+          <li><a href="../../jrpn15.main/Operations15/cosh.html">cosh</a></li>
+          <li><a href="../../jrpn15.main/Operations15/coshInverse.html">coshInverse</a></li>
+          <li><a href="../../jrpn15.main/Operations15/cosInverse.html">cosInverse</a></li>
+          <li><a href="../../jrpn15.main/Operations15/cYX.html">cYX</a></li>
+          <li><a href="../../jrpn15.main/Operations15/deg.html">deg</a></li>
+          <li><a href="../../jrpn15.main/Operations15/deltaPercent.html">deltaPercent</a></li>
+          <li><a href="../../jrpn15.main/Operations15/dim.html">dim</a></li>
+          <li><a href="../../jrpn15.main/Operations15/div.html">div</a></li>
+          <li><a href="../../jrpn15.main/Operations15/dse.html">dse</a></li>
+          <li><a href="../../jrpn15.main/Operations15/eng.html">eng</a></li>
+          <li><a href="../../jrpn15.main/Operations15/eX15.html">eX15</a></li>
+          <li><a href="../../jrpn15.main/Operations15/fix.html">fix</a></li>
+          <li><a href="../../jrpn15.main/Operations15/fQuestion.html">fQuestion</a></li>
+          <li><a href="../../jrpn15.main/Operations15/fracOp.html">fracOp</a></li>
+          <li><a href="../../jrpn15.main/Operations15/grd.html">grd</a></li>
+          <li><a href="../../jrpn15.main/Operations15/gsb.html">gsb</a></li>
+          <li><a href="../../jrpn15.main/Operations15/gto.html">gto</a></li>
+          <li><a href="../../jrpn15.main/Operations15/hyp.html">hyp</a></li>
+          <li><a href="../../jrpn15.main/Operations15/hypInverse.html">hypInverse</a></li>
+          <li><a href="../../jrpn15.main/Operations15/I15.html">I15</a></li>
+          <li><a href="../../jrpn15.main/Operations15/integrate.html">integrate</a></li>
+          <li><a href="../../jrpn15.main/Operations15/intOp.html">intOp</a></li>
+          <li><a href="../../jrpn15.main/Operations15/isg.html">isg</a></li>
+          <li><a href="../../jrpn15.main/Operations15/lbl15.html">lbl15</a></li>
+          <li><a href="../../jrpn15.main/Operations15/letterLabelA.html">letterLabelA</a></li>
+          <li><a href="../../jrpn15.main/Operations15/letterLabelB.html">letterLabelB</a></li>
+          <li><a href="../../jrpn15.main/Operations15/letterLabelC.html">letterLabelC</a></li>
+          <li><a href="../../jrpn15.main/Operations15/letterLabelD.html">letterLabelD</a></li>
+          <li><a href="../../jrpn15.main/Operations15/letterLabelE.html">letterLabelE</a></li>
+          <li><a href="../../jrpn15.main/Operations15/linearRegression.html">linearRegression</a></li>
+          <li><a href="../../jrpn15.main/Operations15/lnOp.html">lnOp</a></li>
+          <li><a href="../../jrpn15.main/Operations15/logOp.html">logOp</a></li>
+          <li><a href="../../jrpn15.main/Operations15/lstx15.html">lstx15</a></li>
+          <li><a href="../../jrpn15.main/Operations15/matrix.html">matrix</a></li>
+          <li><a href="../../jrpn15.main/Operations15/minus.html">minus</a></li>
+          <li><a href="../../jrpn15.main/Operations15/mult.html">mult</a></li>
+          <li><a href="../../jrpn15.main/Operations15/parenI15.html">parenI15</a></li>
+          <li><a href="../../jrpn15.main/Operations15/percent.html">percent</a></li>
+          <li><a href="../../jrpn15.main/Operations15/piOp.html">piOp</a></li>
+          <li><a href="../../jrpn15.main/Operations15/plus.html">plus</a></li>
+          <li><a href="../../jrpn15.main/Operations15/pYX.html">pYX</a></li>
+          <li><a href="../../jrpn15.main/Operations15/rad.html">rad</a></li>
+          <li><a href="../../jrpn15.main/Operations15/ranNum.html">ranNum</a></li>
+          <li><a href="../../jrpn15.main/Operations15/rcl15.html">rcl15</a></li>
+          <li><a href="../../jrpn15.main/Operations15/reciprocal15.html">reciprocal15</a></li>
+          <li><a href="../../jrpn15.main/Operations15/reImSwap.html">reImSwap</a></li>
+          <li><a href="../../jrpn15.main/Operations15/resultOp.html">resultOp</a></li>
+          <li><a href="../../jrpn15.main/Operations15/rnd.html">rnd</a></li>
+          <li><a href="../../jrpn15.main/Operations15/sci.html">sci</a></li>
+          <li><a href="../../jrpn15.main/Operations15/sf.html">sf</a></li>
+          <li><a href="../../jrpn15.main/Operations15/sigmaMinus.html">sigmaMinus</a></li>
+          <li><a href="../../jrpn15.main/Operations15/sigmaPlus.html">sigmaPlus</a></li>
+          <li><a href="../../jrpn15.main/Operations15/sin.html">sin</a></li>
+          <li><a href="../../jrpn15.main/Operations15/sinh.html">sinh</a></li>
+          <li><a href="../../jrpn15.main/Operations15/sinhInverse.html">sinhInverse</a></li>
+          <li><a href="../../jrpn15.main/Operations15/sinInverse.html">sinInverse</a></li>
+          <li><a href="../../jrpn15.main/Operations15/solve.html">solve</a></li>
+          <li><a href="../../jrpn15.main/Operations15/sqrtOp15.html">sqrtOp15</a></li>
+          <li><a href="../../jrpn15.main/Operations15/stdDeviation.html">stdDeviation</a></li>
+          <li><a href="../../jrpn15.main/Operations15/sto15.html">sto15</a></li>
+          <li><a href="../../jrpn15.main/Operations15/tan.html">tan</a></li>
+          <li><a href="../../jrpn15.main/Operations15/tanh.html">tanh</a></li>
+          <li><a href="../../jrpn15.main/Operations15/tanhInverse.html">tanhInverse</a></li>
+          <li><a href="../../jrpn15.main/Operations15/tanInverse.html">tanInverse</a></li>
+          <li><a href="../../jrpn15.main/Operations15/tenX15.html">tenX15</a></li>
+          <li><a href="../../jrpn15.main/Operations15/testOp.html">testOp</a></li>
+          <li><a href="../../jrpn15.main/Operations15/toDeg.html">toDeg</a></li>
+          <li><a href="../../jrpn15.main/Operations15/toH.html">toH</a></li>
+          <li><a href="../../jrpn15.main/Operations15/toHMS.html">toHMS</a></li>
+          <li><a href="../../jrpn15.main/Operations15/toP.html">toP</a></li>
+          <li><a href="../../jrpn15.main/Operations15/toR.html">toR</a></li>
+          <li><a href="../../jrpn15.main/Operations15/toRad.html">toRad</a></li>
+          <li><a href="../../jrpn15.main/Operations15/userOp.html">userOp</a></li>
+          <li><a href="../../jrpn15.main/Operations15/xBar.html">xBar</a></li>
+          <li><a href="../../jrpn15.main/Operations15/xEQ0_15.html">xEQ0_15</a></li>
+          <li><a href="../../jrpn15.main/Operations15/xExchange.html">xExchange</a></li>
+          <li><a href="../../jrpn15.main/Operations15/xFactorial.html">xFactorial</a></li>
+          <li><a href="../../jrpn15.main/Operations15/xSquared.html">xSquared</a></li>
+          <li><a href="../../jrpn15.main/Operations15/yHatR.html">yHatR</a></li>
+          <li><a href="../../jrpn15.main/Operations15/yX15.html">yX15</a></li>
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      2.0.1+6
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

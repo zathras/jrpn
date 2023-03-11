@@ -66,6 +66,25 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 </section>
 
 
+    <section>
+      <dl class="dl-horizontal">
+        
+
+        
+        
+
+        <dt>Implementers</dt>
+        <dd><ul class="comma-separated clazz-relationships">
+          <li><a href="../jrpn15.model15c/ProgramMemory15-class.html">ProgramMemory15</a></li>
+          <li><a href="../jrpn16.main/ProgramMemory16-class.html">ProgramMemory16</a></li>
+        </ul></dd>
+
+
+        
+
+
+      </dl>
+    </section>
 
     
   <section class="summary offset-anchor" id="constructors">
@@ -73,7 +92,7 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 
     <dl class="constructor-summary-list">
         <dt id="ProgramMemory" class="callable">
-          <span class="name"><a href="../model/ProgramMemory/ProgramMemory.html">ProgramMemory</a></span><span class="signature">(<span class="parameter" id="-param-memory"><span class="type-annotation"><a href="../model/Memory-class.html">Memory</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span> <span class="parameter-name">memory</span>, </span><span class="parameter" id="-param-_registerStorage"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/ByteData-class.html">ByteData</a></span> <span class="parameter-name">_registerStorage</span>, </span><span class="parameter" id="-param-layout"><span class="type-annotation"><a href="../model/OperationMap-class.html">OperationMap</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span> <span class="parameter-name">layout</span>, </span><span class="parameter" id="-param-returnStackSize"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">returnStackSize</span></span>)</span>
+          <span class="name"><a href="../model/ProgramMemory/ProgramMemory.html">ProgramMemory</a></span><span class="signature">(<span class="parameter" id="-param-memory"><span class="type-annotation"><a href="../model/Memory-class.html">Memory</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span> <span class="parameter-name">memory</span>, </span><span class="parameter" id="-param-layout"><span class="type-annotation"><a href="../model/OperationMap-class.html">OperationMap</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span> <span class="parameter-name">layout</span>, </span><span class="parameter" id="-param-returnStackSize"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">returnStackSize</span>, </span><span class="parameter" id="-param-_rtn"><span class="type-annotation"><a href="../model/ProgramOperation-class.html">ProgramOperation</a></span> <span class="parameter-name">_rtn</span></span>)</span>
         </dt>
         <dd>
           
@@ -131,12 +150,12 @@ line will be line 4, despite the fact that F-ENG-2 takes up two bytes.</p>
 
         <dt id="isRunning" class="property">
   <span class="name"><a href="../model/ProgramMemory/isRunning.html">isRunning</a></span>
-  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
 
 </dt>
 <dd>
   
-  <div class="features"><span class="feature">read / write</span></div>
+  <div class="features"><span class="feature">read-only</span></div>
 
 </dd>
 
@@ -196,6 +215,17 @@ and detect events.
 
 </dd>
 
+        <dt id="returnStackPos" class="property">
+  <span class="name"><a href="../model/ProgramMemory/returnStackPos.html">returnStackPos</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">read-only</span></div>
+
+</dd>
+
         <dt id="returnStackUnderflow" class="property">
   <span class="name"><a href="../model/ProgramMemory/returnStackUnderflow.html">returnStackUnderflow</a></span>
   <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> 
@@ -204,6 +234,17 @@ and detect events.
 <dd>
   
   <div class="features"><span class="feature">read-only</span></div>
+
+</dd>
+
+        <dt id="runner" class="property">
+  <span class="name"><a href="../model/ProgramMemory/runner.html">runner</a></span>
+  <span class="signature">&#8596; <a href="../model/MProgramRunner-class.html">MProgramRunner</a>?</span> 
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">read / write</span></div>
 
 </dd>
 
@@ -218,6 +259,17 @@ and detect events.
 
 </dd>
 
+        <dt id="suspendedProgram" class="property">
+  <span class="name"><a href="../model/ProgramMemory/suspendedProgram.html">suspendedProgram</a></span>
+  <span class="signature">&#8596; <a href="../model/MProgramRunner-class.html">MProgramRunner</a>?</span> 
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">read / write</span></div>
+
+</dd>
+
       </dl>
     </section>
 
@@ -227,6 +279,34 @@ and detect events.
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
+        <dt id="adjustStackForRunStopStarting" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/adjustStackForRunStopStarting.html">adjustStackForRunStopStarting</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  A RunStop keypress can resume a program, in which case the return stack
+should be left undisturbed.  It can also start a "new" program run,
+so we need to be sure the return stack isn't in underflow
+  
+
+</dd>
+
+        <dt id="debugReturnStack" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/debugReturnStack.html">debugReturnStack</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
         <dt id="decodeJson" class="callable">
   <span class="name"><a href="../model/ProgramMemory/decodeJson.html">decodeJson</a></span><span class="signature">(<wbr><span class="parameter" id="decodeJson-param-json"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">json</span></span>)
     <span class="returntype parameter">&#8594; void</span>
@@ -270,6 +350,19 @@ stray data will be properly zeroed out.
         <dt id="doNextIf" class="callable">
   <span class="name"><a href="../model/ProgramMemory/doNextIf.html">doNextIf</a></span><span class="signature">(<wbr><span class="parameter" id="doNextIf-param-condition"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">condition</span></span>)
     <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="getAllInstructions" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/getAllInstructions.html">getAllInstructions</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/ProgramInstruction-class.html">ProgramInstruction</a><span class="signature">&lt;<wbr><span class="type-parameter">OT</span>&gt;</span></span>&gt;</span></span>
   </span>
   
 
@@ -332,17 +425,28 @@ stray data will be properly zeroed out.
 
 </dd>
 
-        <dt id="handleRunStopKepyress" class="callable">
-  <span class="name"><a href="../model/ProgramMemory/handleRunStopKepyress.html">handleRunStopKepyress</a></span><span class="signature">(<wbr>)
+        <dt id="importProgram" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/importProgram.html">importProgram</a></span><span class="signature">(<wbr><span class="parameter" id="importProgram-param-listing"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">listing</span></span>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
 
 </dt>
 <dd>
-  A RunStop keypress can resume a program, in which case the return stack
-shoould be left undisturbed.  It can also start a "new" program run,
-so we need to be sure the return stack isn't in underflow
+  
+  
+
+</dd>
+
+        <dt id="importProgramFromFile" class="callable">
+  <span class="name"><a href="../model/ProgramMemory/importProgramFromFile.html">importProgramFromFile</a></span><span class="signature">(<wbr><span class="parameter" id="importProgramFromFile-param-original"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span> <span class="parameter-name">original</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
   
 
 </dd>
@@ -520,7 +624,7 @@ To be clear, there are lines+1 possible values.
 
 </dt>
 <dd>
-  line counts from 1
+  line counts from 1, with a phantom return at line 0
   
 
 </dd>
@@ -574,6 +678,8 @@ To be clear, there are lines+1 possible values.
         <li><a href="../model/MKey-class.html">MKey</a></li>
         <li><a href="../model/MKeyExtensionOp-class.html">MKeyExtensionOp</a></li>
         <li><a href="../model/Model-class.html">Model</a></li>
+        <li><a href="../model/ModelSnapshot-class.html">ModelSnapshot</a></li>
+        <li><a href="../model/MProgramRunner-class.html">MProgramRunner</a></li>
         <li><a href="../model/NumStatus-class.html">NumStatus</a></li>
         <li><a href="../model/NumStatus68-class.html">NumStatus68</a></li>
         <li><a href="../model/Observable-class.html">Observable</a></li>
@@ -589,6 +695,7 @@ To be clear, there are lines+1 possible values.
         <li><a href="../model/Settings-class.html">Settings</a></li>
         <li><a href="../model/ShiftKey-class.html">ShiftKey</a></li>
         <li><a href="../model/SignMode-class.html">SignMode</a></li>
+        <li><a href="../model/StackLiftingArgDone-class.html">StackLiftingArgDone</a></li>
         <li><a href="../model/TrigMode-class.html">TrigMode</a></li>
         <li><a href="../model/Value-class.html">Value</a></li>
 
@@ -600,6 +707,7 @@ To be clear, there are lines+1 possible values.
 
 
       <li class="section-title"><a href="../model/model-library.html#enums">Enums</a></li>
+        <li><a href="../model/BlinkMode.html">BlinkMode</a></li>
         <li><a href="../model/OrientationSetting.html">OrientationSetting</a></li>
 
       <li class="section-title"><a href="../model/model-library.html#typedefs">Typedefs</a></li>
@@ -629,19 +737,26 @@ To be clear, there are lines+1 possible values.
           <li><a href="../model/ProgramMemory/memory.html">memory</a></li>
           <li><a href="../model/ProgramMemory/programBytes.html">programBytes</a></li>
           <li><a href="../model/ProgramMemory/programListener.html">programListener</a></li>
+          <li><a href="../model/ProgramMemory/returnStackPos.html">returnStackPos</a></li>
           <li><a href="../model/ProgramMemory/returnStackUnderflow.html">returnStackUnderflow</a></li>
+          <li><a href="../model/ProgramMemory/runner.html">runner</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+          <li><a href="../model/ProgramMemory/suspendedProgram.html">suspendedProgram</a></li>
 
         <li class="section-title"><a href="../model/ProgramMemory-class.html#instance-methods">Methods</a></li>
+          <li><a href="../model/ProgramMemory/adjustStackForRunStopStarting.html">adjustStackForRunStopStarting</a></li>
+          <li><a href="../model/ProgramMemory/debugReturnStack.html">debugReturnStack</a></li>
           <li><a href="../model/ProgramMemory/decodeJson.html">decodeJson</a></li>
           <li><a href="../model/ProgramMemory/deleteCurrent.html">deleteCurrent</a></li>
           <li><a href="../model/ProgramMemory/displayCurrent.html">displayCurrent</a></li>
           <li><a href="../model/ProgramMemory/doNextIf.html">doNextIf</a></li>
+          <li><a href="../model/ProgramMemory/getAllInstructions.html">getAllInstructions</a></li>
           <li><a href="../model/ProgramMemory/getCurrent.html">getCurrent</a></li>
           <li><a href="../model/ProgramMemory/gosub.html">gosub</a></li>
           <li><a href="../model/ProgramMemory/goto.html">goto</a></li>
           <li><a href="../model/ProgramMemory/gotoOpCode.html">gotoOpCode</a></li>
-          <li><a href="../model/ProgramMemory/handleRunStopKepyress.html">handleRunStopKepyress</a></li>
+          <li><a href="../model/ProgramMemory/importProgram.html">importProgram</a></li>
+          <li><a href="../model/ProgramMemory/importProgramFromFile.html">importProgramFromFile</a></li>
           <li><a href="../model/ProgramMemory/incrementCurrentLine.html">incrementCurrentLine</a></li>
           <li><a href="../model/ProgramMemory/insert.html">insert</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>

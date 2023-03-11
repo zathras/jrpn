@@ -70,7 +70,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void reset() {
-  for (int i = 0; i &lt; storage.lengthInBytes; i++) {
+  for (int i = 0; i &lt; totalNybbles; i++) {
     storage.setUint8(i, 0);
   }
   program.reset(zeroMemory: false);

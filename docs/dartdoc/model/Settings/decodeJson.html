@@ -79,14 +79,15 @@ that causes bad behavior in the calculator.</p>
   menuEnabled.value = json[&#39;menuEnabled&#39;] as bool;
   _windowEnabled = json[&#39;windowEnabled&#39;] as bool;
   _euroComma = json[&#39;euroComma&#39;] as bool;
-  _hideComplement = json[&#39;hideComplement&#39;] as bool;
+  _hideComplement = json[&#39;hideComplement&#39;] as bool? ?? false;
   _showWordSize = json[&#39;showWordSize&#39;] as bool? ?? false;
+  _integerModeCommas = json[&#39;integerModeCommas&#39;] as bool? ?? false;
   showAccelerators.value = json[&#39;showAccelerators&#39;] == true; &#47;&#47; could be null
   _msPerInstruction = (json[&#39;msPerInstruction&#39;] as num?)?.toDouble();
   _traceProgramToStdout = (json[&#39;traceProgramToStdout&#39;] as bool?) ?? false;
   _systemOverlaysDisabled =
       (json[&#39;systemOverlaysDisabled&#39;] as bool?) ?? false;
-  _setPlatformOverlays();
+  setPlatformOverlays();
   int? ov = json[&#39;orientation&#39;] as int?;
   if (ov == null || ov &lt; 0 || ov &gt; OrientationSetting.values.length) {
     _orientation = OrientationSetting.auto;
@@ -95,6 +96,12 @@ that causes bad behavior in the calculator.</p>
   }
   _setPlatformOrientation();
   _traceProgramToStdout = (json[&#39;traceProgramToStdout&#39;] as bool?) ?? false;
+  fKeyColor = json[&#39;fKeyColor&#39;] as int?;
+  fTextColor = json[&#39;fTextColor&#39;] as int?;
+  gKeyColor = json[&#39;gKeyColor&#39;] as int?;
+  gTextColor = json[&#39;gTextColor&#39;] as int?;
+  lcdBackgroundColor = json[&#39;lcdBackgroundColor&#39;] as int?;
+  lcdForegroundColor = json[&#39;lcdForegroundColor&#39;] as int?;
 }</code></pre>
 </section>
 
@@ -127,9 +134,16 @@ that causes bad behavior in the calculator.</p>
           <a href="../../model/Settings-class.html#instance-properties">Properties</a>
         </li>
           <li><a href="../../model/Settings/euroComma.html">euroComma</a></li>
+          <li><a href="../../model/Settings/fKeyColor.html">fKeyColor</a></li>
+          <li><a href="../../model/Settings/fTextColor.html">fTextColor</a></li>
+          <li><a href="../../model/Settings/gKeyColor.html">gKeyColor</a></li>
+          <li><a href="../../model/Settings/gTextColor.html">gTextColor</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../model/Settings/hideComplement.html">hideComplement</a></li>
+          <li><a href="../../model/Settings/integerModeCommas.html">integerModeCommas</a></li>
           <li><a href="../../model/Settings/isMobilePlatform.html">isMobilePlatform</a></li>
+          <li><a href="../../model/Settings/lcdBackgroundColor.html">lcdBackgroundColor</a></li>
+          <li><a href="../../model/Settings/lcdForegroundColor.html">lcdForegroundColor</a></li>
           <li><a href="../../model/Settings/menuEnabled.html">menuEnabled</a></li>
           <li><a href="../../model/Settings/msPerInstruction.html">msPerInstruction</a></li>
           <li><a href="../../model/Settings/orientation.html">orientation</a></li>
@@ -143,6 +157,7 @@ that causes bad behavior in the calculator.</p>
         <li class="section-title"><a href="../../model/Settings-class.html#instance-methods">Methods</a></li>
           <li><a href="../../model/Settings/decodeJson.html">decodeJson</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../model/Settings/setPlatformOverlays.html">setPlatformOverlays</a></li>
           <li><a href="../../model/Settings/toJson.html">toJson</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
 

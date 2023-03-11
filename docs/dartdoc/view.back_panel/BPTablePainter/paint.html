@@ -114,27 +114,31 @@ obtain the correct rendering size.</p>
   <pre class="language-dart"><code class="language-dart">@override
 void paint(Canvas canvas, Size size) {
   &#47;&#47; Set the scale so one &quot;pixel&quot; is 1mm at the real caluclator&#39;s size
-  const thickW = BPTable.thickLineWidth;
-  const thinW = BPTable.thinLineWidth;
+  final thickW = table.thickLineWidth;
+  final thinW = table.thinLineWidth;
+  final heightMM = table.panel.rowHeightMM;
+  final drawLines = table.drawHorizontalLines;
   canvas.scale(size.width &#47; (table.widthCM * 10));
   double width = columnWidths.fold(0.0, (double x, double e) =&gt; x + e) +
-      2 * BPTable.thickLineWidth +
+      2 * thickW +
       (thinW * (columnWidths.length - 1));
-  double height = table.rows.length * BPRow.heightMM + 2 * thickW - thinW;
-  RRect frame = RRect.fromLTRBR(thickW &#47; 2, thickW &#47; 2, width - thickW &#47; 2,
-      height - thickW &#47; 2, const Radius.circular(0.1));
-  canvas.drawRRect(frame, thickLine);
+  double height = table.rows.length * heightMM + 2 * thickW - thinW;
+  drawOutline(canvas, width, height);
   double x = thickW - thinW &#47; 2;
-  for (int c = 0; c &lt; columnWidths.length - 1; c++) {
-    x += columnWidths[c] + thinW;
-    canvas.drawLine(Offset(x, 0), Offset(x, height), thinLine);
+  if (table.drawVerticalLines) {
+    for (int c = 0; c &lt; columnWidths.length - 1; c++) {
+      x += columnWidths[c] + thinW;
+      paintVerticalLine(canvas, x, height, c);
+    }
   }
+  canvas.save();
   canvas.translate(0, thickW);
   for (int r = 0; r &lt; table.rows.length - 1; r++) {
-    table.rows[r].paint(canvas, this, last: false);
-    canvas.translate(0, BPRow.heightMM);
+    table.rows[r].paint(canvas, this, drawLine: drawLines || r == 0);
+    canvas.translate(0, heightMM);
   }
-  table.rows.last.paint(canvas, this, last: true);
+  table.rows.last.paint(canvas, this, drawLine: false);
+  canvas.restore();
 }</code></pre>
 </section>
 
@@ -167,19 +171,22 @@ void paint(Canvas canvas, Size size) {
           <a href="../../view.back_panel/BPTablePainter-class.html#instance-properties">Properties</a>
         </li>
           <li><a href="../../view.back_panel/BPTablePainter/columnWidths.html">columnWidths</a></li>
-          <li><a href="../../view.back_panel/BPTablePainter/fill.html">fill</a></li>
+          <li class="inherited"><a href="../../view.back_panel/BPItemPainter/fill.html">fill</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="../../view.back_panel/BPItemPainter/panel.html">panel</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/semanticsBuilder.html">semanticsBuilder</a></li>
           <li><a href="../../view.back_panel/BPTablePainter/table.html">table</a></li>
-          <li><a href="../../view.back_panel/BPTablePainter/thickLine.html">thickLine</a></li>
-          <li><a href="../../view.back_panel/BPTablePainter/thinLine.html">thinLine</a></li>
+          <li class="inherited"><a href="../../view.back_panel/BPItemPainter/thickLine.html">thickLine</a></li>
+          <li class="inherited"><a href="../../view.back_panel/BPItemPainter/thinLine.html">thinLine</a></li>
 
         <li class="section-title"><a href="../../view.back_panel/BPTablePainter-class.html#instance-methods">Methods</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/addListener.html">addListener</a></li>
+          <li><a href="../../view.back_panel/BPTablePainter/drawOutline.html">drawOutline</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/hitTest.html">hitTest</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
           <li><a href="../../view.back_panel/BPTablePainter/paint.html">paint</a></li>
+          <li><a href="../../view.back_panel/BPTablePainter/paintVerticalLine.html">paintVerticalLine</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/removeListener.html">removeListener</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/shouldRebuildSemantics.html">shouldRebuildSemantics</a></li>
           <li><a href="../../view.back_panel/BPTablePainter/shouldRepaint.html">shouldRepaint</a></li>

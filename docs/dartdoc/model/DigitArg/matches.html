@@ -84,10 +84,15 @@ Arg? matches(ProgramOperation key, bool userMode) {
     }
   }
   if (key == Arg.kDot) {
-    return _nextOnDot;
-  } else {
-    return null;
+    final nd = _nextOnDot;
+    if (nd != null) {
+      return nd.matches(key, userMode);
+      &#47;&#47; Honestly, I don&#39;t quite remember why there&#39;s the intervening
+      &#47;&#47; KeyArg(.).  Maybe something to do with f-float-dot on the 16C?
+      &#47;&#47; Anyway, here we need to skip over it.
+    }
   }
+  return null;
 }</code></pre>
 </section>
 
@@ -119,6 +124,7 @@ Arg? matches(ProgramOperation key, bool userMode) {
         <li class="section-title">
           <a href="../../model/DigitArg-class.html#instance-properties">Properties</a>
         </li>
+          <li><a href="../../model/DigitArg/argDoneFactory.html">argDoneFactory</a></li>
           <li><a href="../../model/DigitArg/calc.html">calc</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
           <li><a href="../../model/DigitArg/max.html">max</a></li>

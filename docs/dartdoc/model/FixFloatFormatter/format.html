@@ -63,7 +63,8 @@
   </div>
 
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
-<span class="name ">format</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="format-param-v"><span class="type-annotation"><a href="../../model/Value-class.html">Value</a></span> <span class="parameter-name">v</span></span></li>
+<span class="name ">format</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="format-param-v"><span class="type-annotation"><a href="../../model/Value-class.html">Value</a></span> <span class="parameter-name">v</span>, </span></li>
+<li><span class="parameter" id="format-param-windowEnabled"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">windowEnabled</span></span></li>
 </ol>)
 
       <div class="features"><span class="feature">override</span></div>
@@ -76,9 +77,10 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
-String format(Value v) =&gt;
+String format(Value v, bool windowEnabled) =&gt;
     formatFixed(v, fractionDigits) ??
-    formatScientific(v, min(6, fractionDigits + 1));</code></pre>
+    formatScientific(
+        v, windowEnabled ? min(7, fractionDigits + 1) : fractionDigits + 1);</code></pre>
 </section>
 
 
@@ -119,7 +121,9 @@ String format(Value v) =&gt;
           <li class="inherited"><a href="../../model/FloatFormatter/formatFixed.html">formatFixed</a></li>
           <li class="inherited"><a href="../../model/FloatFormatter/formatMantissaU.html">formatMantissaU</a></li>
           <li class="inherited"><a href="../../model/FloatFormatter/formatScientific.html">formatScientific</a></li>
+          <li><a href="../../model/FixFloatFormatter/leastSignificantDigit.html">leastSignificantDigit</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../model/FixFloatFormatter/round.html">round</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
 
         <li class="section-title inherited"><a href="../../model/FixFloatFormatter-class.html#operators">Operators</a></li>

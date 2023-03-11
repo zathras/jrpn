@@ -66,6 +66,7 @@
       <li><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></li>
         <li><a href="https://api.flutter.dev/flutter/foundation/Listenable-class.html">Listenable</a></li>
         <li><a href="https://api.flutter.dev/flutter/rendering/CustomPainter-class.html">CustomPainter</a></li>
+        <li><a href="../view.back_panel/BPItemPainter-class.html">BPItemPainter</a></li>
       <li>BPTablePainter</li>
     </ul>
   </dd>
@@ -110,14 +111,14 @@
 
 </dd>
 
-        <dt id="fill" class="property">
-  <span class="name"><a href="../view.back_panel/BPTablePainter/fill.html">fill</a></span>
+        <dt id="fill" class="property inherited">
+  <span class="name"><a href="../view.back_panel/BPItemPainter/fill.html">fill</a></span>
   <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-ui/Paint-class.html">Paint</a></span> 
 
 </dt>
-<dd>
+<dd class="inherited">
   
-  <div class="features"><span class="feature">final</span></div>
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -129,6 +130,17 @@
 <dd class="inherited">
   The hash code for this object.
   <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="panel" class="property inherited">
+  <span class="name"><a href="../view.back_panel/BPItemPainter/panel.html">panel</a></span>
+  <span class="signature">&#8594; <a href="../view.back_panel/BackPanel-class.html">BackPanel</a></span> 
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -166,25 +178,25 @@ by this painter.
 
 </dd>
 
-        <dt id="thickLine" class="property">
-  <span class="name"><a href="../view.back_panel/BPTablePainter/thickLine.html">thickLine</a></span>
+        <dt id="thickLine" class="property inherited">
+  <span class="name"><a href="../view.back_panel/BPItemPainter/thickLine.html">thickLine</a></span>
   <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-ui/Paint-class.html">Paint</a></span> 
 
 </dt>
-<dd>
+<dd class="inherited">
   
-  <div class="features"><span class="feature">final</span></div>
+  <div class="features"><span class="feature">late</span><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
-        <dt id="thinLine" class="property">
-  <span class="name"><a href="../view.back_panel/BPTablePainter/thinLine.html">thinLine</a></span>
+        <dt id="thinLine" class="property inherited">
+  <span class="name"><a href="../view.back_panel/BPItemPainter/thinLine.html">thinLine</a></span>
   <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-ui/Paint-class.html">Paint</a></span> 
 
 </dt>
-<dd>
+<dd class="inherited">
   
-  <div class="features"><span class="feature">final</span></div>
+  <div class="features"><span class="feature">late</span><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -207,6 +219,19 @@ by this painter.
 <dd class="inherited">
   Register a closure to be notified when it is time to repaint.
   <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="drawOutline" class="callable">
+  <span class="name"><a href="../view.back_panel/BPTablePainter/drawOutline.html">drawOutline</a></span><span class="signature">(<wbr><span class="parameter" id="drawOutline-param-canvas"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Canvas-class.html">Canvas</a></span> <span class="parameter-name">canvas</span>, </span><span class="parameter" id="drawOutline-param-width"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">width</span>, </span><span class="parameter" id="drawOutline-param-height"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">height</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
 
 </dd>
 
@@ -249,6 +274,19 @@ this custom paint delegate.
 coordinate space configured such that the origin is at the top left of the
 box. The area of the box is the size of the <code>size</code> argument.
   <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="paintVerticalLine" class="callable">
+  <span class="name"><a href="../view.back_panel/BPTablePainter/paintVerticalLine.html">paintVerticalLine</a></span><span class="signature">(<wbr><span class="parameter" id="paintVerticalLine-param-canvas"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Canvas-class.html">Canvas</a></span> <span class="parameter-name">canvas</span>, </span><span class="parameter" id="paintVerticalLine-param-x"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">x</span>, </span><span class="parameter" id="paintVerticalLine-param-height"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">height</span>, </span><span class="parameter" id="paintVerticalLine-param-c"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">c</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
 
 </dd>
 
@@ -364,6 +402,7 @@ implemented in terms of the former).
         <li><a href="../view.back_panel/BPCell-class.html">BPCell</a></li>
         <li><a href="../view.back_panel/BPCustomItem-class.html">BPCustomItem</a></li>
         <li><a href="../view.back_panel/BPItem-class.html">BPItem</a></li>
+        <li><a href="../view.back_panel/BPItemPainter-class.html">BPItemPainter</a></li>
         <li><a href="../view.back_panel/BPRow-class.html">BPRow</a></li>
         <li><a href="../view.back_panel/BPTable-class.html">BPTable</a></li>
         <li><a href="../view.back_panel/BPTablePainter-class.html">BPTablePainter</a></li>
@@ -390,19 +429,22 @@ implemented in terms of the former).
           <a href="../view.back_panel/BPTablePainter-class.html#instance-properties">Properties</a>
         </li>
           <li><a href="../view.back_panel/BPTablePainter/columnWidths.html">columnWidths</a></li>
-          <li><a href="../view.back_panel/BPTablePainter/fill.html">fill</a></li>
+          <li class="inherited"><a href="../view.back_panel/BPItemPainter/fill.html">fill</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="../view.back_panel/BPItemPainter/panel.html">panel</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/semanticsBuilder.html">semanticsBuilder</a></li>
           <li><a href="../view.back_panel/BPTablePainter/table.html">table</a></li>
-          <li><a href="../view.back_panel/BPTablePainter/thickLine.html">thickLine</a></li>
-          <li><a href="../view.back_panel/BPTablePainter/thinLine.html">thinLine</a></li>
+          <li class="inherited"><a href="../view.back_panel/BPItemPainter/thickLine.html">thickLine</a></li>
+          <li class="inherited"><a href="../view.back_panel/BPItemPainter/thinLine.html">thinLine</a></li>
 
         <li class="section-title"><a href="../view.back_panel/BPTablePainter-class.html#instance-methods">Methods</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/addListener.html">addListener</a></li>
+          <li><a href="../view.back_panel/BPTablePainter/drawOutline.html">drawOutline</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/hitTest.html">hitTest</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
           <li><a href="../view.back_panel/BPTablePainter/paint.html">paint</a></li>
+          <li><a href="../view.back_panel/BPTablePainter/paintVerticalLine.html">paintVerticalLine</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/removeListener.html">removeListener</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/shouldRebuildSemantics.html">shouldRebuildSemantics</a></li>
           <li><a href="../view.back_panel/BPTablePainter/shouldRepaint.html">shouldRepaint</a></li>

@@ -19,6 +19,8 @@ this program; if not, see https://www.gnu.org/licenses/ .
 
 */
 
+library jrpn15.more_math;
+
 import 'dart:math';
 import 'dart:typed_data';
 

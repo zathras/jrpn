@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the runCalculation method from the IntegrateProgramRunner class, for the Dart programming language.">
+  <title>runCalculation method - IntegrateProgramRunner class - jrpn15.runners library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jrpn</a></li>
+    <li><a href="../../jrpn15.runners/jrpn15.runners-library.html">jrpn15.runners</a></li>
+    <li><a href="../../jrpn15.runners/IntegrateProgramRunner-class.html">IntegrateProgramRunner</a></li>
+    <li class="self-crumb">runCalculation method</li>
+  </ol>
+  <div class="self-name">runCalculation</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">runCalculation</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+  <div>
+    <ol class="annotation-list">
+        <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
+    </ol>
+  </div>
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+<span class="name ">runCalculation</span>(<wbr>)
+
+      <div class="features"><span class="feature">override</span></div>
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Run the solve/integrate algorithm.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@override
+Future&lt;bool&gt; runCalculation() async {
+  final DisplayMode precision = model.displayMode;
+  &#47;&#47; The number of digits being displayed determines how precisely we
+  &#47;&#47; estimate the integral.
+  const int maxIterations = 10;
+  &#47;&#47; Complexity is... uh... O(a lot)
+  &#47;&#47; In testing, typical functions converge in 3 or 4 iterations.
+  &#47;&#47; With the default 50ms&#47;program instruction, and a trivial function
+  &#47;&#47; that generates a random number, it takes over an hour to get here.
+  &#47;&#47; 10 is conservatively high, and a nice, round number
+  &#47;&#47; that&#39;s low enough so the thing will terminate before the universe
+  &#47;&#47; expires.
+
+  _lastEstimate = 0;
+  final Value originalY = model.y;
+  final Value originalX = model.x;
+  double a = model.yF; &#47;&#47; lower bound
+  double b = model.xF; &#47;&#47; upper bound
+  final double signResult;
+  if (a == b) {
+    model.z = originalX;
+    model.t = originalY;
+    model.x = model.y = Value.zero;
+    return true;
+  } else if (a &gt; b) {
+    signResult = -1;
+    final tmp = b;
+    b = a;
+    a = tmp;
+  } else {
+    signResult = 1;
+  }
+  final double span = b - a;
+
+  &#47;&#47; This is a port of qromo(), copied from
+  &#47;&#47; https:&#47;&#47;www.hpmuseum.org&#47;forum&#47;thread-16523.html
+  &#47;&#47; The post includes the text &quot;You may freely use any of the code
+  &#47;&#47; here and please ask questions or PM me if something is not clear.&quot;
+  &#47;*
+    double qromo(double (*f)(double), double a, double b, int n, double eps) {
+      double R1[n], R2[n];
+      double *Ro = &amp;R1[0], *Ru = &amp;R2[0];
+      double h = b-a;
+      int i, j;
+      unsigned long long k = 1;
+      Ro[0] = f((a+b)&#47;2)*h;
+      for (i = 1; i &lt; n; ++i) {
+        unsigned long long s = 1;
+        double sum = 0;
+        double *Rt;
+        k *= 3;
+        h &#47;= 3;
+        for (j = 1; j &lt; k; j += 3)
+          sum += f(a+(j-1)*h+h&#47;2) + f(a+(j+1)*h+h&#47;2);
+        Ru[0] = h*sum + Ro[0]&#47;3;
+        for (j = 1; j &lt;= i; ++j) {
+          s *= 9;
+          Ru[j] = (s*Ru[j-1] - Ro[j-1])&#47;(s-1);
+        }
+        if (i &gt; 1 &amp;&amp; fabs(Ro[i-1]-Ru[i]) &lt;= eps*fabs(Ru[i])+eps)
+          return Ru[i];
+        Rt = Ro;
+        Ro = Ru;
+        Ru = Rt;
+      }
+      return Ro[n-1]; &#47;&#47; no convergence, return best result,
+                      &#47;&#47; error is fabs((Ru[n-2]-Ro[n-1])&#47;Ro[n-1])
+    }
+   *&#47;
+  var ro = Float64List(maxIterations);
+  var ru = Float64List(maxIterations);
+  double h = span;
+  int k = 1;
+  ro[0] = await runSubroutine((a + b) &#47; 2) * h;
+  _lastEstimate = ro[0] * signResult;
+  int calls = 1;
+  double totalMagnitude = ro[0].abs();
+  int i;
+  for (i = 1; i &lt; maxIterations; i++) {
+    int s = 1;
+    double sum = 0;
+    k *= 3;
+    h &#47;= 3;
+    for (int j = 1; j &lt; k; j += 3) {
+      double f1 = await runSubroutine(a + (j - 1) * h + h &#47; 2);
+      double f2 = await runSubroutine(a + (j + 1) * h + h &#47; 2);
+      calls += 2;
+      totalMagnitude += f1.abs() + f2.abs();
+      sum += f1 + f2;
+    }
+    ru[0] = h * sum + ro[0] &#47; 3;
+    for (int j = 1; j &lt;= i; ++j) {
+      s *= 9;
+      ru[j] = (s * ru[j - 1] - ro[j - 1]) &#47; (s - 1);
+    }
+    final double digit;
+    final area = (totalMagnitude &#47; calls) * span;
+    if (area &lt; 1e-100) {
+      digit = precision.leastSignificantDigit(1).toDouble();
+    } else {
+      digit = log10(area) - 1 + precision.leastSignificantDigit(area);
+      &#47;&#47; I think log10(area).floor() is closer to what the 15C does, but
+      &#47;&#47; subtracting 1 instead makes it so the error scales smoothly, which
+      &#47;&#47; makes more sense to me.  We&#39;re so much faster than the real
+      &#47;&#47; calculator that being overly accurate doesn&#39;t hurt, so this is
+      &#47;&#47; a pretty conservative choice.
+    }
+    final double eps = fpow(10.0, digit.toDouble());
+    final rt = ro;
+    ro = ru;
+    ru = rt;
+    if (i &gt; 1 &amp;&amp; (ru[i - 1] - ro[i]).abs() &lt;= eps * ro[i].abs() + eps) {
+      break;
+    }
+    _lastEstimate = ro[i] * signResult;
+  }
+  final ok = i &lt; maxIterations;
+  if (!ok) {
+    i--;
+  }
+  final err = ((ru[i - 1] - ro[i]) &#47; ro[i]).abs();
+  model.z = originalX;
+  model.t = originalY;
+  model.yF = err;
+  model.xF = ro[i] * signResult;
+  return true; &#47;&#47; The 15C never gives CalculatorError on failure to converge
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">jrpn</a></li>
+  <li><a href="../../jrpn15.runners/jrpn15.runners-library.html">jrpn15.runners</a></li>
+  <li><a href="../../jrpn15.runners/IntegrateProgramRunner-class.html">IntegrateProgramRunner</a></li>
+  <li class="self-crumb">runCalculation method</li>
+</ol>
+
+
+    <h5>IntegrateProgramRunner class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../jrpn15.runners/IntegrateProgramRunner-class.html#constructors">Constructors</a></li>
+          <li><a href="../../jrpn15.runners/IntegrateProgramRunner/IntegrateProgramRunner.html">IntegrateProgramRunner</a></li>
+
+
+        <li class="section-title">
+          <a href="../../jrpn15.runners/IntegrateProgramRunner-class.html#instance-properties">Properties</a>
+        </li>
+          <li class="inherited"><a href="../../controller.states/ProgramRunner/caller.html">caller</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="../../controller.states/ProgramRunner/model.html">model</a></li>
+          <li class="inherited"><a href="../../controller.states/ProgramRunner/parent.html">parent</a></li>
+          <li><a href="../../jrpn15.runners/IntegrateProgramRunner/registersRequired.html">registersRequired</a></li>
+          <li class="inherited"><a href="../../controller.states/ProgramRunner/returnStackStartPos.html">returnStackStartPos</a></li>
+          <li><a href="../../jrpn15.runners/IntegrateProgramRunner/runImplicitRtnOnSST.html">runImplicitRtnOnSST</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+        <li class="section-title"><a href="../../jrpn15.runners/IntegrateProgramRunner-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ProgramRunner/abort.html">abort</a></li>
+          <li><a href="../../jrpn15.runners/IntegrateProgramRunner/checkStartRunning.html">checkStartRunning</a></li>
+          <li><a href="../../jrpn15.runners/IntegrateProgramRunner/fail.html">fail</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li class="inherited"><a href="../../model/MProgramRunner/pushPseudoReturn.html">pushPseudoReturn</a></li>
+          <li class="inherited"><a href="../../controller.states/ProgramRunner/restart.html">restart</a></li>
+          <li class="inherited"><a href="../../controller.states/ProgramRunner/resume.html">resume</a></li>
+          <li class="inherited"><a href="../../jrpn15.runners/NontrivialProgramRunner/run.html">run</a></li>
+          <li><a href="../../jrpn15.runners/IntegrateProgramRunner/runCalculation.html">runCalculation</a></li>
+          <li><a href="../../jrpn15.runners/IntegrateProgramRunner/runSubroutine.html">runSubroutine</a></li>
+          <li class="inherited"><a href="../../jrpn15.runners/NontrivialProgramRunner/runSubroutineErrorsOK.html">runSubroutineErrorsOK</a></li>
+          <li class="inherited"><a href="../../controller.states/ProgramRunner/startRunningProgram.html">startRunningProgram</a></li>
+          <li class="inherited"><a href="../../controller.states/ProgramRunner/suspend.html">suspend</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+        <li class="section-title inherited"><a href="../../jrpn15.runners/IntegrateProgramRunner-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+        <li class="section-title"><a href="../../jrpn15.runners/IntegrateProgramRunner-class.html#static-methods">Static methods</a></li>
+          <li><a href="../../jrpn15.runners/IntegrateProgramRunner/fpow.html">fpow</a></li>
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      2.0.1+6
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

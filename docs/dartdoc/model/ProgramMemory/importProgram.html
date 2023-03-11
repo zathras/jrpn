@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the importProgram method from the ProgramMemory class, for the Dart programming language.">
+  <title>importProgram method - ProgramMemory class - model library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jrpn</a></li>
+    <li><a href="../../model/model-library.html">model</a></li>
+    <li><a href="../../model/ProgramMemory-class.html">ProgramMemory<span class="signature">&lt;<wbr><span class="type-parameter">OT extends ProgramOperation</span>&gt;</span></a></li>
+    <li class="self-crumb">importProgram method</li>
+  </ol>
+  <div class="self-name">importProgram</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">importProgram</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype">void</span>
+<span class="name ">importProgram</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="importProgram-param-listing"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">listing</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">void importProgram(String listing) {
+  final Map&lt;String, ProgramInstruction&lt;OT&gt;&gt; pdToInstruction;
+  {
+    final allInstructions = getAllInstructions();
+    pdToInstruction = &lt;String, ProgramInstruction&lt;OT&gt;&gt;{
+      for (final v in allInstructions) _canonicalizePD(v.programDisplay): v
+    };
+    assert(allInstructions.length == pdToInstruction.length);
+  }
+  final lines = listing.split(&#39;\n&#39;);
+  final program = List&lt;ProgramInstruction&lt;OT&gt;&gt;.empty(growable: true);
+  int lineNumber = 0;
+  for (final line in lines) {
+    lineNumber++;
+    var rest = line.trim();
+    if (rest.isEmpty || rest.startsWith(&#39;#&#39;)) {
+      continue;
+    }
+    int pos = rest.indexOf(&#39; &#39;);
+    if (pos == -1) {
+      throw Exception(&#39;Error at line $lineNumber:  Line number not found&#39;);
+    }
+    final instructionNumber = int.tryParse(rest.substring(0, pos));
+    if (instructionNumber == null) {
+      throw Exception(&#39;No instruction number on line $lineNumber: $line&#39;);
+    }
+    rest = rest.substring(pos).trim();
+    if (rest.substring(0, 1) != &#39;{&#39;) {
+      throw Exception(&#39;Error at line $lineNumber: &#39;
+          &#39;Line doesn\&#39;t have &quot; {&quot; after number: $line&#39;);
+    }
+    rest = rest.substring(1);
+    pos = rest.indexOf(&#39;}&#39;);
+    if (pos == -1) {
+      throw Exception(
+          &#39;Syntax error at line $lineNumber: &quot;}&quot; not found: $line&#39;);
+    }
+    rest = _canonicalizePD(rest.substring(0, pos));
+    if (rest.isEmpty) {
+      if (program.isNotEmpty || instructionNumber != 0) {
+        throw Exception(
+            &#39;Unexpected empty instruction at line $lineNumber: $line&#39;);
+      }
+    } else if (instructionNumber != program.length + 1) {
+      throw Exception(
+          &#39;Unexpected instruction number at line $lineNumber: $line&#39;);
+    } else {
+      final instr = pdToInstruction[rest];
+      if (instr == null) {
+        throw Exception(
+            &#39;Instruction &quot;$rest&quot; not found at line $lineNumber: $line&#39;);
+      }
+      program.add(instr);
+    }
+  }
+  final int len =
+      program.fold(0, (n, instr) =&gt; n + (instr.isExtended ? 2 : 1));
+  if (len &gt; memory.policy.maxProgramBytes) {
+    throw Exception(&#39;Insufficient space for $len byte program&#39;);
+  }
+  suspendedProgram?.abort();
+  suspendedProgram = null;
+  reset();
+  for (final instr in program) {
+    insert(instr);
+  }
+  currentLine = 0;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">jrpn</a></li>
+  <li><a href="../../model/model-library.html">model</a></li>
+  <li><a href="../../model/ProgramMemory-class.html">ProgramMemory<span class="signature">&lt;<wbr><span class="type-parameter">OT extends ProgramOperation</span>&gt;</span></a></li>
+  <li class="self-crumb">importProgram method</li>
+</ol>
+
+
+    <h5>ProgramMemory class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../model/ProgramMemory-class.html#constructors">Constructors</a></li>
+          <li><a href="../../model/ProgramMemory/ProgramMemory.html">ProgramMemory</a></li>
+
+
+        <li class="section-title">
+          <a href="../../model/ProgramMemory-class.html#instance-properties">Properties</a>
+        </li>
+          <li><a href="../../model/ProgramMemory/bytesToNextAllocation.html">bytesToNextAllocation</a></li>
+          <li><a href="../../model/ProgramMemory/currentLine.html">currentLine</a></li>
+          <li><a href="../../model/ProgramMemory/hasExtended.html">hasExtended</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li><a href="../../model/ProgramMemory/isRunning.html">isRunning</a></li>
+          <li><a href="../../model/ProgramMemory/lines.html">lines</a></li>
+          <li><a href="../../model/ProgramMemory/listing.html">listing</a></li>
+          <li><a href="../../model/ProgramMemory/memory.html">memory</a></li>
+          <li><a href="../../model/ProgramMemory/programBytes.html">programBytes</a></li>
+          <li><a href="../../model/ProgramMemory/programListener.html">programListener</a></li>
+          <li><a href="../../model/ProgramMemory/returnStackPos.html">returnStackPos</a></li>
+          <li><a href="../../model/ProgramMemory/returnStackUnderflow.html">returnStackUnderflow</a></li>
+          <li><a href="../../model/ProgramMemory/runner.html">runner</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+          <li><a href="../../model/ProgramMemory/suspendedProgram.html">suspendedProgram</a></li>
+
+        <li class="section-title"><a href="../../model/ProgramMemory-class.html#instance-methods">Methods</a></li>
+          <li><a href="../../model/ProgramMemory/adjustStackForRunStopStarting.html">adjustStackForRunStopStarting</a></li>
+          <li><a href="../../model/ProgramMemory/debugReturnStack.html">debugReturnStack</a></li>
+          <li><a href="../../model/ProgramMemory/decodeJson.html">decodeJson</a></li>
+          <li><a href="../../model/ProgramMemory/deleteCurrent.html">deleteCurrent</a></li>
+          <li><a href="../../model/ProgramMemory/displayCurrent.html">displayCurrent</a></li>
+          <li><a href="../../model/ProgramMemory/doNextIf.html">doNextIf</a></li>
+          <li><a href="../../model/ProgramMemory/getAllInstructions.html">getAllInstructions</a></li>
+          <li><a href="../../model/ProgramMemory/getCurrent.html">getCurrent</a></li>
+          <li><a href="../../model/ProgramMemory/gosub.html">gosub</a></li>
+          <li><a href="../../model/ProgramMemory/goto.html">goto</a></li>
+          <li><a href="../../model/ProgramMemory/gotoOpCode.html">gotoOpCode</a></li>
+          <li><a href="../../model/ProgramMemory/importProgram.html">importProgram</a></li>
+          <li><a href="../../model/ProgramMemory/importProgramFromFile.html">importProgramFromFile</a></li>
+          <li><a href="../../model/ProgramMemory/incrementCurrentLine.html">incrementCurrentLine</a></li>
+          <li><a href="../../model/ProgramMemory/insert.html">insert</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../model/ProgramMemory/opcodeAt.html">opcodeAt</a></li>
+          <li><a href="../../model/ProgramMemory/popReturnStack.html">popReturnStack</a></li>
+          <li><a href="../../model/ProgramMemory/reset.html">reset</a></li>
+          <li><a href="../../model/ProgramMemory/resetReturnStack.html">resetReturnStack</a></li>
+          <li><a href="../../model/ProgramMemory/skipIfRunning.html">skipIfRunning</a></li>
+          <li><a href="../../model/ProgramMemory/stepCurrentLine.html">stepCurrentLine</a></li>
+          <li><a href="../../model/ProgramMemory/toJson.html">toJson</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+        <li class="section-title"><a href="../../model/ProgramMemory-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+          <li><a href="../../model/ProgramMemory/operator_get.html">operator []</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    jrpn
+      2.0.1+6
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

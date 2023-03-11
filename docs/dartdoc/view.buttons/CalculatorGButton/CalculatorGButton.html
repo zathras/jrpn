@@ -64,7 +64,8 @@
 <li><span class="parameter" id="-param-fKey"><span class="type-annotation"><a href="../../controller/Operation-class.html">Operation</a></span> <span class="parameter-name">fKey</span>, </span></li>
 <li><span class="parameter" id="-param-gKey"><span class="type-annotation"><a href="../../controller/Operation-class.html">Operation</a></span> <span class="parameter-name">gKey</span>, </span></li>
 <li><span class="parameter" id="-param-rawKeyboardKey"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rawKeyboardKey</span>, </span></li>
-<li><span class="parameter" id="-param-acceleratorLabel">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">acceleratorLabel</span>, </span></li>
+<li><span class="parameter" id="-param-extraAcceleratorName">{<span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">extraAcceleratorName</span>, </span></li>
+<li><span class="parameter" id="-param-acceleratorLabel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">acceleratorLabel</span>, </span></li>
 <li><span class="parameter" id="-param-key"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/Key-class.html">Key</a>?</span> <span class="parameter-name">key</span>}</span></li>
 </ol>)
     </section>
@@ -84,7 +85,8 @@
     Operation fKey,
     Operation gKey,
     String rawKeyboardKey,
-    {String? acceleratorLabel,
+    {required this.extraAcceleratorName,
+    String? acceleratorLabel,
     Key? key})
     : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
           acceleratorLabel: acceleratorLabel, key: key);</code></pre>
@@ -130,20 +132,20 @@
           <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/hashCode.html">hashCode</a></li>
           <li class="inherited"><a href="../../view.buttons/CalculatorButton/height.html">height</a></li>
           <li class="inherited"><a href="../../view.buttons/CalculatorButton/innerBorder.html">innerBorder</a></li>
-          <li><a href="../../view.buttons/CalculatorGButton/innerBorderColor.html">innerBorderColor</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorShiftButton/innerBorderColor.html">innerBorderColor</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/key.html">key</a></li>
           <li><a href="../../view.buttons/CalculatorGButton/keyTextOffset.html">keyTextOffset</a></li>
           <li><a href="../../view.buttons/CalculatorGButton/keyTextStyle.html">keyTextStyle</a></li>
           <li class="inherited"><a href="../../view.buttons/CalculatorButton/lowerSurface.html">lowerSurface</a></li>
-          <li><a href="../../view.buttons/CalculatorGButton/lowerSurfaceColor.html">lowerSurfaceColor</a></li>
-          <li><a href="../../view.buttons/CalculatorGButton/lowerSurfaceColorPressed.html">lowerSurfaceColorPressed</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorShiftButton/lowerSurfaceColor.html">lowerSurfaceColor</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorShiftButton/lowerSurfaceColorPressed.html">lowerSurfaceColorPressed</a></li>
           <li class="inherited"><a href="../../view.buttons/CalculatorButton/outerBorder.html">outerBorder</a></li>
           <li class="inherited"><a href="../../view.buttons/CalculatorButton/outerBorderPressedScale.html">outerBorderPressedScale</a></li>
           <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
           <li class="inherited"><a href="../../view.buttons/CalculatorButton/uKey.html">uKey</a></li>
           <li class="inherited"><a href="../../view.buttons/CalculatorButton/upperSurface.html">upperSurface</a></li>
           <li><a href="../../view.buttons/CalculatorGButton/upperSurfaceColor.html">upperSurfaceColor</a></li>
-          <li><a href="../../view.buttons/CalculatorGButton/upperSurfaceColorPressed.html">upperSurfaceColorPressed</a></li>
+          <li class="inherited"><a href="../../view.buttons/CalculatorShiftButton/upperSurfaceColorPressed.html">upperSurfaceColorPressed</a></li>
           <li class="inherited"><a href="../../view.buttons/CalculatorButton/uText.html">uText</a></li>
           <li class="inherited"><a href="../../view.buttons/CalculatorButton/width.html">width</a></li>
 

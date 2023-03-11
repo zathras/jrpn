@@ -70,11 +70,11 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void clear() {
-  resetI();
   final maxMem = _memory.totalNybbles;
   for (int addr = _memory.programNybbles; addr &lt; maxMem; addr++) {
     _memory.storage.setUint8(addr, 0);
   }
+  resetI();
 }</code></pre>
 </section>
 

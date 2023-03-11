@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
+library jrpn16.tests;
+
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 

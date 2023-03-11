@@ -68,12 +68,11 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static final NormalOperation sqrtOp = NormalOperation.differentFloatAndInt(
     floatCalc: (Model m) {
-      try {
-        m.resultXF = sqrt(m.xF);
-        &#47;&#47; ignore: avoid_catches_without_on_clauses
-      } catch (e) {
+      final x = m.xF;
+      if (x &lt; 0) {
         throw CalculatorError(0);
       }
+      m.resultXF = sqrt(x);
     },
     complexCalc: (Model m) {
       m.resultXC = m.xC.sqrt();

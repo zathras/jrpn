@@ -76,6 +76,7 @@
     _sign = other._sign;
     _exponent = other._exponent;
     _negativeExponent = other._negativeExponent;
+    _tryNewValue(_entered, _sign, _exponent, _negativeExponent);
   } else {
     changeState(Resting(controller));
   }
@@ -117,6 +118,7 @@
           <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
 
         <li class="section-title"><a href="../../controller.states/DigitEntry-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ControllerState/abort.html">abort</a></li>
           <li><a href="../../controller.states/DigitEntry/buttonDown.html">buttonDown</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/changeState.html">changeState</a></li>

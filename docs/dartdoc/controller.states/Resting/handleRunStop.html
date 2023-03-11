@@ -77,12 +77,24 @@
   <pre class="language-dart"><code class="language-dart">@override
 void handleRunStop() {
   final program = model.memory.program;
-  program.handleRunStopKepyress();
+  assert(!program.isRunning);
+  program.adjustStackForRunStopStarting();
   if (program.currentLine == 0 &amp;&amp; program.lines &gt; 0) {
     program.currentLine = 1;
+    &#47;&#47; On the 15C, if R&#47;S is pressed just before the phantom RTN of an
+    &#47;&#47; integrate function that runs off the end of memory, it does *not*
+    &#47;&#47; handle it gracefully - it just wraps like this.
   }
   program.displayCurrent();
-  changeState(Running(controller as RealController));
+  final rc = controller as RealController;
+  final spr = rc.suspendedProgramRunner;
+  if (spr == null) {
+    changeState(Running(rc, GosubProgramRunner()));
+  } else {
+    final running =
+        spr.restart(RunningController(controller as RealController));
+    changeState(Resumed(running, rc));
+  }
 }</code></pre>
 </section>
 
@@ -121,6 +133,7 @@ void handleRunStop() {
           <li class="inherited"><a href="../../controller/StackLiftEnabledUser/stackLiftEnabled.html">stackLiftEnabled</a></li>
 
         <li class="section-title"><a href="../../controller.states/Resting-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="../../controller.states/ControllerState/abort.html">abort</a></li>
           <li><a href="../../controller.states/Resting/buttonDown.html">buttonDown</a></li>
           <li class="inherited"><a href="../../controller.states/ControllerState/buttonUp.html">buttonUp</a></li>
           <li><a href="../../controller.states/Resting/calculate.html">calculate</a></li>
