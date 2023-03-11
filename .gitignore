@@ -35,6 +35,7 @@ scratch
 .pub-cache/
 .pub/
 /build/
+/shared/build/
 /jrpn16/build/
 /jrpn15/build/
 

@@ -537,6 +537,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ///
   String get modelName;
 
+  bool get is15C;
+
   int get returnStackSize;
 
   bool get userMode => false;
@@ -1176,7 +1178,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   String get _persistentStorageKey =>
-      modelName == '16C' ? 'init' : 'init${modelName}';
+      modelName == '16C' ? 'init' : 'init$modelName';
   Future<void> readFromPersistentStorage() async {
     final storage = await SharedPreferences.getInstance();
     String? js = storage.getString(_persistentStorageKey);

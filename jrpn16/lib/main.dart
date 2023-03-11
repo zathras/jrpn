@@ -134,6 +134,9 @@ class Model16 extends Model<Operation> {
   String get modelName => '16C';
 
   @override
+  bool get is15C => false;
+
+  @override
   ProgramInstruction<Operation> newProgramInstruction(
           Operation operation, ArgDone arg) =>
       ProgramInstruction16(operation, arg);

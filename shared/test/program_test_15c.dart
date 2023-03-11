@@ -27,7 +27,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/m/model.dart';
-import 'package:jrpn15c/main.dart';
+import 'package:jrpn15/main.dart';
 
 import 'programs.dart';
 

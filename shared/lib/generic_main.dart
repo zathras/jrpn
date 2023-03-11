@@ -787,7 +787,8 @@ class Jrpn extends StatefulWidget {
   Future<void> sendUrlToClipboard() {
     final bytes = const ZLibEncoder().encode(_getJson().codeUnits);
     final j = base64UrlEncode(bytes);
-    final s = 'https://jrpn.jovial.com/run/index.html?state=$j';
+    final s = 'https://jrpn.jovial.com/run${model.is15C ? '15' : ''}'
+        '/index.html?state=$j';
     return Clipboard.setData(ClipboardData(text: s));
   }
 

@@ -111,6 +111,9 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   String get modelName => '15C';
 
   @override
+  bool get is15C => true;
+
+  @override
   int get returnStackSize => 7;
 
   @override

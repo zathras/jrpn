@@ -28,9 +28,9 @@ import 'package:flutter/services.dart';
 
 import '../m/model.dart';
 
-/**
- * A separate (desktop) window showing the internal state
- */
+///
+/// A separate (desktop) window showing the internal state
+///
 class InternalStateWindow extends StatelessWidget {
   final state = Observable<ModelSnapshot>(ModelSnapshot(null, ''));
 
@@ -99,7 +99,7 @@ class InternalStateWindow extends StatelessWidget {
 class InternalStatePanel extends StatelessWidget {
   final Model model;
 
-  InternalStatePanel(this.model, {super.key});
+  const InternalStatePanel(this.model, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -109,9 +109,9 @@ class InternalStatePanel extends StatelessWidget {
           Container(
               color: Colors.black,
               child: _TextViewer(model.internalSnapshot, directModel: model)),
-          Align(
+          const Align(
               alignment: FractionalOffset(.95, .07),
-              child: const Icon(Icons.arrow_back, color: Colors.white))
+              child: Icon(Icons.arrow_back, color: Colors.white))
         ]));
   }
 }
