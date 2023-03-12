@@ -1,3 +1,5 @@
+# Maybe github wants a comment at the beginning?
+
 docs/** linguist-generated=true
 *.tcl linguist-documentation
 *.html linguist-documentation
