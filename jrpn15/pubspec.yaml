@@ -35,7 +35,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   test: ^1.16.5
-  msix: ^3.7.0
 
 flutter_icons:
   image_path: "assets_15/icon256.png"
@@ -77,13 +76,3 @@ flutter:
         - asset: packages/jrpn/fonts/LiberationMono.ttf
           style: normal
           weight: 400
-
-# "flutter pub run msix:create"
-msix_config:
-  display_name: JRPN 15C
-  publisher_display_name: Jovial Software
-  identity_name: com.jovial.jrpn15
-  msix_version: 1.0.0.0
-  file-extension: .15c, .j15c
-  execution_alias: jrpn15
-  store: false
