@@ -49,8 +49,7 @@ final _filesWork = kIsWeb ||
     Platform.isLinux ||
     Platform.isMacOS;
 
-final _canLaunchWindow =
-    !kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS);
+final _canLaunchWindow = !kIsWeb && (Platform.isLinux || Platform.isMacOS);
 
 const _topSilverColor = Color(0xffcdcdcd);
 
