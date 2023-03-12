@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=JRPN 15C
-Comment=Calculator Simulator based on the HP-15C
-Exec=jrpn15
-Icon=${SNAP}/meta/gui/jrpn15.png
-Terminal=false
-Type=Application
-Categories=Utility;
