@@ -1,2 +1,2 @@
-*.html linguist-generated
+docs/* linguist-generated
 *.tcl linguist-documentation
