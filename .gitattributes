@@ -1,2 +1,3 @@
-docs/** linguist-generated
+docs/** linguist-generated=true
 *.tcl linguist-documentation
+*.html linguist-documentation
