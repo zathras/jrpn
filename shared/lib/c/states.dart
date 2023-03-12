@@ -1114,7 +1114,7 @@ class OnOffKeyPressed extends DoNothing {
         try {
           await model.writeToPersistentStorage();
         } finally {
-          if (!kIsWeb && Platform.isLinux) {
+          if (!kIsWeb && (Platform.isLinux || Platform.isWindows)) {
             // Current version on Linux dumps core on pop.
             // Current version on Windows keeps window there.
             exit(0);
