@@ -18,8 +18,12 @@ dependencies:
   uni_links_web: ^0.1.0
   archive: ^3.1.2
   url_launcher: ^6.0.3
-  desktop_multi_window: ^0.2.0
   file_selector: ^0.9.2
+  desktop_multi_window:
+    git:
+      url: https://github.com/zathras/tmp_desktop_multi_window.git
+      path: packages/desktop_multi_window
+      ref: main
   vector_math: ^2.1.0
   jovial_svg: ^1.0.2
   jovial_misc: ^0.8.5
