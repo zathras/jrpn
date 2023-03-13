@@ -3,3 +3,4 @@
 docs/** linguist-generated=true
 *.tcl linguist-documentation
 *.html linguist-documentation
+*.htm linguist-documentation
