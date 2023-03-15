@@ -21,22 +21,35 @@ this program; if not, see https://www.gnu.org/licenses/ .
 library view.isw;
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../m/model.dart';
+
+bool _linuxBug = !kIsWeb && Platform.isLinux;
+const _linuxBugText = 'NOTE:  Close by clicking on green X.  See issue 32.\n\n';
 
 ///
 /// A separate (desktop) window showing the internal state
 ///
 class InternalStateWindow extends StatelessWidget {
   final state = Observable<ModelSnapshot>(ModelSnapshot(null, ''));
+  static bool _first = true;
 
   InternalStateWindow({super.key});
 
   static Future<void> launch(BuildContext context, Model model) async {
+    if (_first && _linuxBug) {
+      WidgetsFlutterBinding.ensureInitialized();
+      DesktopMultiWindow.setMethodHandler((_, int windowId) {
+        return WindowController.fromWindowId(windowId).close();
+      });
+    }
+    _first = false;
     final WindowController window = await DesktopMultiWindow.createWindow('');
     await window.setFrame(const Offset(0, 0) & const Size(600, 720));
     await window.center();
@@ -109,8 +122,9 @@ class InternalStatePanel extends StatelessWidget {
           Container(
               color: Colors.black,
               child: _TextViewer(model.internalSnapshot, directModel: model)),
-          const Align(
-              alignment: FractionalOffset(.95, .07),
+          const Positioned(
+              top: 16,
+              right: 16,
               child: Icon(Icons.arrow_back, color: Colors.white))
         ]));
   }
@@ -148,6 +162,26 @@ class _TextViewerState extends State<_TextViewer> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_linuxBug) {
+      return normalBuild(context);
+    } else {
+      return Stack(children: [
+        normalBuild(context),
+        Positioned(
+            top: 16,
+            right: 16,
+            child: GestureDetector(
+                onTap: () =>
+                    unawaited(DesktopMultiWindow.invokeMethod(0, 'close', '')),
+                child: Container(
+                    color: Colors.red,
+                    child: const Icon(Icons.close,
+                        color: Color(0xff00ff00), size: 36))))
+      ]);
+    }
+  }
+
+  Widget normalBuild(BuildContext context) {
     return Container(
         padding: const EdgeInsets.fromLTRB(10, 25, 10, 10),
         color: Colors.black,
@@ -157,7 +191,9 @@ class _TextViewerState extends State<_TextViewer> {
             maxScale: 10,
             boundaryMargin: const EdgeInsets.all(double.infinity),
             child: Text(
-              widget.text.value.text,
+              _linuxBug
+                  ? _linuxBugText + widget.text.value.text
+                  : widget.text.value.text,
               softWrap: false,
               overflow: TextOverflow.visible,
               style: const TextStyle(
