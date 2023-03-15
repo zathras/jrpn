@@ -35,10 +35,10 @@ dev_dependencies:
     sdk: flutter
   test: ^1.16.5
   msix: ^3.6.2
-  jrpn15:
-    path: '../jrpn15'
-  jrpn16:
-    path: '../jrpn16'
+# jrpn15:
+#   path: '../jrpn15'
+# jrpn16:
+#   path: '../jrpn16'
 
 flutter:
   uses-material-design: true
