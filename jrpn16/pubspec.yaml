@@ -12,11 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   jrpn:
-#   path: ../shared/
-      git:
-        url: https://github.com/zathras/jrpn.git
-        path: shared
-        ref: main
+    path: ../shared/
   meta: ^1.7.0
   archive: ^3.1.2
 

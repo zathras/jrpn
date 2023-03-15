@@ -124,10 +124,11 @@ packages:
   desktop_multi_window:
     dependency: transitive
     description:
-      name: desktop_multi_window
-      sha256: "29971186ae0790e32b156f127f9c22c5ee77bdb94b14f7cea23f2356d0c76cfc"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/desktop_multi_window"
+      ref: main
+      resolved-ref: f7b40083aeb4ac1c3b9cc25883c66c38228c28d9
+      url: "https://github.com/zathras/tmp_desktop_multi_window.git"
+    source: git
     version: "0.2.0"
   fake_async:
     dependency: transitive
@@ -315,11 +316,9 @@ packages:
   jrpn:
     dependency: "direct main"
     description:
-      path: shared
-      ref: main
-      resolved-ref: "05c68d29d57b5eec280896ff85a06a3e2c60a9cc"
-      url: "https://github.com/zathras/jrpn.git"
-    source: git
+      path: "../shared"
+      relative: true
+    source: path
     version: "2.0.1+6"
   js:
     dependency: transitive
