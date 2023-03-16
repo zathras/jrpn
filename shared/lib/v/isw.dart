@@ -31,25 +31,17 @@ import 'package:flutter/services.dart';
 import '../m/model.dart';
 
 bool _linuxBug = !kIsWeb && Platform.isLinux;
-const _linuxBugText = 'NOTE:  Close by clicking on green X.  See issue 32.\n\n';
+const _linuxBugText = 'NOTE:  On Linux, closing this window exits calculator.  See issue 32.\n\n';
 
 ///
 /// A separate (desktop) window showing the internal state
 ///
 class InternalStateWindow extends StatelessWidget {
   final state = Observable<ModelSnapshot>(ModelSnapshot(null, ''));
-  static bool _first = true;
 
   InternalStateWindow({super.key});
 
   static Future<void> launch(BuildContext context, Model model) async {
-    if (_first && _linuxBug) {
-      WidgetsFlutterBinding.ensureInitialized();
-      DesktopMultiWindow.setMethodHandler((_, int windowId) {
-        return WindowController.fromWindowId(windowId).close();
-      });
-    }
-    _first = false;
     final WindowController window = await DesktopMultiWindow.createWindow('');
     await window.setFrame(const Offset(0, 0) & const Size(600, 720));
     await window.center();
@@ -162,26 +154,6 @@ class _TextViewerState extends State<_TextViewer> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_linuxBug) {
-      return normalBuild(context);
-    } else {
-      return Stack(children: [
-        normalBuild(context),
-        Positioned(
-            top: 16,
-            right: 16,
-            child: GestureDetector(
-                onTap: () =>
-                    unawaited(DesktopMultiWindow.invokeMethod(0, 'close', '')),
-                child: Container(
-                    color: Colors.red,
-                    child: const Icon(Icons.close,
-                        color: Color(0xff00ff00), size: 36))))
-      ]);
-    }
-  }
-
-  Widget normalBuild(BuildContext context) {
     return Container(
         padding: const EdgeInsets.fromLTRB(10, 25, 10, 10),
         color: Colors.black,
