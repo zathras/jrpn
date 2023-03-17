@@ -316,7 +316,7 @@ packages:
   jrpn:
     dependency: "direct main"
     description:
-      path: "../shared"
+      path: ".."
       relative: true
     source: path
     version: "2.1.1+11"
@@ -484,10 +484,10 @@ packages:
     dependency: transitive
     description:
       name: pointycastle
-      sha256: db7306cf0249f838d1a24af52b5a5887c5bf7f31d8bb4e827d071dc0939ad346
+      sha256: "57b6b78df14175658f09c5dfcfc51a46ad9561a3504fe679913dab404d0cc0f2"
       url: "https://pub.dev"
     source: hosted
-    version: "3.6.2"
+    version: "3.7.0"
   pool:
     dependency: transitive
     description:

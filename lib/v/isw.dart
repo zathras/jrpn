@@ -31,7 +31,8 @@ import 'package:flutter/services.dart';
 import '../m/model.dart';
 
 bool _linuxBug = !kIsWeb && Platform.isLinux;
-const _linuxBugText = 'NOTE:  On Linux, closing this window exits calculator.  See issue 32.\n\n';
+const _linuxBugText =
+    'NOTE:  On the Linux snap, closing this window exits calculator.  See issue 32.\n\n';
 
 ///
 /// A separate (desktop) window showing the internal state

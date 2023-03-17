@@ -32,15 +32,15 @@ import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/m/model.dart';
 
 import 'package:jrpn/v/main_screen.dart';
-import 'package:jrpn15/main.dart';
-import 'package:jrpn15/matrix.dart';
-import 'package:jrpn15/model15c.dart';
-import 'package:jrpn15/tests15c.dart';
+import 'package:jrpn/jrpn15/main.dart';
+import 'package:jrpn/jrpn15/matrix.dart';
+import 'package:jrpn/jrpn15/model15c.dart';
+import 'package:jrpn/jrpn15/tests15c.dart';
 import 'hyperbolic.dart';
 import 'opcodes15c.dart';
 import 'program_test_15c.dart';
 import 'programs.dart';
-import 'package:jrpn15/linear_algebra.dart' as linalg;
+import 'package:jrpn/jrpn15/linear_algebra.dart' as linalg;
 
 Future<void> main() async {
   runStaticInitialization15();
