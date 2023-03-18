@@ -496,6 +496,14 @@ class DigitEntry extends ActiveState {
       final vv = model.tryParseValue(sign + ent);
       if (vv != null) {
         v = vv;
+        if (!model.isFloatMode) {
+          final ism = model.integerSignMode;
+          final maxV = ism.fromBigInt(ism.maxValue(model), model);
+          final len = model.displayMode.format(maxV, model).length - 2;
+          while (ent.length > len && ent.startsWith('0')) {
+            ent = ent.substring(1);
+          }
+        }
       } else if (!model.isFloatMode) {
         // See page 36 - in integer modes, digit entry that overflows is
         // interesting.
