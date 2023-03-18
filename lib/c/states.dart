@@ -504,6 +504,7 @@ class DigitEntry extends ActiveState {
         if (big == null) {
           v = null;
         } else {
+          final originalEntLen = ent.length;
           v = Value.fromInternal(big.internal & model.wordMask);
           ent = model.displayMode.format(v, model);
           ent = ent.substring(0, ent.length - 2); // Remove ' d' etc.
@@ -513,8 +514,16 @@ class DigitEntry extends ActiveState {
           } else {
             sign = '';
           }
-          if (ent.length < 10 && v.internal != big.internal) {
-            ent = '0$ent';
+          if (ent.length < 10 && originalEntLen != ent.length) {
+            // When there's overflow, that changes ent.  We might need to pad
+            // zeros in the left.  See p. 36.
+            final ism = model.integerSignMode;
+            final maxV = ism.fromBigInt(ism.maxValue(model), model);
+            final len = min(originalEntLen,
+                model.displayMode.format(maxV, model).length - 2);
+            if (len > ent.length) {
+              ent = ent.padLeft(len, '0');
+            }
           }
         }
       } else {
