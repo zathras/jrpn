@@ -668,7 +668,7 @@ class DigitEntry extends ActiveState {
   void handleDecimalPoint() {
     if (_exponent == null) {
       if (_entered == '') {
-        _tryNewValue('0$_entered.', _sign, _exponent, _negativeExponent);
+        _tryNewValue('0.', _sign, _exponent, _negativeExponent);
       } else {
         _tryNewValue('$_entered.', _sign, _exponent, _negativeExponent);
       }
@@ -677,13 +677,24 @@ class DigitEntry extends ActiveState {
 
   @override
   void handleEEX() {
-    if (_exponent == null) {
-      assert(!_negativeExponent);
-      if (_entered == '') {
-        _entered = '1';
-      }
-      _tryNewValue(_entered, _sign, 0, _negativeExponent);
+    if (_exponent != null) {
+      return;
     }
+    assert(!_negativeExponent);
+    if (model.settings.windowEnabled) {
+      int pos = _entered.indexOf('.');
+      if (pos == -1) {
+        pos = _entered.length;
+      }
+      if (pos > 7) {
+        // no room
+        return;
+      }
+    }
+    if (_entered == '') {
+      _entered = '1';
+    }
+    _tryNewValue(_entered, _sign, 0, _negativeExponent);
   }
 
   @override
