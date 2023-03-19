@@ -31,7 +31,7 @@ flutter_icons:
     generate: true
   macos:
     generate: true
-    image_path: "assets_15/icon256_macos.png"
+    image_path: assets_15/macos_icon.png
   linux:
     generate: true
   windows: 
