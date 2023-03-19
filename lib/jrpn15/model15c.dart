@@ -216,7 +216,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
       euroComma: false,
       rightJustify: false,
       bits: 64,
-      sign: SignMode.unsigned,
+      sign: SignMode.float,
       wordSize: null,
       gFlag: true,
       prgmFlag: true,

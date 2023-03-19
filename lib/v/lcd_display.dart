@@ -194,7 +194,7 @@ class _DisplayPainter extends CustomPainter {
       tp.layout();
       tp.paint(
           canvas,
-          Offset(size.width * (contents.shift.offset ? 0.33 : 0.3),
+          Offset(size.width * (contents.shift.offset ? 0.36 : 0.315),
               size.height * annY));
     }
     if (contents.extraShift != null) {
@@ -207,7 +207,7 @@ class _DisplayPainter extends CustomPainter {
       tp.layout();
       tp.paint(
           canvas,
-          Offset(size.width * (contents.extraShift!.offset ? 0.33 : 0.3),
+          Offset(size.width * (contents.extraShift!.offset ? 0.36 : 0.315),
               size.height * annY));
     }
     if (contents.cFlag) {
