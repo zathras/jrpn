@@ -265,7 +265,11 @@ class Resting extends ActiveState {
   @override
   void handleBackspace() {
     stackLiftEnabled = false;
-    model.clx();
+    if (model.errorBlink) {
+      model.resetErrorBlink();
+    } else {
+      model.clx();
+    }
     model.display.displayX();
   }
 
