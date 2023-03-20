@@ -1,5 +1,8 @@
 
-Both, version2.1.0:
+Both, Version 2.1.2:
+  * Small cleanups and packaging for release
+
+Both, version 2.1.0:
   * Created 15C simulator using a common codebase.
   * Deploying to Microsoft app store and Linux snap store, in addition to
     Google's Android store.
