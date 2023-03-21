@@ -17,6 +17,7 @@ if [ $? != 0 ]; then
     exit 1
 fi
 cd ..
-rm -rf docs/run docs/run15
+# rm -rf docs/run 
+# mv jrpn16/build/web docs/run
+rm -rf docs/run15
 mv jrpn15/build/web docs/run15
-mv jrpn16/build/web docs/run
