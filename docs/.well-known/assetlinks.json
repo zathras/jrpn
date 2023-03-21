@@ -43,31 +43,7 @@
             "namespace": "android_app",
             "package_name": "com.jovial.jrpn15",
             "sha256_cert_fingerprints": [
-                "66:9D:5A:15:31:42:F9:8E:DF:9D:36:92:59:A4:48:F8:A8:36:A5:84:33:91:4D:B4:35:A9:E7:6D:A4:66:3F:9F"
-            ]
-        }
-    },
-    {
-        "relation": [
-            "delegate_permission/common.handle_all_urls"
-        ],
-        "target": {
-            "namespace": "android_app",
-            "package_name": "com.jovial.jrpn15",
-            "sha256_cert_fingerprints": [
-                "49:7D:1B:85:D2:64:C5:9D:08:3C:16:82:04:6C:D6:A0:41:61:18:26:D2:2E:90:56:8F:B4:22:3E:C7:06:83:C8"
-            ]
-        }
-    },
-    {
-        "relation": [
-            "delegate_permission/common.handle_all_urls"
-        ],
-        "target": {
-            "namespace": "android_app",
-            "package_name": "com.jovial.jrpn15",
-            "sha256_cert_fingerprints": [
-                "69:A5:F4:26:17:45:E7:65:80:F7:D1:3A:FD:D7:3F:FB:3F:7D:F4:40:C3:40:BA:07:C1:DF:A6:C0:35:2C:9F:F9"
+                "18:DC:83:F8:E5:31:E2:F1:BB:84:EC:F1:A0:D8:1A:B7:C6:08:F7:30:0E:78:B2:0D:06:4E:32:F6:FF:88:AD:6E"
             ]
         }
     }
