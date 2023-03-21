@@ -34,15 +34,16 @@ blockquote {margin-left: 10%; margin-right: 12%}
 <p>&nbsp;
 <p style='text-align: center'><b>Click either calculator to run!</b>  Installation
 instructions <a href="#Install">here</a>.
-<p>JRPN 16c is calculator simulator inspired by the 
+<p>JRPN 16C is calculator simulator inspired by the 
 <a href="https://en.wikipedia.org/wiki/HP-16C" rel="nofollow">HP 16C</a>
 "Computer Scientist"
-calculator.  JRPN 15c is similarly inspired by the
+calculator.  JRPN 15C is similarly inspired by the
 <a href="https://en.wikipedia.org/wiki/HP-15C" rel="nofollow">HP 15C</a>.
 Both came out in 1982, and for my money, there were marvels of their time.
 The 15C I bought in early '83 still works great!
+<h2>Project Goals</h2>
 <p>
-I've tried to make them the same as a
+I've tried to make them work the same as a
 real 16C/15C, and to mimic the appearance as closely as possible.  This is a
 completely clean-room implementation; I didn't have access to any of the
 calculators' source code.  I just read the manuals (very closely!), asked a 
@@ -57,13 +58,16 @@ which can be easily found on the web.  A couple of little things are different:
         pressing another, you press the on button (with the calculator "on"),
         and then press the other button.  To turn the calculator off,
         you press "on" twice.
-    <li>You can disable the windowing function.  If you do,
+    <li>You can disable the windowing function on the 16C.  If you do,
         then the digits on the LCD shrink so that they all fit.
         They get pretty small on a 64 bit binary number!  You can
         disable windowing from settings, or temporarily on the 16C by pressing
         CLEAR-PREFIX in integer mode.
+    <li>On the 15C, you can similarly enable the display of long numbers.
+        This will shrink the digits when necessary so it can e.g. fit 
+        scientific notation numbers with 10 digits of precision (f-SCI-9).
     <li>You can copy the contents of the display to the clipboard.
-    <li>From the menu, you can share the calculator state, either
+    <li>From the menu, you can share the calculator state, either numbers with 10 digits of precision (f-SCI-9).
         to/from the clipboard, or to an application.
     <li>The app can interpret a URL that contains an encoding of
         the calculator state.  This works in the web version, and
@@ -80,12 +84,45 @@ which can be easily found on the web.  A couple of little things are different:
         going on inside.
 </ul>
     <img src="internals.png" alt="Internals Screenshot" style="display: block; margin-left: auto; margin-right: auto; max-width:50%;">
+<h2>Why Another Calculator Simulator?</h2>
 <p>
 One nice aspect of these simulators is that they scale the UI to any screen size, without
 any pixelization.  The entire UI is drawn using graphics primitives (with the exception
 of a logo on the back panel), so it should never look "grainy."
 <p>
-Try it out!  Here are some links to the web version:
+A bit of history:  I bought a 15C when I was a freshman at UCLA, back in
+January of 1983.  It still works great, but while traveling it was nice to
+have a good calculator on my laptop.  I used Torsten's 
+<a href="https://hp-15c.homepage.t-online.de/homepage.htm">15C simulator</a>
+starting in the late '90s, mostly on MacOS.
+<p>
+Much later, I ran across
+<a href="http://www.emmet-gray.com/" rel="nofollow">Emmet
+Gray's</a> wonderful <a href="http://www.wrpn.emmet-gray.com/">WRPN
+calculator</a>.  I always wanted a 16C, but I never really <i>needed</i> it,
+and I was a starving student at the time :-)  WRPN works great on Android, but
+the UI uses images that were created back when screen resolutions weren't so
+high, so I dropped Emmet a line, and re-did some of the UI and published 
+that as what I'm now calling
+<a href="https://legacy.jrpn.jovial.com/">"Legacy JRPN"</a>.
+<p>
+When COVID hit, I had some spare time :-)  I was playing around with Flutter,
+and decided it would be fun to do a complete rewrite, with the goal of making
+the UI a close match to the real calculator.  Starting with the LCD display,
+I went to <a href="https://jrpn.jovial.com/dartdoc/view.lcd_display/Segments-class.html">ridiculous
+lengths</a> to mimic the real appearance.  The result is a calculator with a
+UI that's completely drawn from graphics primitives, so it can scale to any
+screen size or resolution, across a wide variety of platforms.
+<p>
+My still-working 15C from 1983 sits on my desk most of the time, and
+it just seemed to make sense to make a 15C simulator off of the same codebase.
+So I did.  I must say, I have a whole new level of appreciation fot the
+sophistication of the 15C.  The amount of functionality they were able to pack
+into such limited hardware is amazing!
+
+<h2>Try it Out!</h2>
+<p>
+Here are some links to the web version:
 <ul>
     <li><a href="https://jrpn.jovial.com/run/index.html?state=eAHdkk2LHCEQhv-L5w5U-zGtfQ17CCSwMIcElj34UfZIunWw7R02y_z3VE-GDckhPyCKBT7lWyr1vrEXrGsqmY19x1ZsLeVpZeMbWzBvD9m6GQMbW92wY5eUQ7n8BXGr5WNZFsvGaOeVyCkFJHKekWq0d7yeyuVrqeGYfuAdXjsW0nqe7euXEgiyE-tYyg0nrMc05TvlRC_vyoOkWs3672x8YkCp3-u5Y7Nd2zfS7CDOdv_L068H_DOScsGl1Nf962sr1U77zeoA2nkVjYLeWDMYbwII42T0PaIIDrVyUYMMHJ2TVgH3ADwY53tSDCYILz1HTWqtKDoNIClviYf9TOQmeEAvLBdCK-kwCsLgYhTOwsGhGVw0A-WEB081QUbuHO0V9woD8kGiHjRxDlr0vOfwnw9q7bmWqdpl79acMlKXDfnXb7WS5T4Tufm5YttqPt7NAt1tPv_BHwtpP_TkxE8311yvPwGK5tis">Launch the 16C</a> with
         <a href="https://albillo.hpcalc.org/articles/HP%20Article%20VA018%20-%20Long%20Live%20the%20HP-16C.pdf">Towers
@@ -108,7 +145,7 @@ Full source is available <a href="https://github.com/zathras/jrpn/">here</a>.
 It's built using Google's <a href="https://flutter.dev/">Flutter</a>, which
 means it can build it for a large variety of platforms.  It's available
 free of charge, and doesn't do any advertising or tracking or anything
-like that; it's a hobby project.  Of course, there is no warranty
+like that; it's basically a labor of love.  Of course, there is no warranty
 of any kind.  For avoidance of doubt:
 <blockquote>
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -135,30 +172,23 @@ It includes a slight delay and a bit of a blink on the LCD
 when you do a calculator operation, and in other ways it
 attempts to behave like a 1982-vintage calculator running on a low-power
 4 bit CPU.
-<p>
-This started out as a 2.0 version of what I'm now calling 
-<a href="https://legacy.jrpn.jovial.com">"Legacy JRPN"</a>, which in turn
-was an adaptation of <a href="http://www.emmet-gray.com/" rel="nofollow">Emmet
-Gray's</a> <a href="http://www.wrpn.emmet-gray.com/">WRPN
-calculator</a>.  It's also based on my having used
-<a href="https://hp-15c.homepage.t-online.de/homepage.htm">Torsten's</a>
-wonderful Tcl/Tk simulator over the course of decades.
 <h2><a name="Install">Installing</h2>
 <p>
-You can get JRPN 16c at the following locations:
+You can get JRPN 16C and 15C at the following locations:
 <ul>
-    <li>Android app store:  <a href="https://play.google.com/store/apps/details?id=com.jovial.jrpn15">JRPN 15</a> and
-        <a href="https://play.google.com/store/apps/details?id=com.jovial.jrpn2">JRPN 16</a>.</li>
-    <li>Linux Snap store:  <a href="https://snapcraft.io/jrpn15" rel="nofollow">JRPN 15</a> and <a href="https://snapcraft.io/jrpn16" rel="nofollow">JRPN 16</a></li>
-    <li>Windows app store:  <a href="https://apps.microsoft.com/store/detail/jrpn-15c/9P2FG47MD49M" rel="nofollow">JRPN 15</a> and <a href="https://apps.microsoft.com/store/detail/jrpn-16c/9NHCLCBXP7T5" rel="nofollow">JRPN 16</a>, with icons <a href="https://github.com/zathras/jrpn/tree/main/misc">here</a> if you need them.</li>
+    <li>Android app store:  <a href="https://play.google.com/store/apps/details?id=com.jovial.jrpn15">JRPN 15C</a> and
+        <a href="https://play.google.com/store/apps/details?id=com.jovial.jrpn2">JRPN 16C</a>.</li>
+    <li>Linux Snap store:  <a href="https://snapcraft.io/jrpn15" rel="nofollow">JRPN 15C</a> and <a href="https://snapcraft.io/jrpn16" rel="nofollow">JRPN 16C</a></li>
+    <li>Windows app store:  <a href="https://apps.microsoft.com/store/detail/jrpn-15c/9P2FG47MD49M" rel="nofollow">JRPN 15C</a> and <a href="https://apps.microsoft.com/store/detail/jrpn-16c/9NHCLCBXP7T5" rel="nofollow">JRPN 16C</a>, with icons <a href="https://github.com/zathras/jrpn/tree/main/misc">here</a> if you need them.</li>
     <li>The <a href="https://github.com/zathras/jrpn/">Github Repository</a>
         has source, and binaries for MacOS, iOS, and an Android universal APK,
+        under
         <a href="https://github.com/zathras/jrpn/releases">releases</a>.
     <li>About iOS and MacOS, I'd be more than happy to cooperate with 
         someone who has a
         full Apple Developer account, and would be willing to publish.
         Happy to give credit in the app, too!  I would do it myself, but a
-        $100/year subscription is a bit too expensive for the privilege of
+        $100/year subscription is a bit much for the privilege of
         giving away software.
     <li>Dartdoc documentation for the source is
         <a href="dartdoc/index.html">available here</a>.
