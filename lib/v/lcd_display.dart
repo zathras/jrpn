@@ -388,9 +388,9 @@ class Digit {
 }
 
 ///
-/// Singleton to do the math of where tho display the digit segments.
+/// Singleton to do the math of where to display the digit segments.
 /// These segments are based on a 72-pixel high digit whose upper-left hand
-/// corner is at 0,0.  it is expected that the client will scale and translate
+/// corner is at 0,0.  it is expected that the caller will scale and translate
 /// the Canvas accordingly.
 ///
 /// This involves some trig.  The variable names are taken from the following
