@@ -642,14 +642,18 @@ class __SettingsMenuState extends State<_SettingsMenu> {
             checked: settings.menuEnabled.value,
             value: () {
               settings.menuEnabled.value = !settings.menuEnabled.value;
+              unawaited(widget.app.model.writeToPersistentStorage());
             },
             child: const Text('Show Menu Icon')),
         ...(settings.isMobilePlatform
             ? [
                 CheckedPopupMenuItem(
                     checked: settings.systemOverlaysDisabled,
-                    value: () => settings.systemOverlaysDisabled =
-                        !settings.systemOverlaysDisabled,
+                    value: () {
+                      settings.systemOverlaysDisabled =
+                          !settings.systemOverlaysDisabled;
+                      unawaited(widget.app.model.writeToPersistentStorage());
+                    },
                     child: const Text('Disable System UI Overlays')),
                 PopupMenuItem(
                     child: Row(children: [
@@ -658,6 +662,8 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                       onChanged: (OrientationSetting? v) {
                         if (v != null) {
                           settings.orientation = v;
+                          unawaited(
+                              widget.app.model.writeToPersistentStorage());
                           Navigator.pop(context, () {});
                         }
                       },
@@ -682,6 +688,7 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                 : settings.windowEnabled,
             value: () {
               settings.windowEnabled = !settings.windowEnabled;
+              unawaited(widget.app.model.writeToPersistentStorage());
               display.update();
             },
             child: Text(widget.controller.menus15C
@@ -694,6 +701,7 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                     checked: settings.hideComplement,
                     value: () {
                       settings.hideComplement = !settings.hideComplement;
+                      unawaited(widget.app.model.writeToPersistentStorage());
                       display.update();
                     },
                     child: const Text('Hide Complement Status')),
@@ -701,6 +709,7 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                     checked: settings.showWordSize,
                     value: () {
                       settings.showWordSize = !settings.showWordSize;
+                      unawaited(widget.app.model.writeToPersistentStorage());
                       display.update();
                     },
                     child: const Text('Show Word Size')),
@@ -708,6 +717,7 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                     checked: settings.integerModeCommas,
                     value: () {
                       settings.integerModeCommas = !settings.integerModeCommas;
+                      unawaited(widget.app.model.writeToPersistentStorage());
                       display.update();
                     },
                     child: const Text('Integer Mode Commas')),
@@ -717,6 +727,7 @@ class __SettingsMenuState extends State<_SettingsMenu> {
             value: () {
               settings.showAccelerators.value =
                   !settings.showAccelerators.value;
+              unawaited(widget.app.model.writeToPersistentStorage());
             },
             child: const Text('Show Accelerators (toggle with "?")')),
         PopupMenuItem(
@@ -1239,6 +1250,8 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                             .replaceFirst(RegExp('.0\$'), ''),
                         onDone: (v) {
                           settings.msPerInstruction = double.tryParse(v);
+                          unawaited(
+                              widget.app.model.writeToPersistentStorage());
                         })),
                 title: const Text('ms/Program Instruction'))),
         PopupMenuItem(
@@ -1251,6 +1264,8 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                         onDone: (v) {
                           settings.fKeyColor = _toColor(v);
                           widget.app.setChanged();
+                          unawaited(
+                              widget.app.model.writeToPersistentStorage());
                         })),
                 title: const Text('f Key Color'))),
         PopupMenuItem(
@@ -1263,6 +1278,8 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                         onDone: (v) {
                           settings.fTextColor = _toColor(v);
                           widget.app.setChanged();
+                          unawaited(
+                              widget.app.model.writeToPersistentStorage());
                         })),
                 title: const Text('f Text Color'))),
         PopupMenuItem(
@@ -1275,6 +1292,8 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                         onDone: (v) {
                           settings.gKeyColor = _toColor(v);
                           widget.app.setChanged();
+                          unawaited(
+                              widget.app.model.writeToPersistentStorage());
                         })),
                 title: const Text('g Key Color'))),
         PopupMenuItem(
@@ -1287,6 +1306,8 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                         onDone: (v) {
                           settings.gTextColor = _toColor(v);
                           widget.app.setChanged();
+                          unawaited(
+                              widget.app.model.writeToPersistentStorage());
                         })),
                 title: const Text('g Text Color'))),
         PopupMenuItem(
@@ -1299,6 +1320,8 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                         onDone: (v) {
                           settings.lcdBackgroundColor = _toColor(v);
                           widget.app.setChanged();
+                          unawaited(
+                              widget.app.model.writeToPersistentStorage());
                         })),
                 title: const Text('LCD Background Color'))),
         PopupMenuItem(
@@ -1311,6 +1334,8 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                         onDone: (v) {
                           settings.lcdForegroundColor = _toColor(v);
                           widget.app.setChanged();
+                          unawaited(
+                              widget.app.model.writeToPersistentStorage());
                         })),
                 title: const Text('LCD Foreground Color'))),
         CheckedPopupMenuItem(
