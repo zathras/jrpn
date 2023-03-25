@@ -48,7 +48,7 @@ const _programs = [
           'R/S -> -1 RE<=>IM -> 1.2246e-16'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 051-055.15c',
-      '20 f B → 2.7536e-89 1.234 A -> 8.914e-1 .5 E -> 0.5205 '
+      '20 f B → 2.7520e-89 1.234 A -> 8.914e-1 .5 E -> 0.5205 '
           '2 ENTER 2.151 - 1.085 / f A → 4.447e-1 STO 3 '
           '3 ENTER 2.151 - 1.085 / f A → 7.830e-1 '
           'RCL 3 - -> 0.3384'),

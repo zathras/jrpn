@@ -67,6 +67,10 @@ abstract class NontrivialProgramRunner extends ProgramRunner {
   Future<double> runSubroutine(double arg) =>
       runSubroutineErrorsOK(arg, const {});
 
+  ///
+  /// If the subroutine we call generates a CalculatorError with an
+  /// acceptable error code, we throw the exception.
+  ///
   Future<double> runSubroutineErrorsOK(
       double arg, Set<int> acceptableErrors) async {
     if (_subroutineStart == _subroutineNotStarted) {
@@ -242,9 +246,19 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
   // which lets a user SST through the function as described on page
   // 257, third paragraph.
 
+  static const int maxIterations = 10;
+  // Complexity is... uh... O(a lot)
+  // In testing, typical functions converge in 3 or 4 iterations.
+  // With the default 50ms/program instruction, and a trivial function
+  // that generates a random number, it takes over an hour to get here.
+  // 10 is conservatively high, and a nice, round number
+  // that's low enough so the thing will terminate before the universe
+  // expires.
+
   ///
   /// For integration, "failure" just returns.  It takes a loooong time
-  /// to get here anyway -- see `maxIterations`.
+  /// to get to where it gives up -- see `maxIterations`.
+  ///
   @override
   fail() {
     throw 'unreachable';
@@ -266,27 +280,15 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
   static double fpow(double a, double b) => math.pow(a, b).toDouble();
 
   @override
-  Future<double> runSubroutine(double arg) async {
+  Future<double> runSubroutineErrorsOK(
+      double arg, Set<int> acceptableErrors) async {
     model.lastX = Value.fromDouble(_lastEstimate);
     // See page 257 of User's Guide, third paragraph.
-    return super.runSubroutine(arg);
+    return super.runSubroutineErrorsOK(arg, acceptableErrors);
   }
 
   @override
   Future<bool> runCalculation() async {
-    final DisplayMode precision = model.displayMode;
-    // The number of digits being displayed determines how precisely we
-    // estimate the integral.
-    const int maxIterations = 10;
-    // Complexity is... uh... O(a lot)
-    // In testing, typical functions converge in 3 or 4 iterations.
-    // With the default 50ms/program instruction, and a trivial function
-    // that generates a random number, it takes over an hour to get here.
-    // 10 is conservatively high, and a nice, round number
-    // that's low enough so the thing will terminate before the universe
-    // expires.
-
-    _lastEstimate = 0;
     final Value originalY = model.y;
     final Value originalX = model.x;
     double a = model.yF; // lower bound
@@ -296,7 +298,7 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
       model.z = originalX;
       model.t = originalY;
       model.x = model.y = Value.zero;
-      return true;
+      return Future.value(true);
     } else if (a > b) {
       signResult = -1;
       final tmp = b;
@@ -306,6 +308,89 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
       signResult = 1;
     }
     final double span = b - a;
+
+    const okErrors = {0, 1};
+    try {
+      _lastEstimate = 0;
+      return await qromb(
+          okErrors, span, a, b, signResult, originalX, originalY);
+    } on CalculatorError catch (e) {
+      if (!okErrors.contains(e.num15)) {
+        rethrow;
+      }
+      while (returnStackStartPos < model.program.returnStackPos + 1) {
+        model.program.popReturnStack();
+      }
+    }
+    _lastEstimate = 0;
+    return qromo(span, a, b, signResult, originalX, originalY);
+  }
+
+  Future<bool> qromb(Set<int> okErrors, double span, double a, double b,
+      double signResult, Value originalX, Value originalY) async {
+    final DisplayMode precision = model.displayMode;
+    // Try qromb.  See https://github.com/zathras/jrpn/issues/36
+    var ro = Float64List(maxIterations);
+    var ru = Float64List(maxIterations);
+    final fOfA = await runSubroutineErrorsOK(a, okErrors);
+    final fOfB = await runSubroutineErrorsOK(b, okErrors);
+    int calls = 1;
+    double totalMagnitude = (fOfA.abs() + fOfB.abs()) / 2;
+    double h = span;
+    ro[0] = (fOfA + fOfB) * h / 2;
+    // Now that we made it here, errors are no longer allowed.
+    int i;
+    for (i = 1; i < maxIterations; i++) {
+      int k = 1 << i; // /k = 2^i, i is at most 12
+      int s = 1;
+      double sum = 0;
+      h /= 2;
+      for (int j = 1; j < k; j += 2) {
+        final f = await runSubroutine(a + j * h);
+        totalMagnitude += f.abs();
+        calls++;
+        sum += f;
+      }
+      ru[0] = h * sum + ro[0] / 2;
+      for (int j = 1; j <= i; j++) {
+        s *= 4;
+        ru[j] = (s * ru[j - 1] - ro[j - 1]) / (s - 1);
+      }
+      final double digit;
+      final area = (totalMagnitude / calls) * span;
+      if (area < 1e-100) {
+        digit = precision.leastSignificantDigit(1).toDouble();
+      } else {
+        digit = log10(area) - 1 + precision.leastSignificantDigit(area);
+        // I think log10(area).floor() is closer to what the 15C does, but
+        // subtracting 1 instead makes it so the error scales smoothly, which
+        // makes more sense to me.  We're so much faster than the real
+        // calculator that being overly accurate doesn't hurt, so this is
+        // a pretty conservative choice.
+      }
+      final double eps = max(1e-200, fpow(10.0, digit.toDouble()));
+      final rt = ro;
+      ro = ru;
+      ru = rt;
+      if (i > 2 && (ru[i - 1] - ro[i]).abs() <= eps * ro[i].abs() + eps) {
+        i++;
+        break;
+      }
+      _lastEstimate = ro[i] * signResult;
+    }
+    final err = (ru[i - 2] - ro[i - 1]).abs();
+    model.z = originalX;
+    model.t = originalY;
+    model.yF = err;
+    model.xF = ro[i - 1] * signResult;
+    return true;
+  }
+
+  Future<bool> qromo(double span, double a, double b, double signResult,
+      Value originalX, Value originalY) async {
+    final DisplayMode precision = model.displayMode;
+    // The number of digits being displayed determines how precisely we
+    // estimate the integral.
 
     // This is a port of qromo(), copied from
     // https://www.hpmuseum.org/forum/thread-16523.html
@@ -380,7 +465,7 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
         // calculator that being overly accurate doesn't hurt, so this is
         // a pretty conservative choice.
       }
-      final double eps = fpow(10.0, digit.toDouble());
+      final double eps = max(1e-200, fpow(10.0, digit.toDouble()));
       final rt = ro;
       ro = ru;
       ru = rt;

@@ -1891,7 +1891,7 @@ class AdvancedFunctionTests {
     _play([l.fShift, l.mult, l.sqrt]); // f integrate a
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
-    expect((model.xF - 2).abs() < 0.0000001, true);
+    expect((model.xF - 2).abs() < 0.0000001, true, reason: '${model.xF - 2}');
     expect(model.yF.abs() < 0.00009, true);
     expect(model.z, Value.fromDouble(dart.pi));
     expect(model.t.asDouble, 0);
