@@ -667,12 +667,13 @@ class FixFloatFormatter extends FloatFormatter {
 
   @override
   double leastSignificantDigitNoFloor(double value) {
-    if (value != 0) {
-      final r = log(value.abs()) / ln10 - 1;
-      if (r < -fractionDigits || r >= 10) {
-        return r -
-            fractionDigits; // Same as super.leastSignificantDigitNoFloor()
-      }
+    if (value == 0) {
+      return -99;
+    }
+    final r = log(value.abs()) / ln10 - 1;
+    if (r < -fractionDigits || r >= 10) {
+      return r - fractionDigits;
+      // Same as super.leastSignificantDigitNoFloor()
     }
     return -fractionDigits.toDouble();
   }
