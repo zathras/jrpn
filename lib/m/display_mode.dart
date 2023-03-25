@@ -162,7 +162,7 @@ abstract class DisplayMode {
   ///
   /// This is needed for the HP 15C's integrate function.
   ///
-  int leastSignificantDigit(double value);
+  double leastSignificantDigitNoFloor(double value);
 
   Value round(Value x);
 }
@@ -254,7 +254,7 @@ abstract class IntegerDisplayMode extends DisplayMode {
   }
 
   @override
-  int leastSignificantDigit(double value) => 1;
+  double leastSignificantDigitNoFloor(double value) => 0; // not reachable
 
   @override
   Value round(Value x) => x;
@@ -466,8 +466,8 @@ class _FloatMode extends DisplayMode {
   String get _jsonName => _formatter._jsonName;
 
   @override
-  int leastSignificantDigit(double value) =>
-      _formatter.leastSignificantDigit(value);
+  double leastSignificantDigitNoFloor(double value) =>
+      _formatter.leastSignificantDigitNoFloor(value);
 
   @override
   Value round(Value x) {
@@ -605,15 +605,20 @@ abstract class FloatFormatter {
   String format(Value v, bool windowEnabled);
 
   ///
-  /// See [DisplayMode.leastSignificantDigit]
+  /// See [DisplayMode.leastSignificantDigitNoFloor]
   ///
   /// This assumes scientific notation, and is overriden for fixed-point.
   ///
-  int leastSignificantDigit(double value) {
+  double leastSignificantDigitNoFloor(double value) {
     if (value != 0) {
-      return log(value.abs()).floor() - fractionDigits;
+      return log(value.abs()) / ln10 - 1 - fractionDigits;
+      // I think log10(area).floor() is closer to what the 15C does, but
+      // subtracting 1 instead makes it so the error scales smoothly, which
+      // makes more sense to me.  We're so much faster than the real
+      // calculator that being overly accurate doesn't hurt, so this is
+      // a pretty conservative choice.
     } else {
-      return -fractionDigits;
+      return -99;
     }
   }
 
@@ -661,14 +666,17 @@ class FixFloatFormatter extends FloatFormatter {
           v, windowEnabled ? min(7, fractionDigits + 1) : fractionDigits + 1);
 
   @override
-  int leastSignificantDigit(double value) {
+  double leastSignificantDigitNoFloor(double value) {
+    print("@@ value $value");
     if (value != 0) {
-      final r = log(value.abs()).floor();
+      final r = log(value.abs()) / ln10 - 1;
+      print("@@ r $r fractionDigits $fractionDigits");
       if (r < -fractionDigits || r >= 10) {
-        return r - fractionDigits; // Same as super.leastSignificantDigit()
+        return r -
+            fractionDigits; // Same as super.leastSignificantDigitNoFloor()
       }
     }
-    return -fractionDigits;
+    return -fractionDigits.toDouble();
   }
 
   @override

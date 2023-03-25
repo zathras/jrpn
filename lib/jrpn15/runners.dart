@@ -334,8 +334,6 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
     var ru = Float64List(maxIterations);
     final fOfA = await runSubroutineErrorsOK(a, okErrors);
     final fOfB = await runSubroutineErrorsOK(b, okErrors);
-    int calls = 1;
-    double totalMagnitude = (fOfA.abs() + fOfB.abs()) / 2;
     double h = span;
     ro[0] = (fOfA + fOfB) * h / 2;
     // Now that we made it here, errors are no longer allowed.
@@ -347,8 +345,6 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
       h /= 2;
       for (int j = 1; j < k; j += 2) {
         final f = await runSubroutine(a + j * h);
-        totalMagnitude += f.abs();
-        calls++;
         sum += f;
       }
       ru[0] = h * sum + ro[0] / 2;
@@ -356,27 +352,17 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
         s *= 4;
         ru[j] = (s * ru[j - 1] - ro[j - 1]) / (s - 1);
       }
-      final double digit;
-      final area = (totalMagnitude / calls) * span;
-      if (area < 1e-100) {
-        digit = precision.leastSignificantDigit(1).toDouble();
-      } else {
-        digit = log10(area) - 1 + precision.leastSignificantDigit(area);
-        // I think log10(area).floor() is closer to what the 15C does, but
-        // subtracting 1 instead makes it so the error scales smoothly, which
-        // makes more sense to me.  We're so much faster than the real
-        // calculator that being overly accurate doesn't hurt, so this is
-        // a pretty conservative choice.
-      }
-      final double eps = max(1e-200, fpow(10.0, digit.toDouble()));
       final rt = ro;
       ro = ru;
       ru = rt;
-      if (i > 2 && (ru[i - 1] - ro[i]).abs() <= eps * ro[i].abs() + eps) {
+      final estimate = ro[i] * signResult;
+      final double digit = precision.leastSignificantDigitNoFloor(estimate);
+      final double eps = fpow(10.0, digit);
+      if (i > 2 && (ru[i - 1] - estimate).abs() <= eps) {
         i++;
         break;
       }
-      _lastEstimate = ro[i] * signResult;
+      _lastEstimate = estimate;
     }
     final err = (ru[i - 2] - ro[i - 1]).abs();
     model.z = originalX;
@@ -433,8 +419,6 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
     int k = 1;
     ro[0] = await runSubroutine((a + b) / 2) * h;
     _lastEstimate = ro[0] * signResult;
-    int calls = 1;
-    double totalMagnitude = ro[0].abs();
     int i;
     for (i = 1; i < maxIterations; i++) {
       int s = 1;
@@ -444,8 +428,6 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
       for (int j = 1; j < k; j += 3) {
         double f1 = await runSubroutine(a + (j - 1) * h + h / 2);
         double f2 = await runSubroutine(a + (j + 1) * h + h / 2);
-        calls += 2;
-        totalMagnitude += f1.abs() + f2.abs();
         sum += f1 + f2;
       }
       ru[0] = h * sum + ro[0] / 3;
@@ -453,26 +435,16 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
         s *= 9;
         ru[j] = (s * ru[j - 1] - ro[j - 1]) / (s - 1);
       }
-      final double digit;
-      final area = (totalMagnitude / calls) * span;
-      if (area < 1e-100) {
-        digit = precision.leastSignificantDigit(1).toDouble();
-      } else {
-        digit = log10(area) - 1 + precision.leastSignificantDigit(area);
-        // I think log10(area).floor() is closer to what the 15C does, but
-        // subtracting 1 instead makes it so the error scales smoothly, which
-        // makes more sense to me.  We're so much faster than the real
-        // calculator that being overly accurate doesn't hurt, so this is
-        // a pretty conservative choice.
-      }
-      final double eps = max(1e-200, fpow(10.0, digit.toDouble()));
       final rt = ro;
       ro = ru;
       ru = rt;
-      if (i > 1 && (ru[i - 1] - ro[i]).abs() <= eps * ro[i].abs() + eps) {
+      final estimate = ro[i] * signResult;
+      final double digit = precision.leastSignificantDigitNoFloor(estimate);
+      final double eps = fpow(10.0, digit);
+      if (i > 1 && (ru[i - 1] - estimate).abs() <= eps) {
         break;
       }
-      _lastEstimate = ro[i] * signResult;
+      _lastEstimate = estimate;
     }
     final ok = i < maxIterations;
     if (!ok) {
