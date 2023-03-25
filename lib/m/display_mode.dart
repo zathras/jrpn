@@ -611,7 +611,7 @@ abstract class FloatFormatter {
   ///
   double leastSignificantDigitNoFloor(double value) {
     if (value != 0) {
-      return log(value.abs()) / ln10 - 1 - fractionDigits;
+      return max(-99, log(value.abs()) / ln10 - 1 - fractionDigits);
       // I think log10(area).floor() is closer to what the 15C does, but
       // subtracting 1 instead makes it so the error scales smoothly, which
       // makes more sense to me.  We're so much faster than the real
@@ -672,7 +672,7 @@ class FixFloatFormatter extends FloatFormatter {
     }
     final r = log(value.abs()) / ln10 - 1;
     if (r < -fractionDigits || r >= 10) {
-      return r - fractionDigits;
+      return max(-99, r - fractionDigits);
       // Same as super.leastSignificantDigitNoFloor()
     }
     return -fractionDigits.toDouble();
