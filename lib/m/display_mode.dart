@@ -667,10 +667,8 @@ class FixFloatFormatter extends FloatFormatter {
 
   @override
   double leastSignificantDigitNoFloor(double value) {
-    print("@@ value $value");
     if (value != 0) {
       final r = log(value.abs()) / ln10 - 1;
-      print("@@ r $r fractionDigits $fractionDigits");
       if (r < -fractionDigits || r >= 10) {
         return r -
             fractionDigits; // Same as super.leastSignificantDigitNoFloor()
