@@ -13,6 +13,8 @@ of a real calculator.
 See https://jrpn.jovial.com/ for more about the calculators'
 features.
 
+## Design
+
 The design is a pretty has a pretty strict MVC separation.
 Notably, the model doesn't have API dependencies on the
 view or the controller.  It uses the classical MVC structure,
@@ -60,3 +62,16 @@ example, some of the selector usages obscure the code, and make
 debugging harder, where perhaps a switch statement might have
 been simpler/clearer.  In retrospect, maybe a few spots in the code
 are a little too clever.
+
+## Building
+
+It's a little tricky to set up Flutter to build two applications from
+one source base.  In the `jrpn` repo, the directories `jrpn15` and `jrpn16`
+each contain a project that builds an executable.  Each references the base
+directory as a "library."
+
+For automated build environments (like the Canonical Snap Store for Linux),
+it was easiest for me to make a skeletal repo for each application.  Those are
+at https://github.com/zathras/jrpn15_build and 
+https://github.com/zathras/jrpn16_build; each pulls in the main `jrpn` repo
+as a dependency in the `pubspec.yaml`.

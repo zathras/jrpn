@@ -7,3 +7,13 @@ NOTE:  A "universal APK" can be produced as follows:
     distribute universal.apk
 
 Source:  https://testfairy.com/blog/android-app-bundle-how-to-generate-apk-from-aab/
+
+
+When releasing, the version number needs to be changed in:
+    applictionVersion in lib/v/main_screen.dart
+    pubspec.yaml
+    jrpn1[56]/pubspec.yaml
+    ../jrpn1[56]_build/pubspec.yaml
+        version property
+        msix_version
+    ../jrpn1[56]_build/snap/snapcraft.yaml
