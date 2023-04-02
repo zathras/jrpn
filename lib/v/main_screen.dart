@@ -258,7 +258,6 @@ class MainScreen extends OrientedScreen {
                             CustomPaint(
                                 painter: _RoundedBox(widthCM: 0.9, paint: p)),
                             Center(child: ScalableImageWidget(si: icon))
-                            // SvgPicture.asset('assets/jupiter.svg'))
                           ],
                         )),
                     const Spacer(flex: 2),
