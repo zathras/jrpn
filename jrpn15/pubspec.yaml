@@ -41,6 +41,15 @@ flutter_icons:
   # Left off: ios: generate: true 
   # If changed, "flutter pub run flutter_launcher_icons"
   # See https://pub.dev/packages/flutter_launcher_icons
+  # For Android, need to manually add a transparent icon entry to manfiest,
+  # viz: 
+  # git diff android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+  #  <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+  #    <background android:drawable="@color/ic_launcher_background"/>
+  #    <foreground android:drawable="@drawable/ic_launcher_foreground"/>
+  # +  <monochrome android:drawable="@drawable/ic_launcher_foreground"/>
+  #  </adaptive-icon>
+
 
 flutter:
   uses-material-design: true
