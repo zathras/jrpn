@@ -184,6 +184,8 @@ class CalculatorError {
 
 enum OrientationSetting { auto, portrait, landscape }
 
+enum KeyFeedbackSetting { platform, click, haptic, both, none }
+
 ///
 /// User settings that control the calculator's appearance or behavior
 ///
@@ -203,6 +205,7 @@ class Settings {
   // 100ms per instruction.  Going about double that speed gives pleasing
   // results.
   OrientationSetting _orientation = OrientationSetting.auto;
+  KeyFeedbackSetting _keyFeedback = KeyFeedbackSetting.platform;
   bool _systemOverlaysDisabled = false;
 
   static const _gKeyColorDefault = 0xff00afef;
@@ -239,6 +242,7 @@ class Settings {
     _msPerInstruction = null;
     _traceProgramToStdout = false;
     _orientation = OrientationSetting.auto;
+    _keyFeedback = KeyFeedbackSetting.platform;
     _setPlatformOrientation();
     _systemOverlaysDisabled = false;
     setPlatformOverlays();
@@ -346,12 +350,10 @@ class Settings {
     }
   }
 
-  OrientationSetting get orientation => _orientation;
+  OrientationSetting get orientation =>
+      isMobilePlatform ? _orientation : OrientationSetting.auto;
 
   set orientation(OrientationSetting v) {
-    if (!isMobilePlatform) {
-      return;
-    }
     _orientation = v;
     _setPlatformOrientation();
     _model.needsSave = true;
@@ -377,6 +379,14 @@ class Settings {
         break;
     }
     unawaited(SystemChrome.setPreferredOrientations(orientations));
+  }
+
+  KeyFeedbackSetting get keyFeedback =>
+      isMobilePlatform ? _keyFeedback : KeyFeedbackSetting.platform;
+
+  set keyFeedback(KeyFeedbackSetting v) {
+    _keyFeedback = v;
+    _model.needsSave = true;
   }
 
   int get gKeyColor => _gKeyColor;
@@ -409,7 +419,8 @@ class Settings {
       'euroComma': _euroComma,
       'showAccelerators': showAccelerators.value,
       'systemOverlaysDisabled': systemOverlaysDisabled,
-      'orientation': orientation.index
+      'orientation': orientation.index,
+      'keyFeedback': keyFeedback.index
     };
     if (_model.modelName != '15C') {
       r['showWordSize'] = _showWordSize;
@@ -462,10 +473,16 @@ class Settings {
         (json['systemOverlaysDisabled'] as bool?) ?? false;
     setPlatformOverlays();
     int? ov = json['orientation'] as int?;
-    if (ov == null || ov < 0 || ov > OrientationSetting.values.length) {
+    if (ov == null || ov < 0 || ov >= OrientationSetting.values.length) {
       _orientation = OrientationSetting.auto;
     } else {
       _orientation = OrientationSetting.values[ov];
+    }
+    int? kv = json['keyFeedback'] as int?;
+    if (kv == null || kv < 0 || kv >= KeyFeedbackSetting.values.length) {
+      _keyFeedback = KeyFeedbackSetting.platform;
+    } else {
+      _keyFeedback = KeyFeedbackSetting.values[kv];
     }
     _setPlatformOrientation();
     _traceProgramToStdout = (json['traceProgramToStdout'] as bool?) ?? false;

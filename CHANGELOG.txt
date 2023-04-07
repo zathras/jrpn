@@ -1,6 +1,8 @@
 Upcoming:
-  * Avoid confustion by autosaving calculator state when settings changed
-  * Imporovements to numerical integration
+  * Support haptic key feedback in addition to click.
+  * Avoid confusion by autosaving calculator state when settings changed.
+  * Improvements to numerical integration.
+  * Nicer Android icons.
 
 15C only, Version 2.1.3:
   * Backspace key clears flashing error/overflow (Issue 34)

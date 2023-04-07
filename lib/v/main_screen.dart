@@ -678,7 +678,37 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                             child: Text('Landscape'))
                       ]),
                   const Text('    Orientation')
-                ]))
+                ])),
+                PopupMenuItem(
+                    child: Row(children: [
+                  DropdownButton(
+                      value: settings.keyFeedback,
+                      onChanged: (KeyFeedbackSetting? v) {
+                        if (v != null) {
+                          settings.keyFeedback = v;
+                          unawaited(
+                              widget.app.model.writeToPersistentStorage());
+                          Navigator.pop(context, () {});
+                        }
+                      },
+                      items: const [
+                        DropdownMenuItem(
+                            value: KeyFeedbackSetting.platform,
+                            child: Text('Platform')),
+                        DropdownMenuItem(
+                            value: KeyFeedbackSetting.click,
+                            child: Text('Click')),
+                        DropdownMenuItem(
+                            value: KeyFeedbackSetting.haptic,
+                            child: Text('Haptic')),
+                        DropdownMenuItem(
+                            value: KeyFeedbackSetting.both,
+                            child: Text('Both')),
+                        DropdownMenuItem(
+                            value: KeyFeedbackSetting.none, child: Text('None'))
+                      ]),
+                  const Text('    Key Feedback')
+                ])),
               ]
             : []),
         CheckedPopupMenuItem(

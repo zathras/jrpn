@@ -27,9 +27,11 @@ this program; if not, see https://www.gnu.org/licenses/ .
 /// See [CalculatorButton] for more details.
 library view.buttons;
 
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../c/controller.dart';
 import '../m/model.dart';
@@ -995,7 +997,23 @@ class CalculatorButtonState extends State<CalculatorButton> {
           factory.controller.buttonUp();
         },
         onTapDown: (TapDownDetails details) {
-          Feedback.forTap(context);
+          switch (widget.bFactory.settings.keyFeedback) {
+            case KeyFeedbackSetting.platform:
+              unawaited(Feedback.forTap(context));
+              break;
+            case KeyFeedbackSetting.click:
+              unawaited(SystemSound.play(SystemSoundType.click));
+              break;
+            case KeyFeedbackSetting.haptic:
+              unawaited(HapticFeedback.vibrate());
+              break;
+            case KeyFeedbackSetting.both:
+              unawaited(SystemSound.play(SystemSoundType.click));
+              unawaited(HapticFeedback.vibrate());
+              break;
+            case KeyFeedbackSetting.none:
+              break;
+          }
           setState(() {
             _pressed = true;
           });
