@@ -1224,6 +1224,7 @@ class Running extends ControllerState {
   void Function(CalculatorError?)? _singleStepOnDone;
   double pendingDelay = 0;
   late Timer showRunningTimer;
+  DateTime _lastDelay = DateTime.now();
 
   Running(RealController c, this._runner)
       : _fake = RunningController(c),
@@ -1328,20 +1329,19 @@ class Running extends ControllerState {
     final ProgramListener listener = model.memory.program.programListener;
     final settings = controller.model.settings;
     final program = model.memory.program;
-    var lastDelay = DateTime.now();
     for (;;) {
       if (!_stopNext) {
         if (pendingDelay >= 4) {
-          lastDelay = DateTime.now();
-          await (Future<void>.delayed(
-              Duration(milliseconds: (pendingDelay ~/ 4) * 4)));
+          _lastDelay = DateTime.now();
+          final delay = Duration(milliseconds: (pendingDelay ~/ 4) * 4);
+          await (Future<void>.delayed(delay));
         } else {
           final now = DateTime.now();
-          if (now.difference(lastDelay).inMilliseconds >= 1000) {
-            // Delay at least 4 ms every second, so the calculator doesn't become
+          if (now.difference(_lastDelay).inMilliseconds >= 100) {
+            // Delay at least 4 ms every 100ms, so the calculator doesn't become
             // non-responsive if the user cranks the speed up all the way.
             await Future<void>.delayed(const Duration(milliseconds: 4));
-            lastDelay = now;
+            _lastDelay = now;
           }
         }
       }
@@ -1409,7 +1409,7 @@ class Running extends ControllerState {
           print("*********** ${_fake.pendingError}");
         }
       }
-      pendingDelay =
+      pendingDelay +=
           settings.msPerInstruction / ((instr.op.numericValue == null) ? 1 : 5);
       // While we're not simulating real instruction time, the number keys
       // are a lot faster than most other operations on a real calculator,
