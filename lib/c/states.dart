@@ -1331,22 +1331,20 @@ class Running extends ControllerState {
     final program = model.memory.program;
     for (;;) {
       if (!_stopNext) {
-        if (pendingDelay >= 4) {
-          _lastDelay = DateTime.now();
-          final delay = Duration(milliseconds: (pendingDelay ~/ 4) * 4);
+        final now = DateTime.now();
+        if (now.difference(_lastDelay).inMilliseconds >= 100) {
+          // Delay at least 5 ms every 100ms, so the calculator doesn't become
+          // non-responsive if the user cranks the speed up all the way.
+          pendingDelay = max(5, pendingDelay);
+        }
+        if (pendingDelay > 0) {
+          _lastDelay = now;
+          final delay = Duration(microseconds: (pendingDelay * 1000).round());
           await (Future<void>.delayed(delay));
-        } else {
-          final now = DateTime.now();
-          if (now.difference(_lastDelay).inMilliseconds >= 100) {
-            // Delay at least 4 ms every 100ms, so the calculator doesn't become
-            // non-responsive if the user cranks the speed up all the way.
-            await Future<void>.delayed(const Duration(milliseconds: 4));
-            _lastDelay = now;
-          }
+          pendingDelay -=
+              (DateTime.now().difference(_lastDelay)).inMicroseconds / 1000;
         }
       }
-      // Javascript clock granularity is 4ms
-      pendingDelay = pendingDelay % 4;
       final int line = program.currentLine;
       final ProgramInstruction<Operation> instr = program[line];
       if (instr.op == Operations.rs) {
@@ -1403,7 +1401,7 @@ class Running extends ControllerState {
         }
         // ignore: avoid_print
         print(out.toString());
-        // @@ print(program.debugReturnStack());
+        // Too busy: print(program.debugReturnStack());
         if (_fake.pendingError != null) {
           // ignore: avoid_print
           print("*********** ${_fake.pendingError}");
