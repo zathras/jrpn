@@ -1337,12 +1337,19 @@ class Running extends ControllerState {
           // non-responsive if the user cranks the speed up all the way.
           pendingDelay = max(5, pendingDelay);
         }
-        if (pendingDelay > 0) {
+        if (pendingDelay >= 5) {
+          // Only delay if 5ms has accrued.  This, combined with the logic
+          // above, ensures we really do throttle the CPU at 95%.  The
+          // observed actual delay times, at least on MacOS, have a slop of
+          // one or two ms anyway, so we're not losing anything important
+          // by enforcing slightly more granular sleep in certain edge cases
+          // (e.g. msPerInstruction of 1 or .1).
           _lastDelay = now;
           final delay = Duration(microseconds: (pendingDelay * 1000).round());
           await (Future<void>.delayed(delay));
-          pendingDelay -=
+          final actual =
               (DateTime.now().difference(_lastDelay)).inMicroseconds / 1000;
+          pendingDelay -= actual;
         }
       }
       final int line = program.currentLine;
