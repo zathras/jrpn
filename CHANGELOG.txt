@@ -1,4 +1,4 @@
-Upcoming:
+Both, Version 2.1.4
   * Support haptic key feedback in addition to click.
   * Avoid confusion by autosaving calculator state when settings changed.
   * Improvements to numerical integration.

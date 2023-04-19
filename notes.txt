@@ -1,16 +1,7 @@
 
 
-NOTE:  A "universal APK" can be produced as follows:
-
-    bundletool build-apks --mode=universal --bundle=my_app.aab --output=my_app.apks
-    unzip my_app.apks
-    distribute universal.apk
-
-Source:  https://testfairy.com/blog/android-app-bundle-how-to-generate-apk-from-aab/
-
-
 When releasing, the version number needs to be changed in:
-    applictionVersion in lib/v/main_screen.dart
+    applicationVersion in lib/generic_main.dart
     pubspec.yaml
     jrpn1[56]/pubspec.yaml
     ../jrpn1[56]_build/pubspec.yaml

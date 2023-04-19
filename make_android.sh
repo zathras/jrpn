@@ -8,10 +8,20 @@ if [ ! -e build/app/outputs/flutter-apk/app-release.apk ] ; then
     echo "Oops!"
     exit 1
 fi
+flutter build appbundle --release
+if [ ! -e build/app/outputs/flutter-apk/app-release.apk ] ; then
+    echo "Oops!"
+    exit 1
+fi
 cd ..
 cd jrpn16
 flutter clean
 flutter build apk --release
+if [ ! -e build/app/outputs/flutter-apk/app-release.apk ] ; then
+    echo "Oops!"
+    exit 1
+fi
+flutter build appbundle --release
 if [ ! -e build/app/outputs/flutter-apk/app-release.apk ] ; then
     echo "Oops!"
     exit 1
