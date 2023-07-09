@@ -1749,33 +1749,3 @@ class DebugLog {
     }
   }
 }
-
-///
-/// The state of the calculator, stored in a form suitable for
-/// persisting in a Flutter `RestorationBucket`.  Flutter doesn't trust
-/// app developers to persist their state in a callback on an app
-/// lifecycle notification.  Instead, they force an app to continuously
-/// update one or more `RestorationBucket` instances with data that can
-/// be serialized with a `StandardMessageCodec`.
-///
-/// In JRPN, settings are written out whenever they are modified, but the
-/// rest of the calculator state changes with each keystroke.  So, that
-/// internal state needs to be held in a data structure composed of the
-/// primitive types that can be serialized out with a `StandardMessageCodec`.
-/// This runs rather contrary to OO encapsulation of data, but so be it.
-///
-/// Note that, early on, I did try `AppLifecycleState`, but it wasn't
-/// reliable.  I'm afraid I don't remember exactly what the issues were.
-/// It looks like others have been less than satisfied with 
-/// `AppLifecycleState`, cf. https://github.com/flutter/flutter/issues/57594
-/// The specification of `WidgetsBindingObserver` isn't exactly brimming over
-/// with normative guarantees, and a more primitive (and synchronous) mechanism
-/// like `RestorationBucket` seems more likely to work.
-///
-class PrimitiveState {
-  final List<Object> _raw;
-
-  PrimitiveState(this._raw);
-
-  PrimitiveState.initial(ByteData memory) : _raw = [memory, Uint64List(0)];
-}
