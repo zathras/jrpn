@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jovial.jrpn15">
+   <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="JRPN 15C"
         android:name="${applicationName}"
