@@ -1764,6 +1764,14 @@ class DebugLog {
 /// primitive types that can be serialized out with a `StandardMessageCodec`.
 /// This runs rather contrary to OO encapsulation of data, but so be it.
 ///
+/// Note that, early on, I did try `AppLifecycleState`, but it wasn't
+/// reliable.  I'm afraid I don't remember exactly what the issues were.
+/// It looks like others have been less than satisfied with 
+/// `AppLifecycleState`, cf. https://github.com/flutter/flutter/issues/57594
+/// The specification of `WidgetsBindingObserver` isn't exactly brimming over
+/// with normative guarantees, and a more primitive (and synchronous) mechanism
+/// like `RestorationBucket` seems more likely to work.
+///
 class PrimitiveState {
   final List<Object> _raw;
 
