@@ -70,7 +70,7 @@ class Value {
     final double check = asDouble;
 
     // While we're here, we know we should never legitimately return this:
-    assert(check != double.nan);
+    assert(!check.isNaN);
   }
 
   BigInt get _upper52 => (internal >> 12) & _mask52;

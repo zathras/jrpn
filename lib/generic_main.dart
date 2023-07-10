@@ -837,12 +837,13 @@ class Jrpn extends StatefulWidget {
   JrpnState createState() => JrpnState();
 }
 
-class JrpnState extends State<Jrpn> {
+class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   bool _initDone = false;
   bool _disposed = false;
   StreamSubscription? _linksSubscription;
   String? _incomingLink;
   Object? _pendingError;
+  AppLifecycleState? _lastLifecycleState;
   late final FocusNode keyboard;
   late final ScalableImage icon;
   late final ScalableImage tryzub;
@@ -859,6 +860,8 @@ class JrpnState extends State<Jrpn> {
         onKey: (FocusNode _, RawKeyEvent e) => controller.keyboard.onKey(e));
     _uiChangeObserver = _uiChanged;
     widget._changed.addObserver(_uiChangeObserver);
+    WidgetsBinding.instance.addObserver(this);
+    _lastLifecycleState = WidgetsBinding.instance.lifecycleState;
     unawaited(_init());
   }
 
@@ -868,10 +871,21 @@ class JrpnState extends State<Jrpn> {
     widget._changed.removeObserver(_uiChangeObserver);
     _disposed = true;
     _linksSubscription?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   void _uiChanged(void _) {
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_lastLifecycleState == AppLifecycleState.resumed &&
+        state != AppLifecycleState.resumed) {
+      unawaited(controller.model.writeToPersistentStorage());
+      // See discussion in https://github.com/zathras/jrpn/issues/46
+    }
+    _lastLifecycleState = state;
   }
 
   @override

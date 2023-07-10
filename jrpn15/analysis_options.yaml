@@ -15,8 +15,6 @@ linter:
 
 analyzer:
   strong-mode:
-    implicit-casts: false
-    implicit-dynamic: false
 
 #   exclude:
 #     - path/to/excluded/files/**

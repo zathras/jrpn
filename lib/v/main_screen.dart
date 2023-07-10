@@ -189,13 +189,13 @@ class MainScreen extends OrientedScreen {
         items: [
           PopupMenuItem(
               value: _copyDisplayToClipboard,
-              child: Row(children: const [
+              child: const Row(children: [
                 Icon(Icons.content_copy),
                 Text('Copy to Clipboard')
               ])),
           PopupMenuItem(
               value: _pasteNumberToModel,
-              child: Row(children: const [
+              child: const Row(children: [
                 Icon(Icons.content_copy),
                 Text('Paste from Clipboard')
               ])),
@@ -1376,10 +1376,8 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
               model.captureDebugLog = !model.captureDebugLog;
               model.display.update();
             },
-            child: Row(children: const [
-              SizedBox(width: 30),
-              Text('Capture Debug\nLog')
-            ])),
+            child: const Row(
+                children: [SizedBox(width: 30), Text('Capture Debug\nLog')])),
       ],
       child: Row(
         children: [
