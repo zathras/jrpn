@@ -1498,7 +1498,7 @@ class Operations15 extends Operations {
   static double _checkResult(double Function() f, int errNo) {
     try {
       final v = f();
-      if (v != double.nan) {
+      if (!v.isNaN) {
         return v;
       }
     } catch (ex) {
@@ -1510,7 +1510,7 @@ class Operations15 extends Operations {
   static Complex _checkResultC(Complex Function() f, int errNo) {
     try {
       final v = f();
-      if (v.real != double.nan && v.imaginary != double.nan) {
+      if (!v.real.isNaN && !v.imaginary.isNaN) {
         return v;
       }
     } catch (ex) {
