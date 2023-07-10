@@ -1376,10 +1376,8 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
               model.captureDebugLog = !model.captureDebugLog;
               model.display.update();
             },
-            child: const Row(children: [
-              SizedBox(width: 30),
-              Text('Capture Debug\nLog')
-            ])),
+            child: const Row(
+                children: [SizedBox(width: 30), Text('Capture Debug\nLog')])),
       ],
       child: Row(
         children: [
