@@ -749,7 +749,7 @@ Public License instead of this License.  But first, please read
 
 /// package_info doesn't exist for all platforms, so I'm doing it the old
 /// fashioned way.
-const applicationVersion = '2.1.4';
+const applicationVersion = '2.1.5';
 final Uri applicationWebAddress = Uri.https('jrpn.jovial.com', '');
 final Uri applicationIssueAddress =
     Uri.https('github.com', 'zathras/jrpn/issues');

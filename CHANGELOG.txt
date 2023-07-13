@@ -1,5 +1,5 @@
 Android only, Versin 2.1.5
-  * Automaticaly save state on app lifecycle notification
+  * Automatically save state on app lifecycle notification
   * Request internet permission so that links from help menu work
 
 Both, Version 2.1.4
