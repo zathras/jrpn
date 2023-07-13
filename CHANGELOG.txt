@@ -1,3 +1,7 @@
+Android only, Versin 2.1.5
+  * Automaticaly save state on app lifecycle notification
+  * Request internet permission so that links from help menu work
+
 Both, Version 2.1.4
   * Support haptic key feedback in addition to click.
   * Avoid confusion by autosaving calculator state when settings changed.
