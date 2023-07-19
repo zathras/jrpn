@@ -247,3 +247,69 @@ class LinearRegression {
 
   double get r => p / sqrt(m * n);
 }
+
+///
+/// Special case of sin() for HP15, so that sin(180) gives exactly 0, etc.
+///
+/// rightAngleInt is 90 for degrees, 100 for grad, and null for radians.
+///
+double? sin15(double angle, int? rightAngleInt) {
+  if (rightAngleInt != null) {
+    double? a = _normalizeAngle(angle, rightAngleInt);
+    if (a == 0 || a == rightAngleInt * 2) {
+      return 0;
+    }
+  }
+  return null;
+}
+
+///
+/// Special case of cos() for HP15, so that cos(90) gives exactly 0, etc.
+///
+/// rightAngleInt is 90 for degrees, 100 for grad, and null for radians.
+///
+double? cos15(double angle, int? rightAngleInt) {
+  if (rightAngleInt != null) {
+    double? a = _normalizeAngle(angle, rightAngleInt);
+    if (a == rightAngleInt || a == rightAngleInt * 3) {
+      return 0;
+    }
+  }
+  return null;
+}
+
+///
+/// Special case of tan() for HP15, so that tan(90) gives CalculatorError(0),
+/// etc.
+///
+/// rightAngleInt is 90 for degrees, 100 for grad, and null for radians.
+///
+double? tan15(double angle, int? rightAngleInt) {
+  if (rightAngleInt != null) {
+    double? a = _normalizeAngle(angle, rightAngleInt);
+    if (a == rightAngleInt || a == 3 * rightAngleInt) {
+      throw CalculatorError(0);
+    } else if (a == 0 || a == rightAngleInt * 2) {
+      return 0;
+    }
+  }
+  return null;
+}
+
+//
+// Return null if angle isn't worth considering, or a number between
+// 0 (inclusive) and 4*rightAngleInt (exclusive) if it is.
+//
+double? _normalizeAngle(double angle, int rightAngleInt) {
+  if (angle > 9999999999.0 || angle < -9999999999.0) {
+    // If the angle's units aren't exactly represented, don't bother.  This
+    // prevents us having round-off problems with the remainder call, below.
+    return null;
+  }
+  angle = angle.remainder(rightAngleInt * 4);
+  if (angle >= 0) {
+    return angle;
+  } else {
+    return 4 * rightAngleInt + angle;
+  }
+}

@@ -604,7 +604,9 @@ class Operations15 extends Operations {
       pressed: (LimitedState c) => c.handleShift(ShiftKey.none), name: 'HYP-1');
   static final NormalOperation sin = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.resultXF = dart.sin(m.xF * m.trigMode.scaleFactor);
+        final double angle = m.xF;
+        m.resultXF = sin15(angle, m.trigMode.rightAngleInt) ??
+            dart.sin(angle * m.trigMode.scaleFactor);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -622,7 +624,9 @@ class Operations15 extends Operations {
       name: 'SIN-1');
   static final NormalOperation cos = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.resultXF = dart.cos(m.xF * m.trigMode.scaleFactor);
+        final double angle = m.xF;
+        m.resultXF = cos15(angle, m.trigMode.rightAngleInt) ??
+            dart.cos(angle * m.trigMode.scaleFactor);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
@@ -642,7 +646,9 @@ class Operations15 extends Operations {
       name: 'COS-1');
   static final NormalOperation tan = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.resultXF = dart.tan(m.xF * m.trigMode.scaleFactor);
+        final double angle = m.xF;
+        m.resultXF = tan15(angle, m.trigMode.rightAngleInt) ??
+            dart.tan(angle * m.trigMode.scaleFactor);
       },
       complexCalc: (Model m) {
         // Always in radians - see 15C manual p. 131, "For the trigonometric..."
