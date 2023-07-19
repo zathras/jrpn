@@ -1256,6 +1256,12 @@ class Running extends ControllerState {
     }
   }
 
+  void runSingleStep() {
+    assert(_stopNext);
+    model.displayDisabled = true;
+    unawaited(_run());
+  }
+
   /// We delay the showing of the blinking running a little bit, so that
   /// we don't get a very short flash of "running" when msPerInstruction
   /// is set to 0.
@@ -1629,7 +1635,7 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
         assert(!program.isRunning);
         program.adjustStackForRunStopStarting();
         final s = Running.singleStep(_fake, GosubProgramRunner(), _onDone);
-        s.buttonUp(key);
+        s.runSingleStep();
       } else {
         spr.restart(_fake, singleStepOnDone: _onDone);
       }
