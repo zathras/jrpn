@@ -548,7 +548,8 @@ class _HelpMenu extends StatelessWidget {
         PopupMenuItem(
             value: () {
               Navigator.pop<void>(context);
-              launchUrl(applicationIssueAddress);
+              unawaited(launchUrl(applicationIssueAddress,
+                  mode: LaunchMode.externalApplication));
             },
             child: const Text('Submit Issue (Web)')),
         PopupMenuItem(
@@ -572,8 +573,8 @@ class _HelpMenu extends StatelessWidget {
                   children: [
                     const SizedBox(height: 40),
                     InkWell(
-                        onTap: () =>
-                            unawaited(launchUrl(applicationWebAddress)),
+                        onTap: () => unawaited(launchUrl(applicationWebAddress,
+                            mode: LaunchMode.externalApplication)),
                         child: RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
