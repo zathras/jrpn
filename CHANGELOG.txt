@@ -1,6 +1,13 @@
-Android only, Versin 2.1.5
+Version 2.1.6
+  * Fix bug with SST in calculator mode (Issue 48)
+  * Give exact results for trig functions in degrees at
+    zero points and infinity (0, 90, 180, 270) (Issue 49).
+  * Android:  Open about page and bug page in external
+    browser (Issue 51).
+
+Android only, Version 2.1.5
   * Automatically save state on app lifecycle notification
-  * Request internet permission so that links from help menu work
+  * Request internet permission so that links from help menu work (Issue 50)
 
 Both, Version 2.1.4
   * Support haptic key feedback in addition to click.
