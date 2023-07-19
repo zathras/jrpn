@@ -1680,12 +1680,13 @@ enum BlinkMode {
 class TrigMode {
   final double scaleFactor;
   final String? label;
+  final int? rightAngleInt; // # of units in a right angle, if an int
 
-  const TrigMode._p(this.scaleFactor, this.label);
+  const TrigMode._p(this.scaleFactor, this.label, this.rightAngleInt);
 
-  static const deg = TrigMode._p(pi / 180, null);
-  static const rad = TrigMode._p(1, 'RAD');
-  static const grad = TrigMode._p(pi / 200, 'GRAD');
+  static const deg = TrigMode._p(pi / 180, null, 90);
+  static const rad = TrigMode._p(1, 'RAD', null);
+  static const grad = TrigMode._p(pi / 200, 'GRAD', 100);
 
   String? toJson() => label;
 
