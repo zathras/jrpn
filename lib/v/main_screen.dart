@@ -935,7 +935,8 @@ class __FileSaveMenuState extends State<_FileSaveMenu> {
     final model = widget.app.model;
     final ext = 'j${model.modelName.toLowerCase()}';
     final suggested = 'calculator.$ext';
-    final String? path = await getSavePath(suggestedName: suggested);
+    final String? path =
+        (await getSaveLocation(suggestedName: suggested))?.path;
     if (path == null) {
       return;
     }
@@ -1106,7 +1107,8 @@ class __ExportProgramMenuState extends State<_ExportProgramMenu> {
     final model = widget.app.model;
     final ext = model.modelName.toLowerCase();
     final suggested = 'program.$ext';
-    final String? path = await getSavePath(suggestedName: suggested);
+    final String? path =
+        (await getSaveLocation(suggestedName: suggested))?.path;
     if (path == null) {
       return;
     }

@@ -193,7 +193,7 @@ abstract class Controller {
 /// [RealController] `_stackLiftEnabled` flag.  This provides enhanced
 /// encapsulation, by explicitly marking states that do this.
 ///
-abstract class StackLiftEnabledUser {
+mixin StackLiftEnabledUser {
   Controller get controller;
 
   /// Tell if stack lift is enabled.  This is considered part of the
