@@ -35,6 +35,7 @@ Future<void> main() async {
   testWidgets('16C Buttons', (WidgetTester tester) async {
     await tester.pumpWidget(Jrpn(Controller16(Model16())));
   });
+  test('Issue 53 number entry', issue53NumberEntry);
   test('programEntry', programEntry);
   test('p79 program', p79Program);
   test('p93 checksum program', p93Checksum);
@@ -326,6 +327,142 @@ Future<void> programWithError() async {
   expect(m.display.current, '   error 5  ');
   enter(c, Operations16.letterA);
   expect(m.display.current.trim(), '5.00');
+}
+
+Future<void> issue53NumberEntry() async {
+  final tc = TestCalculator();
+  final m = tc.model;
+  tc.enter(Operations16.dec);
+  tc.enter(Operations.n8);
+  tc.enter(Operations16.wSize);
+  tc.enter(Operations16.twosCompl);
+  tc.enter(Operations.clx);
+  expect(m.display.current, '0 d');
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n2);
+  tc.enter(Operations.n5);
+  tc.enter(Operations.n5);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  expect(m.display.current, '-001 d');
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n2);
+  tc.enter(Operations.n5);
+  tc.enter(Operations.n4);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  expect(m.display.current, '-002 d');
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n2);
+  tc.enter(Operations.n5);
+  tc.enter(Operations.n6);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  expect(m.display.current, '25 d');
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n2);
+  tc.enter(Operations.n5);
+  tc.enter(Operations.n6);
+  tc.enter(Operations.n4);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  expect(m.display.current, '-002 d');
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n1);
+  tc.enter(Operations.n0);
+  tc.enter(Operations16.wSize);
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n5);
+  tc.enter(Operations.n1);
+  tc.enter(Operations.n2);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  expect(m.display.current, '-0512 d');
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n1);
+  tc.enter(Operations.n0);
+  tc.enter(Operations.n2);
+  tc.enter(Operations.n3);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  expect(m.display.current, '-0001 d');
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n1);
+  tc.enter(Operations.n0);
+  tc.enter(Operations.n2);
+  tc.enter(Operations.n4);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  expect(m.display.current, '102 d');
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n1);
+  tc.enter(Operations.n0);
+  tc.enter(Operations.n2);
+  tc.enter(Operations.n4);
+  tc.enter(Operations.n1);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  tc.enter(Operations.n7);
+  expect(m.display.current, '-003 d');
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n2);
+  tc.enter(Operations.n5);
+  tc.enter(Operations.n5);
+  expect(m.display.current, '-001 d');
+  tc.enter(Operations.bsp);
+  expect(m.display.current, '25 d');
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n8);
+  tc.enter(Operations16.wSize);
+  tc.enter(Operations16.unsign);
+
+  tc.enter(Operations.clx);
+  expect(m.display.current, '0 d');
+  tc.enter(Operations.n2);
+  tc.enter(Operations.n5);
+  expect(m.display.current, '25 d');
+  tc.enter(Operations.n8);
+  expect(m.display.current, '25 d');
+  tc.enter(Operations.n4);
+  expect(m.display.current, '254 d');
+  tc.enter(Operations.bsp);
+  expect(m.display.current, '25 d');
+  tc.enter(Operations.bsp);
+  expect(m.display.current, '2 d');
 }
 
 Future<void> testRegistersAndWordSize() async {
