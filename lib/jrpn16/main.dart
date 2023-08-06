@@ -686,10 +686,8 @@ class Operations16 extends Operations {
         int count = 0;
         BigInt v = m.x.internal;
         while (v > BigInt.zero) {
-          if ((v & BigInt.one) != BigInt.zero) {
-            count++;
-          }
-          v = v >> 1;
+          count++;
+          v &= (v - BigInt.one);
         }
         m.resultX = Value.fromInternal(BigInt.from(count));
       },
