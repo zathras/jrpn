@@ -398,7 +398,7 @@ Future<void> issue53NumberEntry() async {
   tc.enter(Operations.n7);
   tc.enter(Operations.n7);
   tc.enter(Operations.n7);
-  expect(m.display.current, '-0512 d');
+  expect(m.display.current, '-512 d');
 
   tc.enter(Operations.clx);
   tc.enter(Operations.n1);
@@ -410,7 +410,7 @@ Future<void> issue53NumberEntry() async {
   tc.enter(Operations.n7);
   tc.enter(Operations.n7);
   tc.enter(Operations.n7);
-  expect(m.display.current, '-0001 d');
+  expect(m.display.current, '-001 d');
 
   tc.enter(Operations.clx);
   tc.enter(Operations.n1);
@@ -436,6 +436,10 @@ Future<void> issue53NumberEntry() async {
   tc.enter(Operations.n7);
   tc.enter(Operations.n7);
   expect(m.display.current, '-003 d');
+
+  tc.enter(Operations.clx);
+  tc.enter(Operations.n8);
+  tc.enter(Operations16.wSize);
 
   tc.enter(Operations.clx);
   tc.enter(Operations.n2);

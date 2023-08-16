@@ -219,6 +219,8 @@ abstract class IntegerDisplayMode extends DisplayMode {
     return addCommas(s, m.settings.integerModeCommas) + displayName;
   }
 
+  String formatUnsigned(Value v, Model m) => format(v, m);
+
   @override
   void convertValuesTo(DisplayMode next, Model model) =>
       next._convertValuesFromInt(model);
@@ -370,6 +372,11 @@ class _DecimalMode extends IntegerDisplayMode {
       return super.format(v, m);
     }
     return '-${super.format(m.signMode.negate(v, m), m)}';
+  }
+
+  @override
+  formatUnsigned(Value v, Model m) {
+    return super.format(v, m);
   }
 
   @override
