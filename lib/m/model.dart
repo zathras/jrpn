@@ -572,6 +572,10 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   BigInt get maxInt => _integerSignMode.maxValue(this);
   @override
   BigInt get minInt => _integerSignMode.minValue(this);
+
+  /***
+   * Float mode includes complex mode
+   */
   @override
   bool get isFloatMode => displayMode.isFloatMode;
 
