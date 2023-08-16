@@ -497,7 +497,13 @@ class DigitEntry extends ActiveState {
   bool _tryNewValue(String ent, String sign, final int? ex, final bool negEx) {
     final Value? v;
     if (ex == null) {
-      final vv = model.tryParseValue(sign + ent);
+      // (model.isFloatMode || sign == ""))
+      final Value? vv;
+      if (!model.isFloatMode && sign == '-') {
+        vv = null;
+      } else {
+        vv = model.tryParseValue(sign + ent);
+      }
       if (vv != null) {
         v = vv;
         if (!model.isFloatMode) {
@@ -511,13 +517,19 @@ class DigitEntry extends ActiveState {
       } else if (!model.isFloatMode) {
         // See page 36 - in integer modes, digit entry that overflows is
         // interesting.
+        if (sign != "") {
+          // CHS ends digit entry, so if we're here we've already had a
+          // bit flow into the sign bit, so this is definitely overflow
+          return false;
+        }
         Value? big = model.displayMode
             .tryParse(sign + ent, model.memory.registers.helper68);
-        if (big == null) {
-          v = null;
+        if (big == null || (big.internal != (big.internal & model.wordMask))) {
+          // Overflow.  See https://github.com/zathras/jrpn/issues/53.
+          return false;
         } else {
           final originalEntLen = ent.length;
-          v = Value.fromInternal(big.internal & model.wordMask);
+          v = Value.fromInternal(big.internal);
           ent = model.displayMode.format(v, model);
           ent = ent.substring(0, ent.length - 2); // Remove ' d' etc.
           if (ent.startsWith('-')) {
@@ -630,6 +642,12 @@ class DigitEntry extends ActiveState {
         newNeg = _negativeExponent;
       }
       _tryNewValue(_entered, _sign, newEx, newNeg);
+    } else if (!model.isFloatMode && _sign == '-') {
+      // See https://github.com/zathras/jrpn/issues/53...  We convert
+      // to unsigned, then subtract the digit
+      final displayMode = model.displayMode as IntegerDisplayMode;
+      final String fmt = displayMode.formatUnsigned(model.x, model);
+      _tryNewValue(fmt.substring(0, fmt.length - 3), '', ex, _negativeExponent);
     } else if (_entered.length > 1) {
       if (_sign == '-') {
         _tryNewValue(_entered, '', ex, _negativeExponent);
