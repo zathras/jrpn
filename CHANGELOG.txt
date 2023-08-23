@@ -1,3 +1,7 @@
+Version 2.1.7
+  * 16C:  More realistic integer mode number entry (Issue 53)
+  * Desktop:  Autosave on window close via new API (Issue 46)
+
 Version 2.1.6
   * Fix bug with SST in calculator mode (Issue 48)
   * Give exact results for trig functions in degrees at
