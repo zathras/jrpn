@@ -205,8 +205,7 @@ abstract class IntegerDisplayMode extends DisplayMode {
   @override
   SignMode signMode(IntegerSignMode integerSignMode) => integerSignMode;
 
-  @override
-  String format(Value v, Model m) {
+  String formatUnsigned(Value v, Model m) {
     String s = v.internal.toRadixString(radix);
     if (_leadingZeroesOK && m.displayLeadingZeros) {
       final int digits = (m.wordSize + _bitsPerDigit - 1) ~/ _bitsPerDigit;
@@ -219,7 +218,8 @@ abstract class IntegerDisplayMode extends DisplayMode {
     return addCommas(s, m.settings.integerModeCommas) + displayName;
   }
 
-  String formatUnsigned(Value v, Model m) => format(v, m);
+  @override
+  String format(Value v, Model m) => formatUnsigned(v, m);
 
   @override
   void convertValuesTo(DisplayMode next, Model model) =>
@@ -362,6 +362,9 @@ class _DecimalMode extends IntegerDisplayMode {
   }
 
   @override
+  formatUnsigned(Value v, Model m) => super.formatUnsigned(v, m);
+
+  @override
   String format(Value v, Model m) {
     if (m.signMode == SignMode.unsigned) {
       return super.format(v, m);
@@ -372,11 +375,6 @@ class _DecimalMode extends IntegerDisplayMode {
       return super.format(v, m);
     }
     return '-${super.format(m.signMode.negate(v, m), m)}';
-  }
-
-  @override
-  formatUnsigned(Value v, Model m) {
-    return super.format(v, m);
   }
 
   @override
