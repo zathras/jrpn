@@ -630,6 +630,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   set xPreserveCLX(Value v) {
+    needsSave = true;
     _justSetXReal = v;
     if (!_clxDone) {
       _imaginaryStack?[0] = Value.zero;
@@ -654,6 +655,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       v = Value.fMinValue;
     }
     _imaginaryStack![0] = v;
+    needsSave = true;
   }
 
   /// Set the real part of X, leaving the imaginary part alone, and not
@@ -698,7 +700,6 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set popSetResultXC(Complex v) {
     _popStackSetLastX();
     _setComplex(0, v);
-    needsSave = true;
   }
 
   /// Set a result in X, which saves the old X value in lastX
@@ -1217,10 +1218,13 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     return readFromPersistentStorage();
   }
 
-  Future<void> writeToPersistentStorage() async {
+  Future<void> writeToPersistentStorage({ bool onlyIfNeeded = false }) async {
     // We could query needsSave here, but this is called infrequently.
     // A full audit to make sure needsSave is always updated would be needed
     // to restore the query here.
+    if (onlyIfNeeded && !needsSave) {
+      return;
+    }
     needsSave = false;
     final storage = await SharedPreferences.getInstance();
     String js = json.encode(toJson());

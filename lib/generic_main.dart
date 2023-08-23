@@ -23,6 +23,7 @@ library main;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
@@ -749,7 +750,7 @@ Public License instead of this License.  But first, please read
 
 /// package_info doesn't exist for all platforms, so I'm doing it the old
 /// fashioned way.
-const applicationVersion = '2.1.6';
+const applicationVersion = '2.1.7';
 final Uri applicationWebAddress = Uri.https('jrpn.jovial.com', '');
 final Uri applicationIssueAddress =
     Uri.https('github.com', 'zathras/jrpn/issues');
@@ -844,14 +845,25 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   String? _incomingLink;
   Object? _pendingError;
   AppLifecycleState? _lastLifecycleState;
+  late final AppLifecycleListener _appLifecycleListener;
   late final FocusNode keyboard;
   late final ScalableImage icon;
   late final ScalableImage tryzub;
   late void Function(void) _uiChangeObserver;
 
-  JrpnState();
+  JrpnState() {
+    _appLifecycleListener = AppLifecycleListener(
+      onExitRequested: exitRequested
+    );
+  }
 
   Controller get controller => widget.controller;
+
+  Future<AppExitResponse> exitRequested() async {
+    // See https://github.com/zathras/jrpn/issues/46
+    await controller.model.writeToPersistentStorage(onlyIfNeeded: true);
+    return AppExitResponse.exit;
+  }
 
   @override
   void initState() {
@@ -882,7 +894,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (_lastLifecycleState == AppLifecycleState.resumed &&
         state != AppLifecycleState.resumed) {
-      unawaited(controller.model.writeToPersistentStorage());
+      unawaited(controller.model.writeToPersistentStorage(onlyIfNeeded: true));
       // See discussion in https://github.com/zathras/jrpn/issues/46
     }
     _lastLifecycleState = state;
