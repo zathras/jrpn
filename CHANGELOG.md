@@ -1,5 +1,5 @@
 Version 2.1.7
-  * 16C:  More realistic integer mode number entry (Issue 53)
+  * 16C:  More realistic signed decimal integer mode number entry on overflow (Issue 53)
   * Desktop:  Autosave on window close via new API (Issue 46)
 
 Version 2.1.6
