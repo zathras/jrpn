@@ -884,6 +884,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     _disposed = true;
     _linksSubscription?.cancel();
     WidgetsBinding.instance.removeObserver(this);
+    _appLifecycleListener.dispose();
   }
 
   void _uiChanged(void _) {

@@ -26,6 +26,7 @@ library view.main_screen;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
@@ -142,7 +143,7 @@ class MainScreen extends OrientedScreen {
               screen.box(
                   const Rect.fromLTWH(
                       0.63, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak),
-                  LcdDisplay(controller.model, _showMenu)),
+                  LcdDisplay(controller.model, _showMenu, 11)),
               ...controller
                   .getPortraitButtonFactory(context, screen)
                   .buildButtons(Rect.fromLTRB(
@@ -153,6 +154,20 @@ class MainScreen extends OrientedScreen {
 
   @override
   Widget buildLandscape(BuildContext context, final ScreenPositioner screen) {
+    final double lcdLeft;
+    final double lcdWidth;
+    final double iconL;
+    int digitsH = 11;
+    final bool expand = false;
+    if (expand) {
+      lcdLeft = 0.53;
+      lcdWidth = 10.53;
+      digitsH = 18;
+    } else {
+      lcdLeft = 2.0;
+      lcdWidth = 6.7;
+    }
+    iconL = screen.width - 1.82 + 0.056 * (digitsH - 11);
     return Container(
       // Midnight blue for slop when aspect ratio not matched
       alignment: Alignment.center,
@@ -164,12 +179,12 @@ class MainScreen extends OrientedScreen {
           children: [
             screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
                 CustomPaint(painter: DrawnBackground(screen))),
-            screen.box(Rect.fromLTWH(screen.width - 1.82, 0.65, 0.94, 0.94),
+            screen.box(Rect.fromLTWH(iconL, 0.65, 0.94, 0.94),
                 _jrpnIcon()),
             screen.box(
-                const Rect.fromLTWH(
-                    2.0, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak),
-                LcdDisplay(controller.model, _showMenu)),
+                Rect.fromLTWH(
+                    lcdLeft, 0.6, lcdWidth, 1.5 * LcdDisplay.heightTweak),
+                LcdDisplay(controller.model, _showMenu, digitsH)),
             ...controller
                 .getLandscapeButtonFactory(context, screen)
                 .buildButtons(Rect.fromLTRB(
