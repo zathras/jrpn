@@ -1218,7 +1218,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     return readFromPersistentStorage();
   }
 
-  Future<void> writeToPersistentStorage({ bool onlyIfNeeded = false }) async {
+  Future<void> writeToPersistentStorage({bool onlyIfNeeded = false}) async {
     // We could query needsSave here, but this is called infrequently.
     // A full audit to make sure needsSave is always updated would be needed
     // to restore the query here.

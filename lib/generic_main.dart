@@ -852,9 +852,8 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   late void Function(void) _uiChangeObserver;
 
   JrpnState() {
-    _appLifecycleListener = AppLifecycleListener(
-      onExitRequested: exitRequested
-    );
+    _appLifecycleListener =
+        AppLifecycleListener(onExitRequested: exitRequested);
   }
 
   Controller get controller => widget.controller;

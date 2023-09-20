@@ -63,7 +63,8 @@ class LcdDisplay extends StatefulWidget {
   final int digitsH;
   static const double heightTweak = 0.90;
 
-  LcdDisplay(this.model, this.showMenu, this.digitsH, {Key? key}) : super(key: key) {
+  LcdDisplay(this.model, this.showMenu, this.digitsH, {Key? key})
+      : super(key: key) {
     assert(digitsH >= 11 && digitsH <= 18);
     // 34 = 16 bit binary number with " b".  Above 16 bits, we scale the
     // digits.
@@ -108,7 +109,8 @@ class _LcdDisplayState extends State<LcdDisplay> {
                 _tapOffset = details.globalPosition,
             onTap: () => unawaited(widget.showMenu(context, _tapOffset)),
             child: CustomPaint(
-                painter: _DisplayPainter(_contents, widget.model.settings, widget.digitsH))));
+                painter: _DisplayPainter(
+                    _contents, widget.model.settings, widget.digitsH))));
   }
 }
 

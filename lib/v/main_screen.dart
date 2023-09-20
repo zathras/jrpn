@@ -179,8 +179,7 @@ class MainScreen extends OrientedScreen {
           children: [
             screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
                 CustomPaint(painter: DrawnBackground(screen))),
-            screen.box(Rect.fromLTWH(iconL, 0.65, 0.94, 0.94),
-                _jrpnIcon()),
+            screen.box(Rect.fromLTWH(iconL, 0.65, 0.94, 0.94), _jrpnIcon()),
             screen.box(
                 Rect.fromLTWH(
                     lcdLeft, 0.6, lcdWidth, 1.5 * LcdDisplay.heightTweak),
