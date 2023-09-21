@@ -230,7 +230,11 @@ class MainScreen extends OrientedScreen {
       try {
         cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
       } catch (e) {
-        return showErrorDialog(context, 'Error accessing clipboard', e);
+        if (jrpnState.mounted) {
+          return showErrorDialog(context, 'Error accessing clipboard', e);
+        } else {
+          return;
+        }
       }
       if (cd == null || cd == '') {
         if (jrpnState.mounted) {
@@ -726,18 +730,31 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                 ])),
               ]
             : []),
-        CheckedPopupMenuItem(
-            checked: widget.controller.menus15C
-                ? !settings.windowEnabled
-                : settings.windowEnabled,
-            value: () {
-              settings.windowEnabled = !settings.windowEnabled;
-              unawaited(widget.app.model.writeToPersistentStorage());
-              display.update();
-            },
-            child: Text(widget.controller.menus15C
-                ? 'Display Long Numbers'
-                : 'Enable Window')),
+        PopupMenuItem(
+            child: Row(children: [
+          DropdownButton(
+              value: settings.longNumbers,
+              onChanged: (LongNumbersSetting? v) {
+                if (v != null) {
+                  settings.longNumbers = v;
+                  unawaited(widget.app.model.writeToPersistentStorage());
+                  display.update();
+                  Navigator.pop(context, () {});
+                }
+              },
+              items: [
+                DropdownMenuItem(
+                    value: LongNumbersSetting.window,
+                    child: Text(
+                        widget.controller.menus15C ? 'Disable' : 'Window')),
+                DropdownMenuItem(
+                    value: LongNumbersSetting.growLCD, child: Text('Grow LCD')),
+                DropdownMenuItem(
+                    value: LongNumbersSetting.shrinkDigits,
+                    child: Text('Shrink Digits')),
+              ]),
+          const Text('    Long\n    Numbers')
+        ])),
         ...(widget.controller.menus15C
             ? []
             : [
@@ -1021,7 +1038,11 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
     try {
       cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
     } catch (e) {
-      return showErrorDialog(context, 'Error accessing clipboard', e);
+      if (mounted) {
+        return showErrorDialog(context, 'Error accessing clipboard', e);
+      } else {
+        return;
+      }
     }
     if (cd == null) {
       widget.app.controller.showMessage('bad c1ip ');
@@ -1215,7 +1236,11 @@ class __FileReadMenuState extends State<_FileReadMenu> {
     try {
       cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
     } catch (e) {
-      return showErrorDialog(context, 'Error accessing clipboard', e);
+      if (mounted) {
+        return showErrorDialog(context, 'Error accessing clipboard', e);
+      } else {
+        return;
+      }
     }
     if (cd == null) {
       widget.app.controller.showMessage('bad c1ip ');

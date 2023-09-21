@@ -209,7 +209,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   @override
   LcdContents selfTestContents() => LcdContents(
       hideComplement: false,
-      windowEnabled: false,
+      longNumbers: LongNumbersSetting.window,
       mainText: '-8,8,8,8,8,8,8,8,8,8,',
       cFlag: false,
       complexFlag: true,

@@ -57,9 +57,9 @@ class LcdDisplay extends StatefulWidget {
   final Model model;
   final Future<void> Function(BuildContext, Offset) showMenu;
 
-  /**
-   * Max # of digits horizontally, including sign and, e.g., " h".
-   */
+  ///
+  /// Max # of digits horizontally, including sign and, e.g., " h".
+  ///
   final int digitsH;
   static const double heightTweak = 0.90;
 

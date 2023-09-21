@@ -167,7 +167,7 @@ class Model16 extends Model<Operation> {
   @override
   LcdContents selfTestContents() => LcdContents(
       hideComplement: false,
-      windowEnabled: false,
+      longNumbers: LongNumbersSetting.window,
       mainText: '-8,8,8,8,8,8,8,8,8,8,',
       cFlag: true,
       complexFlag: false,

@@ -74,7 +74,7 @@ class LcdContents {
   final bool gFlag;
   final bool prgmFlag;
   final bool rightJustify;
-  final bool windowEnabled;
+  final LongNumbersSetting longNumbers;
   final bool euroComma;
   final bool hideComplement;
   final int? wordSize;
@@ -93,7 +93,7 @@ class LcdContents {
       required this.gFlag,
       required this.prgmFlag,
       required this.rightJustify,
-      required this.windowEnabled,
+      required this.longNumbers,
       required this.euroComma,
       required this.hideComplement,
       required this.wordSize,
@@ -113,7 +113,7 @@ class LcdContents {
         gFlag = false,
         prgmFlag = false,
         rightJustify = false,
-        windowEnabled = false,
+        longNumbers = LongNumbersSetting.window,
         euroComma = false,
         hideComplement = false,
         wordSize = null,
@@ -132,7 +132,7 @@ class LcdContents {
         complexFlag = false,
         gFlag = false,
         prgmFlag = false,
-        windowEnabled = false,
+        longNumbers = LongNumbersSetting.window,
         euroComma = false,
         hideComplement = false,
         wordSize = null,
@@ -154,7 +154,7 @@ class LcdContents {
       euroComma == other.euroComma &&
       hideComplement == other.hideComplement &&
       wordSize == other.wordSize &&
-      windowEnabled == other.windowEnabled &&
+      longNumbers == other.longNumbers &&
       complexFlag == other.complexFlag &&
       trigMode == other.trigMode &&
       userMode == other.userMode &&
@@ -186,13 +186,15 @@ enum OrientationSetting { auto, portrait, landscape }
 
 enum KeyFeedbackSetting { platform, click, haptic, both, none }
 
+enum LongNumbersSetting { window, growLCD, shrinkDigits }
+
 ///
 /// User settings that control the calculator's appearance or behavior
 ///
 class Settings {
   final Model _model;
   final Observable<bool> menuEnabled = Observable(true);
-  bool _windowEnabled = true;
+  LongNumbersSetting _longNumbers = LongNumbersSetting.window;
   bool _euroComma = false;
   bool _hideComplement = false;
   bool _showWordSize = false;
@@ -233,7 +235,7 @@ class Settings {
 
   void _reset() {
     menuEnabled.value = true;
-    _windowEnabled = true;
+    _longNumbers = LongNumbersSetting.window;
     _euroComma = false;
     _hideComplement = false;
     _showWordSize = false;
@@ -270,14 +272,18 @@ class Settings {
   }
 
   ///
-  /// Should the window functions be enabled?  If not, we just shrink the
-  /// digits when a number is too big.
+  /// How to display a long number.  "Window" is the 16c functionality
+  /// that shows a partial number.  On the 15C, it means "keep to an
+  /// 11 digit display," which makes it impossible to display,
+  /// e.g. 9.999999999 e99
   ///
-  bool get windowEnabled => _windowEnabled;
-  set windowEnabled(bool v) {
-    _windowEnabled = v;
+  LongNumbersSetting get longNumbers => _longNumbers;
+  set longNumbers(LongNumbersSetting v) {
+    _longNumbers = v;
     _model.needsSave = true;
   }
+
+  bool get windowLongNumbers => _longNumbers == LongNumbersSetting.window;
 
   ///
   /// Should we show numbers Euro-style, with commas instead of periods
@@ -415,7 +421,9 @@ class Settings {
   Map<String, dynamic> toJson() {
     final r = <String, dynamic>{
       'menuEnabled': menuEnabled.value,
-      'windowEnabled': _windowEnabled,
+      'windowEnabled': _longNumbers ==
+          LongNumbersSetting.window, // For backwards compatibility
+      'longNumbers': _longNumbers.index,
       'euroComma': _euroComma,
       'showAccelerators': showAccelerators.value,
       'systemOverlaysDisabled': systemOverlaysDisabled,
@@ -461,7 +469,16 @@ class Settings {
   ///
   void decodeJson(Map<String, dynamic> json) {
     menuEnabled.value = json['menuEnabled'] as bool;
-    _windowEnabled = json['windowEnabled'] as bool;
+    final longNumbers = json['longNumbers'] as int?;
+    if (longNumbers == null) {
+      // Old settings
+      final windowEnabled = json['windowEnabled'] as bool;
+      _longNumbers = windowEnabled
+          ? LongNumbersSetting.window
+          : LongNumbersSetting.growLCD;
+    } else {
+      _longNumbers = LongNumbersSetting.values[longNumbers];
+    }
     _euroComma = json['euroComma'] as bool;
     _hideComplement = json['hideComplement'] as bool? ?? false;
     _showWordSize = json['showWordSize'] as bool? ?? false;
@@ -573,9 +590,9 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   @override
   BigInt get minInt => _integerSignMode.minValue(this);
 
-  /***
-   * Float mode includes complex mode
-   */
+  ///
+  /// Float mode includes complex mode
+  ///
   @override
   bool get isFloatMode => displayMode.isFloatMode;
 
@@ -1030,6 +1047,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Value? tryParseValue(String s) => displayMode.tryParse(s, this);
 
   LcdContents _newLcdContents({bool disableWindow = false}) {
+    // disableWindow is used for the clear-prefix extension to the 16C,
+    // which temporarily disables windowing, if enabled.
     return LcdContents(
         mainText:
             disableWindow ? display.currentWithoutWindow : display.current,
@@ -1043,12 +1062,14 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         gFlag: gFlag,
         prgmFlag: prgmFlag,
         rightJustify: displayMode.rightJustify,
-        windowEnabled: disableWindow ? false : settings.windowEnabled,
+        longNumbers:
+            disableWindow ? LongNumbersSetting.growLCD : settings.longNumbers,
         euroComma: settings.euroComma,
         wordSize: settings.showWordSize ? wordSize : null,
         hideComplement: settings.hideComplement);
   }
 
+  // Used for short messages
   LcdContents _newLcdContentsJustDigits() {
     return LcdContents(
         mainText: display.current,
@@ -1060,7 +1081,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         gFlag: false,
         prgmFlag: false,
         rightJustify: false,
-        windowEnabled: false,
+        longNumbers: LongNumbersSetting.window,
         euroComma: false,
         hideComplement: false,
         wordSize: null,
@@ -1515,7 +1536,7 @@ class DisplayModel {
       } else {
         return ' $_current';
       }
-    } else if (model.settings.windowEnabled) {
+    } else if (model.settings.windowLongNumbers) {
       final int maxWindow = ((_numDigits - 1) ~/ 8) * 8;
       if (_window > maxWindow) {
         _window = maxWindow;

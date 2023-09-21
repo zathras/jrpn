@@ -362,9 +362,6 @@ class _DecimalMode extends IntegerDisplayMode {
   }
 
   @override
-  formatUnsigned(Value v, Model m) => super.formatUnsigned(v, m);
-
-  @override
   String format(Value v, Model m) {
     if (m.signMode == SignMode.unsigned) {
       return super.format(v, m);
@@ -457,7 +454,7 @@ class _FloatMode extends DisplayMode {
   /// exponent with a sign, like "E+07'.
   @override
   String format(Value v, Model m) => addCommas(
-      _formatter.format(v, m.settings.windowEnabled),
+      _formatter.format(v, m.settings.windowLongNumbers),
       m.settings.integerModeCommas);
 
   @override
