@@ -143,7 +143,7 @@ class MainScreen extends OrientedScreen {
               screen.box(
                   const Rect.fromLTWH(
                       0.63, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak),
-                  LcdDisplay(controller.model, _showMenu, 11)),
+                  LcdDisplay(controller.model, _showMenu, 11, jrpnState)),
               ...controller
                   .getPortraitButtonFactory(context, screen)
                   .buildButtons(Rect.fromLTRB(
@@ -154,20 +154,14 @@ class MainScreen extends OrientedScreen {
 
   @override
   Widget buildLandscape(BuildContext context, final ScreenPositioner screen) {
-    final double lcdLeft;
-    final double lcdWidth;
-    final double iconL;
-    int digitsH = 11;
-    final bool expand = false;
-    if (expand) {
-      lcdLeft = 0.53;
-      lcdWidth = 10.53;
-      digitsH = 18;
-    } else {
-      lcdLeft = 2.0;
-      lcdWidth = 6.7;
-    }
-    iconL = screen.width - 1.82 + 0.056 * (digitsH - 11);
+    int digitsH = controller.model.display.lcdDigits;
+    // Over 18 digits, we shrink the font.  18 is enough for
+    // 16 hex digits, which fits a 64 bit number
+    assert(digitsH >= 11 && digitsH <= 18);
+    final expander = (digitsH - 11) / 7;
+    final lcdLeft = 2.0 - 1.47 * expander;
+    final lcdWidth = 6.7 + 3.83 * expander;
+    final iconL = screen.width - 1.82 + 0.056 * (digitsH - 11);
     return Container(
       // Midnight blue for slop when aspect ratio not matched
       alignment: Alignment.center,
@@ -183,7 +177,7 @@ class MainScreen extends OrientedScreen {
             screen.box(
                 Rect.fromLTWH(
                     lcdLeft, 0.6, lcdWidth, 1.5 * LcdDisplay.heightTweak),
-                LcdDisplay(controller.model, _showMenu, digitsH)),
+                LcdDisplay(controller.model, _showMenu, digitsH, jrpnState)),
             ...controller
                 .getLandscapeButtonFactory(context, screen)
                 .buildButtons(Rect.fromLTRB(

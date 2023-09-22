@@ -72,6 +72,7 @@ abstract class DisplayMode {
   /// Put calculator in floating-point mode, displaying fractionDigits
   int get radix;
   int get commaDistance;
+  int maxDisplayDigits(int wordSize, IntegerSignMode signMode);
 
   Value? tryParse(String s, NumStatus m);
 
@@ -295,6 +296,11 @@ class _HexMode extends _Pow2IntegerMode {
 
   @override
   String get _jsonName => 'h';
+
+  @override
+  int maxDisplayDigits(int wordSize, IntegerSignMode signMode) =>
+      (wordSize + 3) ~/ 4 + 2;
+  // "f h" is 4 bits, and takes 3 LCD digits
 }
 
 class _OctalMode extends _Pow2IntegerMode {
@@ -312,6 +318,11 @@ class _OctalMode extends _Pow2IntegerMode {
 
   @override
   String get _jsonName => 'o';
+
+  @override
+  int maxDisplayDigits(int wordSize, IntegerSignMode signMode) =>
+      (wordSize + 2) ~/ 3 + 2;
+  // "7 o" is 3 bits, and takes 3 LCD digits
 }
 
 class _BinaryMode extends _Pow2IntegerMode {
@@ -329,6 +340,10 @@ class _BinaryMode extends _Pow2IntegerMode {
 
   @override
   String get _jsonName => 'b';
+
+  @override
+  int maxDisplayDigits(int wordSize, IntegerSignMode signMode) => wordSize + 2;
+  // "1 b" is 3 bits, and takes 3 LCD digits
 }
 
 class _DecimalMode extends IntegerDisplayMode {
@@ -376,6 +391,18 @@ class _DecimalMode extends IntegerDisplayMode {
 
   @override
   String get _jsonName => 'd';
+
+  @override
+  int maxDisplayDigits(int wordSize, IntegerSignMode signMode) {
+    const log2Of10 = 3.3219280948873626; // base 2 log(10)
+    if (signMode.isUnsigned) {
+      return 2 + (wordSize / log2Of10).ceil();
+      // I verified that this formula works for wordSizes from 1 to 64,
+      // with no roundoff problems.  The " d" takes two LCD positions.
+    } else {
+      return 3 + ((wordSize - 1) / log2Of10).ceil();
+    }
+  }
 }
 
 class _FloatMode extends DisplayMode {
@@ -478,6 +505,10 @@ class _FloatMode extends DisplayMode {
     }
     return _formatter.round(x);
   }
+
+  @override
+  int maxDisplayDigits(int wordSize, IntegerSignMode signMode) =>
+      _formatter.maxDisplayDigits;
 }
 
 class _ComplexMode extends _FloatMode {
@@ -503,6 +534,11 @@ abstract class FloatFormatter {
   int get fractionDigits;
 
   static final int _ascii0 = '0'.codeUnitAt(0);
+
+  int get maxDisplayDigits => max(11, fractionDigits + 4);
+  // It's always OK to claim 11, as that's the minumum number of LCD digits.
+  // Worst case is sci/eng format... -1.234567891-11 takes 14 LCD digits.
+  // Fixed formatting becomes scientific for big enough numbers.
 
   ///
   /// Format the unsigned part of the mantissa to the given number of digits.

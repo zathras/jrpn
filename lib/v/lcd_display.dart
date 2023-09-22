@@ -62,8 +62,10 @@ class LcdDisplay extends StatefulWidget {
   ///
   final int digitsH;
   static const double heightTweak = 0.90;
+  final State jrpnState; // To repaint entire UI when LCD size changes
 
-  LcdDisplay(this.model, this.showMenu, this.digitsH, {Key? key})
+  LcdDisplay(this.model, this.showMenu, this.digitsH, this.jrpnState,
+      {Key? key})
       : super(key: key) {
     assert(digitsH >= 11 && digitsH <= 18);
     // 34 = 16 bit binary number with " b".  Above 16 bits, we scale the
@@ -75,12 +77,13 @@ class LcdDisplay extends StatefulWidget {
 }
 
 class _LcdDisplayState extends State<LcdDisplay> {
-  LcdContents _contents = LcdContents.blank();
+  late LcdContents _contents;
   Offset _tapOffset = const Offset(0, 0);
 
   @override
   void initState() {
     super.initState();
+    _contents = LcdContents.blank(lcdDigits: widget.model.display.lcdDigits);
     widget.model.display.addListener(_update);
   }
 
@@ -91,9 +94,16 @@ class _LcdDisplayState extends State<LcdDisplay> {
   }
 
   void _update(final LcdContents next) {
-    setState(() {
-      _contents = next;
-    });
+    if (_contents.lcdDigits != next.lcdDigits) {
+      // Repaint whole UI, since the display size changed
+      widget.jrpnState.setState(() {
+        _contents = next;
+      });
+    } else {
+      setState(() {
+        _contents = next;
+      });
+    }
   }
 
   @override

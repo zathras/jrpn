@@ -128,6 +128,8 @@ abstract class IntegerSignMode extends SignMode {
       return bigLabel.toInt();
     }
   }
+
+  bool get isUnsigned => false;
 }
 
 class _OnesComplement extends IntegerSignMode {
@@ -367,6 +369,9 @@ class _Unsigned extends IntegerSignMode {
 
   @override
   bool get doesSignExtension => false;
+
+  @override
+  bool get isUnsigned => true;
 }
 
 class _Float extends SignMode {

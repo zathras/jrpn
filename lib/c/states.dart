@@ -1176,7 +1176,8 @@ class OnOffKeyPressed extends DoNothing {
             // make a bit of sense if you're turning a calculator off, but
             // whatever.)  So, on platforms were we can't go away, we blank
             // the LCD display and wait for the ON button to be pressed.
-            model.display.show(LcdContents.blank());
+            model.display
+                .show(LcdContents.blank(lcdDigits: model.display.lcdDigits));
             changeState(CalculatorOff(controller));
           }
         }

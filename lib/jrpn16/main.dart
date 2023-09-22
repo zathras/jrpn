@@ -181,7 +181,8 @@ class Model16 extends Model<Operation> {
       shift: ShiftKey.g,
       trigMode: TrigMode.deg,
       userMode: false,
-      extraShift: ShiftKey.f);
+      extraShift: ShiftKey.f,
+      lcdDigits: 11);
 
   @override
   set isComplexMode(bool v) {}

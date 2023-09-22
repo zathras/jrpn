@@ -80,6 +80,7 @@ class LcdContents {
   final int? wordSize;
   final TrigMode trigMode;
   final bool userMode;
+  final int lcdDigits;
 
   Timer? _myTimer;
 
@@ -99,10 +100,11 @@ class LcdContents {
       required this.wordSize,
       required this.trigMode,
       required this.userMode,
+      required this.lcdDigits,
       this.extraShift})
       : blank = false;
 
-  LcdContents.blank({Timer? timer})
+  LcdContents.blank({Timer? timer, required this.lcdDigits})
       : blank = true,
         mainText = '',
         shift = ShiftKey.none,
@@ -122,7 +124,7 @@ class LcdContents {
         _myTimer = timer,
         extraShift = null;
 
-  LcdContents.powerOn(String text, this.rightJustify)
+  LcdContents.powerOn(String text, this.rightJustify, this.lcdDigits)
       : mainText = rightJustify ? text : ' $text',
         blank = false,
         shift = ShiftKey.none,
@@ -158,7 +160,8 @@ class LcdContents {
       complexFlag == other.complexFlag &&
       trigMode == other.trigMode &&
       userMode == other.userMode &&
-      extraShift == other.extraShift;
+      extraShift == other.extraShift &&
+      lcdDigits == other.lcdDigits;
 
   @override
   String toString() => blank
@@ -536,7 +539,7 @@ abstract class NumStatus {
 /// structure.  Extended by Model15 and Model16.
 ///
 abstract class Model<OT extends ProgramOperation> implements NumStatus {
-  late final display = DisplayModel(this);
+  late final DisplayModel display;
   late final settings = Settings(this);
   @protected
   bool _needsSave = false;
@@ -553,7 +556,9 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Model(this._displayMode, this._wordSize, int numFlags)
       : _flags = List<bool>.filled(numFlags, false, growable: false),
         _wordMask = (BigInt.one << _wordSize) - BigInt.one,
-        _signMask = BigInt.one << (_wordSize - 1);
+        _signMask = BigInt.one << (_wordSize - 1) {
+    display = DisplayModel(this);
+  }
 
   /// The list of "logical" keys.  This has nothing to do with the UI;
   /// The order of the operations in this list determines the
@@ -881,6 +886,19 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     needsSave = true;
   }
 
+  ///
+  /// The maximum number of LCD digits that can be displayed, given the
+  /// current settings.  "-1 07" (-1e7) takes up 5 LCD positions, for
+  /// example, and "1 b" takes three.
+  ///
+  int get maxDisplayDigits {
+    if (settings.longNumbers != LongNumbersSetting.growLCD) {
+      return 11;
+    } else {
+      return max(11, displayMode.maxDisplayDigits(wordSize, _integerSignMode));
+    }
+  }
+
   ProgramMemory<OT> get program => memory.program;
 
   SignMode get signMode => displayMode.signMode(_integerSignMode);
@@ -1066,7 +1084,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
             disableWindow ? LongNumbersSetting.growLCD : settings.longNumbers,
         euroComma: settings.euroComma,
         wordSize: settings.showWordSize ? wordSize : null,
-        hideComplement: settings.hideComplement);
+        hideComplement: settings.hideComplement,
+        lcdDigits: display.lcdDigits);
   }
 
   // Used for short messages
@@ -1087,7 +1106,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         wordSize: null,
         trigMode: TrigMode.deg,
         userMode: false,
-        extraShift: null);
+        extraShift: null,
+        lcdDigits: 11);
   }
 
   ///
@@ -1506,16 +1526,19 @@ class DisplayModel {
   String _current;
   int _window = 0; // Number of digits scrolled off the right side
   bool _showingX = true;
-  final Observable<LcdContents> _lastShown;
+  late final Observable<LcdContents> _lastShown;
   bool get ignoreUpdates => model.displayDisabled;
 
   DisplayModel(Model model)
       : this._p(model, model.displayMode.format(model.x, model));
 
-  DisplayModel._p(this.model, String initial)
-      : _current = initial,
-        _lastShown =
-            Observable(LcdContents.powerOn(initial, !model.isFloatMode));
+  DisplayModel._p(this.model, String initial) : _current = initial {
+    _lastShown =
+        Observable(LcdContents.powerOn(initial, !model.isFloatMode, lcdDigits));
+  }
+
+  /// The number of LCD digits in our display, from 11 to 18 inclusive.
+  int get lcdDigits => min(model.maxDisplayDigits, 18);
 
   set current(String v) {
     _current = v;
@@ -1641,7 +1664,7 @@ class DisplayModel {
         : model._newLcdContents(disableWindow: disableWindow);
     if (blink.blinking || model.errorBlink) {
       bool on = true;
-      final blank = LcdContents.blank();
+      final blank = LcdContents.blank(lcdDigits: lcdDigits);
       final Duration d;
       if (blink.blinking) {
         d = const Duration(milliseconds: 400);
@@ -1661,7 +1684,7 @@ class DisplayModel {
         show(c);
       });
       c._myTimer = t;
-      show(LcdContents.blank().._myTimer = t);
+      show(LcdContents.blank(lcdDigits: lcdDigits).._myTimer = t);
     } else {
       c._myTimer = null;
       show(c);
