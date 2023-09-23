@@ -752,6 +752,7 @@ Public License instead of this License.  But first, please read
 /// fashioned way.
 const applicationVersion = '2.1.7';
 final Uri applicationWebAddress = Uri.https('jrpn.jovial.com', '');
+final Uri applicationHelpAddress = Uri.https('jrpn.jovial.com', 'help.html');
 final Uri applicationIssueAddress =
     Uri.https('github.com', 'zathras/jrpn/issues');
 

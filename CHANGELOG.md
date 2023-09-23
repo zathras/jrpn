@@ -1,3 +1,8 @@
+Version 2.1.8
+  * Add ability to grow LCD and, on the 16C, show large binary numbers on
+    two lines.
+  * Add user guide to explain menu options.
+
 Version 2.1.7
   * 16C:  More realistic signed decimal integer mode number entry on overflow (Issue 53)
   * Desktop:  Autosave on window close via new API (Issue 46)

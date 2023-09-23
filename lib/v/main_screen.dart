@@ -538,6 +538,13 @@ class _HelpMenu extends StatelessWidget {
         PopupMenuItem(
             value: () {
               Navigator.pop<void>(context);
+              unawaited(launchUrl(applicationHelpAddress,
+                  mode: LaunchMode.externalApplication));
+            },
+            child: const Text('User Guide')),
+        PopupMenuItem(
+            value: () {
+              Navigator.pop<void>(context);
               unawaited(
                   showDialog(context: context, builder: _showNonWarranty));
             },

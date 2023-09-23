@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
+<title>
+JRPN Help
+</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+p {font-size: 20px; margin-left: 4%; margin-right: 5%}
+li {font-size: 20px; margin-left: 4%; margin-right: 10%; margin-bottom: 5px}
+li:last-child { margin-bottom: 0px; }
+blockquote {margin-left: 10%; margin-right: 12%}
+</style>
+</head>
+<body style="background-color: #ffffff">
+<p style="text-align: center; font-size: x-large; font-weight: bold;">
+    JRPN 15C/16C - User Guide
+</p>
+<p>
+This is the user guide for JRPN 15C and JRPN 16C calculator 
+simulators.  The main page is
+<a href="index.html">here</a>.
+<p>
+Both simulators try to be a faithful implementation of the behavior
+of the original 1980s calculator.  For the most part, the user guide
+for the original calculators applies.  It can readily be found on the
+internet.  Those guides aren't copied here because I'm unsure of
+copyright, and JRPN is a clean-room implementation.
+<p>
+This guide concentrates on some slight extensions, and various settings
+that are part of the application.  Be aware that the calculation results
+in floating point modes can be expected to diverge somewhat from the
+original calculator.  JRPN maintains floating-point numbers internally
+as a binary-coded decimal value with a ten digit mantissa, like the
+original.  However, for many calculations, the value is converted into
+a standard 64 bit double, then the calculation is performed and the result
+is converted back.  Other operations, like the 15C's integrate and solve
+functions, almost certainly use a different algorithm than the
+original.  With this said,
+results are believed to be generally compatible, and in some cases slightly
+more accurate.
+
+<h2>The ON Button</h2>
+<p>
+The original calculators let you access special functions by simultaneously
+pressing the ON butten and some other buttons.  In the simulator, press the
+ON button once to access these functions; pressing it a second time quits
+the program.  The other "hidden" features are swapping commas and decimal
+points ("Euro mode"), a calculator reset, and a calculator self-test.
+
+<h2>Settings</h2>
+<p>
+Note that some settings are only available on mobile platforms
+(Andriod and IOS).
+<ul>
+    <li><b>Show Menu Icon</b> - If unchecked, gets rid of the 
+        Android-style dots that provide a visual cue that a menu
+        is there.  In this mode, you still access the menu by pressing
+        in the upper-right hand corner of the UI.
+    </li>
+    <li><b>Disable System UI Overlays</b> (mobile) - Hides Android/IOS
+        system UI elements, so you just see the calculator.</li>
+    <li><b>Orientation</b> (mobile) - Lets you lock the orientation to
+        portrait or landscape.  Personally, I leave this locked to
+        landscape, since this simulates the real calculator.</li>
+    <li><b>Key Feedback</b> - Lets you force a key feedback different
+        than the platform default.  For example, on Android the default
+        platform key feedback is a click, but I prefer haptic feedback.</li>
+    <li><b>Long Numbers</b> - Controls how long numbers are displayed,
+        like "123456789ABCDEF0 h" or "-1.234567891 27".  The default
+        is to behave like the original calculator.  In landscape mode,
+        the LCD display can be stretched enough to fit a 64 bit hex
+        number.  The digit size ca also be shrunk to fit more in.</li>
+    <li><b>Show Accelerators</b> - Shows keyboard accelerators.</li>
+    <li><b>System Settings, ms/Program Instruction</b> - lets you control
+        how fast programs execute.  By default, the calculator delays for
+        50ms after each instruction, which generally yields performance about
+        3x the original in my experience.</li>
+    <li><b>System Settings, Colors</b> - lets you tweak various colors in
+        the UI, by entering a hex RGB value.  For example, if you like a
+        slightly different shade of gold for the F key, you can set it here.
+        </li>
+    <li><b>System Settings, Debug Log</b> - captures debug information,
+        including a record of keypresses, in an internal memory buffer.
+        This information is included if you copy the calculator state
+        to the clipboard in the File menu, and might be useful for a
+        bug report.  To date, this has never been necessary.</li>
+</ul>
+
+<h2>File Menu - Read</h2>
+<ul>
+    <li><b>Restore Starting Stated</b> - Restores the calculator to its
+        last saved state.</li>
+    <li><b>Read from Clipboard</b> - Reads calculator state from the
+        clipboard.  This can be used to copy it from JRPN on another
+        device, by sending the string and copying it to the clipboard.</li>
+
+</ul>
+
+<h2>File Menu - Save</h2>
+<ul>
+    <li><b>Save as Starting State</b> - saves the current calculator state.
+        The calculator does this automatically when it's shut down or when 
+        you turn it off using the ON button, so normally this isn't needed.</li>
+    <li><b>Copy to Clipboard</b> - Copies the current calculator state to
+        the clipboard.  You can use this to send it to another copy of JRPN
+        on a different device. </li>
+    <li><b>Export to Application</b> - Like Copy to Clipboard, but sends
+        the data to another program, e.g. using an Android intent.</li>
+    <li><b>Copy URL to Clipboard</b> - Like the previous two, but encodes
+        the state as a URL that can be used to launch the web version of
+        JRPN.</li>
+</ul>
+
+<h2>File Menu - Import/Export Program</h2>
+<p>
+These menu options let you import and export a human-readable
+program listing.  It may be possible to use this to send and receive
+programs to/from other HP 15C/16C simulators.  The format is based
+on the documentation from
+<a href="https://hp-15c.homepage.t-online.de/homepage.htm">Torsten's
+HP 15C Simulator</a>.  I added this feature at Torsten's request.
+
+<h2>Reset All</h2>
+<p>
+Restores the simulator to its default settings.
+
+<p style="float: right; align-items: center; font-style: italic;">
+<a href="http://en.wikipedia.org/wiki/Vi"><img alt="*" src="vi.powered.gif"></a>
+<p style="float: right; align-items: center; font-style: italic;">
+<a href="https://bill.jovial.com/">Bill Foote</a>&nbsp;&nbsp;&nbsp;&nbsp;
+</body>
+</html>
