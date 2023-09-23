@@ -56,21 +56,34 @@ import '../m/model.dart';
 class LcdDisplay extends StatefulWidget {
   final Model model;
   final Future<void> Function(BuildContext, Offset) showMenu;
-  static const double heightTweak = 0.90;
 
-  const LcdDisplay(this.model, this.showMenu, {Key? key}) : super(key: key);
+  ///
+  /// Max # of digits horizontally, including sign and, e.g., " h".
+  ///
+  final int digitsH;
+  static const double heightTweak = 0.90;
+  final State jrpnState; // To repaint entire UI when LCD size changes
+
+  LcdDisplay(this.model, this.showMenu, this.digitsH, this.jrpnState,
+      {Key? key})
+      : super(key: key) {
+    assert(digitsH >= 11 && digitsH <= 18);
+    // 34 = 16 bit binary number with " b".  Above 16 bits, we scale the
+    // digits.
+  }
 
   @override
   State<LcdDisplay> createState() => _LcdDisplayState();
 }
 
 class _LcdDisplayState extends State<LcdDisplay> {
-  LcdContents _contents = LcdContents.blank();
+  late LcdContents _contents;
   Offset _tapOffset = const Offset(0, 0);
 
   @override
   void initState() {
     super.initState();
+    _contents = LcdContents.blank(lcdDigits: widget.model.display.lcdDigits);
     widget.model.display.addListener(_update);
   }
 
@@ -81,9 +94,16 @@ class _LcdDisplayState extends State<LcdDisplay> {
   }
 
   void _update(final LcdContents next) {
-    setState(() {
-      _contents = next;
-    });
+    if (_contents.lcdDigits != next.lcdDigits) {
+      // Repaint whole UI, since the display size changed
+      widget.jrpnState.setState(() {
+        _contents = next;
+      });
+    } else {
+      setState(() {
+        _contents = next;
+      });
+    }
   }
 
   @override
@@ -99,15 +119,17 @@ class _LcdDisplayState extends State<LcdDisplay> {
                 _tapOffset = details.globalPosition,
             onTap: () => unawaited(widget.showMenu(context, _tapOffset)),
             child: CustomPaint(
-                painter: _DisplayPainter(_contents, widget.model.settings))));
+                painter: _DisplayPainter(
+                    _contents, widget.model.settings, widget.digitsH))));
   }
 }
 
 class _DisplayPainter extends CustomPainter {
   LcdContents contents;
   Settings settings;
+  final int digitsH;
 
-  _DisplayPainter(this.contents, this.settings);
+  _DisplayPainter(this.contents, this.settings, this.digitsH);
 
   static const double heightTweak = LcdDisplay.heightTweak;
 
@@ -127,7 +149,12 @@ class _DisplayPainter extends CustomPainter {
       ..color = lcdBackground
       ..style = PaintingStyle.fill;
     // Note that, by default, we are not clipped to our size
-    final outlineW = size.width / 20;
+    final expander = (digitsH - 11) / (18 - 11);
+    // expander is a number between 0 and 1, inclusive, expressing how much
+    // we're expanding the LCD display.  0 means "no expansion", and 1
+    // means "full expansion", that is, space for 18 digits horizontally.
+    final outlineW = (size.width / 20) * (1 - 29 / 80 * expander);
+    // I got 29/80 by observing a running program.
     final outlineH = size.height / 20;
     final outlineR = Radius.circular(size.height / 15);
     canvas.drawRRect(
@@ -278,10 +305,12 @@ class _DisplayPainter extends CustomPainter {
     final double digitW = width / 11.5;
     double x = outlineW + digitW / 3;
     canvas.translate(x, y);
-    canvas.scale(width / (Segments.instance.width * 11.5));
+    final digitSpace = min(digitsH, 18) + 0.5;
+    // After 18, we start shrinking the font
+    canvas.scale(width / (Segments.instance.width * digitSpace));
     final digits = (contents.euroComma) ? Digit.euroDigits : Digit.digits;
     Digit.paint(canvas, contents.mainText, digits, lcdForeground,
-        rightJustify: contents.rightJustify);
+        rightJustify: contents.rightJustify, digitsH: digitsH);
     canvas.restore();
   }
 
@@ -357,7 +386,7 @@ class Digit {
 
   static void paint(
       Canvas c, String message, Map<int, Digit> digits, Color lcdForeground,
-      {required bool rightJustify}) {
+      {required bool rightJustify, required int digitsH}) {
     _paint.color = lcdForeground;
     final Iterable<Digit> values = message.codeUnits.map(((ch) {
       final d = digits[ch];
@@ -367,12 +396,12 @@ class Digit {
     }));
     int width =
         values.fold(0, (int count, Digit d) => d.noWidth ? count : count + 1);
-    if (rightJustify && width <= 11) {
+    if (rightJustify && width <= digitsH) {
       // Go one to the left of the first digit
-      c.translate(_s.width * (10 - width), 0);
+      c.translate(_s.width * (digitsH - 1 - width), 0);
     } else {
-      c.translate(0, Segments.h / 2);
-      final double sf = 11.0 / max(width, 11);
+      final double sf = digitsH / max(width, digitsH);
+      c.translate(22 * (sf - 1.0), Segments.h / 2);
       c.scale(sf);
       c.translate(-_s.width, -Segments.h / 2);
     }

@@ -209,7 +209,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   @override
   LcdContents selfTestContents() => LcdContents(
       hideComplement: false,
-      windowEnabled: false,
+      longNumbers: LongNumbersSetting.window,
       mainText: '-8,8,8,8,8,8,8,8,8,8,',
       cFlag: false,
       complexFlag: true,
@@ -223,7 +223,8 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
       shift: ShiftKey.g,
       trigMode: TrigMode.grad,
       userMode: true,
-      extraShift: ShiftKey.f);
+      extraShift: ShiftKey.f,
+      lcdDigits: 11);
 
   @override
   addStuffToSnapshot(StringBuffer buf) {

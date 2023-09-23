@@ -167,7 +167,7 @@ class Model16 extends Model<Operation> {
   @override
   LcdContents selfTestContents() => LcdContents(
       hideComplement: false,
-      windowEnabled: false,
+      longNumbers: LongNumbersSetting.window,
       mainText: '-8,8,8,8,8,8,8,8,8,8,',
       cFlag: true,
       complexFlag: false,
@@ -181,7 +181,8 @@ class Model16 extends Model<Operation> {
       shift: ShiftKey.g,
       trigMode: TrigMode.deg,
       userMode: false,
-      extraShift: ShiftKey.f);
+      extraShift: ShiftKey.f,
+      lcdDigits: 11);
 
   @override
   set isComplexMode(bool v) {}

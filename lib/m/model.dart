@@ -74,12 +74,13 @@ class LcdContents {
   final bool gFlag;
   final bool prgmFlag;
   final bool rightJustify;
-  final bool windowEnabled;
+  final LongNumbersSetting longNumbers;
   final bool euroComma;
   final bool hideComplement;
   final int? wordSize;
   final TrigMode trigMode;
   final bool userMode;
+  final int lcdDigits;
 
   Timer? _myTimer;
 
@@ -93,16 +94,17 @@ class LcdContents {
       required this.gFlag,
       required this.prgmFlag,
       required this.rightJustify,
-      required this.windowEnabled,
+      required this.longNumbers,
       required this.euroComma,
       required this.hideComplement,
       required this.wordSize,
       required this.trigMode,
       required this.userMode,
+      required this.lcdDigits,
       this.extraShift})
       : blank = false;
 
-  LcdContents.blank({Timer? timer})
+  LcdContents.blank({Timer? timer, required this.lcdDigits})
       : blank = true,
         mainText = '',
         shift = ShiftKey.none,
@@ -113,7 +115,7 @@ class LcdContents {
         gFlag = false,
         prgmFlag = false,
         rightJustify = false,
-        windowEnabled = false,
+        longNumbers = LongNumbersSetting.window,
         euroComma = false,
         hideComplement = false,
         wordSize = null,
@@ -122,7 +124,7 @@ class LcdContents {
         _myTimer = timer,
         extraShift = null;
 
-  LcdContents.powerOn(String text, this.rightJustify)
+  LcdContents.powerOn(String text, this.rightJustify, this.lcdDigits)
       : mainText = rightJustify ? text : ' $text',
         blank = false,
         shift = ShiftKey.none,
@@ -132,7 +134,7 @@ class LcdContents {
         complexFlag = false,
         gFlag = false,
         prgmFlag = false,
-        windowEnabled = false,
+        longNumbers = LongNumbersSetting.window,
         euroComma = false,
         hideComplement = false,
         wordSize = null,
@@ -154,11 +156,12 @@ class LcdContents {
       euroComma == other.euroComma &&
       hideComplement == other.hideComplement &&
       wordSize == other.wordSize &&
-      windowEnabled == other.windowEnabled &&
+      longNumbers == other.longNumbers &&
       complexFlag == other.complexFlag &&
       trigMode == other.trigMode &&
       userMode == other.userMode &&
-      extraShift == other.extraShift;
+      extraShift == other.extraShift &&
+      lcdDigits == other.lcdDigits;
 
   @override
   String toString() => blank
@@ -186,13 +189,15 @@ enum OrientationSetting { auto, portrait, landscape }
 
 enum KeyFeedbackSetting { platform, click, haptic, both, none }
 
+enum LongNumbersSetting { window, growLCD, shrinkDigits }
+
 ///
 /// User settings that control the calculator's appearance or behavior
 ///
 class Settings {
   final Model _model;
   final Observable<bool> menuEnabled = Observable(true);
-  bool _windowEnabled = true;
+  LongNumbersSetting _longNumbers = LongNumbersSetting.window;
   bool _euroComma = false;
   bool _hideComplement = false;
   bool _showWordSize = false;
@@ -233,7 +238,7 @@ class Settings {
 
   void _reset() {
     menuEnabled.value = true;
-    _windowEnabled = true;
+    _longNumbers = LongNumbersSetting.window;
     _euroComma = false;
     _hideComplement = false;
     _showWordSize = false;
@@ -270,14 +275,18 @@ class Settings {
   }
 
   ///
-  /// Should the window functions be enabled?  If not, we just shrink the
-  /// digits when a number is too big.
+  /// How to display a long number.  "Window" is the 16c functionality
+  /// that shows a partial number.  On the 15C, it means "keep to an
+  /// 11 digit display," which makes it impossible to display,
+  /// e.g. 9.999999999 e99
   ///
-  bool get windowEnabled => _windowEnabled;
-  set windowEnabled(bool v) {
-    _windowEnabled = v;
+  LongNumbersSetting get longNumbers => _longNumbers;
+  set longNumbers(LongNumbersSetting v) {
+    _longNumbers = v;
     _model.needsSave = true;
   }
+
+  bool get windowLongNumbers => _longNumbers == LongNumbersSetting.window;
 
   ///
   /// Should we show numbers Euro-style, with commas instead of periods
@@ -415,7 +424,9 @@ class Settings {
   Map<String, dynamic> toJson() {
     final r = <String, dynamic>{
       'menuEnabled': menuEnabled.value,
-      'windowEnabled': _windowEnabled,
+      'windowEnabled': _longNumbers ==
+          LongNumbersSetting.window, // For backwards compatibility
+      'longNumbers': _longNumbers.index,
       'euroComma': _euroComma,
       'showAccelerators': showAccelerators.value,
       'systemOverlaysDisabled': systemOverlaysDisabled,
@@ -461,7 +472,16 @@ class Settings {
   ///
   void decodeJson(Map<String, dynamic> json) {
     menuEnabled.value = json['menuEnabled'] as bool;
-    _windowEnabled = json['windowEnabled'] as bool;
+    final longNumbers = json['longNumbers'] as int?;
+    if (longNumbers == null) {
+      // Old settings
+      final windowEnabled = json['windowEnabled'] as bool;
+      _longNumbers = windowEnabled
+          ? LongNumbersSetting.window
+          : LongNumbersSetting.growLCD;
+    } else {
+      _longNumbers = LongNumbersSetting.values[longNumbers];
+    }
     _euroComma = json['euroComma'] as bool;
     _hideComplement = json['hideComplement'] as bool? ?? false;
     _showWordSize = json['showWordSize'] as bool? ?? false;
@@ -519,7 +539,7 @@ abstract class NumStatus {
 /// structure.  Extended by Model15 and Model16.
 ///
 abstract class Model<OT extends ProgramOperation> implements NumStatus {
-  late final display = DisplayModel(this);
+  late final DisplayModel display;
   late final settings = Settings(this);
   @protected
   bool _needsSave = false;
@@ -536,7 +556,9 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Model(this._displayMode, this._wordSize, int numFlags)
       : _flags = List<bool>.filled(numFlags, false, growable: false),
         _wordMask = (BigInt.one << _wordSize) - BigInt.one,
-        _signMask = BigInt.one << (_wordSize - 1);
+        _signMask = BigInt.one << (_wordSize - 1) {
+    display = DisplayModel(this);
+  }
 
   /// The list of "logical" keys.  This has nothing to do with the UI;
   /// The order of the operations in this list determines the
@@ -573,9 +595,9 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   @override
   BigInt get minInt => _integerSignMode.minValue(this);
 
-  /***
-   * Float mode includes complex mode
-   */
+  ///
+  /// Float mode includes complex mode
+  ///
   @override
   bool get isFloatMode => displayMode.isFloatMode;
 
@@ -864,6 +886,19 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     needsSave = true;
   }
 
+  ///
+  /// The maximum number of LCD digits that can be displayed, given the
+  /// current settings.  "-1 07" (-1e7) takes up 5 LCD positions, for
+  /// example, and "1 b" takes three.
+  ///
+  int get maxDisplayDigits {
+    if (settings.longNumbers != LongNumbersSetting.growLCD) {
+      return 11;
+    } else {
+      return max(11, displayMode.maxDisplayDigits(wordSize, _integerSignMode));
+    }
+  }
+
   ProgramMemory<OT> get program => memory.program;
 
   SignMode get signMode => displayMode.signMode(_integerSignMode);
@@ -1030,6 +1065,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Value? tryParseValue(String s) => displayMode.tryParse(s, this);
 
   LcdContents _newLcdContents({bool disableWindow = false}) {
+    // disableWindow is used for the clear-prefix extension to the 16C,
+    // which temporarily disables windowing, if enabled.
     return LcdContents(
         mainText:
             disableWindow ? display.currentWithoutWindow : display.current,
@@ -1043,12 +1080,15 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         gFlag: gFlag,
         prgmFlag: prgmFlag,
         rightJustify: displayMode.rightJustify,
-        windowEnabled: disableWindow ? false : settings.windowEnabled,
+        longNumbers:
+            disableWindow ? LongNumbersSetting.growLCD : settings.longNumbers,
         euroComma: settings.euroComma,
         wordSize: settings.showWordSize ? wordSize : null,
-        hideComplement: settings.hideComplement);
+        hideComplement: settings.hideComplement,
+        lcdDigits: display.lcdDigits);
   }
 
+  // Used for short messages
   LcdContents _newLcdContentsJustDigits() {
     return LcdContents(
         mainText: display.current,
@@ -1060,13 +1100,14 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         gFlag: false,
         prgmFlag: false,
         rightJustify: false,
-        windowEnabled: false,
+        longNumbers: LongNumbersSetting.window,
         euroComma: false,
         hideComplement: false,
         wordSize: null,
         trigMode: TrigMode.deg,
         userMode: false,
-        extraShift: null);
+        extraShift: null,
+        lcdDigits: 11);
   }
 
   ///
@@ -1218,7 +1259,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     return readFromPersistentStorage();
   }
 
-  Future<void> writeToPersistentStorage({ bool onlyIfNeeded = false }) async {
+  Future<void> writeToPersistentStorage({bool onlyIfNeeded = false}) async {
     // We could query needsSave here, but this is called infrequently.
     // A full audit to make sure needsSave is always updated would be needed
     // to restore the query here.
@@ -1485,16 +1526,19 @@ class DisplayModel {
   String _current;
   int _window = 0; // Number of digits scrolled off the right side
   bool _showingX = true;
-  final Observable<LcdContents> _lastShown;
+  late final Observable<LcdContents> _lastShown;
   bool get ignoreUpdates => model.displayDisabled;
 
   DisplayModel(Model model)
       : this._p(model, model.displayMode.format(model.x, model));
 
-  DisplayModel._p(this.model, String initial)
-      : _current = initial,
-        _lastShown =
-            Observable(LcdContents.powerOn(initial, !model.isFloatMode));
+  DisplayModel._p(this.model, String initial) : _current = initial {
+    _lastShown =
+        Observable(LcdContents.powerOn(initial, !model.isFloatMode, lcdDigits));
+  }
+
+  /// The number of LCD digits in our display, from 11 to 18 inclusive.
+  int get lcdDigits => min(model.maxDisplayDigits, 18);
 
   set current(String v) {
     _current = v;
@@ -1515,7 +1559,7 @@ class DisplayModel {
       } else {
         return ' $_current';
       }
-    } else if (model.settings.windowEnabled) {
+    } else if (model.settings.windowLongNumbers) {
       final int maxWindow = ((_numDigits - 1) ~/ 8) * 8;
       if (_window > maxWindow) {
         _window = maxWindow;
@@ -1620,7 +1664,7 @@ class DisplayModel {
         : model._newLcdContents(disableWindow: disableWindow);
     if (blink.blinking || model.errorBlink) {
       bool on = true;
-      final blank = LcdContents.blank();
+      final blank = LcdContents.blank(lcdDigits: lcdDigits);
       final Duration d;
       if (blink.blinking) {
         d = const Duration(milliseconds: 400);
@@ -1640,7 +1684,7 @@ class DisplayModel {
         show(c);
       });
       c._myTimer = t;
-      show(LcdContents.blank().._myTimer = t);
+      show(LcdContents.blank(lcdDigits: lcdDigits).._myTimer = t);
     } else {
       c._myTimer = null;
       show(c);

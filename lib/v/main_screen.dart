@@ -26,6 +26,7 @@ library view.main_screen;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
@@ -142,7 +143,7 @@ class MainScreen extends OrientedScreen {
               screen.box(
                   const Rect.fromLTWH(
                       0.63, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak),
-                  LcdDisplay(controller.model, _showMenu)),
+                  LcdDisplay(controller.model, _showMenu, 11, jrpnState)),
               ...controller
                   .getPortraitButtonFactory(context, screen)
                   .buildButtons(Rect.fromLTRB(
@@ -153,6 +154,14 @@ class MainScreen extends OrientedScreen {
 
   @override
   Widget buildLandscape(BuildContext context, final ScreenPositioner screen) {
+    int digitsH = controller.model.display.lcdDigits;
+    // Over 18 digits, we shrink the font.  18 is enough for
+    // 16 hex digits, which fits a 64 bit number
+    assert(digitsH >= 11 && digitsH <= 18);
+    final expander = (digitsH - 11) / 7;
+    final lcdLeft = 2.0 - 1.47 * expander;
+    final lcdWidth = 6.7 + 3.83 * expander;
+    final iconL = screen.width - 1.82 + 0.056 * (digitsH - 11);
     return Container(
       // Midnight blue for slop when aspect ratio not matched
       alignment: Alignment.center,
@@ -164,12 +173,11 @@ class MainScreen extends OrientedScreen {
           children: [
             screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
                 CustomPaint(painter: DrawnBackground(screen))),
-            screen.box(Rect.fromLTWH(screen.width - 1.82, 0.65, 0.94, 0.94),
-                _jrpnIcon()),
+            screen.box(Rect.fromLTWH(iconL, 0.65, 0.94, 0.94), _jrpnIcon()),
             screen.box(
-                const Rect.fromLTWH(
-                    2.0, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak),
-                LcdDisplay(controller.model, _showMenu)),
+                Rect.fromLTWH(
+                    lcdLeft, 0.6, lcdWidth, 1.5 * LcdDisplay.heightTweak),
+                LcdDisplay(controller.model, _showMenu, digitsH, jrpnState)),
             ...controller
                 .getLandscapeButtonFactory(context, screen)
                 .buildButtons(Rect.fromLTRB(
@@ -216,7 +224,11 @@ class MainScreen extends OrientedScreen {
       try {
         cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
       } catch (e) {
-        return showErrorDialog(context, 'Error accessing clipboard', e);
+        if (jrpnState.mounted) {
+          return showErrorDialog(context, 'Error accessing clipboard', e);
+        } else {
+          return;
+        }
       }
       if (cd == null || cd == '') {
         if (jrpnState.mounted) {
@@ -712,18 +724,31 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                 ])),
               ]
             : []),
-        CheckedPopupMenuItem(
-            checked: widget.controller.menus15C
-                ? !settings.windowEnabled
-                : settings.windowEnabled,
-            value: () {
-              settings.windowEnabled = !settings.windowEnabled;
-              unawaited(widget.app.model.writeToPersistentStorage());
-              display.update();
-            },
-            child: Text(widget.controller.menus15C
-                ? 'Display Long Numbers'
-                : 'Enable Window')),
+        PopupMenuItem(
+            child: Row(children: [
+          DropdownButton(
+              value: settings.longNumbers,
+              onChanged: (LongNumbersSetting? v) {
+                if (v != null) {
+                  settings.longNumbers = v;
+                  unawaited(widget.app.model.writeToPersistentStorage());
+                  display.update();
+                  Navigator.pop(context, () {});
+                }
+              },
+              items: [
+                DropdownMenuItem(
+                    value: LongNumbersSetting.window,
+                    child: Text(
+                        widget.controller.menus15C ? 'Disable' : 'Window')),
+                DropdownMenuItem(
+                    value: LongNumbersSetting.growLCD, child: Text('Grow LCD')),
+                DropdownMenuItem(
+                    value: LongNumbersSetting.shrinkDigits,
+                    child: Text('Shrink Digits')),
+              ]),
+          const Text('    Long\n    Numbers')
+        ])),
         ...(widget.controller.menus15C
             ? []
             : [
@@ -1007,7 +1032,11 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
     try {
       cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
     } catch (e) {
-      return showErrorDialog(context, 'Error accessing clipboard', e);
+      if (mounted) {
+        return showErrorDialog(context, 'Error accessing clipboard', e);
+      } else {
+        return;
+      }
     }
     if (cd == null) {
       widget.app.controller.showMessage('bad c1ip ');
@@ -1201,7 +1230,11 @@ class __FileReadMenuState extends State<_FileReadMenu> {
     try {
       cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
     } catch (e) {
-      return showErrorDialog(context, 'Error accessing clipboard', e);
+      if (mounted) {
+        return showErrorDialog(context, 'Error accessing clipboard', e);
+      } else {
+        return;
+      }
     }
     if (cd == null) {
       widget.app.controller.showMessage('bad c1ip ');

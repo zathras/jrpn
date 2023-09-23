@@ -281,7 +281,7 @@ class Resting extends ActiveState {
         model.display.update();
         changeState(ShowState(this));
       }
-    } else if (model.settings.windowEnabled) {
+    } else if (model.settings.windowLongNumbers) {
       model.display.displayX(flash: false, disableWindow: true);
       changeState(ShowState(this, disableWindow: true));
     }
@@ -561,7 +561,7 @@ class DigitEntry extends ActiveState {
     if (v == null) {
       return false;
     }
-    if (model.isFloatMode && model.settings.windowEnabled) {
+    if (model.isFloatMode && model.settings.windowLongNumbers) {
       int max = ent.contains('.') ? 11 : 10;
       if (ent.length > max) {
         return false;
@@ -581,7 +581,7 @@ class DigitEntry extends ActiveState {
       String show = ent;
       String pad;
       if (extra < 0) {
-        if (model.settings.windowEnabled) {
+        if (model.settings.windowLongNumbers) {
           while (extra < 0) {
             if (!show.substring(show.length - 1).contains(_decimalDigits)) {
               return false; // Doesn't fit
@@ -703,7 +703,7 @@ class DigitEntry extends ActiveState {
       return;
     }
     assert(!_negativeExponent);
-    if (model.settings.windowEnabled) {
+    if (model.settings.windowLongNumbers) {
       int pos = _entered.indexOf('.');
       if (pos == -1) {
         pos = _entered.length;
@@ -721,7 +721,7 @@ class DigitEntry extends ActiveState {
 
   @override
   void handleClearPrefix() {
-    if (model.isFloatMode || model.settings.windowEnabled) {
+    if (model.isFloatMode || model.settings.windowLongNumbers) {
       changeState(Resting(controller)).handleClearPrefix();
     }
   }
@@ -1176,7 +1176,8 @@ class OnOffKeyPressed extends DoNothing {
             // make a bit of sense if you're turning a calculator off, but
             // whatever.)  So, on platforms were we can't go away, we blank
             // the LCD display and wait for the ON button to be pressed.
-            model.display.show(LcdContents.blank());
+            model.display
+                .show(LcdContents.blank(lcdDigits: model.display.lcdDigits));
             changeState(CalculatorOff(controller));
           }
         }
