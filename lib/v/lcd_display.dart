@@ -95,7 +95,7 @@ class _LcdDisplayState extends State<LcdDisplay> {
 
   void _update(final LcdContents next) {
     if (_contents.lcdDigits != next.lcdDigits) {
-      // Repaint whole UI, since the display size changed
+      // Repaint whole UI, since the display size might have changed
       widget.jrpnState.setState(() {
         _contents = next;
       });
