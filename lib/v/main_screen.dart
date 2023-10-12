@@ -158,8 +158,8 @@ class MainScreen extends OrientedScreen {
                   LcdDisplay(controller.model, _showMenu, 11, jrpnState)),
               ...controller
                   .getPortraitButtonFactory(context, screen)
-                  .buildButtons(Rect.fromLTRB(
-                      0.7, 2.75 + extraV, screen.width - 0.7, screen.height - 0.47)),
+                  .buildButtons(Rect.fromLTRB(0.7, 2.75 + extraV,
+                      screen.width - 0.7, screen.height - 0.47)),
               MainMenu(this, screen)
             ])));
   }

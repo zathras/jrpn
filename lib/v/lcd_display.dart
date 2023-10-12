@@ -396,15 +396,30 @@ class Digit {
     }));
     int width =
         values.fold(0, (int count, Digit d) => d.noWidth ? count : count + 1);
+    final int numLines;
     if (rightJustify && width <= digitsH) {
+      numLines = 1;
       // Go one to the left of the first digit
       c.translate(_s.width * (digitsH - 1 - width), 0);
     } else {
-      final double sf = digitsH / max(width, digitsH);
-      c.translate(22 * (sf - 1.0), Segments.h / 2);
-      c.scale(sf);
-      c.translate(-_s.width, -Segments.h / 2);
+      if (digitsH == 18) {
+        // Landscape, 34 positions fits a 32 bit binary number
+        numLines = 1 + (width - 3) ~/ 32;
+      } else if (digitsH == 11) {
+        // Portrait, 18 positions fits a 16 bit binary number
+        numLines = 1 + (width - 3) ~/ 16;
+      } else {
+        numLines = 1;
+      }
+      print("@@ width $width, numLines is $numLines");
+      if (true || numLines == 1) {
+        final double sf = digitsH / max(width, digitsH);
+        c.translate(22 * (sf - 1.0), Segments.h / 2);
+        c.scale(sf);
+        c.translate(-_s.width, -Segments.h / 2);
+      } else {}
     }
+    c.save();
     for (final Digit d in values) {
       if (!d.noWidth) {
         c.translate(_s.width, 0);
@@ -413,6 +428,7 @@ class Digit {
         c.drawPath(p, _paint);
       }
     }
+    c.restore();
   }
 }
 
