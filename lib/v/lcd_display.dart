@@ -61,11 +61,12 @@ class LcdDisplay extends StatefulWidget {
   /// Max # of digits horizontally, including sign and, e.g., " h".
   ///
   final int digitsH;
+  final bool extraTall;
   static const double heightTweak = 0.90;
   final State jrpnState; // To repaint entire UI when LCD size changes
 
   LcdDisplay(this.model, this.showMenu, this.digitsH, this.jrpnState,
-      {Key? key})
+      {this.extraTall = false, Key? key})
       : super(key: key) {
     assert(digitsH >= 11 && digitsH <= 18);
     // 34 = 16 bit binary number with " b".  Above 16 bits, we scale the
@@ -95,7 +96,7 @@ class _LcdDisplayState extends State<LcdDisplay> {
 
   void _update(final LcdContents next) {
     if (_contents.lcdDigits != next.lcdDigits) {
-      // Repaint whole UI, since the display size changed
+      // Repaint whole UI, since the display size might have changed
       widget.jrpnState.setState(() {
         _contents = next;
       });
@@ -119,8 +120,8 @@ class _LcdDisplayState extends State<LcdDisplay> {
                 _tapOffset = details.globalPosition,
             onTap: () => unawaited(widget.showMenu(context, _tapOffset)),
             child: CustomPaint(
-                painter: _DisplayPainter(
-                    _contents, widget.model.settings, widget.digitsH))));
+                painter: _DisplayPainter(_contents, widget.model.settings,
+                    widget.digitsH, widget.extraTall))));
   }
 }
 
@@ -128,8 +129,9 @@ class _DisplayPainter extends CustomPainter {
   LcdContents contents;
   Settings settings;
   final int digitsH;
+  final bool extraTall;
 
-  _DisplayPainter(this.contents, this.settings, this.digitsH);
+  _DisplayPainter(this.contents, this.settings, this.digitsH, this.extraTall);
 
   static const double heightTweak = LcdDisplay.heightTweak;
 
@@ -176,11 +178,11 @@ class _DisplayPainter extends CustomPainter {
     // Annunciators:
 
     final TextStyle aStyle = TextStyle(
-        fontSize: size.height / heightTweak / 7,
+        fontSize: (extraTall ? 0.458 : 1.0) * size.height / heightTweak / 7,
         fontFamily: 'KeyLabelFont',
         color: lcdForeground);
 
-    const double annY = 0.82 * heightTweak;
+    double annY = (extraTall ? 0.94 : 0.82) * heightTweak;
 
     if (!contents.hideComplement && contents.sign.annunciatorText != '') {
       final String text = contents.sign.annunciatorText;
@@ -310,7 +312,9 @@ class _DisplayPainter extends CustomPainter {
     canvas.scale(width / (Segments.instance.width * digitSpace));
     final digits = (contents.euroComma) ? Digit.euroDigits : Digit.digits;
     Digit.paint(canvas, contents.mainText, digits, lcdForeground,
-        rightJustify: contents.rightJustify, digitsH: digitsH);
+        rightJustify: contents.rightJustify,
+        digitsH: digitsH,
+        onlyShrink: settings.longNumbers == LongNumbersSetting.shrinkDigits);
     canvas.restore();
   }
 
@@ -386,7 +390,9 @@ class Digit {
 
   static void paint(
       Canvas c, String message, Map<int, Digit> digits, Color lcdForeground,
-      {required bool rightJustify, required int digitsH}) {
+      {required bool rightJustify,
+      required int digitsH,
+      required bool onlyShrink}) {
     _paint.color = lcdForeground;
     final Iterable<Digit> values = message.codeUnits.map(((ch) {
       final d = digits[ch];
@@ -396,22 +402,74 @@ class Digit {
     }));
     int width =
         values.fold(0, (int count, Digit d) => d.noWidth ? count : count + 1);
+    final int numLines;
+    final int horizPositions;
+    int xPos = -999; // Only useful when numLines > 1
     if (rightJustify && width <= digitsH) {
+      numLines = 1;
+      horizPositions = digitsH;
       // Go one to the left of the first digit
       c.translate(_s.width * (digitsH - 1 - width), 0);
     } else {
-      final double sf = digitsH / max(width, digitsH);
-      c.translate(22 * (sf - 1.0), Segments.h / 2);
-      c.scale(sf);
-      c.translate(-_s.width, -Segments.h / 2);
+      if (digitsH == 18) {
+        // Landscape, 34 positions fits a 32 bit binary number
+        horizPositions = 34;
+        numLines = 1 + (width - 3) ~/ 32;
+      } else if (digitsH == 11) {
+        if (width <= 34 || !onlyShrink) {
+          // Portrait, 18 positions fits a 16 bit binary number
+          horizPositions = 18;
+          numLines = 1 + (width - 3) ~/ 16;
+        } else {
+          // Portrait, non-growing LCD, over 32 bit binary number, so we
+          // need to shrink more
+          horizPositions = 34;
+          numLines = 1 + (width - 3) ~/ 32;
+        }
+      } else {
+        horizPositions = digitsH;
+        numLines = 1;
+      }
+      if (numLines <= 1) {
+        final double sf = digitsH / max(width, digitsH);
+        c.translate(22 * (sf - 1.0), Segments.h / 2);
+        c.scale(sf);
+        c.translate(-_s.width, -Segments.h / 2);
+      } else {
+        assert(horizPositions > digitsH);
+        final double sf = digitsH / horizPositions;
+        c.translate(22 * (sf - 1.0), Segments.h / 2);
+        c.scale(sf);
+        c.translate(-_s.width, -Segments.h * 1.2);
+        xPos = ((horizPositions - 2) - (width - 2)) % (horizPositions - 2);
+        c.save();
+        c.translate(_s.width * xPos, 0);
+      }
     }
+    int line = 0;
+    xPos--;
     for (final Digit d in values) {
+      if (!d.noWidth) {
+        xPos++;
+      }
+      if (xPos == (horizPositions - 2)) {
+        line++;
+        if (line < numLines) {
+          c.restore();
+          c.translate(0, Segments.h * 1.8);
+          c.save();
+        }
+        xPos = 0;
+      }
       if (!d.noWidth) {
         c.translate(_s.width, 0);
       }
       for (final Path p in d.segments) {
         c.drawPath(p, _paint);
       }
+    }
+    if (numLines > 1) {
+      c.restore();
     }
   }
 }

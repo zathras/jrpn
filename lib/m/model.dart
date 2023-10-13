@@ -886,19 +886,6 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     needsSave = true;
   }
 
-  ///
-  /// The maximum number of LCD digits that can be displayed, given the
-  /// current settings.  "-1 07" (-1e7) takes up 5 LCD positions, for
-  /// example, and "1 b" takes three.
-  ///
-  int get maxDisplayDigits {
-    if (settings.longNumbers != LongNumbersSetting.growLCD) {
-      return 11;
-    } else {
-      return max(11, displayMode.maxDisplayDigits(wordSize, _integerSignMode));
-    }
-  }
-
   ProgramMemory<OT> get program => memory.program;
 
   SignMode get signMode => displayMode.signMode(_integerSignMode);
@@ -1537,8 +1524,23 @@ class DisplayModel {
         Observable(LcdContents.powerOn(initial, !model.isFloatMode, lcdDigits));
   }
 
-  /// The number of LCD digits in our display, from 11 to 18 inclusive.
-  int get lcdDigits => min(model.maxDisplayDigits, 18);
+  ///
+  /// The maximum number of LCD digits that can be displayed, given the
+  /// current settings.  "-1 07" (-1e7) takes up 5 LCD positions, for
+  /// example, and "1 b" takes three.
+  ///
+  int get lcdDigits {
+    if (model.settings.longNumbers != LongNumbersSetting.growLCD) {
+      return 11;
+    } else {
+      final d = model.displayMode
+          .maxDisplayDigits(model.wordSize, model._integerSignMode);
+      return max(11, d);
+      // This value is used during display, and to trigger a screen repaint.
+      // maxLcdDigits is set during a redisplay, and it only changes when
+      // there's a switch between portrait and landscape.
+    }
+  }
 
   set current(String v) {
     _current = v;

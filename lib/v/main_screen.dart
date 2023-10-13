@@ -129,7 +129,25 @@ class MainScreen extends OrientedScreen {
   static const keyFrameSilver = Color(0xffdbdad1);
 
   @override
-  Widget buildPortrait(BuildContext context, final ScreenPositioner screen) {
+  Widget buildPortrait(BuildContext context, ScreenPositioner screen) {
+    final display = controller.model.display;
+    // In portrait, we first shrink the font down, up to 18 digits (enough
+    // for a 16 digit hex or binary number).  Beyond that, we grow the display
+    // vertically, but since the font is half-sized, we only need to increase
+    // the size once we get over 32 digits.  The display never gets wider.
+    //
+    // So:  lines is in the range 2..4, inclusive, because it's really
+    // half-lines, in a sense.
+    final lcdLines = max(1, (display.lcdDigits - 3) ~/ 16) + 1;
+    final extraV = (lcdLines - 2) * 0.8;
+    if (extraV > 0) {
+      screen = ScreenPositioner(screen.width, screen.height + extraV);
+      // So yes, we might shrink the whole calculator, if it was just
+      // fitting vertically.  The size only changes when the display mode
+      // (BIN/HEX/DEC) changes, or the word size changes.  That's a pretty
+      // rare thing, so I'm OK with the buttons and stuff moving around a
+      // little.
+    }
     return Container(
         alignment: Alignment.center,
         color: deadZoneColor,
@@ -137,26 +155,28 @@ class MainScreen extends OrientedScreen {
             aspectRatio: screen.width / screen.height,
             child: Stack(fit: StackFit.expand, children: [
               screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
-                  CustomPaint(painter: DrawnBackground(screen))),
+                  CustomPaint(painter: DrawnBackground(screen, extraV))),
               screen.box(Rect.fromLTWH(0.60, screen.height - 1.5, 0.94, 0.94),
                   _jrpnIcon()),
               screen.box(
-                  const Rect.fromLTWH(
-                      0.63, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak),
-                  LcdDisplay(controller.model, _showMenu, 11, jrpnState)),
+                  Rect.fromLTWH(
+                      0.63, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak + extraV),
+                  LcdDisplay(controller.model, _showMenu, 11, jrpnState,
+                      extraTall: extraV > 0)),
               ...controller
                   .getPortraitButtonFactory(context, screen)
-                  .buildButtons(Rect.fromLTRB(
-                      0.7, 2.75, screen.width - 0.7, screen.height - 0.47)),
+                  .buildButtons(Rect.fromLTRB(0.7, 2.75 + extraV,
+                      screen.width - 0.7, screen.height - 0.47)),
               MainMenu(this, screen)
             ])));
   }
 
   @override
   Widget buildLandscape(BuildContext context, final ScreenPositioner screen) {
-    int digitsH = controller.model.display.lcdDigits;
+    final display = controller.model.display;
+    int digitsH = min(18, display.lcdDigits);
     // Over 18 digits, we shrink the font.  18 is enough for
-    // 16 hex digits, which fits a 64 bit number
+    // 16 hex digits, which fits a 64 bit number.
     assert(digitsH >= 11 && digitsH <= 18);
     final expander = (digitsH - 11) / 7;
     final lcdLeft = 2.0 - 1.47 * expander;
@@ -172,7 +192,7 @@ class MainScreen extends OrientedScreen {
           fit: StackFit.expand,
           children: [
             screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
-                CustomPaint(painter: DrawnBackground(screen))),
+                CustomPaint(painter: DrawnBackground(screen, 0))),
             screen.box(Rect.fromLTWH(iconL, 0.65, 0.94, 0.94), _jrpnIcon()),
             screen.box(
                 Rect.fromLTWH(
@@ -306,8 +326,9 @@ class MainScreen extends OrientedScreen {
 ///
 class DrawnBackground extends CustomPainter {
   final ScreenPositioner screen;
+  final double extraLcdHeight;
 
-  DrawnBackground(this.screen);
+  DrawnBackground(this.screen, this.extraLcdHeight);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -321,7 +342,7 @@ class DrawnBackground extends CustomPainter {
     canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), p);
 
     double x = 0.27 * cm;
-    double y = 2.5 * cm;
+    double y = (2.5 + extraLcdHeight) * cm;
 
     // Silver along top:
     p.color = _topSilverColor;
@@ -748,9 +769,9 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                     value: LongNumbersSetting.window,
                     child: Text(
                         widget.controller.menus15C ? 'Disable' : 'Window')),
-                DropdownMenuItem(
+                const DropdownMenuItem(
                     value: LongNumbersSetting.growLCD, child: Text('Grow LCD')),
-                DropdownMenuItem(
+                const DropdownMenuItem(
                     value: LongNumbersSetting.shrinkDigits,
                     child: Text('Shrink Digits')),
               ]),
