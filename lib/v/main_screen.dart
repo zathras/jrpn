@@ -134,13 +134,19 @@ class MainScreen extends OrientedScreen {
     // In portrait, we first shrink the font down, up to 18 digits (enough
     // for a 16 digit hex or binary number).  Beyond that, we grow the display
     // vertically, but since the font is half-sized, we only need to increase
-    // over 32 digits.  The display never gets wider.
+    // the size once we get over 32 digits.  The display never gets wider.
     //
-    // So:  lines is in the range 2..4, inclusive
+    // So:  lines is in the range 2..4, inclusive, because it's really
+    // half-lines, in a sense.
     final lcdLines = max(1, (display.lcdDigits - 3) ~/ 16) + 1;
     final extraV = (lcdLines - 2) * 0.8;
     if (extraV > 0) {
       screen = ScreenPositioner(screen.width, screen.height + extraV);
+      // So yes, we might shrink the whole calculator, if it was just
+      // fitting vertically.  The size only changes when the display mode
+      // (BIN/HEX/DEC) changes, or the word size changes.  That's a pretty
+      // rare thing, so I'm OK with the buttons and stuff moving around a
+      // little.
     }
     return Container(
         alignment: Alignment.center,
@@ -155,7 +161,8 @@ class MainScreen extends OrientedScreen {
               screen.box(
                   Rect.fromLTWH(
                       0.63, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak + extraV),
-                  LcdDisplay(controller.model, _showMenu, 11, jrpnState)),
+                  LcdDisplay(controller.model, _showMenu, 11, jrpnState,
+                      extraTall: extraV > 0)),
               ...controller
                   .getPortraitButtonFactory(context, screen)
                   .buildButtons(Rect.fromLTRB(0.7, 2.75 + extraV,
