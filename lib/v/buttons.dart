@@ -1007,9 +1007,16 @@ class CalculatorButtonState extends State<CalculatorButton> {
             case KeyFeedbackSetting.haptic:
               unawaited(HapticFeedback.vibrate());
               break;
+            case KeyFeedbackSetting.hapticHeavy:
+              unawaited(HapticFeedback.heavyImpact());
+              break;
             case KeyFeedbackSetting.both:
               unawaited(SystemSound.play(SystemSoundType.click));
               unawaited(HapticFeedback.vibrate());
+              break;
+            case KeyFeedbackSetting.bothHeavy:
+              unawaited(SystemSound.play(SystemSoundType.click));
+              unawaited(HapticFeedback.heavyImpact());
               break;
             case KeyFeedbackSetting.none:
               break;

@@ -735,7 +735,7 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                       items: const [
                         DropdownMenuItem(
                             value: KeyFeedbackSetting.platform,
-                            child: Text('Platform')),
+                            child: Text('Platform Default')),
                         DropdownMenuItem(
                             value: KeyFeedbackSetting.click,
                             child: Text('Click')),
@@ -745,6 +745,12 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                         DropdownMenuItem(
                             value: KeyFeedbackSetting.both,
                             child: Text('Both')),
+                        DropdownMenuItem(
+                            value: KeyFeedbackSetting.hapticHeavy,
+                            child: Text('Haptic - Heavy')),
+                        DropdownMenuItem(
+                            value: KeyFeedbackSetting.bothHeavy,
+                            child: Text('Both - Heavy')),
                         DropdownMenuItem(
                             value: KeyFeedbackSetting.none, child: Text('None'))
                       ]),
