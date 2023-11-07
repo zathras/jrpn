@@ -1172,7 +1172,7 @@ class OnOffKeyPressed extends DoNothing {
             await SystemNavigator.pop();
             // That kills us on some platforms, but it doesn't make sense on
             // web.  It's a NOP on iOS, because apps terminating themselves
-            // is against the Apple human interface guidelines (which don't
+            // is against the Apple human interface guidelines (which doesn't
             // make a bit of sense if you're turning a calculator off, but
             // whatever.)  So, on platforms were we can't go away, we blank
             // the LCD display and wait for the ON button to be pressed.

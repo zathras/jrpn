@@ -2058,7 +2058,28 @@ class AdvancedFunctionTests {
     model.isComplexMode = false;
   }
 
+  // Test f-FIX-I
+  Future<void> _bug65() async {
+    final l = layout;
+    model.xF = 1.2345678;
+    _play([l.fShift, l.n7, l.n5]);
+    expect(model.display.current, ' 1.23457    ');
+    _play([l.fShift, l.n7, l.n1]);
+    expect(model.display.current, ' 1.2        ');
+    model.xF = 3;
+    _play([l.sto, l.tan, l.gShift, l.bsp, l.fShift, l.n7, l.tan]);
+    model.xF = 1.2345678;
+    _play([l.enter]);
+    expect(model.display.current, ' 1.235      ');
+    model.xF = 4;
+    _play([l.sto, l.tan, l.gShift, l.bsp, l.fShift, l.n7, l.tan]);
+    model.xF = 1.2345678;
+    _play([l.enter]);
+    expect(model.display.current, ' 1.2346     ');
+  }
+
   Future<void> run() async {
+    await _bug65();
     await _statistics();
     await _page139(asProgram: false);
     await _page139(asProgram: true);
