@@ -1,6 +1,7 @@
 Version 2.1.9
-  * Add permission needed on some Andoird phones for haptic feedback.
+  * Add permission needed on some Android phones for haptic feedback.
   * Add option for heavy haptic feedback.
+  * Fix FIX/ENG/SCI I:  Issue 65
 
 Version 2.1.8
   * Add ability to grow LCD and, on the 16C, show large binary numbers on

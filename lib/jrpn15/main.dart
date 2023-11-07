@@ -1532,7 +1532,7 @@ class Operations15 extends Operations {
 class PrecisionArg extends ArgAlternates {
   final void Function(Model m, int v) f;
 
-  static int _translate(Model m, Value v) => min(9, max(0, m.xF)).floor();
+  static int _translate(Model m, Value v) => min(9, max(0, v.asDouble)).floor();
 
   PrecisionArg({required this.f})
       : super(synonyms: Arg.registerISynonyms, children: [
