@@ -66,8 +66,7 @@ class LcdDisplay extends StatefulWidget {
   final State jrpnState; // To repaint entire UI when LCD size changes
 
   LcdDisplay(this.model, this.showMenu, this.digitsH, this.jrpnState,
-      {this.extraTall = false, Key? key})
-      : super(key: key) {
+      {this.extraTall = false, super.key}) {
     assert(digitsH >= 11 && digitsH <= 18);
     // 34 = 16 bit binary number with " b".  Above 16 bits, we scale the
     // digits.

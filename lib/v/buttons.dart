@@ -161,9 +161,7 @@ abstract class ButtonFactory {
 }
 
 abstract class LandscapeButtonFactory extends ButtonFactory {
-  LandscapeButtonFactory(
-      BuildContext context, ScreenPositioner screen, RealController controller)
-      : super(context, screen, controller);
+  LandscapeButtonFactory(super.context, super.screen, super.controller);
 
   @override
   int get numRows => 4;
@@ -193,9 +191,7 @@ abstract class LandscapeButtonFactory extends ButtonFactory {
 }
 
 abstract class PortraitButtonFactory extends ButtonFactory {
-  PortraitButtonFactory(
-      BuildContext context, ScreenPositioner screen, RealController controller)
-      : super(context, screen, controller);
+  PortraitButtonFactory(super.context, super.screen, super.controller);
 
   @override
   int get numRows => 7;
@@ -342,9 +338,8 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
 
   CalculatorButton(this.bFactory, this.uText, this.fText, this.gText, this.uKey,
       this.fKey, this.gKey, this.acceleratorKey,
-      {String? acceleratorLabel, Key? key})
-      : _acceleratorLabel = acceleratorLabel,
-        super(key: key);
+      {String? acceleratorLabel, super.key})
+      : _acceleratorLabel = acceleratorLabel;
 
   @override
   CalculatorButtonState createState() => CalculatorButtonState();
@@ -546,19 +541,17 @@ class CalculatorOnSpecialButton extends CalculatorButton {
   final String specialText; // For the special function when on is pressed
 
   CalculatorOnSpecialButton(
-      ButtonFactory factory,
-      String uText,
-      String fText,
-      String gText,
-      Operation uKey,
-      Operation fKey,
-      Operation gKey,
-      String rawKeyboardKey,
+      super.factory,
+      super.uText,
+      super.fText,
+      super.gText,
+      super.uKey,
+      super.fKey,
+      super.gKey,
+      super.rawKeyboardKey,
       this.specialText,
-      {String? acceleratorLabel,
-      Key? key})
-      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            acceleratorLabel: acceleratorLabel, key: key);
+      {super.acceleratorLabel,
+      super.key});
 
   @override
   CalculatorButtonState createState() => _CalculatorOnSpecialButtonState();
@@ -591,19 +584,16 @@ class CalculatorOnSpecialButton extends CalculatorButton {
 /// it's also a [CalculatorOnSpecialButton].
 class CalculatorOnButton extends CalculatorOnSpecialButton {
   CalculatorOnButton(
-      ButtonFactory factory,
-      String uText,
-      String fText,
-      String gText,
-      Operation uKey,
-      Operation fKey,
-      Operation gKey,
-      String rawKeyboardKey,
-      String specialText,
-      {Key? key})
-      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            specialText,
-            key: key);
+      super.factory,
+      super.uText,
+      super.fText,
+      super.gText,
+      super.uKey,
+      super.fKey,
+      super.gKey,
+      super.rawKeyboardKey,
+      super.specialText,
+      {super.key});
 
   @override
   Color get lowerSurfaceColor => upperSurfaceColor;
@@ -651,19 +641,9 @@ class _CalculatorOnSpecialButtonState extends CalculatorButtonState {
 }
 
 abstract class CalculatorShiftButton extends CalculatorButton {
-  CalculatorShiftButton(
-      ButtonFactory factory,
-      String uText,
-      String fText,
-      String gText,
-      Operation uKey,
-      Operation fKey,
-      Operation gKey,
-      String rawKeyboardKey,
-      {String? acceleratorLabel,
-      Key? key})
-      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            acceleratorLabel: acceleratorLabel, key: key);
+  CalculatorShiftButton(super.factory, super.uText, super.fText, super.gText,
+      super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
+      {super.acceleratorLabel, super.key});
 
   String get extraAcceleratorName;
 
@@ -704,20 +684,9 @@ abstract class CalculatorShiftButton extends CalculatorButton {
 /// The f shift button, which is gold instead of black.
 ///
 class CalculatorFButton extends CalculatorShiftButton {
-  CalculatorFButton(
-      ButtonFactory factory,
-      String uText,
-      String fText,
-      String gText,
-      Operation uKey,
-      Operation fKey,
-      Operation gKey,
-      String rawKeyboardKey,
-      {required this.extraAcceleratorName,
-      String? acceleratorLabel,
-      Key? key})
-      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            acceleratorLabel: acceleratorLabel, key: key);
+  CalculatorFButton(super.factory, super.uText, super.fText, super.gText,
+      super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
+      {required this.extraAcceleratorName, super.acceleratorLabel, super.key});
 
   @override
   late final upperSurfaceColor = Color(bFactory.settings.fKeyColor);
@@ -734,20 +703,9 @@ class CalculatorFButton extends CalculatorShiftButton {
 /// The g shift button, which is blue instead of black.
 ///
 class CalculatorGButton extends CalculatorShiftButton {
-  CalculatorGButton(
-      ButtonFactory factory,
-      String uText,
-      String fText,
-      String gText,
-      Operation uKey,
-      Operation fKey,
-      Operation gKey,
-      String rawKeyboardKey,
-      {required this.extraAcceleratorName,
-      String? acceleratorLabel,
-      Key? key})
-      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            acceleratorLabel: acceleratorLabel, key: key);
+  CalculatorGButton(super.factory, super.uText, super.fText, super.gText,
+      super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
+      {required this.extraAcceleratorName, super.acceleratorLabel, super.key});
 
   @override
   late final Color upperSurfaceColor = Color(bFactory.settings.gKeyColor);
@@ -765,18 +723,9 @@ class CalculatorGButton extends CalculatorShiftButton {
 /// so we change the font.
 ///
 class CalculatorButtonWithLJ extends CalculatorButton {
-  CalculatorButtonWithLJ(
-      ButtonFactory factory,
-      String uText,
-      String fText,
-      String gText,
-      Operation uKey,
-      Operation fKey,
-      Operation gKey,
-      String rawKeyboardKey,
-      {Key? key})
-      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            key: key);
+  CalculatorButtonWithLJ(super.factory, super.uText, super.fText, super.gText,
+      super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
+      {super.key});
 
   @override
   void drawBlueText(Canvas canvas, double w) {
@@ -796,18 +745,9 @@ class CalculatorButtonWithLJ extends CalculatorButton {
 /// up depends on the specific font, which is bundled with the app.
 ///
 class CalculatorWhiteSqrtButton extends CalculatorButton {
-  CalculatorWhiteSqrtButton(
-      ButtonFactory factory,
-      String uText,
-      String fText,
-      String gText,
-      Operation uKey,
-      Operation fKey,
-      Operation gKey,
-      String rawKeyboardKey,
-      {Key? key})
-      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            key: key);
+  CalculatorWhiteSqrtButton(super.factory, super.uText, super.fText,
+      super.gText, super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
+      {super.key});
 
   @override
   void drawWhiteText(Canvas canvas, TextStyle style, String text, double w) {
@@ -831,17 +771,15 @@ class CalculatorWhiteSqrtButton extends CalculatorButton {
 ///
 class CalculatorBlueSqrtButton extends CalculatorButton {
   CalculatorBlueSqrtButton(
-      ButtonFactory factory,
-      String uText,
-      String fText,
-      String gText,
-      NormalOperation uKey,
-      NormalOperation fKey,
-      NormalOperation gKey,
-      String rawKeyboardKey,
-      {Key? key})
-      : super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            key: key);
+      super.factory,
+      super.uText,
+      super.fText,
+      super.gText,
+      NormalOperation super.uKey,
+      NormalOperation super.fKey,
+      NormalOperation super.gKey,
+      super.rawKeyboardKey,
+      {super.key});
 
   @override
   void drawBlueText(Canvas canvas, double w) {
@@ -862,25 +800,14 @@ class CalculatorBlueSqrtButton extends CalculatorButton {
 /// The enter button, which occupies two rows on the keyboard.
 ///
 class CalculatorEnterButton extends CalculatorButton {
-  CalculatorEnterButton(
-      ButtonFactory factory,
-      String uText,
-      String fText,
-      String gText,
-      Operation uKey,
-      Operation fKey,
-      Operation gKey,
-      String rawKeyboardKey,
-      {required this.extraHeight,
-      String? acceleratorLabel,
-      Key? key})
+  CalculatorEnterButton(super.factory, super.uText, super.fText, super.gText,
+      super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
+      {required this.extraHeight, super.acceleratorLabel, super.key})
       : _outerBorder = _calculateOuterBorder(factory, extraHeight),
         _innerBorder = _calculateInnerBorder(factory, extraHeight),
         _lowerSurface = _calculateLowerSurface(factory, extraHeight),
         _upperSurface = _calculateUpperSurface(factory, extraHeight),
-        _gTextOffset = factory.gTextOffset.translate(0, extraHeight),
-        super(factory, uText, fText, gText, uKey, fKey, gKey, rawKeyboardKey,
-            acceleratorLabel: acceleratorLabel, key: key);
+        _gTextOffset = factory.gTextOffset.translate(0, extraHeight);
 
   final double extraHeight;
   final RRect _outerBorder;

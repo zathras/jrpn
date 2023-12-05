@@ -785,7 +785,7 @@ class Jrpn extends StatefulWidget {
 
   final Observable<void> _changed = Observable(null);
 
-  Jrpn(this.controller, {Key? key}) : super(key: key);
+  Jrpn(this.controller, {super.key});
 
   Model get model => controller.model;
 
@@ -842,7 +842,7 @@ class Jrpn extends StatefulWidget {
 class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   bool _initDone = false;
   bool _disposed = false;
-  StreamSubscription? _linksSubscription;
+  StreamSubscription<String?>? _linksSubscription;
   String? _incomingLink;
   Object? _pendingError;
   AppLifecycleState? _lastLifecycleState;

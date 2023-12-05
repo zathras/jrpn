@@ -512,7 +512,7 @@ class _FloatMode extends DisplayMode {
 }
 
 class _ComplexMode extends _FloatMode {
-  _ComplexMode(FloatFormatter formatter) : super(formatter);
+  _ComplexMode(super.formatter);
 
   @override
   void setComplexMode(Model m, bool v) {
@@ -737,7 +737,7 @@ class FixFloatFormatter extends FloatFormatter {
 ///
 @immutable
 class _Fix16FloatFormatter extends FixFloatFormatter {
-  const _Fix16FloatFormatter(int fractionDigits) : super(fractionDigits);
+  const _Fix16FloatFormatter(super.fractionDigits);
 
   @override
   String get _jsonName => 'f$fractionDigits';
@@ -762,7 +762,7 @@ class _Sci16FloatFormatter extends SciFloatFormatter {
 
 @immutable
 class _EngFloatFormatter extends SciFloatFormatter {
-  const _EngFloatFormatter(int fractionDigits) : super(fractionDigits);
+  const _EngFloatFormatter(super.fractionDigits);
 
   @override
   String get _jsonName => 'e$fractionDigits';

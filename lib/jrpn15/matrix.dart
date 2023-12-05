@@ -595,7 +595,7 @@ abstract class UpperOrLowerTriangular extends AMatrix {
 }
 
 class UpperTriangular extends UpperOrLowerTriangular {
-  UpperTriangular(Matrix m) : super(m);
+  UpperTriangular(super.m);
 
   @override
   getFixed(int r, int c) {
@@ -608,7 +608,7 @@ class UpperTriangular extends UpperOrLowerTriangular {
 }
 
 class LowerTriangular extends UpperOrLowerTriangular {
-  LowerTriangular(Matrix m) : super(m);
+  LowerTriangular(super.m);
 
   @override
   getFixed(int r, int c) {

@@ -2019,9 +2019,7 @@ class CalculatorButtonHyperbolic extends CalculatorButton {
 }
 
 class LandscapeButtonFactory15 extends LandscapeButtonFactory {
-  LandscapeButtonFactory15(
-      BuildContext context, ScreenPositioner screen, RealController controller)
-      : super(context, screen, controller);
+  LandscapeButtonFactory15(super.context, super.screen, super.controller);
 
   @override
   Offset get fTextOffset => const Offset(0, -4);
@@ -2047,9 +2045,7 @@ class LandscapeButtonFactory15 extends LandscapeButtonFactory {
 }
 
 class PortraitButtonFactory15 extends PortraitButtonFactory {
-  PortraitButtonFactory15(
-      BuildContext context, ScreenPositioner screen, RealController controller)
-      : super(context, screen, controller);
+  PortraitButtonFactory15(super.context, super.screen, super.controller);
 
   @override
   Offset get fTextOffset => const Offset(0, -4);
@@ -2358,7 +2354,7 @@ ProgramInstruction<Operation> _newProgramInstruction(
 
 class ProgramInstruction15<OT extends ProgramOperation>
     extends ProgramInstruction<OT> {
-  ProgramInstruction15(OT op, ArgDone arg) : super(op, arg);
+  ProgramInstruction15(super.op, super.arg);
 }
 
 ///

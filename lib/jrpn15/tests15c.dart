@@ -28,7 +28,7 @@ import 'main.dart';
 import 'model15c.dart';
 
 class SelfTests15 extends SelfTests {
-  SelfTests15({bool inCalculator = true}) : super(inCalculator: inCalculator);
+  SelfTests15({super.inCalculator});
 
   @override
   Model15<Operation> newModel() {

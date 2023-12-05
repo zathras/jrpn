@@ -14,7 +14,9 @@ linter:
         exhaustive_cases: true
 
 analyzer:
-  strong-mode:
-
+    language:
+        strict-casts: true
+        strict-inference: true
+        strict-raw-types: true
 #   exclude:
 #     - path/to/excluded/files/**

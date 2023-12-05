@@ -31,7 +31,7 @@ import 'package:jrpn/v/back_panel.dart';
 /// The calculator's back panel.
 ///
 class BackPanel16 extends BackPanel {
-  BackPanel16({Key? key}) : super(key: key);
+  BackPanel16({super.key});
 
   @override
   Widget buildBackPanelPortrait(

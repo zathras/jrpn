@@ -101,7 +101,7 @@ abstract class ControllerState {
 /// to [NormalOperation].
 ///
 abstract class LimitedState extends ControllerState {
-  LimitedState(Controller con) : super(con);
+  LimitedState(super.con);
 
   ///
   /// Process an [Operation] with the argument [ArgDone], once the
@@ -142,7 +142,7 @@ abstract class LimitedState extends ControllerState {
 /// or recalling a value from a register or lastX.
 ///
 abstract class ActiveState extends LimitedState with StackLiftEnabledUser {
-  ActiveState(Controller con) : super(con);
+  ActiveState(super.con);
 
   void handlePSE() => controller.handlePSE();
 
@@ -166,7 +166,7 @@ abstract class ActiveState extends LimitedState with StackLiftEnabledUser {
 /// it to do something.
 ///
 class Resting extends ActiveState {
-  Resting(Controller con) : super(con);
+  Resting(super.con);
 
   @override
   void buttonDown(Operation key) {
@@ -445,7 +445,7 @@ class Resting extends ActiveState {
 /// The state the calculator's in while entering digits.
 ///
 class DigitEntry extends ActiveState {
-  DigitEntry(Controller con) : super(con);
+  DigitEntry(super.con);
 
   String _entered = '';
   String _sign = '';
@@ -831,9 +831,8 @@ class ArgInputState extends ControllerState {
 ///
 class RunProgramArgInputState extends ArgInputState {
   final ProgramRunner Function() runner;
-  RunProgramArgInputState(Operation op, Arg arg, Controller con,
-      LimitedState lastState, this.runner)
-      : super(op, arg, con, lastState);
+  RunProgramArgInputState(
+      super.op, super.arg, super.con, super.lastState, this.runner);
 
   bool isDone = false;
 
@@ -898,7 +897,7 @@ class ProgramEntry extends LimitedState {
   Timer? _autorepeat;
   bool _alreadyDisplayed = false;
 
-  ProgramEntry(Controller con) : super(con);
+  ProgramEntry(super.con);
 
   ProgramMemory get program => model.memory.program;
 
@@ -1085,7 +1084,7 @@ class WaitingForGotoDotLines extends ControllerState {
   int _value = 0;
   int _digits = 0;
 
-  WaitingForGotoDotLines(Controller con, this.last) : super(con);
+  WaitingForGotoDotLines(super.con, this.last);
 
   @override
   void buttonDown(Operation key) {
@@ -1141,7 +1140,7 @@ class ShowState extends ControllerState {
 /// running self-tests.
 ///
 class DoNothing extends ControllerState {
-  DoNothing(Controller con) : super(con);
+  DoNothing(super.con);
 
   @override
   void buttonDown(Operation key) {}
@@ -1153,7 +1152,7 @@ class DoNothing extends ControllerState {
 /// calculator off.
 ///
 class OnOffKeyPressed extends DoNothing {
-  OnOffKeyPressed(Controller con) : super(con);
+  OnOffKeyPressed(super.con);
 
   @override
   void buttonDown(Operation key) {
@@ -1612,9 +1611,7 @@ class SingleStepping extends ControllerState with StackLiftEnabledUser {
   // from the real controller.
   bool _running = false;
 
-  SingleStepping(RunningController rc)
-      : _fake = rc,
-        super(rc);
+  SingleStepping(RunningController super.rc) : _fake = rc;
 
   ProgramMemory<Operation> get program => model.memory.program;
 
@@ -1703,7 +1700,7 @@ class Resumed extends ControllerState {
 /// some point.
 ///
 class CalculatorOff extends ControllerState {
-  CalculatorOff(Controller con) : super(con);
+  CalculatorOff(super.con);
 
   @override
   void buttonDown(Operation key) {

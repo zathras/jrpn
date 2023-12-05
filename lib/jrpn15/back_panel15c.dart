@@ -32,14 +32,14 @@ import 'dart:math' as dart;
 /// The calculator's back panel.
 ///
 class BackPanel15 extends BackPanel {
-  BackPanel15({Key? key}) : super(key: key);
+  BackPanel15({super.key});
 
   @override
-  get thickLineWidth => rowHeightMM * 0.09;
+  double get thickLineWidth => rowHeightMM * 0.09;
   @override
-  get thinLineWidth => rowHeightMM * 0.05;
+  double get thinLineWidth => rowHeightMM * 0.05;
   @override
-  get rowHeightMM => 3.7;
+  double get rowHeightMM => 3.7;
   @override
   double get fontSize => rowHeightMM * 0.60;
   @override
@@ -511,8 +511,7 @@ class _JumpTable extends StatelessWidget {
   final List<List<BPCell>> mainText;
 
   const _JumpTable(this.widthMM, this.heightMM, this.panel,
-      {required this.topText, required this.mainText, Key? key})
-      : super(key: key);
+      {required this.topText, required this.mainText});
 
   @override
   Widget build(BuildContext context) =>
@@ -596,7 +595,7 @@ class _JumpTableKey extends BPTable {
 }
 
 class _JumpTableKeyPainter extends BPTablePainter {
-  _JumpTableKeyPainter(_JumpTableKey table) : super(table);
+  _JumpTableKeyPainter(_JumpTableKey super.table);
 
   @override
   void drawOutline(Canvas canvas, double width, double height) {
@@ -617,7 +616,7 @@ class _TableWithDrawing extends BPTable {
 }
 
 class _TableWithDrawingPainter extends BPTablePainter {
-  _TableWithDrawingPainter(_TableWithDrawing table) : super(table);
+  _TableWithDrawingPainter(_TableWithDrawing super.table);
 
   @override
   void drawOutline(Canvas canvas, double width, double height) {
@@ -752,7 +751,7 @@ class _NumberTable extends BPTable {
 }
 
 class _NumberTablePainter extends BPTablePainter {
-  _NumberTablePainter(_NumberTable table) : super(table);
+  _NumberTablePainter(_NumberTable super.table);
 
   @override
   void drawOutline(Canvas canvas, double width, double height) {

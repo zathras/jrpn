@@ -123,7 +123,7 @@ class TestCalculator implements ProgramListener {
 
   void resume() {
     _trace("==> resume");
-    Completer c = _resume!;
+    Completer<void> c = _resume!;
     _resume = null;
     c.complete(null);
   }

@@ -29,7 +29,7 @@ import 'package:jrpn/c/controller.dart';
 import 'main.dart';
 
 class SelfTests16 extends SelfTests {
-  SelfTests16({bool inCalculator = true}) : super(inCalculator: inCalculator);
+  SelfTests16({super.inCalculator});
 
   @override
   Model<Operation> newModel() {
