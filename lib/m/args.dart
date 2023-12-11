@@ -59,7 +59,7 @@ abstract class Arg {
 class DigitArg extends Arg {
   final int max;
   final void Function(Model, int) calc;
-  final ArgDone Function(Function(Model)) argDoneFactory;
+  final ArgDone Function(void Function(Model)) argDoneFactory;
 
   late final List<ArgDone> _next;
   late final KeyArg? _nextOnDot;
@@ -390,9 +390,7 @@ class ArgDone extends Arg {
 class StackLiftingArgDone extends ArgDone {
   final bool Function(Model) needsStackLiftIfEnabled;
 
-  StackLiftingArgDone(Function(Model) calculate,
-      {required this.needsStackLiftIfEnabled})
-      : super(calculate);
+  StackLiftingArgDone(super.calculate, {required this.needsStackLiftIfEnabled});
 
   @override
   bool liftStackIfEnabled(Model m) => needsStackLiftIfEnabled(m);

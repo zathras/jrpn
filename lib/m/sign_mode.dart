@@ -133,7 +133,7 @@ abstract class IntegerSignMode extends SignMode {
 }
 
 class _OnesComplement extends IntegerSignMode {
-  _OnesComplement._p(String j) : super._p(j);
+  _OnesComplement._p(super.j) : super._p();
 
   @override
   String get annunciatorText => "1's";
@@ -224,7 +224,7 @@ class _OnesComplement extends IntegerSignMode {
 }
 
 class _TwosComplement extends IntegerSignMode {
-  _TwosComplement._p(String j) : super._p(j);
+  _TwosComplement._p(super.j) : super._p();
 
   @override
   String get annunciatorText => '';
@@ -303,7 +303,7 @@ class _TwosComplement extends IntegerSignMode {
 }
 
 class _Unsigned extends IntegerSignMode {
-  _Unsigned._p(String j) : super._p(j);
+  _Unsigned._p(super.j) : super._p();
 
   @override
   String get annunciatorText => 'U';

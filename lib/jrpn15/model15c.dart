@@ -361,8 +361,7 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
 
   int _numRegisters = 20;
 
-  Memory15(this.model, {required int memoryNybbles})
-      : super(memoryNybbles: memoryNybbles);
+  Memory15(this.model, {required super.memoryNybbles});
 
   @override
   void initializeSystem(OperationMap<OT> layout, OT lbl, OT rtn) => program =
@@ -402,10 +401,9 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
 class ProgramMemory15<OT extends ProgramOperation> extends ProgramMemory<OT> {
   final List<int> _lblOpcodes;
 
-  ProgramMemory15(Memory<OT> memory, OperationMap<OT> layout,
-      int returnStackSize, OT lbl, OT rtn)
-      : _lblOpcodes = _makeLblOpcodes(lbl),
-        super(memory, layout, returnStackSize, rtn);
+  ProgramMemory15(
+      super.memory, super.layout, super.returnStackSize, OT lbl, OT super.rtn)
+      : _lblOpcodes = _makeLblOpcodes(lbl);
 
   static List<int> _makeLblOpcodes(ProgramOperation lbl) {
     /// Because LBL . n is two-byte, we have to chase down the opcodes

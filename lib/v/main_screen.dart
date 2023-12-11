@@ -79,7 +79,7 @@ class ScreenPositioner {
 }
 
 abstract class OrientedScreen extends StatelessWidget {
-  const OrientedScreen({Key? key}) : super(key: key);
+  const OrientedScreen({super.key});
 
   static final ScreenPositioner landscape = ScreenPositioner(12.7, 8);
   static final ScreenPositioner portrait = ScreenPositioner(8, 12.7);
@@ -113,9 +113,7 @@ class MainScreen extends OrientedScreen {
   final Jrpn app;
   final ScalableImage icon;
 
-  MainScreen(this.jrpnState, this.icon, {Key? key})
-      : app = jrpnState.widget,
-        super(key: key);
+  MainScreen(this.jrpnState, this.icon, {super.key}) : app = jrpnState.widget;
 
   RealController get controller => app.controller;
   Model get model => app.model;
@@ -476,7 +474,7 @@ class MainMenu extends StatefulWidget {
   final MainScreen main;
   final ScreenPositioner screen;
 
-  const MainMenu(this.main, this.screen, {Key? key}) : super(key: key);
+  const MainMenu(this.main, this.screen, {super.key});
 
   @override
   State<MainMenu> createState() => _MainMenuState();
@@ -544,8 +542,7 @@ class _HelpMenu extends StatelessWidget {
   final ScalableImage icon;
   final RealController controller;
 
-  const _HelpMenu(this.title, this.icon, this.controller, {Key? key})
-      : super(key: key);
+  const _HelpMenu(this.title, this.icon, this.controller);
 
   @override
   Widget build(BuildContext context) {
@@ -653,7 +650,7 @@ Widget _showNonWarranty(BuildContext context) => AlertDialog(
 class _SettingsMenu extends StatefulWidget {
   final String title;
   final Jrpn app;
-  const _SettingsMenu(this.title, this.app, {Key? key}) : super(key: key);
+  const _SettingsMenu(this.title, this.app);
 
   Model get model => app.model;
   RealController get controller => app.controller;
@@ -881,7 +878,7 @@ class _FileMenu extends StatefulWidget {
   final String title;
   final Jrpn app;
 
-  const _FileMenu(this.title, this.app, {Key? key}) : super(key: key);
+  const _FileMenu(this.title, this.app);
 
   @override
   _FileMenuState createState() => _FileMenuState();
@@ -935,7 +932,7 @@ class _FileSaveMenu extends StatefulWidget {
   final String title;
   final Jrpn app;
 
-  const _FileSaveMenu(this.title, this.app, {Key? key}) : super(key: key);
+  const _FileSaveMenu(this.title, this.app);
 
   @override
   __FileSaveMenuState createState() => __FileSaveMenuState();
@@ -1017,7 +1014,7 @@ class _ImportProgramMenu extends StatefulWidget {
   final String title;
   final Jrpn app;
 
-  const _ImportProgramMenu(this.title, this.app, {Key? key}) : super(key: key);
+  const _ImportProgramMenu(this.title, this.app);
 
   @override
   __ImportProgramMenuState createState() => __ImportProgramMenuState();
@@ -1115,7 +1112,7 @@ class _ExportProgramMenu extends StatefulWidget {
   final String title;
   final Jrpn app;
 
-  const _ExportProgramMenu(this.title, this.app, {Key? key}) : super(key: key);
+  const _ExportProgramMenu(this.title, this.app);
 
   @override
   __ExportProgramMenuState createState() => __ExportProgramMenuState();
@@ -1208,7 +1205,7 @@ class _FileReadMenu extends StatefulWidget {
   final String title;
   final Jrpn app;
 
-  const _FileReadMenu(this.title, this.app, {Key? key}) : super(key: key);
+  const _FileReadMenu(this.title, this.app);
 
   @override
   __FileReadMenuState createState() => __FileReadMenuState();
@@ -1314,7 +1311,7 @@ class _SystemSettingsMenu extends StatefulWidget {
   final String title;
   final Jrpn app;
 
-  const _SystemSettingsMenu(this.title, this.app, {Key? key}) : super(key: key);
+  const _SystemSettingsMenu(this.title, this.app);
 
   @override
   _SystemSettingsMenuState createState() => _SystemSettingsMenuState();
@@ -1482,7 +1479,7 @@ class ErrorDialog extends StatelessWidget {
   final String message;
   final Object? exception;
 
-  const ErrorDialog(this.message, this.exception, {Key? key}) : super(key: key);
+  const ErrorDialog(this.message, this.exception, {super.key});
 
   @override
   Widget build(BuildContext context) {

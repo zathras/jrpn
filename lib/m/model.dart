@@ -187,7 +187,15 @@ class CalculatorError {
 
 enum OrientationSetting { auto, portrait, landscape }
 
-enum KeyFeedbackSetting { platform, click, haptic, both, none, hapticHeavy, bothHeavy }
+enum KeyFeedbackSetting {
+  platform,
+  click,
+  haptic,
+  both,
+  none,
+  hapticHeavy,
+  bothHeavy
+}
 
 enum LongNumbersSetting { window, growLCD, shrinkDigits }
 

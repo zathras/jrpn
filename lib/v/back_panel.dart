@@ -32,7 +32,7 @@ import 'main_screen.dart';
 import '../generic_main.dart';
 
 abstract class BackPanel extends OrientedScreen {
-  BackPanel({Key? key}) : super(key: key);
+  BackPanel({super.key});
 
   double get thickLineWidth => 0.65; // mm
   double get thinLineWidth => 0.3; // mm
@@ -168,8 +168,7 @@ class BPTable extends StatelessWidget {
 
   const BPTable(this.widthCM, this.rows, this.drawHorizontalLines,
       this.drawVerticalLines, this.panel,
-      {Key? key})
-      : super(key: key);
+      {super.key});
 
   double get thickLineWidth => panel.thickLineWidth;
   double get thinLineWidth => panel.thinLineWidth;
@@ -557,9 +556,9 @@ class _TextItem extends BPItem {
 }
 
 class _SqrtTextItem extends _TextItem {
-  _SqrtTextItem._p(TextPainter painter, BackPanel panel, bool box, double scale,
-      double width, Offset offset, Offset boxOffset)
-      : super._p(painter, panel, box, scale, width, offset, boxOffset);
+  _SqrtTextItem._p(super.painter, super.panel, super.box, super.scale,
+      super.width, super.offset, super.boxOffset)
+      : super._p();
 
   factory _SqrtTextItem(String text, BackPanel panel,
       {bool box = false,

@@ -230,8 +230,7 @@ class Memory16 extends Memory<Operation> {
   @override
   late final policy = MemoryPolicy16(this);
 
-  Memory16(this.model, {required int memoryNybbles})
-      : super(memoryNybbles: memoryNybbles);
+  Memory16(this.model, {required super.memoryNybbles});
 
   @override
   void initializeSystem(
@@ -744,7 +743,7 @@ class Operations16 extends Operations {
 }
 
 class ProgramInstruction16 extends ProgramInstruction<Operation> {
-  ProgramInstruction16(Operation op, ArgDone arg) : super(op, arg);
+  ProgramInstruction16(super.op, super.arg);
 }
 
 ///
@@ -921,9 +920,7 @@ class ButtonLayout16 extends ButtonLayout {
 }
 
 class LandscapeButtonFactory16 extends LandscapeButtonFactory {
-  LandscapeButtonFactory16(
-      BuildContext context, ScreenPositioner screen, RealController controller)
-      : super(context, screen, controller);
+  LandscapeButtonFactory16(super.context, super.screen, super.controller);
 
   @override
   double addUpperGoldLabels(List<Widget> result, Rect pos,
@@ -955,9 +952,7 @@ class LandscapeButtonFactory16 extends LandscapeButtonFactory {
 }
 
 class PortraitButtonFactory16 extends PortraitButtonFactory {
-  PortraitButtonFactory16(
-      BuildContext context, ScreenPositioner screen, RealController controller)
-      : super(context, screen, controller);
+  PortraitButtonFactory16(super.context, super.screen, super.controller);
 
   @override
   double addUpperGoldLabels(List<Widget> result, Rect pos,
