@@ -165,7 +165,11 @@ class Value {
         return fNegativeInfinity;
       }
     } else if (negativeExponent) {
-      exponent = ((0x999 + 1) - exponent); // 1000's complement in BCD
+      // 1000's complement in BCD
+      exponent = ((0x999 + 1) - exponent);
+      if (exponent & 0xf == 0xa) {
+        exponent += 6;
+      }
     }
     if (mantissa == _mantissaSign) {
       // -0.0, which the real calculator doesn't distinguish from 0.0
@@ -209,7 +213,11 @@ class Value {
         throw CalculatorError(6, num15: 1);
       }
     }
-    return m * pow(10.0, (exponent - 9).toDouble());
+    final e = exponent;
+    if (m == 0 && e != 0) {
+      throw CalculatorError(6, num15: 1);   // Issue 68
+    }
+    return m * pow(10.0, (e - 9).toDouble());
   }
 
   String get floatPrefix {
@@ -226,17 +234,23 @@ class Value {
   /// Get the exponent part of this value interpreted as a float.
   /// Not valid for infinity or -infinity.
   int get exponent {
+    int checkDigit(int d) {
+      if (d > 9) {
+        throw CalculatorError(6, num15: 1);
+      }
+      return d;
+    }
     int lower12 = _lower12;
-    int r = 10 * ((lower12 >> 4) & 0xf) + (lower12 & 0xf);
+    int r = 10 * checkDigit((lower12 >> 4) & 0xf) + checkDigit(lower12 & 0xf);
     if (lower12 & 0xf00 == 0x900) {
       r = -(100 - r);
     } else if ((lower12 & 0x0f00) != 0x000) {
-      throw CalculatorError(6); // Invalid float format
+      throw CalculatorError(6, num15: 1);
     }
     if (r > -100 && r < 100) {
       return r;
     } else {
-      throw CalculatorError(6); // Invalid float format
+      throw CalculatorError(6, num15: 1);
     }
   }
 
@@ -303,7 +317,9 @@ class Value {
     }
     final BigInt u = _upper52;
     final BigInt mag = (u << ((e + 1) * 4)) & _mantissaMagnitude;
-    if ((u & _mantissaSign) == BigInt.zero) {
+    if (mag == BigInt.zero) {
+      return Value.zero;
+    } else if ((u & _mantissaSign) == BigInt.zero) {
       return Value._fromMantissaAndRawExponent(mag, 0x999); // 0x999 is -1
     } else {
       return Value._fromMantissaAndRawExponent(mag | _mantissaSign, 0x999);
@@ -342,6 +358,9 @@ class Value {
 
   Value timesTenTo(int power) {
     assert(asMatrix == null);
+    if (this == zero) {
+      return this;
+    }
     final e = exponent + power;
     if (e >= 100) {
       if (mantissaDigit(-1) == 0) {
