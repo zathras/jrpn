@@ -279,7 +279,7 @@ double? cos15(double angle, int? rightAngleInt) {
 }
 
 ///
-/// Special case of tan() for HP15, so that tan(90) gives CalculatorError(0),
+/// Special case of tan() for HP15, so that tan(90) gives infinity,
 /// etc.
 ///
 /// rightAngleInt is 90 for degrees, 100 for grad, and null for radians.
@@ -288,7 +288,7 @@ double? tan15(double angle, int? rightAngleInt) {
   if (rightAngleInt != null) {
     double? a = _normalizeAngle(angle, rightAngleInt);
     if (a == rightAngleInt || a == 3 * rightAngleInt) {
-      throw CalculatorError(0);
+      return double.infinity;
     } else if (a == 0 || a == rightAngleInt * 2) {
       return 0;
     }
