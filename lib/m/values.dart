@@ -48,8 +48,9 @@ class Value {
   /// The calculator's internal representation of a value, as an *unsigned*
   /// integer of (up to) 64 bits in normal operation (128 for the double
   /// integer operations).  It's a BigInt rather than an int because
-  /// Javascript Is Evil (tm).  That said, using BigInt does let us handle the
-  /// double integer operations easily.
+  /// Javascript Is Evil (tm) - dart web currently has 32 bit ints for that
+  /// reason.  Hopefully WASM will fix that eventually.  Anyway, using BigInt
+  /// does let us handle the double integer operations easily.
   final BigInt internal;
   static final BigInt _maxNormalInternal =
       BigInt.parse('ffffffffffffffff', radix: 16);
@@ -62,7 +63,7 @@ class Value {
 
   Value._fromMantissaAndRawExponent(BigInt mantissa, int exponent)
       : internal = (mantissa << 12) | BigInt.from(exponent) {
-    assert(exponent >= 0, 'Exponent must be tens complement');
+    assert(exponent >= 0, 'Exponent must be thousands complement');
     // Assert a valid float bit pattern by throwing CaclulatorError(6)
     // if malformed.
     // In production, asDouble can legitimately throw this error when a
@@ -166,7 +167,7 @@ class Value {
       }
     } else if (negativeExponent) {
       // 1000's complement in BCD
-      exponent = ((0x999 + 1) - exponent);
+      exponent = (0x99a - exponent);
       if (exponent & 0xf == 0xa) {
         exponent += 6;
       }
@@ -202,6 +203,11 @@ class Value {
   /// There is no corresponding asInt method, because the int interpretation
   /// depends on the bit size and the sign mode - cf. IntegerSignMode.toBigInt()
   double get asDouble {
+    if (this == fInfinity) {
+      return double.infinity;
+    } else if (this == fNegativeInfinity) {
+      return double.negativeInfinity;
+    }
     final BigInt upper52 = _upper52;
     String mantissa = (upper52 & _mantissaMagnitude).toRadixString(16);
     final int sign = (upper52 >> 40).toInt();
@@ -215,11 +221,15 @@ class Value {
     }
     final e = exponent;
     if (m == 0 && e != 0) {
-      throw CalculatorError(6, num15: 1);   // Issue 68
+      throw CalculatorError(6, num15: 1); // Issue 68
     }
     return m * pow(10.0, (e - 9).toDouble());
   }
 
+  ///
+  /// Give the mantissa, essentially.  Used for f-CLEAR PREFIX, which shows
+  /// the mantissa to the user.
+  ///
   String get floatPrefix {
     final sb = StringBuffer();
     final BigInt upper52 = _upper52;
@@ -233,6 +243,7 @@ class Value {
   ///
   /// Get the exponent part of this value interpreted as a float.
   /// Not valid for infinity or -infinity.
+  ///
   int get exponent {
     int checkDigit(int d) {
       if (d > 9) {
@@ -240,6 +251,7 @@ class Value {
       }
       return d;
     }
+
     int lower12 = _lower12;
     int r = 10 * checkDigit((lower12 >> 4) & 0xf) + checkDigit(lower12 & 0xf);
     if (lower12 & 0xf00 == 0x900) {
@@ -250,6 +262,7 @@ class Value {
     if (r > -100 && r < 100) {
       return r;
     } else {
+      // Impossible, now that checking is stricter, but left in for robustness.
       throw CalculatorError(6, num15: 1);
     }
   }
@@ -309,6 +322,9 @@ class Value {
     if (asMatrix != null) {
       throw CalculatorError(1);
     }
+    if (this == fInfinity || this == fNegativeInfinity) {
+      return zero;
+    }
     final int e = exponent;
     if (e > 9) {
       return zero;
@@ -329,6 +345,9 @@ class Value {
   Value intOp() {
     if (asMatrix != null) {
       throw CalculatorError(1);
+    }
+    if (this == fInfinity || this == fNegativeInfinity) {
+      return this;
     }
     final e = exponent;
     if (e < 0) {
@@ -352,6 +371,9 @@ class Value {
     int rawE = ((e ~/ 10) * 0x10) | (e % 10);
     if (negative) {
       rawE = 0x99a - rawE;
+      if (rawE & 0xf == 0xa) {
+        rawE += 6;
+      }
     }
     return rawE;
   }

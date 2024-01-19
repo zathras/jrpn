@@ -1723,9 +1723,18 @@ class DisplayModel {
       delayed._myTimer = t;
       initial._myTimer = t;
       show(initial);
+      if (model.errorBlink) {
+        update(
+            flash: flash, disableWindow: disableWindow, blink: BlinkMode.all);
+      }
     } else {
       currentShowingX = newNumber;
-      update(flash: flash, disableWindow: disableWindow);
+      if (model.errorBlink) {
+        update(
+            flash: flash, disableWindow: disableWindow, blink: BlinkMode.all);
+      } else {
+        update(flash: flash, disableWindow: disableWindow);
+      }
     }
   }
 }

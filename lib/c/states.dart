@@ -278,7 +278,8 @@ class Resting extends ActiveState {
     if (model.isFloatMode) {
       if (model.x.asMatrix == null) {
         model.display.current = model.x.floatPrefix;
-        model.display.update();
+        final blink = model.errorBlink ? BlinkMode.all : BlinkMode.none;
+        model.display.update(blink: blink);
         changeState(ShowState(this));
       }
     } else if (model.settings.windowLongNumbers) {

@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 /*
-Copyright (c) 2021-2023 William Foote
+Copyright (c) 2021-2024 William Foote
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -79,6 +79,9 @@ Future<void> main() async {
   });
   test('15C opcode test', opcodeTest15C);
   test('15C lastX test', lastX15C);
+  test('Value exponent test', valueExponentTest);
+  test('Value frac op test', valueFracOpTest);
+  test('Value int op test', valueIntOpTest);
   test15cPrograms();
 }
 
@@ -2161,6 +2164,87 @@ String formatDouble(double v, int digits) {
     }
   }
   return r;
+}
+
+Future<void> valueExponentTest() async {
+  for (int e = -99; e <= 99; e++) {
+    final d = double.parse('5e$e');
+    expect(Value.fromDouble(d).asDouble.toStringAsExponential(10),
+        d.toStringAsExponential(10));
+  }
+  expect(Value.fromDouble(5e-100).asDouble, 0.0);
+  expect(Value.fromDouble(-5e-100).asDouble, 0.0);
+  expect(Value.fromDouble(5e100).asDouble, double.infinity);
+  expect(Value.fromDouble(-5e100).asDouble, double.negativeInfinity);
+}
+
+Future<void> valueFracOpTest() async {
+  expect(Value.fromDouble(0.0000000001234567891).fracOp(),
+      Value.fromDouble(0.0000000001234567891));
+  expect(Value.fromDouble(0.000000001234567891).fracOp(),
+      Value.fromDouble(0.000000001234567891));
+  expect(Value.fromDouble(0.00000001234567891).fracOp(),
+      Value.fromDouble(0.00000001234567891));
+  expect(Value.fromDouble(0.0000001234567891).fracOp(),
+      Value.fromDouble(0.0000001234567891));
+  expect(Value.fromDouble(0.000001234567891).fracOp(),
+      Value.fromDouble(0.000001234567891));
+  expect(Value.fromDouble(0.00001234567891).fracOp(),
+      Value.fromDouble(0.00001234567891));
+  expect(Value.fromDouble(0.0001234567891).fracOp(),
+      Value.fromDouble(0.0001234567891));
+  expect(Value.fromDouble(0.001234567891).fracOp(),
+      Value.fromDouble(0.001234567891));
+  expect(Value.fromDouble(0.01234567891).fracOp(),
+      Value.fromDouble(0.01234567891));
+  expect(
+      Value.fromDouble(0.1234567891).fracOp(), Value.fromDouble(0.1234567891));
+  expect(Value.fromDouble(1.234567891).fracOp(), Value.fromDouble(0.234567891));
+  expect(Value.fromDouble(12.34567891).fracOp(), Value.fromDouble(0.34567891));
+  expect(Value.fromDouble(123.4567891).fracOp(), Value.fromDouble(0.4567891));
+  expect(Value.fromDouble(1234.567891).fracOp(), Value.fromDouble(0.567891));
+  expect(Value.fromDouble(12345.67891).fracOp(), Value.fromDouble(0.67891));
+  expect(Value.fromDouble(123456.7891).fracOp(), Value.fromDouble(0.7891));
+  expect(Value.fromDouble(1234567.891).fracOp(), Value.fromDouble(0.891));
+  expect(Value.fromDouble(12345678.91).fracOp(), Value.fromDouble(0.91));
+  expect(Value.fromDouble(123456789.1).fracOp(), Value.fromDouble(0.1));
+  expect(Value.fromDouble(1234567891).fracOp(), Value.fromDouble(0.0));
+  for (int e = -99; e < 0; e++) {
+    final d = double.parse('1.234567891e$e');
+    expect(Value.fromDouble(d).fracOp(), Value.fromDouble(d));
+  }
+  for (int e = 9; e <= 99; e++) {
+    final d = double.parse('1.234567891e$e');
+    expect(Value.fromDouble(d).fracOp(), Value.zero);
+  }
+  expect(Value.zero.fracOp(), Value.zero);
+  expect(Value.fInfinity.fracOp(), Value.zero);
+  expect(Value.fNegativeInfinity.fracOp(), Value.zero);
+}
+
+Future<void> valueIntOpTest() async {
+  expect(Value.fromDouble(1.234567891).intOp(), Value.fromDouble(1));
+  expect(Value.fromDouble(12.34567891).intOp(), Value.fromDouble(12));
+  expect(Value.fromDouble(123.4567891).intOp(), Value.fromDouble(123));
+  expect(Value.fromDouble(1234.567891).intOp(), Value.fromDouble(1234));
+  expect(Value.fromDouble(12345.67891).intOp(), Value.fromDouble(12345));
+  expect(Value.fromDouble(123456.7891).intOp(), Value.fromDouble(123456));
+  expect(Value.fromDouble(1234567.891).intOp(), Value.fromDouble(1234567));
+  expect(Value.fromDouble(12345678.91).intOp(), Value.fromDouble(12345678));
+  expect(Value.fromDouble(123456789.1).intOp(), Value.fromDouble(123456789));
+  expect(Value.fromDouble(1234567891).intOp(), Value.fromDouble(1234567891));
+  expect(Value.fromDouble(12345678914).intOp(), Value.fromDouble(12345678910));
+  for (int e = -99; e < 0; e++) {
+    final d = double.parse('1.234567891e$e');
+    expect(Value.fromDouble(d).intOp(), Value.zero);
+  }
+  for (int e = 9; e <= 99; e++) {
+    final d = double.parse('1.234567891e$e');
+    expect(Value.fromDouble(d).intOp(), Value.fromDouble(d));
+  }
+  expect(Value.zero.intOp(), Value.zero);
+  expect(Value.fInfinity.intOp(), Value.fInfinity);
+  expect(Value.fNegativeInfinity.intOp(), Value.fNegativeInfinity);
 }
 
 Future<void> lastX15C() async {
