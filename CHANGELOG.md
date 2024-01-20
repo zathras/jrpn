@@ -1,3 +1,7 @@
+Version 2.1.10
+  * Add stricter checks of internal float format:  Issue 68
+  * Give infinity (and not error) for tan(90 degrees):  Issue 69
+
 Version 2.1.9
   * Add permission needed on some Android phones for haptic feedback.
   * Add option for heavy haptic feedback.
