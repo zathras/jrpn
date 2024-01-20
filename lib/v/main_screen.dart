@@ -606,7 +606,7 @@ class _HelpMenu extends StatelessWidget {
                   applicationIcon: ScalableImageWidget(si: icon, scale: 0.15),
                   applicationName: 'JRPN ${controller.model.modelName}',
                   applicationVersion: 'Version $applicationVersion',
-                  applicationLegalese: '© 2021-2023 Bill Foote',
+                  applicationLegalese: '© 2021-2024 Bill Foote',
                   children: [
                     const SizedBox(height: 40),
                     InkWell(

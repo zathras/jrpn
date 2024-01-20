@@ -48,7 +48,7 @@ SOFTWARE.
 ''';
 
 const gnuLicense = '''
-Copyright (c) 2021-2023 William Foote
+Copyright (c) 2021-2024 William Foote
 
 Program includes portions derived from other sources, as specified
 in the relevant source files.  Source is available in the repository
