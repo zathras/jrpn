@@ -1,3 +1,6 @@
+Version 2.1.11
+  * 16C:  More robust handling on invalid floats in registers:  Issue 70
+
 Version 2.1.10
   * Add stricter checks of internal float format:  Issue 68
   * Give infinity (and not error) for tan(90 degrees):  Issue 69

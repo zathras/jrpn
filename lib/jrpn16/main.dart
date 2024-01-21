@@ -299,7 +299,10 @@ class Operations16 extends Operations {
           maxDigit: 31,
           f: (m, v) {
             if (m.isFloatMode) {
-              v.asDouble; // Throw exception if not
+              final d = v.asDouble; // Throw exception if not
+              if (d == double.infinity || d == double.negativeInfinity) {
+                throw CalculatorError(6);
+              }
             }
             m.x = v;
           }),

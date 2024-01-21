@@ -211,7 +211,12 @@ class Value {
     final BigInt upper52 = _upper52;
     String mantissa = (upper52 & _mantissaMagnitude).toRadixString(16);
     final int sign = (upper52 >> 40).toInt();
-    double m = double.parse(mantissa);
+    double m = 0;
+    try {
+      m = double.parse(mantissa);
+    } catch (e) {
+      throw CalculatorError(6, num15: 1);
+    }
     if (sign != 0) {
       if (sign == 0x9) {
         m = -m;

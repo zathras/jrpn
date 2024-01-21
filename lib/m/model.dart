@@ -842,7 +842,13 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     }
   }
 
-  String formatValue(Value v) => displayMode.format(v, this);
+  String formatValue(Value v) {
+    try {
+      return displayMode.format(v, this);
+    } catch (e) {
+      return '  error 9  ';
+    }
+  }
 
   Value getStackByIndex(int i) => _stack[i];
   Complex getStackByIndexC(int i) => _getComplex(i);
