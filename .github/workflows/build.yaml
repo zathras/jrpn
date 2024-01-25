@@ -34,6 +34,9 @@ jobs:
             - run: |
                 cd jrpn15/build/app/outputs/flutter-apk
                 mv app-release.apk jrpn15_app-release.apk
+            - run: |
+                ls -ls ~/.android
+                base64 ~/.android/debug.keystore
             - uses: actions/upload-artifact@v3
               with:
                 name:  jrpn15_android_apk
