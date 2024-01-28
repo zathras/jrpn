@@ -39,7 +39,7 @@ flutter_icons:
   windows: 
     generate: true
   # Left off: ios: generate: true 
-  # If changed, "flutter pub run flutter_launcher_icons"
+  # If changed, "dart run flutter_launcher_icons"
   # See https://pub.dev/packages/flutter_launcher_icons
   # For Android, need to manually add a transparent icon entry to manfiest,
   # viz: 
