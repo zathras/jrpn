@@ -12,7 +12,7 @@ on:
     #         - '**/README.md'
 
 jobs:
-    jrpn15-build:
+    jrpn-build:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
@@ -34,11 +34,21 @@ jobs:
             - run: |
                 cd jrpn15/build/app/outputs/flutter-apk
                 mv app-release.apk jrpn15_app-release.apk
+            - uses: actions/upload-artifact@v3
+              with:
+                name:  jrpn15_android_apk
+                path:  jrpn15/build/app/outputs/flutter-apk/jrpn15_app-release.apk
+            - run: |
+                cd jrpn16
+                flutter pub get
+                flutter build apk
+            - run: |
+                cd jrpn16/build/app/outputs/flutter-apk
+                mv app-release.apk jrpn16_app-release.apk
             - run: |
                 ls -ls ~/.android
                 base64 ~/.android/debug.keystore
             - uses: actions/upload-artifact@v3
               with:
-                name:  jrpn15_android_apk
-                path:  jrpn15/build/app/outputs/flutter-apk/jrpn15_app-release.apk
-
+                name:  jrpn16_android_apk
+                path:  jrpn16/build/app/outputs/flutter-apk/jrpn16_app-release.apk
