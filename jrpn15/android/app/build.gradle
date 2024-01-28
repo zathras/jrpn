@@ -49,8 +49,6 @@ android {
 
     defaultConfig {
         applicationId "com.jovial.jrpn15"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion // was 19
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
@@ -69,7 +67,10 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // If we're running as a github action, there's no storeFile.
+            // Use the debug signing configs in this case.
+            signingConfig (keystoreProperties['storeFile'] != null 
+                        ? signingConfigs.release : signingConfigs.debug)
         }
     }
 
