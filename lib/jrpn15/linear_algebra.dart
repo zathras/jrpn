@@ -132,7 +132,7 @@ void solve(Matrix a, AMatrix b, AMatrix x) {
   }
   x.visit((r, c) {
     final v = x.get(r, c);
-    if (v == Value.fInfinity || v == Value.fNegativeInfinity) {
+    if (v.isInfinite) {
       throw MatrixOverflow();
     }
   });

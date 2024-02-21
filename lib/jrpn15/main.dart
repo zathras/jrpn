@@ -121,10 +121,10 @@ class Operations15 extends Operations {
           });
         } else {
           _scalarOrMatrix(m, scalar: (x, y) {
-            if (x == 0) {
+            if (x == Value.zero) {
               throw CalculatorError(0);
             }
-            return y / x;
+            return Value.fromDouble(y.asDouble / x.asDouble);
           }, matrix: (m, x, y, r) {
             if (x != r) {
               r.resize(m, y.rows, y.columns);
@@ -150,28 +150,28 @@ class Operations15 extends Operations {
       name: '/');
 
   static void _scalarOrMatrix(Model m,
-      {required double Function(double, double) scalar,
+      {required Value Function(Value, Value) scalar,
       required void Function(Model15 m, Matrix x, Matrix y, Matrix r) matrix}) {
     m as Model15;
     final int? mx = m.x.asMatrix;
     final int? my = m.y.asMatrix;
     if (mx == null && my == null) {
-      m.popSetResultXF = scalar(m.xF, m.yF);
+      m.popSetResultX = scalar(m.x, m.y);
     } else {
       final result = m.matrices[m.resultMatrix];
       if (mx == null) {
         final matY = m.matrices[my!];
-        final x = m.xF;
+        final x = m.x;
         result.resize(m, matY.rows, matY.columns);
         matY.visit((r, c) {
-          result.setF(r, c, scalar(x, matY.getF(r, c)));
+          result.set(r, c, scalar(x, matY.get(r, c)));
         });
       } else if (my == null) {
         final matX = m.matrices[mx];
-        final y = m.yF;
+        final y = m.y;
         result.resize(m, matX.rows, matX.columns);
         matX.visit((r, c) {
-          result.setF(r, c, scalar(matX.getF(r, c), y));
+          result.set(r, c, scalar(matX.get(r, c), y));
         });
       } else {
         final matX = m.matrices[mx];
@@ -186,7 +186,7 @@ class Operations15 extends Operations {
   static final NormalOperation mult = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         _scalarOrMatrix(m,
-            scalar: (x, y) => y * x,
+            scalar: (x, y) => Value.fromDouble(y.asDouble * x.asDouble),
             matrix: (m, x, y, r) => _matrixMultiply(m, x, y, r));
       },
       complexCalc: (Model m) {
@@ -213,42 +213,43 @@ class Operations15 extends Operations {
   static final NormalOperation plus = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         _scalarOrMatrix(m,
-            scalar: (x, y) => y + x,
+            scalar: (x, y) => y.decimalAdd(x),
             matrix: (m, x, y, r) {
-              _addOrSubtractMatricesXY((x, y) => y + x, m, x, y, r);
+              _addOrSubtractMatricesXY((x, y) => y.decimalAdd(x), m, x, y, r);
             });
       },
       complexCalc: (Model m) {
         if (m.x.asMatrix != null || m.y.asMatrix != null) {
           plus.floatCalc!(m);
         } else {
-          m.popSetResultXC = m.yC + m.xC;
+          m.popSetResultXCV = m.yCV.decimalAdd(m.xCV);
         }
       },
       name: '+');
 
-  static void _addOrSubtractMatricesXY(double Function(double, double) f,
+  static void _addOrSubtractMatricesXY(Value Function(Value, Value) f,
       Model15 m, Matrix x, Matrix y, Matrix result) {
     if (x.rows != y.rows || x.columns != y.columns) {
       throw CalculatorError(11);
     }
     result.resize(m, x.rows, x.columns);
-    result.visit((r, c) => result.setF(r, c, f(x.getF(r, c), y.getF(r, c))));
+    result.visit((r, c) => result.set(r, c, f(x.get(r, c), y.get(r, c))));
   }
 
   static final NormalOperation minus = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         _scalarOrMatrix(m,
-            scalar: (x, y) => y - x,
+            scalar: (x, y) => y.decimalSubtract(x),
             matrix: (m, x, y, r) {
-              _addOrSubtractMatricesXY((x, y) => y - x, m, x, y, r);
+              _addOrSubtractMatricesXY(
+                  (x, y) => y.decimalSubtract(x), m, x, y, r);
             });
       },
       complexCalc: (Model m) {
         if (m.x.asMatrix != null || m.y.asMatrix != null) {
           minus.floatCalc!(m);
         } else {
-          m.popSetResultXC = m.yC - m.xC;
+          m.popSetResultXCV = m.yCV.decimalSubtract(m.xCV);
         }
       },
       name: '-');

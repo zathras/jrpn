@@ -625,9 +625,17 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   List<Value>? _imaginaryStack;
   Complex _getComplex(int i) =>
       Complex(_stack[i].asDouble, _imaginaryStack![i].asDouble);
+  ComplexValue _getComplexValue(int i) =>
+      ComplexValue(_stack[i], _imaginaryStack![i]);
   void _setComplex(int i, Complex v) {
     _stack[i] = Value.fromDouble(v.real);
     _imaginaryStack![i] = Value.fromDouble(v.imaginary);
+    needsSave = true;
+  }
+
+  void _setComplexV(int i, ComplexValue v) {
+    _stack[i] = v.real;
+    _imaginaryStack![i] = v.imaginary;
     needsSave = true;
   }
 
@@ -642,15 +650,18 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// Get x as a complex value
   Complex get xC => _getComplex(0);
 
+  /// Get x as a ComplexValue
+  ComplexValue get xCV => _getComplexValue(0);
+
   /// Just the imaginary part of x
   Value get xImaginary => _imaginaryStack![0];
 
   /// Just set the real part of X.  All x setters come here.
   set _justSetXReal(Value v) {
-    if (identical(v, Value.fInfinity)) {
+    if (v == Value.fInfinity) {
       floatOverflow = true;
       v = Value.fMaxValue;
-    } else if (identical(v, Value.fNegativeInfinity)) {
+    } else if (v == Value.fNegativeInfinity) {
       floatOverflow = true;
       v = Value.fMinValue;
     }
@@ -725,11 +736,18 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   // ignore: avoid_setters_without_getters
   set popSetResultXF(double v) => popSetResultX = Value.fromDouble(v);
 
-  /// Pop the stack and set X from a Dart double, setting lastX
+  /// Pop the stack and set X from a Complex, setting lastX
   // ignore: avoid_setters_without_getters
   set popSetResultXC(Complex v) {
     _popStackSetLastX();
     _setComplex(0, v);
+  }
+
+  /// Pop the stack and set X from a ComplexValue, setting lastX
+  // ignore: avoid_setters_without_getters
+  set popSetResultXCV(ComplexValue v) {
+    _popStackSetLastX();
+    _setComplexV(0, v);
   }
 
   /// Set a result in X, which saves the old X value in lastX
@@ -754,6 +772,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   BigInt get yI => _integerSignMode.toBigInt(_stack[1], this);
   double get yF => _stack[1].asDouble;
   Complex get yC => _getComplex(1);
+  ComplexValue get yCV => _getComplexValue(1);
   set y(Value v) {
     _stack[1] = v;
     _imaginaryStack?[1] = Value.zero;

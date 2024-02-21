@@ -82,6 +82,7 @@ Future<void> main() async {
   test('Value exponent test', valueExponentTest);
   test('Value frac op test', valueFracOpTest);
   test('Value int op test', valueIntOpTest);
+  test('Decimal addition/subtraction', decimalAddSubtract);
   test15cPrograms();
 }
 
@@ -2245,6 +2246,83 @@ Future<void> valueIntOpTest() async {
   expect(Value.zero.intOp(), Value.zero);
   expect(Value.fInfinity.intOp(), Value.fInfinity);
   expect(Value.fNegativeInfinity.intOp(), Value.fNegativeInfinity);
+}
+
+Future<void> decimalAddSubtract() async {
+  void testDoubles(double n1, double n2) {
+    Value v1 = Value.fromDouble(n1);
+    Value v2 = Value.fromDouble(n2);
+    expect(v1.decimalAdd(v2), Value.fromDouble(n1 + n2));
+    expect(v1.decimalSubtract(v2), Value.fromDouble(n1 - n2));
+  }
+
+  void testAddNoReverse(double n1, double n2, double expected) {
+    expect(Value.fromDouble(n1).decimalAdd(Value.fromDouble(n2)),
+        Value.fromDouble(expected));
+    expect(Value.fromDouble(n1).decimalSubtract(Value.fromDouble(-n2)),
+        Value.fromDouble(expected));
+    expect(Value.fromDouble(-n1).decimalAdd(Value.fromDouble(-n2)),
+        Value.fromDouble(-expected));
+    expect(Value.fromDouble(-n1).decimalSubtract(Value.fromDouble(n2)),
+        Value.fromDouble(-expected));
+  }
+
+  void testAdd(double n1, double n2, double expected) {
+    testAddNoReverse(n1, n2, expected);
+    testAddNoReverse(n2, n1, expected);
+  }
+
+  void testSubtract(double n1, double n2, double expected) {
+    testAdd(n1, -n2, expected);
+  }
+
+  // Do a bunch of additions/subtractions that are represented exactly in
+  // IEEE double-precision (53 bits of mantissa; 2^^53 is a 15 digit number
+  for (int n1 = 1; n1 <= 15; n1++) {
+    for (int n2 = 1; n2 <= 15; n2++) {
+      const patterns = {
+        '111111111100000',
+        '999999999900000',
+        '123456789100000',
+        '567891234700000',
+        '987654321900000',
+        '891521596500000',
+        '281902729800000'
+      };
+      for (final d1 in patterns) {
+        for (final d2 in patterns) {
+          testDoubles(double.parse(d1.substring(0, n1)),
+              double.parse(d2.substring(0, n2)));
+        }
+      }
+    }
+  }
+
+  // While we're at it, make sure moving the decimal exponent around
+  // doesn't change anything...
+  for (double f in [1, 1e-50, 1e+60]) {
+    // Test some edge cases that we know don't work with binary floating point,
+    // and others mentioned in issue #78
+    testSubtract(f * 100, f * 99.999999, f * 1e-6);
+    testAdd(f * 1, f * 5e-10, f * 1.000000001);
+    testSubtract(f * 1, f * 5e-10, f * 0.9999999995);
+    testSubtract(f * 1, f * 6e-11, f * 0.9999999999);
+    testSubtract(f * 1, f * 5e-11, f * 1);
+    testSubtract(f * 1, f * 5.000000001e-11, f * 0.9999999999);
+    testAdd(f * 2, f * 5e-10, f * 2.000000001);
+    testSubtract(f * 2, f * 5e-10, f * 2);
+    testAdd(f * 3, f * 5e-10, f * 3.000000001);
+    testSubtract(f * 3, f * 5e-10, f * 3);
+  }
+
+  // Test overflow
+  testAdd(9.999999999e99, 0.000000001e99, double.infinity);
+  testAdd(9.999999999e99, 0.0000000005e99, double.infinity);
+  testAdd(9.999999999e99, 0.0000000004999999999e99, 9.999999999e99);
+
+  // Test underflow
+  testSubtract(2e-99, 1.000000000e-99, 1e-99);
+  testSubtract(2e-99, 1.000000001e-99, 0); // It's 9.9999999990e-100
 }
 
 Future<void> lastX15C() async {

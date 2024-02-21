@@ -461,7 +461,7 @@ class _FloatMode extends DisplayMode {
       final double y = m.yI.toDouble();
       final Value r = Value.fromDouble(y * pow(2.0, x));
       m.x = r;
-      if (r == Value.fInfinity || r == Value.fNegativeInfinity) {
+      if (r.isInfinite) {
         m.floatOverflow = true;
       }
     }
@@ -488,7 +488,7 @@ class _FloatMode extends DisplayMode {
   int get hashCode => Object.hash(_jsonName, _formatter);
 
   @override
-  bool operator ==(Object? other) =>
+  bool operator ==(Object other) =>
       (other is _FloatMode) ? _jsonName == other._jsonName : false;
 
   @override

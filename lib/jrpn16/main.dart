@@ -431,7 +431,7 @@ class Operations16 extends Operations {
   static final NormalOperation plus = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
         m.floatOverflow = false;
-        m.popSetResultXF = m.yF + m.xF;
+        m.popSetResultX = m.y.decimalAdd(m.x);
       },
       intCalc: (Model m) => m.integerSignMode.intAdd(m),
       name: '+');
@@ -439,7 +439,7 @@ class Operations16 extends Operations {
   static final NormalOperation minus = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
         m.floatOverflow = false;
-        m.popSetResultXF = m.yF - m.xF;
+        m.popSetResultX = m.y.decimalSubtract(m.x);
       },
       intCalc: (Model m) => m.integerSignMode.intSubtract(m),
       name: '-');

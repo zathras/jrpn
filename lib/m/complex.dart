@@ -46,7 +46,7 @@ class Complex {
   int get hashCode => Object.hash(real, imaginary);
 
   @override
-  bool operator ==(Object? other) => (other is Complex)
+  bool operator ==(Object other) => (other is Complex)
       ? (real == other.real && imaginary == other.imaginary)
       : false;
 

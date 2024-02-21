@@ -81,7 +81,7 @@ class Value {
   int get hashCode => internal.hashCode;
 
   @override
-  bool operator ==(Object? other) =>
+  bool operator ==(Object other) =>
       (other is Value) ? (internal == other.internal) : false;
 
   /// Zero for both floats and ints
@@ -187,6 +187,8 @@ class Value {
   /// Determine if this value is zero.  In 1's complement mode,
   /// -0 isZero, too.
   bool isZero(Model m) => m.isZero(this);
+
+  bool get isInfinite => this == fInfinity || this == fNegativeInfinity;
 
   ///
   /// If this is a matrix descriptor, give the matrix number, where A is 0.
@@ -314,6 +316,7 @@ class Value {
   ///
   /// Give one digit of the mantissa, where 0 is the MSD, and 9 is the LSD.
   /// -1 gives the sign digit (9 is negative, 0 is positive).
+  ///
   int mantissaDigit(int digit) {
     assert(digit >= -1 && digit <= 9);
     final r = ((internal >> 4 * (12 - digit)) & _maskF).toInt();
@@ -327,7 +330,7 @@ class Value {
     if (asMatrix != null) {
       throw CalculatorError(1);
     }
-    if (this == fInfinity || this == fNegativeInfinity) {
+    if (isInfinite) {
       return zero;
     }
     final int e = exponent;
@@ -351,7 +354,7 @@ class Value {
     if (asMatrix != null) {
       throw CalculatorError(1);
     }
-    if (this == fInfinity || this == fNegativeInfinity) {
+    if (isInfinite) {
       return this;
     }
     final e = exponent;
@@ -399,6 +402,292 @@ class Value {
       return zero;
     } else {
       return Value._fromMantissaAndRawExponent(_upper52, _intToRawExponent(e));
+    }
+  }
+
+  Value decimalAdd(Value other) {
+    final us = _InternalFP(this);
+    us.add(_InternalFP(other));
+    return us.toValue();
+  }
+
+  Value decimalSubtract(Value other) {
+    final us = _InternalFP(this);
+    us.subtract(_InternalFP(other));
+    return us.toValue();
+  }
+}
+
+///
+/// A complex Value.  This is just a wrapper, used for addition and subtraction.
+///
+@immutable
+class ComplexValue {
+  final Value real;
+  final Value imaginary;
+
+  const ComplexValue(this.real, this.imaginary);
+
+  ComplexValue decimalAdd(ComplexValue other) => ComplexValue(
+      real.decimalAdd(other.real), imaginary.decimalAdd(other.imaginary));
+
+  ComplexValue decimalSubtract(ComplexValue other) => ComplexValue(
+      real.decimalSubtract(other.real),
+      imaginary.decimalSubtract(other.imaginary));
+}
+
+///
+/// An mutable, internal representation of a decimal floating point value,
+/// with 12 digits of mantissa.
+///
+class _InternalFP {
+  final _bytes = Uint8List(14);
+
+  _InternalFP(Value v) {
+    assert(!v.isInfinite);
+    isNegative = v.isNegative;
+    for (int i = 0; i < 10; i++) {
+      setMantissa(i + 1, v.mantissaDigit(i));
+    }
+    // lsd and msd retain default value of zero
+    exponent = v.exponent;
+  }
+
+  @override
+  String toString() {
+    final sb = StringBuffer('_InternalFP ');
+    if (isNegative) {
+      sb.write('-');
+    } else {
+      sb.write('+');
+    }
+    final zero = '0'.codeUnitAt(0);
+    sb.writeCharCode(zero + getMantissa(0));
+    sb.writeCharCode(zero + getMantissa(1));
+    sb.write('.');
+    for (int i = 2; i < 12; i++) {
+      sb.writeCharCode(zero + getMantissa(i));
+    }
+    sb.write('e');
+    sb.write(exponent.toString());
+    return sb.toString();
+  }
+
+  ///
+  /// Convert to a Value.  Calling this method changes the internal
+  /// representation (to a normalized form).
+  ///
+  Value toValue() {
+    // First, normalize the mantissa, ensuring msd is 0
+    normalizeMantissa();
+    // Next, round away from zero.  Cf. issue #78
+    int d = 11;
+    bool carry = getMantissa(d--) >= 5;
+    setMantissa(11, 0);
+    while (carry && d >= 0) {
+      final v = getMantissa(d) + 1;
+      if (v > 9) {
+        setMantissa(d, 0);
+      } else {
+        carry = false;
+        setMantissa(d, v);
+      }
+      d--;
+    }
+    assert(!carry);
+    // Rounding might have de-normalized the mantissa
+    normalizeMantissa();
+    assert(getMantissa(0) == 0);
+    // Check for a zero mantissa
+    for (d = 1;; d++) {
+      if (getMantissa(d) != 0) {
+        break;
+      } else if (d == 11) {
+        return Value.zero;
+      }
+    }
+    // Now normalize so that mantissa[1] is non-zero
+    if (d > 1) {
+      final int delta = d - 1;
+      // Left shift so that msd is in mantissa[1]
+      exponent -= delta;
+      for (d = 1; d < 12; d++) {
+        setMantissa(d, getMantissa(d + delta));
+      }
+    }
+
+    // At this point, mantissa should be mostly normalized, viz:
+    assert(getMantissa(0) == 0 && getMantissa(1) > 0);
+    // The lsd might be non-zero; rounding when we convert to a value
+    // will handle that.
+
+    // Check underflow and overflow
+    if (exponent > 99) {
+      if (isNegative) {
+        return Value.fNegativeInfinity;
+      } else {
+        return Value.fInfinity;
+      }
+    } else if (exponent < -99) {
+      return Value.zero;
+    }
+
+    // Convert to the HP's internal format.
+    // Going through hex is pretty horrible, but so is doing a bunch of
+    // left-shifts using immutable BigInt instances.
+    final internal = StringBuffer();
+    final asciiZero = '0'.codeUnitAt(0);
+    if (isNegative) {
+      internal.writeCharCode(asciiZero + 9);
+    }
+    for (d = 1; d <= 10; d++) {
+      internal.writeCharCode(asciiZero + getMantissa(d));
+    }
+    int e = exponent;
+    if (e < 0) {
+      e += 1000;
+    }
+    assert(e >= 0 && e <= 999, e);
+    for (int divisor = 100; divisor > 0; divisor ~/= 10) {
+      int digit = e ~/ divisor;
+      assert(digit >= 0 && digit <= 9);
+      internal.writeCharCode(asciiZero + digit);
+      e -= digit * divisor;
+    }
+    assert(e == 0);
+    return Value.fromInternal(BigInt.parse(internal.toString(), radix: 16));
+  }
+
+  void normalizeMantissa() {
+    if (getMantissa(0) > 0) {
+      // Do a truncating shift right
+      exponent++;
+      for (int d = 11; d >= 0; d--) {
+        setMantissa(d, getMantissa(d - 1));
+      }
+    }
+  }
+
+  bool get isNegative => _bytes[0] != 0;
+  set isNegative(bool v) => _bytes[0] = v ? 1 : 0;
+
+  // 0 is most significant digit.  Out of range digits return zero.
+  int getMantissa(int d) {
+    if (d >= 0 && d < 12) {
+      return _bytes[d + 1];
+    } else {
+      return 0;
+    }
+  }
+
+  void setMantissa(int d, int v) {
+    assert(d >= 0 && d < 12, '$d');
+    _bytes[d + 1] = v;
+  }
+
+  ///
+  /// The exponent of this value.  Because the MSD is maintained at zero for
+  /// a normalized value, our value is:
+  /// MM.MMMMMMMMMM * 10^exponent
+  ///
+  int get exponent => _bytes[13] - 128;
+  set exponent(int v) {
+    assert(v > -128 && v < 128);
+    _bytes[13] = v + 128;
+  }
+
+  void negate() => isNegative = !isNegative;
+
+  ///
+  /// Add other to ourself.  Possibly changes other.
+  ///
+  void add(_InternalFP other) {
+    assert(getMantissa(0) == 0 && other.getMantissa(0) == 0);
+    if (isNegative != other.isNegative) {
+      other.negate();
+      return subtract(other);
+    }
+    final exponentDelta = exponent - other.exponent;
+    if (exponentDelta > 0) {
+      other.shiftRight(exponentDelta, 0);
+    } else if (exponentDelta < 0) {
+      shiftRight(-exponentDelta, 0);
+    }
+    int carry = 0;
+    for (int d = 11; d >= 0; d--) {
+      final v = getMantissa(d) + other.getMantissa(d) + carry;
+      setMantissa(d, v % 10);
+      carry = v ~/ 10;
+    }
+    assert(carry == 0);
+  }
+
+  ///
+  /// Subtract other from ourself.  Possibly changes other.
+  ///
+  void subtract(_InternalFP other) {
+    assert(getMantissa(0) == 0 && other.getMantissa(0) == 0);
+    if (isNegative != other.isNegative) {
+      other.negate();
+      return add(other);
+    }
+    shiftLeft(1);
+    other.shiftLeft(1);
+    final exponentDelta = exponent - other.exponent;
+    if (exponentDelta > 0) {
+      other.complementMantissa();
+      other.shiftRight(exponentDelta, 9);
+    } else {
+      negate();
+      complementMantissa();
+      shiftRight(-exponentDelta, 9);
+    }
+    int carry = 0;
+    for (int d = 11; d >= 0; d--) {
+      final v = getMantissa(d) + other.getMantissa(d) + carry;
+      setMantissa(d, v % 10);
+      carry = v ~/ 10;
+    }
+    // If this has changed signs
+    if (carry == 0) {
+      negate();
+      complementMantissa();
+    }
+  }
+
+  // Form the 10s complement of the mantissa.
+  void complementMantissa() {
+    int borrow = 0;
+    for (int d = 11; d >= 0; d--) {
+      final v = 10 - borrow - getMantissa(d);
+      if (v == 10) {
+        borrow = 0;
+        setMantissa(d, 0);
+      } else {
+        borrow = 1;
+        setMantissa(d, v);
+      }
+    }
+    assert(borrow == 1);
+  }
+
+  void shiftRight(int delta, int shiftIn) {
+    assert(delta >= 0);
+    exponent += delta;
+    for (int d = 11; d >= delta; d--) {
+      setMantissa(d, getMantissa(d - delta));
+    }
+    for (int d = min(11, delta - 1); d >= 0; d--) {
+      setMantissa(d, shiftIn);
+    }
+  }
+
+  void shiftLeft(int delta) {
+    assert(delta >= 0);
+    assert(!Iterable<int>.generate(delta).any((i) => getMantissa(i) > 0));
+    exponent -= delta;
+    for (int d = 0; d <= 11; d++) {
+      setMantissa(d, getMantissa(d + delta));
     }
   }
 }
