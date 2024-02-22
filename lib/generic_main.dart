@@ -756,6 +756,7 @@ final Uri applicationHelpAddress = Uri.https('jrpn.jovial.com', 'help.html');
 final Uri applicationIssueAddress =
     Uri.https('github.com', 'zathras/jrpn/issues');
 
+
 void genericMain(Jrpn calculator) async {
   // Get there first!
   LicenseRegistry.addLicense(_getLicenses);

@@ -730,7 +730,7 @@ class _InternalFP {
         setMantissa(d, v);
       }
     }
-    // borrow == 0 means we just formed the 10s complement of 0
+    // borrow == 0 means we just formed the 10s complement of 0, which is 0
   }
 
   void shiftRight(int delta, int shiftIn) {
