@@ -74,7 +74,6 @@ abstract class Controller {
 
   set state(ControllerState s) {
     _state = s;
-    // print('@@ state of $this set to $s');
     s.onChangedTo();
   }
 
@@ -934,6 +933,7 @@ class KeyboardController {
   // For < and > accelerators, which imply a g-shift:
   CalculatorButtonState? _extraShiftThatIsDown;
   DateTime lastKeyDown = DateTime.now();
+  bool controlPressed = false;
 
   static final _ignored = <PhysicalKeyboardKey>{
     PhysicalKeyboardKey.shiftLeft,
@@ -947,12 +947,25 @@ class KeyboardController {
     PhysicalKeyboardKey.metaRight
   };
 
-  KeyEventResult onKey(RawKeyEvent e) {
-    if (e is! RawKeyDownEvent) {
-      if (e is RawKeyUpEvent && e.physicalKey == _physicalKeyThatIsDown) {
-        releasePressedButton();
-        _physicalKeyThatIsDown = null;
+  KeyEventResult onKey(KeyEvent e) {
+    final isControl = e.logicalKey == LogicalKeyboardKey.controlLeft ||
+        e.logicalKey == LogicalKeyboardKey.controlRight ||
+        e.logicalKey == LogicalKeyboardKey.control;
+    if (e is! KeyDownEvent) {
+      if (e is KeyUpEvent) {
+        if (isControl) {
+          controlPressed = false;
+        } else {
+          if (e.physicalKey == _physicalKeyThatIsDown) {
+            releasePressedButton();
+          }
+          _physicalKeyThatIsDown = null;
+        }
       }
+      return KeyEventResult.ignored;
+    }
+    if (isControl) {
+      controlPressed = true;
       return KeyEventResult.ignored;
     }
     final now = DateTime.now();
@@ -981,10 +994,14 @@ class KeyboardController {
       if (sch == null) {
         return KeyEventResult.ignored;
       }
-      if (e.isControlPressed && (sch == 'f' || sch == 'F')) {
+      if (controlPressed && (sch == 'f' || sch == 'F')) {
         // Yes, JavaScript really does suck.  In case you were wondering.
+        // This happens on Chrome (Still!  As of February 2024!).
+        // On the HP 16C, we *really* want ^F to me the gold F key, since
+        // plain F is taken for the hex digit.  For consistency, we allow
+        // ^G for the G shift key.
         ch = Characters('\u0006');
-      } else if (e.isControlPressed && (sch == 'g' || sch == 'G')) {
+      } else if (controlPressed && (sch == 'g' || sch == 'G')) {
         ch = Characters('\u0007');
       } else {
         ch = Characters(sch).toUpperCase();

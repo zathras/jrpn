@@ -868,8 +868,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    keyboard = FocusNode(
-        onKey: (FocusNode _, RawKeyEvent e) => controller.keyboard.onKey(e));
+    keyboard = FocusNode();
     _uiChangeObserver = _uiChanged;
     widget._changed.addObserver(_uiChangeObserver);
     WidgetsBinding.instance.addObserver(this);
@@ -926,9 +925,10 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     if (link != null) {
       return _showIncomingLink(link, context);
     }
-    return RawKeyboardListener(
+    return Focus(
         focusNode: keyboard,
         autofocus: true,
+        onKeyEvent: (_, KeyEvent e) => controller.keyboard.onKey(e),
         child: SafeArea(top: false, child: MainScreen(this, icon)));
   }
 
