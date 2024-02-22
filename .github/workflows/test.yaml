@@ -4,7 +4,7 @@
 name:  JRPN Test
 run-name: ${{ github.actor }} JRPN Test
 on:
-    workflow_dispatch:          # Manually
+    #    workflow_dispatch:          # Manually
     push:
         branches: [master]
         paths-ignore:
