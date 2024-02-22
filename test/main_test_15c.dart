@@ -2326,6 +2326,8 @@ Future<void> decimalAddSubtract() async {
   // Test underflow
   testSubtract(2e-99, 1.000000000e-99, 1e-99);
   testSubtract(2e-99, 1.000000001e-99, 0); // It's 9.9999999990e-100
+
+  expect('graitiuous failure', true);
 }
 
 Future<void> lastX15C() async {
