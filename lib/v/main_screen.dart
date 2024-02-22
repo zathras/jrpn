@@ -226,7 +226,7 @@ class MainScreen extends OrientedScreen {
                 Text('Paste from Clipboard')
               ])),
         ]);
-    if (f != null && jrpnState.mounted) {
+    if (f != null && context.mounted) {
       f(context);
     }
   }
@@ -242,22 +242,22 @@ class MainScreen extends OrientedScreen {
       try {
         cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
       } catch (e) {
-        if (jrpnState.mounted) {
+        if (context.mounted) {
           return showErrorDialog(context, 'Error accessing clipboard', e);
         } else {
           return;
         }
       }
       if (cd == null || cd == '') {
-        if (jrpnState.mounted) {
+        if (context.mounted) {
           return showErrorDialog(context, 'Empty clipboard', null);
         }
       } else if (model.displayDisabled) {
-        if (jrpnState.mounted) {
+        if (context.mounted) {
           return showErrorDialog(
               context, 'Program is running / display disabled', null);
         }
-      } else if (!controller.pasteToX(cd) && jrpnState.mounted) {
+      } else if (!controller.pasteToX(cd) && context.mounted) {
         return showErrorDialog(context, 'Number format error', null);
       }
     }());
@@ -893,7 +893,7 @@ class _FileMenuState extends State<_FileMenu> {
       onSelected: (Future<void> Function() action) async {
         await action();
         setState(() {});
-        if (mounted) {
+        if (context.mounted) {
           Navigator.pop(context, () {});
         }
       },
@@ -947,7 +947,7 @@ class __FileSaveMenuState extends State<_FileSaveMenu> {
       onSelected: (Future<void> Function() action) async {
         await action();
         setState(() {});
-        if (mounted) {
+        if (context.mounted) {
           Navigator.pop<Future<void> Function()>(context, () async {});
         }
       },
@@ -1003,7 +1003,7 @@ class __FileSaveMenuState extends State<_FileSaveMenu> {
       await f.saveTo(path);
     } catch (e, s) {
       debugPrint('\n\n$e\n\n$s');
-      if (mounted) {
+      if (context.mounted) {
         return showErrorDialog(context, 'Error saving', e);
       }
     }
@@ -1029,7 +1029,7 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
       onSelected: (Future<void> Function() action) async {
         await action();
         setState(() {});
-        if (mounted) {
+        if (context.mounted) {
           Navigator.pop<Future<void> Function()>(context, () async {});
         }
       },
@@ -1063,7 +1063,7 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
     try {
       cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
     } catch (e) {
-      if (mounted) {
+      if (context.mounted) {
         return showErrorDialog(context, 'Error accessing clipboard', e);
       } else {
         return;
@@ -1077,7 +1077,7 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
       } catch (e, s) {
         debugPrint('\n\n$e\n\n$s');
         widget.app.controller.showMessage('bad c1ip ');
-        if (mounted) {
+        if (context.mounted) {
           return showErrorDialog(context, 'Bad data in clipboard', e);
         }
       }
@@ -1101,7 +1101,7 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
     } catch (e, s) {
       debugPrint('\n\n$e\n\n$s');
       widget.app.controller.showMessage('bad fi1e ');
-      if (mounted) {
+      if (context.mounted) {
         return showErrorDialog(context, 'Bad data in file', e);
       }
     }
@@ -1127,7 +1127,7 @@ class __ExportProgramMenuState extends State<_ExportProgramMenu> {
       onSelected: (Future<void> Function() action) async {
         await action();
         setState(() {});
-        if (mounted) {
+        if (context.mounted) {
           Navigator.pop<Future<void> Function()>(context, () async {});
         }
       },
@@ -1194,7 +1194,7 @@ class __ExportProgramMenuState extends State<_ExportProgramMenu> {
       await f.saveTo(path);
     } catch (e, s) {
       debugPrint('\n\n$e\n\n$s');
-      if (mounted) {
+      if (context.mounted) {
         return showErrorDialog(context, 'Error saving', e);
       }
     }
@@ -1220,7 +1220,7 @@ class __FileReadMenuState extends State<_FileReadMenu> {
       onSelected: (Future<void> Function() action) async {
         await action();
         setState(() {});
-        if (mounted) {
+        if (context.mounted) {
           Navigator.pop<Future<void> Function()>(context, () async {});
         }
       },
@@ -1261,7 +1261,7 @@ class __FileReadMenuState extends State<_FileReadMenu> {
     try {
       cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
     } catch (e) {
-      if (mounted) {
+      if (context.mounted) {
         return showErrorDialog(context, 'Error accessing clipboard', e);
       } else {
         return;
@@ -1275,7 +1275,7 @@ class __FileReadMenuState extends State<_FileReadMenu> {
       } catch (e, s) {
         debugPrint('\n\n$e\n\n$s');
         widget.app.controller.showMessage('bad c1ip ');
-        if (mounted) {
+        if (context.mounted) {
           return showErrorDialog(context, 'Bad data in clipboard', e);
         }
       }
@@ -1300,7 +1300,7 @@ class __FileReadMenuState extends State<_FileReadMenu> {
     } catch (e, s) {
       debugPrint('\n\n$e\n\n$s');
       widget.app.controller.showMessage('bad fi1e ');
-      if (mounted) {
+      if (context.mounted) {
         return showErrorDialog(context, 'Bad data in file', e);
       }
     }
@@ -1329,7 +1329,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
       onSelected: (Future<void> Function() action) async {
         await action();
         setState(() {});
-        if (mounted) {
+        if (context.mounted) {
           Navigator.pop(context, () {});
         }
       },
