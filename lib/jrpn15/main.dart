@@ -194,7 +194,6 @@ class Operations15 extends Operations {
           mult.floatCalc!(m);
         } else {
           m.popSetResultXCV = m.yCV.decimalishMultiply(m.xCV);
-          // @@ m.popSetResultXC = m.yC * m.xC;
         }
       },
       name: '*');

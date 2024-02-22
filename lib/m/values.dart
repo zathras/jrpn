@@ -459,6 +459,17 @@ class ComplexValue {
       real.decimalSubtract(other.real),
       imaginary.decimalSubtract(other.imaginary));
 
+  ///
+  /// This is a little weird.  A complex multiply has a big element of
+  /// subtraction in it, and subtaction is something that can make
+  /// IEEE binary floating point "show through" in an obvious way.  AFAIK
+  /// that's not true of complex division, so there isn't a corresponding
+  /// decimalishDivide.
+  ///
+  /// If we wanted *exactly* the 15C behavior, we'd have to implement
+  /// decimal math throught, but that's an explicit non-goal, at least
+  /// as of issue #78.
+  ///
   ComplexValue decimalishMultiply(ComplexValue other) {
     final usR = real.asDouble;
     final usI = imaginary.asDouble;
