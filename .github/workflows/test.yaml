@@ -4,11 +4,11 @@
 name:  JRPN Test
 run-name: ${{ github.actor }} JRPN Test
 on:
-    #    workflow_dispatch:          # Manually
     push:
-        branches: [master]
         paths-ignore:
             - '**/README.md'
+    workflow_dispatch:          # Manually
+
 jobs:
     test:
         runs-on: ubuntu-latest
