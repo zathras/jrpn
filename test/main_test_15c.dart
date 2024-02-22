@@ -1787,7 +1787,7 @@ class AdvancedFunctionTests {
     expect(out.current, ProgramEvent.done);
     expect(model.xF, 1.414213562);
     expect(model.yF, 1.414213562);
-    expect(model.z.asDouble.abs() < 1e-9, true);
+    expect(model.z.asDouble.abs() <= 1e-9, true);
 
     // Example from page 182
     _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
@@ -2276,11 +2276,14 @@ Future<void> decimalAddSubtract() async {
     testAdd(n1, -n2, expected);
   }
 
+  testAdd(0, 0, 0);
+
   // Do a bunch of additions/subtractions that are represented exactly in
   // IEEE double-precision (53 bits of mantissa; 2^^53 is a 15 digit number
   for (int n1 = 1; n1 <= 15; n1++) {
     for (int n2 = 1; n2 <= 15; n2++) {
       const patterns = {
+        '000000000000000',
         '111111111100000',
         '999999999900000',
         '123456789100000',

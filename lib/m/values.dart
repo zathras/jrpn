@@ -406,12 +406,36 @@ class Value {
   }
 
   Value decimalAdd(Value other) {
+    if (this == fInfinity) {
+      return fInfinity;
+    } else if (this == fNegativeInfinity) {
+      if (other == fInfinity) {
+        return fInfinity; // We don't have NaN
+      } else {
+        return fNegativeInfinity;
+      }
+    } else if (other.isInfinite) {
+      return other;
+    }
     final us = _InternalFP(this);
     us.add(_InternalFP(other));
     return us.toValue();
   }
 
   Value decimalSubtract(Value other) {
+    if (this == fInfinity) {
+      return fInfinity;
+    } else if (this == fNegativeInfinity) {
+      if (other == fInfinity) {
+        return fNegativeInfinity;
+      } else {
+        return fInfinity; // We don't have NaN
+      }
+    } else if (other == fInfinity) {
+      return fNegativeInfinity;
+    } else if (other == fNegativeInfinity) {
+      return fInfinity;
+    }
     final us = _InternalFP(this);
     us.subtract(_InternalFP(other));
     return us.toValue();
@@ -434,6 +458,18 @@ class ComplexValue {
   ComplexValue decimalSubtract(ComplexValue other) => ComplexValue(
       real.decimalSubtract(other.real),
       imaginary.decimalSubtract(other.imaginary));
+
+  ComplexValue decimalishMultiply(ComplexValue other) {
+    final usR = real.asDouble;
+    final usI = imaginary.asDouble;
+    final themR = other.real.asDouble;
+    final themI = other.imaginary.asDouble;
+    return ComplexValue(
+        Value.fromDouble(usR * themR)
+            .decimalSubtract(Value.fromDouble(usI * themI)),
+        Value.fromDouble(usR * themI)
+            .decimalAdd(Value.fromDouble(usI * themR)));
+  }
 }
 
 ///
@@ -571,6 +607,15 @@ class _InternalFP {
   bool get isNegative => _bytes[0] != 0;
   set isNegative(bool v) => _bytes[0] = v ? 1 : 0;
 
+  bool get isZero {
+    for (int i = 0; i < 12; i++) {
+      if (getMantissa(i) > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   // 0 is most significant digit.  Out of range digits return zero.
   int getMantissa(int d) {
     if (d >= 0 && d < 12) {
@@ -630,6 +675,12 @@ class _InternalFP {
     if (isNegative != other.isNegative) {
       other.negate();
       return add(other);
+    } else if (isZero) {
+      _bytes.setRange(0, _bytes.length, other._bytes);
+      isNegative = !other.isNegative;
+      return;
+    } else if (other.isZero) {
+      return;
     }
     shiftLeft(1);
     other.shiftLeft(1);
@@ -668,7 +719,7 @@ class _InternalFP {
         setMantissa(d, v);
       }
     }
-    assert(borrow == 1);
+    // borrow == 0 means we just formed the 10s complement of 0
   }
 
   void shiftRight(int delta, int shiftIn) {

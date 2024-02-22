@@ -39,16 +39,16 @@ const _programs = [
       'CF 0 04.122007 ENTER 12.072021 A -> 5353.0000 '
           'SF 0 04.122007 ENTER 12.072021 A -> 4969.0000'),
   _Program('HP Journal/HP Journal - 08.1980 p23 - W.M. Kahan.15c',
-      '0 ENTER 1 INTEGRATE A -> 1.8130 X<=>Y -> 9.6089e-7'),
+      '0 ENTER 1 INTEGRATE A -> 1.8130 X<=>Y -> 9.6085e-7'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 067-069.15c',
       '100 ENTER 1 A -> 1 RE<=>IM -> 0 RE<=>IM '
           'R/S -> 0.9980 RE<=>IM -> 0.0628 50 STO I '
           '0 ENTER ENTER ENTER RCL I -> 50 '
-          'R/S -> -1 RE<=>IM -> 1.2246e-16'),
+          'R/S -> -1 RE<=>IM -> 0'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 051-055.15c',
-      '20 f B → 2.7520e-89 1.234 A -> 8.914e-1 .5 E -> 0.5205 '
+      '20 f B → 0 1.234 A -> 8.914e-1 .5 E -> 0.5205 '
           '2 ENTER 2.151 - 1.085 / f A → 4.447e-1 STO 3 '
           '3 ENTER 2.151 - 1.085 / f A → 7.830e-1 '
           'RCL 3 - -> 0.3384'),
@@ -63,7 +63,7 @@ const _programs = [
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 069-072.15c',
       '0 A -> 1.6279 B -> -0.1487 B -> -0.1497 B -> -0.1497 '
-          'RE<=>IM -> 2.8319 RE<=>IM C -> 1e-10 X<=>Y -> -0.1497'),
+          'RE<=>IM -> 2.8319 RE<=>IM C -> 1.1662e-9 X<=>Y -> -0.1497'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 056-058.15c',
       'B 4.2 A -> 2.0486 FIX 9 -> 2.048555637 3.2 x! -> 7.756689536 '
@@ -343,7 +343,7 @@ const _programs = [
           'x↔y → -71.65588319 '
           '2.56 EEX CHS 6 B GSB 2 → 49.6509 '
           'x↔y → 84.2754 '
-          '796 EEX CHS 12 GSB 3 → 497.6942 '
+          '796 EEX CHS 12 GSB 3 → 497.6941 '
           'x↔y → 0.9840'),
   _Program(
       'HP Applications Books/Electrical Engineering/Reactance Chart.15c',

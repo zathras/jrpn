@@ -193,7 +193,8 @@ class Operations15 extends Operations {
         if (m.x.asMatrix != null || m.y.asMatrix != null) {
           mult.floatCalc!(m);
         } else {
-          m.popSetResultXC = m.yC * m.xC;
+          m.popSetResultXCV = m.yCV.decimalishMultiply(m.xCV);
+          // @@ m.popSetResultXC = m.yC * m.xC;
         }
       },
       name: '*');
