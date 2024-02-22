@@ -659,7 +659,12 @@ class _InternalFP {
   ///
   void add(_InternalFP other) {
     assert(getMantissa(0) == 0 && other.getMantissa(0) == 0);
-    if (isNegative != other.isNegative) {
+    if (other.isZero) {
+      return;
+    } else if (isZero) {
+      _bytes.setRange(0, _bytes.length, other._bytes);
+      return;
+    } else if (isNegative != other.isNegative) {
       other.negate();
       return subtract(other);
     }

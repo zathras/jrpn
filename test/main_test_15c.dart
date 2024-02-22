@@ -2278,6 +2278,23 @@ Future<void> decimalAddSubtract() async {
 
   testAdd(0, 0, 0);
 
+  // Do additions and subtractions where athe difference in magnitude is
+  // great enough that we get the same answer in decimal and double
+  {
+    final numbers = {
+      9.123456789e99,
+      1.567891234e42,
+      0.0,
+      1.567891234e-42,
+      9.123456789e-99
+    };
+    for (final n1 in numbers) {
+      for (final n2 in numbers) {
+        testDoubles(n1, n2);
+      }
+    }
+  }
+
   // Do a bunch of additions/subtractions that are represented exactly in
   // IEEE double-precision (53 bits of mantissa; 2^^53 is a 15 digit number
   for (int n1 = 1; n1 <= 15; n1++) {
