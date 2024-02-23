@@ -352,7 +352,7 @@ class Digit {
     'a'.codeUnitAt(0):
         Digit._p([_s.top, _s.upL, _s.upR, _s.mid, _s.lowL, _s.lowR]),
     'b'.codeUnitAt(0): Digit._p([_s.upL, _s.mid, _s.lowL, _s.lowR, _s.bot]),
-    'c'.codeUnitAt(0): Digit._p([_s.mid, _s.lowL, _s.bot]),
+    'c'.codeUnitAt(0): Digit._p([_s.top, _s.lowL, _s.upL, _s.bot]),
     'd'.codeUnitAt(0): Digit._p([_s.upR, _s.mid, _s.lowL, _s.lowR, _s.bot]),
     'e'.codeUnitAt(0): Digit._p([_s.top, _s.upL, _s.mid, _s.lowL, _s.bot]),
     'f'.codeUnitAt(0): Digit._p([_s.top, _s.upL, _s.mid, _s.lowL]),
