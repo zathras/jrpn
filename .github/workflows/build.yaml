@@ -32,12 +32,12 @@ jobs:
                 flutter config --enable-android
                 flutter build apk
             - run: |
-                cd jrpn15/build/app/outputs/signed
+                cd jrpn15/build/app/outputs/flutter-apk
                 mv app-release.apk jrpn15_app-release.apk
             - uses: actions/upload-artifact@v3
               with:
                 name:  jrpn15_android_apk
-                path:  jrpn15/build/app/outputs/signed/jrpn15_app-release.apk
+                path:  jrpn15/build/app/outputs/flutter-apk/jrpn15_app-release.apk
             - run: |
                 cd jrpn16
                 flutter pub get
