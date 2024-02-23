@@ -32,13 +32,13 @@ jobs:
                 flutter config --enable-android
                 flutter build apk
             - uses: Tlaster/android-sign@v1
-                name: Sign APK
-                with:
-                  releaseDirectory: jrpn15/build/app/outputs/flutter-apk
-                  signingKeyBase64: ${{ secrets.SIGNINGKEYBASE64 }}
-                  output: jrpn15/build/app/outputs/signed
-                  alias: ${{ secrets.ALIAS }}
-                  keyStorePassword: ${{ secrets.KEYSTOREPASSWORD }}
+              name: Sign 15c
+              with:
+                releaseDirectory: jrpn15/build/app/outputs/flutter-apk
+                signingKeyBase64: ${{ secrets.SIGNINGKEYBASE64 }}
+                output: jrpn15/build/app/outputs/signed
+                alias: ${{ secrets.ALIAS }}
+                keyStorePassword: ${{ secrets.KEYSTOREPASSWORD }}
             - run: |
                 cd jrpn15/build/app/outputs/signed
                 mv app-release.apk jrpn15_app-release.apk
