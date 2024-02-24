@@ -9,6 +9,11 @@ def keystorePropertiesFile = file(java.nio.file.Paths.get(System.getProperty('us
 
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+} else {
+    keystoreProperties['keyAlias'] = "$System.env.JRPN_KEYALIAS"
+    keystoreProperties['keyPassword'] = "$System.env.JRPN_KEYPASSWORD"
+    keystoreProperties['storeFile']  = "$System.env.JRPN_STOREFILE"
+    keystoreProperties['storePassword'] = "$System.env.JRPN_STOREPASSWORD"
 }
 
 def localProperties = new Properties()
@@ -67,8 +72,8 @@ android {
 
     buildTypes {
         release {
-            // If we're running as a github action, there's no storeFile.
-            // Use the debug signing configs in this case.
+            // If we don't have a keystore file,
+            // use the debug signing config.
             signingConfig (keystoreProperties['storeFile'] != null 
                         ? signingConfigs.release : signingConfigs.debug)
         }
