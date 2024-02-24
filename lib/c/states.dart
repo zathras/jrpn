@@ -564,12 +564,6 @@ class DigitEntry extends ActiveState {
     }
     if (model.isFloatMode) {
       int max = ent.contains('.') ? 11 : 10;
-      if (!model.settings.windowLongNumbers) {
-        max += 20;
-        // Seems like a good tradeoff.  This holds it to 1 line on the 15C
-        // when in e.g. FIX-9 mode, and in no case does it let the number
-        // spill outside the bounds of the LCD.  cf. Issue #79
-      }
       if (ent.length > max) {
         return false;
       }
