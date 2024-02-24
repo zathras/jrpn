@@ -37,7 +37,7 @@ jobs:
                 flutter config --enable-android
                 flutter build apk
               env:
-                JRPN_STOREFILE: ${{ format('{0}/github.jks', env.HOME }}
+                JRPN_STOREFILE: ${{ format('{0}/github.jks', env.HOME) }}
                 JRPN_KEYALIAS: ${{ secrets.KEY_ALIAS }}
                 JRPN_KEYPASSWORD: ${{ secrets.KEY_PASSWORD }}
                 JRPN_STOREPASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
