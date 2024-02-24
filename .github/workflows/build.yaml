@@ -44,21 +44,26 @@ jobs:
             - run: |
                 cd jrpn15/build/app/outputs/flutter-apk
                 mv app-release.apk jrpn15_app-release.apk
-            - uses: actions/upload-artifact@v3
+            - uses: actions/upload-artifact@v4
               with:
                 name:  jrpn15_android_apk
                 path:  jrpn15/build/app/outputs/flutter-apk/jrpn15_app-release.apk
             - run: |
+                export JRPN_STOREFILE="$HOME/github.jks"
                 cd jrpn16
                 flutter pub get
                 flutter build apk
+              env:
+                JRPN_KEYALIAS: ${{ secrets.KEY_ALIAS }}
+                JRPN_KEYPASSWORD: ${{ secrets.KEY_PASSWORD }}
+                JRPN_STOREPASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
             - run: |
                 cd jrpn16/build/app/outputs/flutter-apk
                 mv app-release.apk jrpn16_app-release.apk
             - run: |
                 ls -ls ~/.android
                 base64 ~/.android/debug.keystore
-            - uses: actions/upload-artifact@v3
+            - uses: actions/upload-artifact@v4
               with:
                 name:  jrpn16_android_apk
                 path:  jrpn16/build/app/outputs/flutter-apk/jrpn16_app-release.apk
