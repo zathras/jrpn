@@ -25,7 +25,7 @@ jobs:
                   channel: 'stable'
                   # flutter:version: '3.0.0'
             - name: Decode Keystore
-              run: echo $B64_KEYSTORE | base64 -di > github.jks
+              run: echo $B64_KEYSTORE | base64 -di > ~/github.jks
               env:
                 B64_KEYSTORE : ${{ secrets.KEYSTORE }}
             - name: Build JRPN15
@@ -37,7 +37,7 @@ jobs:
                 flutter config --enable-android
                 flutter build apk
               env:
-                JRPN_STOREFILE: "github.jks"
+                JRPN_STOREFILE: "$HOME/github.jks"
                 JRPN_KEYALIAS: ${{ secrets.KEY_ALIAS }}
                 JRPN_KEYPASSWORD: ${{ secrets.KEY_PASSWORD }}
                 JRPN_STOREPASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
