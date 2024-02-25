@@ -22,12 +22,15 @@ this program; if not, see https://www.gnu.org/licenses/ .
 
 import 'dart:async';
 import 'dart:math' as dart;
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/v/buttons.dart';
 import 'package:vector_math/vector_math_64.dart' as dart_mat;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:decimal/decimal.dart';
+
 import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/m/model.dart';
 
@@ -2257,14 +2260,19 @@ Future<void> decimalAddSubtract() async {
   }
 
   void testAddNoReverse(double n1, double n2, double expected) {
-    expect(Value.fromDouble(n1).decimalAdd(Value.fromDouble(n2)),
-        Value.fromDouble(expected));
-    expect(Value.fromDouble(n1).decimalSubtract(Value.fromDouble(-n2)),
-        Value.fromDouble(expected));
-    expect(Value.fromDouble(-n1).decimalAdd(Value.fromDouble(-n2)),
-        Value.fromDouble(-expected));
-    expect(Value.fromDouble(-n1).decimalSubtract(Value.fromDouble(n2)),
-        Value.fromDouble(-expected));
+    try {
+      expect(Value.fromDouble(n1).decimalAdd(Value.fromDouble(n2)),
+          Value.fromDouble(expected));
+      expect(Value.fromDouble(n1).decimalSubtract(Value.fromDouble(-n2)),
+          Value.fromDouble(expected));
+      expect(Value.fromDouble(-n1).decimalAdd(Value.fromDouble(-n2)),
+          Value.fromDouble(-expected));
+      expect(Value.fromDouble(-n1).decimalSubtract(Value.fromDouble(n2)),
+          Value.fromDouble(-expected));
+    } catch (e) {
+      print("Failed for $n1 $n2");
+      rethrow;
+    }
   }
 
   void testAdd(double n1, double n2, double expected) {
@@ -2343,6 +2351,106 @@ Future<void> decimalAddSubtract() async {
   // Test underflow
   testSubtract(2e-99, 1.000000000e-99, 1e-99);
   testSubtract(2e-99, 1.000000001e-99, 0); // It's 9.9999999990e-100
+
+  // Test infinity
+  expect(
+      Value.fromDouble(double.infinity)
+          .decimalAdd(Value.fromDouble(double.infinity)),
+      Value.fromDouble(double.infinity));
+  expect(
+      Value.fromDouble(double.infinity)
+          .decimalAdd(Value.fromDouble(double.negativeInfinity)),
+      Value.fromDouble(double.infinity));
+  expect(
+      Value.fromDouble(double.negativeInfinity)
+          .decimalAdd(Value.fromDouble(double.infinity)),
+      Value.fromDouble(double.infinity));
+  expect(
+      Value.fromDouble(double.negativeInfinity)
+          .decimalAdd(Value.fromDouble(double.negativeInfinity)),
+      Value.fromDouble(double.negativeInfinity));
+  expect(Value.fromDouble(double.infinity).decimalAdd(Value.fromDouble(42)),
+      Value.fromDouble(double.infinity));
+  expect(Value.fromDouble(42).decimalAdd(Value.fromDouble(double.infinity)),
+      Value.fromDouble(double.infinity));
+  expect(
+      Value.fromDouble(double.negativeInfinity)
+          .decimalAdd(Value.fromDouble(42)),
+      Value.fromDouble(double.negativeInfinity));
+  expect(
+      Value.fromDouble(42)
+          .decimalAdd(Value.fromDouble(double.negativeInfinity)),
+      Value.fromDouble(double.negativeInfinity));
+
+  expect(
+      Value.fromDouble(double.infinity)
+          .decimalSubtract(Value.fromDouble(double.infinity)),
+      Value.fromDouble(double.infinity));
+  expect(
+      Value.fromDouble(double.infinity)
+          .decimalSubtract(Value.fromDouble(double.negativeInfinity)),
+      Value.fromDouble(double.infinity));
+  expect(
+      Value.fromDouble(double.negativeInfinity)
+          .decimalSubtract(Value.fromDouble(double.infinity)),
+      Value.fromDouble(double.negativeInfinity));
+  expect(
+      Value.fromDouble(double.negativeInfinity)
+          .decimalSubtract(Value.fromDouble(double.negativeInfinity)),
+      Value.fromDouble(double.infinity));
+  expect(
+      Value.fromDouble(double.infinity).decimalSubtract(Value.fromDouble(42)),
+      Value.fromDouble(double.infinity));
+  expect(
+      Value.fromDouble(42).decimalSubtract(Value.fromDouble(double.infinity)),
+      Value.fromDouble(double.negativeInfinity));
+  expect(
+      Value.fromDouble(double.negativeInfinity)
+          .decimalSubtract(Value.fromDouble(42)),
+      Value.fromDouble(double.negativeInfinity));
+  expect(
+      Value.fromDouble(42)
+          .decimalSubtract(Value.fromDouble(double.negativeInfinity)),
+      Value.fromDouble(double.infinity));
+
+  // Test a bunch of random numbers
+  final random = Random();
+  // No real point in setting a seed, since Random() can change across
+  // platforms and versions of the library.
+  double getRandom(final int exp) {
+    return 2 * (random.nextDouble() - 0.5) * pow(10.0, exp);
+  }
+
+  const fmt = SciFloatFormatter(9);
+  for (int i = 0; i < 1000; i++) {
+    final int exp = random.nextInt(201) - 100;
+    final v1 = Value.fromDouble(getRandom(exp));
+    final v2 = Value.fromDouble(getRandom(exp + random.nextInt(25) - 12));
+    //final v1 = Value.fromDouble(5.4180462650000005e-99);
+    //final v2 = Value.fromDouble(2.848459742e-98);
+    if (!v1.isInfinite && !v2.isInfinite) {
+      final d1 = Decimal.fromJson(fmt.format(v1, false));
+      final d2 = Decimal.fromJson(fmt.format(v2, false));
+      // final d1 = Decimal.fromJson('5.4180462651E-99');
+      // final d2 = Decimal.fromJson('2.8484597420E-98');
+      //print('$d1');
+      //print('$d2');
+      //print('${d1 + d2}');
+      //print(fmt.formatScientific(v1, 10));
+      //print(fmt.formatScientific(v2, 10));
+      final plus =
+          Value.fromDouble(double.parse((d1 + d2).toStringAsExponential(9)));
+      final minus =
+          Value.fromDouble(double.parse((d1 - d2).toStringAsExponential(9)));
+      //print(plus);
+      //print(plus.asDouble);
+      testAdd(v1.asDouble, v2.asDouble, plus.asDouble);
+      testSubtract(v1.asDouble, v2.asDouble, minus.asDouble);
+    }
+    if (i % 1000 == 0 && i > 0) {
+      print('$i');
+    }
+  }
 }
 
 Future<void> lastX15C() async {

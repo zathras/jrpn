@@ -26,7 +26,7 @@ part of 'model.dart';
 ///
 /// This format is interesting.  It's big-endian BCD.  The mantissa is
 /// sign-magnitude, with the sign in a nybble that is 0 for positive, and
-/// 9 for negative.  The exponent is 1000's complement BCD, with a magnitude
+/// 9 for negative.  The exponent is 10's complement BCD, with a magnitude
 /// between 0 and 99 (inclusive).  So it looks like:
 ///
 ///      smmmmmmmmmmeee
@@ -426,10 +426,10 @@ class Value {
     if (this == fInfinity) {
       return fInfinity;
     } else if (this == fNegativeInfinity) {
-      if (other == fInfinity) {
-        return fNegativeInfinity;
-      } else {
+      if (other == fNegativeInfinity) {
         return fInfinity; // We don't have NaN
+      } else {
+        return fNegativeInfinity; // We don't have NaN
       }
     } else if (other == fInfinity) {
       return fNegativeInfinity;
@@ -485,9 +485,11 @@ class ComplexValue {
 
 ///
 /// An mutable, internal representation of a decimal floating point value,
-/// with 12 digits of mantissa.
+/// with 12 digits of mantissa.  Operations on two arguments are allowed
+/// to change *both* arguments.
 ///
 class _InternalFP {
+  // A sign byte, 12 mantissa bytes, and an exponent byte.
   final _bytes = Uint8List(14);
 
   _InternalFP(Value v) {
@@ -563,10 +565,8 @@ class _InternalFP {
       }
     }
 
-    // At this point, mantissa should be mostly normalized, viz:
-    assert(getMantissa(0) == 0 && getMantissa(1) > 0);
-    // The lsd might be non-zero; rounding when we convert to a value
-    // will handle that.
+    // At this point, mantissa should be normalized, viz:
+    assert(getMantissa(0) == 0 && getMantissa(1) > 0 && getMantissa(11) == 0);
 
     // Check underflow and overflow
     if (exponent > 99) {
@@ -736,6 +736,7 @@ class _InternalFP {
       }
     }
     // borrow == 0 means we just formed the 10s complement of 0, which is 0
+    assert(borrow == 1 || isZero, toString());
   }
 
   void shiftRight(int delta, int shiftIn) {
