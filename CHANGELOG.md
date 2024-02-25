@@ -1,3 +1,9 @@
+Version 2.1.12
+  * Implement FP addition and subtraction in decimal:  Issue 78
+  * Limit FP digit entry even when not in windowed mode:  Issue 79
+  * 16C:  Display 0xc as "C", not "c":  Issue 76k
+  * Github action for APK builds:  Issue 73
+
 Version 2.1.11
   * 16C:  More robust handling on invalid floats in registers:  Issue 70
 

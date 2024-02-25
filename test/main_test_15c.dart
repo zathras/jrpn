@@ -2426,24 +2426,13 @@ Future<void> decimalAddSubtract() async {
     final int exp = random.nextInt(201) - 100;
     final v1 = Value.fromDouble(getRandom(exp));
     final v2 = Value.fromDouble(getRandom(exp + random.nextInt(25) - 12));
-    //final v1 = Value.fromDouble(5.4180462650000005e-99);
-    //final v2 = Value.fromDouble(2.848459742e-98);
     if (!v1.isInfinite && !v2.isInfinite) {
       final d1 = Decimal.fromJson(fmt.format(v1, false));
       final d2 = Decimal.fromJson(fmt.format(v2, false));
-      // final d1 = Decimal.fromJson('5.4180462651E-99');
-      // final d2 = Decimal.fromJson('2.8484597420E-98');
-      //print('$d1');
-      //print('$d2');
-      //print('${d1 + d2}');
-      //print(fmt.formatScientific(v1, 10));
-      //print(fmt.formatScientific(v2, 10));
       final plus =
           Value.fromDouble(double.parse((d1 + d2).toStringAsExponential(9)));
       final minus =
           Value.fromDouble(double.parse((d1 - d2).toStringAsExponential(9)));
-      //print(plus);
-      //print(plus.asDouble);
       testAdd(v1.asDouble, v2.asDouble, plus.asDouble);
       testSubtract(v1.asDouble, v2.asDouble, minus.asDouble);
     }
