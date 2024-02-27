@@ -628,14 +628,14 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ComplexValue _getComplexValue(int i) =>
       ComplexValue(_stack[i], _imaginaryStack![i]);
   void _setComplex(int i, Complex v) {
-    _stack[i] = Value.fromDouble(v.real);
-    _imaginaryStack![i] = Value.fromDouble(v.imaginary);
+    _stack[i] = _checkOverflow(Value.fromDouble(v.real));
+    _imaginaryStack![i] = _checkOverflow(Value.fromDouble(v.imaginary));
     needsSave = true;
   }
 
   void _setComplexV(int i, ComplexValue v) {
-    _stack[i] = v.real;
-    _imaginaryStack![i] = v.imaginary;
+    _stack[i] = _checkOverflow(v.real);
+    _imaginaryStack![i] = _checkOverflow(v.imaginary);
     needsSave = true;
   }
 
@@ -656,16 +656,20 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// Just the imaginary part of x
   Value get xImaginary => _imaginaryStack![0];
 
-  /// Just set the real part of X.  All x setters come here.
-  set _justSetXReal(Value v) {
+  Value _checkOverflow(Value v) {
     if (v == Value.fInfinity) {
       floatOverflow = true;
-      v = Value.fMaxValue;
+      return Value.fMaxValue;
     } else if (v == Value.fNegativeInfinity) {
       floatOverflow = true;
-      v = Value.fMinValue;
+      return Value.fMinValue;
     }
-    _stack[0] = v;
+    return v;
+  }
+
+  /// Just set the real part of X.  All x setters come here.
+  set _justSetXReal(Value v) {
+    _stack[0] = _checkOverflow(v);
     needsSave = true;
     display.window = 0;
   }
@@ -688,14 +692,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// the real part is already set.
   ///
   set xImaginary(Value v) {
-    if (identical(v, Value.fInfinity)) {
-      floatOverflow = true;
-      v = Value.fMaxValue;
-    } else if (identical(v, Value.fNegativeInfinity)) {
-      floatOverflow = true;
-      v = Value.fMinValue;
-    }
-    _imaginaryStack![0] = v;
+    _imaginaryStack![0] = _checkOverflow(v);
     needsSave = true;
   }
 
