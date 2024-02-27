@@ -1,7 +1,7 @@
 Version 2.1.12
   * Implement FP addition and subtraction in decimal:  Issue 78
   * Limit FP digit entry even when not in windowed mode:  Issue 79
-  * 16C:  Display 0xc as "C", not "c":  Issue 76k
+  * 16C:  Display 0xc as "C", not "c":  Issue 76
   * Github action for APK builds:  Issue 73
 
 Version 2.1.11
