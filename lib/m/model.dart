@@ -771,7 +771,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Complex get yC => _getComplex(1);
   ComplexValue get yCV => _getComplexValue(1);
   set y(Value v) {
-    _stack[1] = v;
+    _stack[1] = _checkOverflow(v);
     _imaginaryStack?[1] = Value.zero;
     needsSave = true;
   }
@@ -784,7 +784,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Complex get zC => _getComplex(2);
 
   set z(Value v) {
-    _stack[2] = v;
+    _stack[2] = _checkOverflow(v);
     _imaginaryStack?[2] = Value.zero;
     needsSave = true;
   }
@@ -793,7 +793,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   Value get t => _stack[3];
   set t(Value v) {
-    _stack[3] = v;
+    _stack[3] = _checkOverflow(v);
     _imaginaryStack?[3] = Value.zero;
     needsSave = true;
   }
@@ -801,12 +801,12 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   void setYZT(Value v) {
     assert(!isComplexMode);
     // This is only used converting between int and float
-    _stack[3] = _stack[2] = _stack[1] = v;
+    _stack[3] = _stack[2] = _stack[1] = _checkOverflow(v);
     needsSave = true;
   }
 
   void setXYZT(Value v) {
-    _stack[3] = _stack[2] = _stack[1] = _stack[0] = v;
+    _stack[3] = _stack[2] = _stack[1] = _stack[0] = _checkOverflow(v);
     final im = _imaginaryStack;
     if (im != null) {
       im[3] = im[2] = im[1] = im[0] = Value.zero;
@@ -822,7 +822,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Value get lastXImaginary => _lastXImaginary!;
   Complex get lastXC => Complex(_lastX.asDouble, _lastXImaginary!.asDouble);
   set lastX(Value v) {
-    _lastX = v;
+    _lastX = _checkOverflow(v);
     if (isComplexMode) {
       _lastXImaginary = Value.zero;
     }
@@ -830,8 +830,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   set lastXC(Complex v) {
-    _lastX = Value.fromDouble(v.real);
-    _lastXImaginary = Value.fromDouble(v.imaginary);
+    _lastX = _checkOverflow(Value.fromDouble(v.real));
+    _lastXImaginary = _checkOverflow(Value.fromDouble(v.imaginary));
     needsSave = true;
   }
 
