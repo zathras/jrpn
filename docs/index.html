@@ -61,19 +61,22 @@ which can be easily found on the web.  A couple of little things are different:
         pressing another, you press the on button (with the calculator "on"),
         and then press the other button.  To turn the calculator off,
         you press "on" twice.
-    <li>Note that the calculator's state is only saved when you as it to be
-        (e.g. ON-ON, or File -> Save Starting State).  As of this writing,
-        Flutter doesn't provide a notification when an app is closed.  (!)
+    <li>The calculator state is saved when the application is quit, or when
+        you request it (e.g. ON-ON, or File -> Save Starting State).  It
+        is possible to terminate an application without giving it a chance
+        to save (e.g. by pulling the plug on a computer, kill -9 on Unix,
+        etc.).
     <li>You can disable the windowing function on the 16C.  If you do,
-        then the digits on the LCD shrink so that they all fit.
+        then the LCD grows and/or the digits shrink so that they all fit.
         They get pretty small on a 64 bit binary number!  You can
         disable windowing from settings, or temporarily on the 16C by pressing
         CLEAR-PREFIX in integer mode.
     <li>On the 15C, you can similarly enable the display of long numbers.
-        This will shrink the digits when necessary so it can e.g. fit 
-        scientific notation numbers with 10 digits of precision (f-SCI-9).
+        This will grow the LCD or shrink the digits when necessary so it 
+        can e.g. fit scientific notation numbers with 10 digits of 
+        precision (f-SCI-9).
     <li>You can copy the contents of the display to the clipboard.
-    <li>From the menu, you can share the calculator state, either numbers 
+    <li>From the menu, you can share the calculator state, either 
         to/from the clipboard, or to an application.
     <li>The app can interpret a URL that contains an encoding of
         the calculator state.  This works in the web version, and
@@ -86,8 +89,8 @@ which can be easily found on the web.  A couple of little things are different:
         format.  The 15C's program files should be compatible with
         Torsten's <a href="https://hp-15c.homepage.t-online.de/homepage.htm">outstanding
         simulator</a>
-    <li>There's a nifty "view calculator internals" screen that lets you see what's
-        going on inside.
+    <li>There's a nifty "view calculator internals" screen that lets you see 
+        what's going on inside.
 </ul>
     <img src="internals.png" alt="Internals Screenshot" style="display: block; margin-left: auto; margin-right: auto; max-width:50%;">
 <h2>Why Another Calculator Simulator?</h2>
