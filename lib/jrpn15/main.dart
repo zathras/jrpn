@@ -735,8 +735,13 @@ class Operations15 extends Operations {
     if (arg < 0 || arg >= (m as Model15).matrices.length) {
       throw CalculatorError(11);
     }
-    int r = m.yF.truncate();
-    int c = m.xF.truncate();
+    int r, c;
+    if (m.y == Value.zero || m.x == Value.zero) {
+      r = c = 0;
+    } else {
+      r = m.yF.truncate();
+      c = m.xF.truncate();
+    }
     if (r < 0 || c < 0) {
       throw CalculatorError(1);
     }
