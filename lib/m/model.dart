@@ -586,6 +586,9 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   bool get is15C;
 
+  // See Model15.deferToButtonUp
+  bool get hasDeferToButtonUp => false;
+
   int get returnStackSize;
 
   bool get userMode => false;

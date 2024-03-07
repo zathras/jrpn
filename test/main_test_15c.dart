@@ -989,7 +989,7 @@ class AdvancedFunctionTests {
   }
 
   void _misc() {
-    final mat = model.matrices[model.resultMatrix = 1];
+    final mat = model.matrices[model.resultMatrix = 1]; // B
     mat.resize(model, 5, 5);
     final vals = [
       <double>[1, 3, 29, 4.7, 16.8],
@@ -1029,6 +1029,74 @@ class AdvancedFunctionTests {
     controller.buttonDown(Operations15.matrix);
     controller.buttonDown(Operations.n8); // Frobenius norm
     expect(model.x, Value.fromDouble(284.5818154));
+
+    // Test issue 80:  Set matrix dimension to 0 with non-number
+    // in x or y
+    mat.resize(model, 3, 3);
+    model.x = Value.fromMatrix(1);
+    model.yF = 0;
+    controller.buttonDown(Operations15.dim);
+    controller.buttonDown(Operations15.eX15); // B
+    expect(mat.columns, 0);
+    expect(mat.rows, 0);
+    mat.resize(model, 3, 3);
+    model.xF = 0;
+    model.y = Value.fromMatrix(1);
+    controller.buttonDown(Operations15.dim);
+    controller.buttonDown(Operations15.eX15);
+    expect(mat.columns, 0);
+    expect(mat.rows, 0);
+
+    // Test issue 81:  Stack lift and rcl <matrix>
+    model.userMode = false;
+    mat.resize(model, 1, 1);
+    controller.buttonDown(Operations15.matrix);
+    controller.buttonDown(Operations.n1);
+    model.xF = -5;
+    controller.buttonDown(Operations15.sto15);
+    controller.buttonDown(Operations15.eX15); // B
+    controller.buttonUp();
+
+    controller.buttonDown(Operations.enter);
+    controller.buttonDown(Operations.n1);
+    controller.buttonDown(Operations.enter);
+    controller.buttonDown(Operations.n2);
+    controller.buttonDown(Operations.enter);
+    controller.buttonDown(Operations.n3);
+    controller.buttonDown(Operations.enter);
+    controller.buttonDown(Operations.n4);
+    controller.buttonDown(Operations15.rcl15);
+    controller.buttonDown(Operations15.eX15); // B
+    controller.buttonUp();
+    expect(model.xF, -5);
+    expect(model.yF, 4);
+    expect(model.z, Value.fromDouble(3));
+    expect(model.t, Value.fromDouble(2));
+    controller.buttonDown(Operations.n5);
+    expect(model.xF, 5);
+    expect(model.yF, -5);
+    expect(model.z, Value.fromDouble(4));
+    expect(model.t, Value.fromDouble(3));
+
+    controller.buttonDown(Operations.enter);
+    controller.buttonDown(Operations.n1);
+    controller.buttonDown(Operations.enter);
+    controller.buttonDown(Operations.n2);
+    controller.buttonDown(Operations.enter);
+    controller.buttonDown(Operations.n3);
+    controller.buttonDown(Operations.enter);
+    controller.buttonDown(Operations15.rcl15);
+    controller.buttonDown(Operations15.eX15); // B
+    controller.buttonUp();
+    expect(model.xF, -5);
+    expect(model.yF, 3);
+    expect(model.z, Value.fromDouble(2));
+    expect(model.t, Value.fromDouble(1));
+    controller.buttonDown(Operations.n5);
+    expect(model.xF, 5);
+    expect(model.yF, -5);
+    expect(model.z, Value.fromDouble(3));
+    expect(model.t, Value.fromDouble(2));
 
     mat.resize(model, 0, 0);
   }

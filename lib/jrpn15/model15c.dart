@@ -48,7 +48,18 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   @override
   bool userMode = false;
 
-  void Function()? deferToButtonUp;
+  //
+  // A bit hacky:  Some operations, like matrix operations, don't run until
+  // the button is released, and they can be cancelled by holding the button
+  // down.  This doesn't fit in with the input design terribly well, so I was
+  // more or less forced to squirrel away an indication that a function has
+  // been deferred here, in the model.
+  //
+  // Returns true if stack lift needs to be enabled.
+  //
+  bool Function()? deferToButtonUp;
+  @override
+  bool get hasDeferToButtonUp => deferToButtonUp != null;
 
   Model15(this._getLogicalKeys, this._newProgramInstructionF)
       : super(DisplayMode.fix(4, false), 56, 10);

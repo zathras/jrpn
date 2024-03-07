@@ -1184,6 +1184,7 @@ class Operations15 extends Operations {
       if (increment) {
         _incrementR0R1(m, row, col, matrix);
       }
+      return false; // Don't enable stack lift
     }).run;
   }
 
@@ -1705,9 +1706,10 @@ class DeferredRclArg extends ArgDone {
         // from pressing a number key (and NOT enter), or it might have come
         // from some other operation.  We're about to consume the x and y
         // registers.  For RCL g <mat>, we should not do stack lift.
-        opBeforeCalculate();
+        opBeforeCalculate(); // Does a lift stack if enabled
       }
       released(m, matrix);
+      return true; // Enable stack lift
     }).run;
   }
 }
@@ -1772,6 +1774,7 @@ class RclIndirectArg extends ArgDone {
           opBeforeCalculate();
         }
         matReleased(m, matrix);
+        return true; // Enable stack lift
       }).run;
     }
   }
@@ -2185,7 +2188,9 @@ class Controller15 extends RealController {
       bool s = super.doDeferred();
       final deferred = model.deferToButtonUp;
       if (deferred != null) {
-        deferred();
+        if (deferred()) {
+          enableStackLift();
+        }
         s = true;
       }
       return s;
@@ -2368,7 +2373,7 @@ class ProgramInstruction15<OT extends ProgramOperation>
 /// elements (e.g. STO A).
 ///
 class DeferredFunction {
-  final void Function() f;
+  final bool Function() f;
   final Model m;
   final bool disableDisplay;
   late final Timer _timeout;
@@ -2384,11 +2389,14 @@ class DeferredFunction {
     m.display.update(flash: false);
   }
 
-  void run() {
+  /// Returns true if stack lift needs to be enabled
+  bool run() {
     if (_timeout.isActive) {
       m.displayDisabled = disableDisplay;
       _timeout.cancel();
-      f(); // could throw exception
+      return f(); // could throw exception
+    } else {
+      return false;
     }
   }
 }

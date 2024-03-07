@@ -383,6 +383,10 @@ class ArgDone extends Arg {
   /// just executes, but some 15C operations can be deferred; this method
   /// can be overridden to do that.
   ///
+  /// If an operation is deferred (on the 15C by setting the model's
+  /// deferToButtonUp member), stack lift-related functions will be
+  /// deferred too.
+  ///
   void handleOpBeforeCalculate(Model m, void Function() opBeforeCalculate) =>
       opBeforeCalculate();
 }

@@ -83,6 +83,8 @@ abstract class Controller {
   /// for proper functioning of the R/S key, and SST.
   bool get _stackLiftEnabled;
   set _stackLiftEnabled(bool v);
+  @protected
+  void enableStackLift() => _stackLiftEnabled = true;
 
   void buttonWidgetDown(CalculatorButton b) =>
       buttonDown(model.shift.select(b));

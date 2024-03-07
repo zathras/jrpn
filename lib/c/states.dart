@@ -205,13 +205,16 @@ class Resting extends ActiveState {
         // Give the argument a chance to veto or defer the beforeCalculate
         // step.  This is needed for operations with a timeout, like the
         // 15C's STO to matrix.
+        assert(!model.hasDeferToButtonUp);
         arg.handleOpBeforeCalculate(model, () => op.beforeCalculate(this));
-        if (arg.liftStackIfEnabled(model)) {
-          liftStackIfEnabled();
+        if (!model.hasDeferToButtonUp) {
+          if (arg.liftStackIfEnabled(model)) {
+            liftStackIfEnabled();
+          }
+          f(model);
+          model.display.displayX();
+          op.possiblyAlterStackLift(controller);
         }
-        f(model);
-        model.display.displayX();
-        op.possiblyAlterStackLift(controller);
       }
     } on CalculatorError catch (e, stack) {
       controller.showCalculatorError(e, stack);
