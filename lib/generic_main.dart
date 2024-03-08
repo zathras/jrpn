@@ -824,6 +824,10 @@ class Jrpn extends StatefulWidget {
         '${d.hour.toString().padLeft(2, '0')}:'
         '${d.minute.toString().padLeft(2, '0')} ${d.timeZoneName}';
     out.writeln('#  Generated $now.');
+    final size = model.memory.program.programBytes;
+    out.writeln('#  Program occupies $size bytes.');
+    // Always a multiple of 7, because program memory is allocated in 7 byte
+    // chunks.
     out.writeln('');
     for (final line in model.program.listing) {
       out.writeln(line);
