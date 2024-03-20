@@ -518,8 +518,7 @@ class Matrix extends AMatrix {
 }
 
 ///
-/// A copy of a matrix.  This isn't used by the 15C simulator, but it comes
-/// in handy for experiments and testing.
+/// A copy of a matrix.
 ///
 class CopyMatrix extends AMatrix {
   @override

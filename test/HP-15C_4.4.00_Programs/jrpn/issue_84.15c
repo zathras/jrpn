@@ -1,0 +1,30 @@
+#  Program produced by JRPN 15C.
+#  Generated 2024-3-13 10:24 Central European Standard Time.
+
+   000 {          } 
+   001 { 42 21 11 } f LBL A
+   002 { 42 16  0 } f MATRIX 0
+   003 {        2 } 2
+   004 {       36 } ENTER
+   005 { 42 23 11 } f DIM A
+   006 {        1 } 1
+   007 { 42 23 12 } f DIM B
+   008 { 42 16  1 } f MATRIX 1
+   009 {    44 12 } STO B
+   010 {        2 } 2
+   011 {  44 11 u } u STO A
+   012 {        1 } 1
+   013 {  44 11 u } u STO A
+   014 {        4 } 4
+   015 {  44 11 u } u STO A
+   016 {        2 } 2
+   017 {       16 } CHS
+   018 {  44 11 u } u STO A
+   019 {       34 } X<=>Y
+   020 { 45 16 12 } RCL MATRIX B
+   021 { 45 16 11 } RCL MATRIX A
+   022 { 42 26 12 } f RESULT B
+   023 {       10 } /
+   024 {    43 32 } g RTN
+
+# End.

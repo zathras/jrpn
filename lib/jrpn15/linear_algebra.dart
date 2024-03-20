@@ -98,13 +98,14 @@ void decomposeLU(Matrix m) {
 /// Solve the system of linear equations AX = B.  This is a port of
 /// la4j's ForwardBackSubstitutionSolver.solve.
 ///
-void solve(Matrix a, AMatrix b, AMatrix x) {
-  if (!a.isLU) {
-    decomposeLU(a);
-  }
+void solve(Matrix a, AMatrix b, AMatrix result) {
+  CopyMatrix x = CopyMatrix(result);
   final int n = b.rows;
   if (x.rows != n || x.columns != b.columns || a.rows != n) {
     throw CalculatorError(11);
+  }
+  if (!a.isLU) {
+    decomposeLU(a);
   }
 
   for (int rCol = 0; rCol < x.columns; rCol++) {
@@ -135,6 +136,9 @@ void solve(Matrix a, AMatrix b, AMatrix x) {
     if (v.isInfinite) {
       throw MatrixOverflow();
     }
+  });
+  x.visit((r, c) {
+    result.set(r, c, x.get(r, c));
   });
 }
 
