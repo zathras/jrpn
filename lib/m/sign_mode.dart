@@ -146,13 +146,9 @@ class _OnesComplement extends IntegerSignMode {
 
   @override
   Value negate(Value v, Model m) {
-    // 0 negates to 0, and -0 negates to 0, like in a real 16c.
-    BigInt i = v.internal;
-    if (BigInt.zero.compareTo(i) == 0) {
-      return v;
-    } else {
-      return Value.fromInternal(i ^ m.wordMask);
-    }
+    // 0 negates to -0, and -0 negates to 0.
+    // Source:  https://github.com/zathras/jrpn/issues/85
+    return Value.fromInternal(v.internal ^ m.wordMask);
   }
 
   @override
