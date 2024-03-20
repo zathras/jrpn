@@ -425,6 +425,7 @@ class _FloatMode extends DisplayMode {
 
   @override
   Value? tryParse(String s, NumStatus m) {
+    s = s.trim().replaceAll(',', '');
     double? d = double.tryParse(s);
     if (d == null) {
       return null;
