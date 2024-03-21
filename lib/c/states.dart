@@ -1303,7 +1303,7 @@ class Running extends ControllerState {
     }
     bool aborted = false;
     try {
-      await _runner._run(this);
+      await _runner._run(this, true);
     } on CalculatorError catch (e) {
       _fake.pendingError = e;
       program.programListener.onError(e);
@@ -1493,7 +1493,7 @@ class Running extends ControllerState {
         _pushedRunner = null;
         _runner.pushPseudoReturn(model);
         _runner.returnStackStartPos = program.returnStackPos;
-        await _runner._run(this);
+        await _runner._run(this, false);
         _runner = parent;
       }
     }
@@ -1529,8 +1529,11 @@ abstract class ProgramRunner extends MProgramRunner {
 
   bool get runImplicitRtnOnSST => false;
 
-  Future<void> _run(Running caller) {
+  Future<void> _run(Running caller, bool starting) {
     _caller = caller;
+    if (starting) {
+      checkStartRunning();
+    }
     return run();
   }
 
@@ -1549,11 +1552,8 @@ abstract class ProgramRunner extends MProgramRunner {
   }
 
   ///
-  /// Called from startRunningProgram in order to see if it's OK to start
+  /// Called in order to see if it's OK to start
   /// running.  Throws CalculatorError if not.
-  /// This is called as part of a solve or integrate operation that is
-  /// executed in a program.  Not called when solve/integrate is entered from
-  /// the keyboard.
   ///
   void checkStartRunning();
 
