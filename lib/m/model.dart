@@ -1356,17 +1356,17 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ModelSnapshot _createSnapshot() {
     final buf = StringBuffer();
     if (isComplexMode) {
-      buf.writeln('     X:  $x + ${_imaginaryStack![0]}i');
-      buf.writeln('     Y:  $y + ${_imaginaryStack![1]}i');
-      buf.writeln('     Z:  $z + ${_imaginaryStack![2]}i');
       buf.writeln('     T:  $t + ${_imaginaryStack![3]}i');
+      buf.writeln('     Z:  $z + ${_imaginaryStack![2]}i');
+      buf.writeln('     Y:  $y + ${_imaginaryStack![1]}i');
+      buf.writeln('     X:  $x + ${_imaginaryStack![0]}i');
       buf.writeln();
       buf.writeln('Last X:  $lastX + ${_lastXImaginary}i');
     } else {
-      buf.writeln('     X:  $x');
-      buf.writeln('     Y:  $y');
-      buf.writeln('     Z:  $z');
       buf.writeln('     T:  $t');
+      buf.writeln('     Z:  $z');
+      buf.writeln('     Y:  $y');
+      buf.writeln('     X:  $x');
       buf.writeln();
       buf.writeln('Last X:  $lastX');
     }
