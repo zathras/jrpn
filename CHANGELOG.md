@@ -7,7 +7,7 @@ Version 2.1.12
   * 15C:  Fix matrix solve when result matrix is an arg matrix:  Issue 84
   * 16C:  Display 0xc as "C", not "c":  Issue 76
   * 16C:  In 1's complement decimal, give -0 from "0 CHS":  Issue 85
-  * Make parsing of a number when pasting more forgiving:  Issue 83
+  * Copy/paste improvements:  Issue 83
   * Other small issues/enhancements:  Issues 79, 80, 81, 82
   * Github action for APK builds:  Issue 73
 

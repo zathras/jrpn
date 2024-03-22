@@ -182,7 +182,12 @@ abstract class IntegerDisplayMode extends DisplayMode {
 
   @override
   Value? tryParse(String s, NumStatus m) {
-    s = s.replaceAll(',', '');
+    s = s.replaceAll(',', '').trim();
+    // Get rid of " h" etc. at end:
+    final int pos = s.indexOf(' ');
+    if (pos > -1) {
+      s = s.substring(0, pos);
+    }
     BigInt? v = BigInt.tryParse(s, radix: radix);
     if (v == null) {
       return null;
@@ -425,7 +430,7 @@ class _FloatMode extends DisplayMode {
 
   @override
   Value? tryParse(String s, NumStatus m) {
-    s = s.trim().replaceAll(',', '');
+    s = s.replaceAll(',', '').replaceAll(' ', '');
     double? d = double.tryParse(s);
     if (d == null) {
       return null;

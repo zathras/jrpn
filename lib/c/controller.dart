@@ -159,6 +159,7 @@ abstract class Controller {
   bool _branchingOperationCalcDisabled();
 
   bool pasteToX(String clipboard) {
+    clipboard = model.settings.swapCommaIfEuro(clipboard);
     final v = model.tryParseValue(clipboard);
     if (v == null) {
       return false;

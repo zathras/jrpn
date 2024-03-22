@@ -233,6 +233,10 @@ class MainScreen extends OrientedScreen {
 
   void _copyDisplayToClipboard(BuildContext _) {
     String displayed = model.display.currentWithoutWindow;
+    if (!model.isFloatMode) {
+      displayed = displayed.replaceAll(',', '');
+    }
+    displayed = model.settings.swapCommaIfEuro(displayed);
     Clipboard.setData(ClipboardData(text: displayed));
   }
 

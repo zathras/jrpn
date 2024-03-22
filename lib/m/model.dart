@@ -307,6 +307,26 @@ class Settings {
   }
 
   ///
+  /// Swap "." and "," if we're in euroComma mode
+  ///
+  String swapCommaIfEuro(String src) {
+    if (!euroComma) {
+      return src;
+    }
+    final result = StringBuffer();
+    for (final int ch in src.codeUnits) {
+      if (ch == ','.codeUnitAt(0)) {
+        result.write('.');
+      } else if (ch == '.'.codeUnitAt(0)) {
+        result.write(',');
+      } else {
+        result.writeCharCode(ch);
+      }
+    }
+    return result.toString();
+  }
+
+  ///
   /// Should we hide the complement annunciator?
   ///
   bool get hideComplement => _hideComplement;
