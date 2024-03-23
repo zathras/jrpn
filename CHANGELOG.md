@@ -9,7 +9,7 @@ Version 2.1.12
   * 16C:  In 1's complement decimal, give -0 from "0 CHS":  Issue 85
   * Copy/paste improvements:  Issue 83
   * Other small issues/enhancements:  Issues 79, 80, 81, 82
-  * Github action for APK builds:  Issue 73
+  * Github action for APK builds:  Issue 73.  This changes the APK signing key.
 
 Version 2.1.11
   * 16C:  More robust handling on invalid floats in registers:  Issue 70
