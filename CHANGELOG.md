@@ -3,7 +3,7 @@ Version 2.1.12
   * Limit FP digit entry even when not in windowed mode:  Issue 79
   * 15C:  Check for overflow on complex operations
   * 15C:  Check common pool availability when doing solve, integrate
-    from the keiyboard:  Issue 86
+    from the keyboard:  Issue 86
   * 15C:  Fix matrix solve when result matrix is an arg matrix:  Issue 84
   * 16C:  Display 0xc as "C", not "c":  Issue 76
   * 16C:  In 1's complement decimal, give -0 from "0 CHS":  Issue 85
