@@ -578,6 +578,31 @@ class CalculatorOnSpecialButton extends CalculatorButton {
       super.drawWhiteText(canvas, bFactory.specialButtonTextStyle, text, w);
 }
 
+///
+/// The button with the decimal point on it is really, really special in that
+/// its keyboard accelerator allows ',' when in Euro comma mode
+///
+class CalculatorDotButton extends CalculatorOnSpecialButton {
+  final Settings settings;
+
+  CalculatorDotButton(
+      super.factory,
+      super.uText,
+      super.fText,
+      super.gText,
+      super.uKey,
+      super.fKey,
+      super.gKey,
+      super.rawKeyboardKey,
+      super.specialText,
+      this.settings,
+      {super.key})
+      : super(acceleratorLabel: '');
+
+  @override
+  String get acceleratorLabel => settings.euroComma ? '\u2219\u201a' : '\u2219';
+}
+
 /// The on/off button, which is flat on the 16C.
 /// This button also has a special function when the on button is pressed,
 /// because pressing it a second time turns the calculator off, so

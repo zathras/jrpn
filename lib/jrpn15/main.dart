@@ -1953,7 +1953,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.rcl15, Operations15.userOp, Operations.mem, 'R');
   CalculatorButton get n0 => CalculatorButton(factory, '0', 'x!', 'x\u0305',
       Operations.n0, Operations15.xFactorial, Operations15.xBar, '0');
-  CalculatorButton get dot => CalculatorOnSpecialButton(
+  CalculatorButton get dot => CalculatorDotButton(
       factory,
       '\u2219',
       'y\u0302,r',
@@ -1963,7 +1963,7 @@ class ButtonLayout15 extends ButtonLayout {
       Operations15.stdDeviation,
       '.',
       '\u2219/\u201a',
-      acceleratorLabel: '\u2219');
+      factory.settings);
   CalculatorButton get sum => CalculatorButton(
       factory,
       '\u03a3+',

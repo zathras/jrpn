@@ -1006,6 +1006,8 @@ class KeyboardController {
         ch = Characters('\u0006');
       } else if (controlPressed && (sch == 'g' || sch == 'G')) {
         ch = Characters('\u0007');
+      } else if (sch == ',' && controller.model.settings.euroComma) {
+        ch = Characters('.');
       } else {
         ch = Characters(sch).toUpperCase();
       }

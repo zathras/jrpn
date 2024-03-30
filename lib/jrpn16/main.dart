@@ -886,7 +886,7 @@ class ButtonLayout16 extends ButtonLayout {
       Operations16.rcl, Operations16.floatKey, Operations16.windowLeft, 'R>');
   CalculatorButton get n0 => CalculatorButton(factory, '0', 'MEM', 'x\u2260y',
       Operations.n0, Operations.mem, Operations.xNEy, '0');
-  CalculatorButton get dot => CalculatorOnSpecialButton(
+  CalculatorButton get dot => CalculatorDotButton(
       factory,
       '\u2219',
       'STATUS',
@@ -896,7 +896,7 @@ class ButtonLayout16 extends ButtonLayout {
       Operations.xNE0,
       '.',
       '\u2219/\u201a',
-      acceleratorLabel: '\u2219');
+      factory.settings);
   CalculatorButton get chs => CalculatorButton(factory, 'CHS', 'EEX', 'x=y',
       Operations.chs, Operations.eex, Operations.xEQy, 'H');
   CalculatorButton get plus => CalculatorButton(factory, '+', 'OR', 'x=0',
