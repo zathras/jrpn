@@ -1,3 +1,7 @@
+Version 2.1.13
+  * Allow "," as keyboard accelerator in Euro comma mode:  Issue 90
+  * 16C - Implement leading zeros (flag 3) on integer number entry:  Issue 89
+
 Version 2.1.12
   * Implement FP addition and subtraction in decimal:  Issue 78
   * Limit FP digit entry even when not in windowed mode:  Issue 79

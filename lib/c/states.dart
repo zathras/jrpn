@@ -499,9 +499,17 @@ class DigitEntry extends ActiveState {
   static final _decimalDigits = RegExp('[0-9]');
 
   bool _tryNewValue(String ent, String sign, final int? ex, final bool negEx) {
+    final int intDigits;
+    if (model.isFloatMode) {
+      intDigits = 0;
+    } else {
+      final ism = model.integerSignMode;
+      final maxV = ism.fromBigInt(ism.maxValue(model), model);
+      intDigits =
+          model.displayMode.format(maxV, model).replaceAll(',', '').length - 2;
+    }
     final Value? v;
     if (ex == null) {
-      // (model.isFloatMode || sign == ""))
       final Value? vv;
       if (!model.isFloatMode && sign == '-') {
         vv = null;
@@ -511,10 +519,7 @@ class DigitEntry extends ActiveState {
       if (vv != null) {
         v = vv;
         if (!model.isFloatMode) {
-          final ism = model.integerSignMode;
-          final maxV = ism.fromBigInt(ism.maxValue(model), model);
-          final len = model.displayMode.format(maxV, model).length - 2;
-          while (ent.length > len && ent.startsWith('0')) {
+          while (ent.length > intDigits && ent.startsWith('0')) {
             ent = ent.substring(1);
           }
         }
@@ -545,10 +550,7 @@ class DigitEntry extends ActiveState {
           if (ent.length < 10 && originalEntLen != ent.length) {
             // When there's overflow, that changes ent.  We might need to pad
             // zeros in the left.  See p. 36.
-            final ism = model.integerSignMode;
-            final maxV = ism.fromBigInt(ism.maxValue(model), model);
-            final len = min(originalEntLen,
-                model.displayMode.format(maxV, model).length - 2);
+            final len = min(originalEntLen, intDigits);
             if (len > ent.length) {
               ent = ent.padLeft(len, '0');
             }
@@ -573,9 +575,13 @@ class DigitEntry extends ActiveState {
     }
     model.xPreserveCLX = v;
     if (ex == null) {
+      String d = ent;
+      if (model.displayLeadingZeros && model.displayMode != DisplayMode.decimal)  {
+        d = d.padLeft(intDigits, '0');
+      }
       model.display.current = sign +
           model.displayMode.addCommas(
-              ent.replaceAll(',', ''), model.settings.integerModeCommas) +
+              d.replaceAll(',', ''), model.settings.integerModeCommas) +
           model.displayMode.displayName;
     } else {
       assert(model.displayMode.isFloatMode);
