@@ -576,13 +576,14 @@ class DigitEntry extends ActiveState {
     model.xPreserveCLX = v;
     if (ex == null) {
       String d = ent;
-      if (model.displayLeadingZeros && model.displayMode != DisplayMode.decimal)  {
+      final dm = model.displayMode;
+      if (model.displayLeadingZeros && dm != DisplayMode.decimal) {
         d = d.padLeft(intDigits, '0');
       }
       model.display.current = sign +
-          model.displayMode.addCommas(
+          dm.addCommas(
               d.replaceAll(',', ''), model.settings.integerModeCommas) +
-          model.displayMode.displayName;
+          dm.displayName;
     } else {
       assert(model.displayMode.isFloatMode);
       assert(negEx || ex >= 0);
