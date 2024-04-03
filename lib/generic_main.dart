@@ -748,9 +748,9 @@ Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
 ''';
 
-/// package_info doesn't exist for all platforms, so I'm doing it the old
-/// fashioned way.
-const applicationVersion = '2.1.12';
+/// package_info doesn't exist for all platforms, so I'm doing the version
+/// number the old fashioned way.
+const applicationVersion = '2.1.13';
 final Uri applicationWebAddress = Uri.https('jrpn.jovial.com', '');
 final Uri applicationHelpAddress = Uri.https('jrpn.jovial.com', 'help.html');
 final Uri applicationIssueAddress =
