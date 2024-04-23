@@ -29,7 +29,7 @@ flutter_icons:
   adaptive_icon_foreground: "assets_16/icon_adaptive.png"
   adaptive_icon_background: "#dbdad1"
   android:
-    generate: true
+    generate: false
   macos:
     generate: false
     image_path: "assets_16/macos_icon.png"
@@ -38,7 +38,7 @@ flutter_icons:
   windows:
     generate: false
   ios:
-    generate: true
+    generate: false
   # If changed, "dart run flutter_launcher_icons"
   # See https://pub.dev/packages/flutter_launcher_icons
   # For Android, need to manually add a transparent icon entry to manfiest,
