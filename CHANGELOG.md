@@ -1,3 +1,6 @@
+Version 2.1.14 (upcoming)
+  * Make haptic feedback the more iOS-friendly selection feedback
+
 Version 2.1.13
   * Allow "," as keyboard accelerator in Euro comma mode:  Issue 90
   * 16C - Implement leading zeros (flag 3) on integer number entry:  Issue 89
