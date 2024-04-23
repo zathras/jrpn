@@ -32,13 +32,14 @@ flutter_icons:
   android:
     generate: true
   macos:
-    generate: true
+    generate: false
     image_path: assets_15/macos_icon.png
   linux:
-    generate: true
+    generate: false
   windows: 
+    generate: false 
+  ios:
     generate: true
-  # Left off: ios: generate: true 
   # If changed, "dart run flutter_launcher_icons"
   # See https://pub.dev/packages/flutter_launcher_icons
   # For Android, need to manually add a transparent icon entry to manfiest,

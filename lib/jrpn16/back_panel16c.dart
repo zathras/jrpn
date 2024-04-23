@@ -176,7 +176,7 @@ class BackPanel16 extends BackPanel {
         row([
           cell(center(list([
             space(0.7),
-            text('\CHS',
+            text('CHS',
                 offset: const Offset(0.0, 0),
                 boxOffset: const Offset(-.3, 0),
                 box: true,

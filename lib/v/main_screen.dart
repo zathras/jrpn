@@ -267,60 +267,8 @@ class MainScreen extends OrientedScreen {
     }());
   }
 
-  Widget _jrpnIcon() {
-    final Paint p = Paint()
-      ..color = const Color(0xffe6edf5)
-      ..style = PaintingStyle.fill;
-    const border = 3;
-    return Container(
-        color: Colors.black,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Spacer(flex: border),
-            Expanded(
-              flex: 100,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Spacer(flex: border),
-                    Expanded(
-                        flex: 64,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            CustomPaint(
-                                painter: _RoundedBox(widthCM: 0.9, paint: p)),
-                            Center(child: ScalableImageWidget(si: icon))
-                          ],
-                        )),
-                    const Spacer(flex: 2),
-                    Expanded(
-                        flex: 34,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            CustomPaint(
-                                painter: _RoundedBox(widthCM: 0.9, paint: p)),
-                            CustomPaint(
-                                painter: _ScaledText(
-                                    text: model.modelName,
-                                    widthCM: 0.9,
-                                    embiggen: 1.25,
-                                    style: const TextStyle(
-                                        fontSize: 0.3, // in cm
-                                        fontFamily: 'LogoFont',
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black))),
-                          ],
-                        )),
-                    const Spacer(flex: border),
-                  ]),
-            ),
-            const Spacer(flex: border),
-          ],
-        ));
-  }
+  Widget _jrpnIcon() =>
+      CustomPaint(painter: JrpnIconPainter(icon, model.modelName));
 }
 
 ///
@@ -414,59 +362,88 @@ class DrawnBackground extends CustomPainter {
   }
 }
 
-/// A rounded box for the logo
-class _RoundedBox extends CustomPainter {
-  final double widthCM;
-  final Paint paintArg;
+@immutable
+class JrpnIconPainter extends CustomPainter {
+  final ScalableImage jupiter;
+  final String modelName;
+  final bool adaptive;
 
-  _RoundedBox({required this.widthCM, required Paint paint}) : paintArg = paint;
-
-  @override
-  void paint(Canvas c, Size size) {
-    final double cm = size.width / widthCM;
-    final outlineR = Radius.circular(0.05 * cm);
-    c.drawRRect(
-        RRect.fromLTRBR(0, 0, size.width, size.height, outlineR), paintArg);
-  }
+  const JrpnIconPainter(this.jupiter, this.modelName, {this.adaptive = false});
 
   @override
-  bool shouldRepaint(covariant _RoundedBox oldDelegate) {
-    return false; // We never change
-  }
-}
+  void paint(Canvas canvas, Size size) {
+    final Paint foreground = Paint()
+      ..color = const Color(0xffe6edf5)
+      ..style = PaintingStyle.fill;
+    final Paint background = Paint()
+      ..color = const Color(0xff000000)
+      ..style = PaintingStyle.fill;
+    if (!adaptive) {
+      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), background);
+    }
 
-/// Scaled text for the logo
-class _ScaledText extends CustomPainter {
-  final String text;
-  final TextStyle style;
-  final double widthCM;
-  final double embiggen;
+    const border = 3 / 106;
+    double x = border * size.width;
+    double y = border * size.height;
+    size = Size(size.width - 2 * x, size.height - 2 * y);
 
-  _ScaledText(
-      {required this.text,
-      required this.style,
-      required this.widthCM,
-      required this.embiggen});
+    Size rectSize = Size(size.width, size.height * 0.64);
+    final cornerRadius = Radius.circular(0.05 * rectSize.width * 0.9);
+    if (!adaptive) {
+      canvas.drawRRect(
+          RRect.fromLTRBR(
+              x, y, x + rectSize.width, y + rectSize.height, cornerRadius),
+          foreground);
+    }
+    canvas.save();
+    canvas.translate(x + (rectSize.width - rectSize.height) / 2, y);
+    canvas.scale(
+        rectSize.height / jupiter.height!, rectSize.height / jupiter.width!);
+    jupiter.paint(canvas);
+    canvas.restore();
 
-  @override
-  void paint(Canvas c, Size size) {
-    final span = TextSpan(style: style, text: text);
-    final double cm = size.width / widthCM;
+    y += rectSize.height;
+    if (adaptive) {
+      y += 0.01 * size.height;
+      background.strokeWidth = 0.02 * size.height;
+      canvas.drawLine(Offset(0, y), Offset(size.width + 2 * x, y), background);
+      y += 0.01 * size.height;
+    } else {
+      y += 0.02 * size.height;
+    }
+
+    rectSize = Size(size.width, size.height * 0.34);
+    if (!adaptive) {
+      canvas.drawRRect(
+          RRect.fromLTRBR(
+              x, y, x + rectSize.width, y + rectSize.height, cornerRadius),
+          foreground);
+    }
+
+    const embiggen = 1.25;
+    const style = TextStyle(
+        fontSize: 0.3, // in cm
+        fontFamily: 'LogoFont',
+        fontWeight: FontWeight.w500,
+        color: Colors.black);
+    final span = TextSpan(style: style, text: modelName);
+    final double cm = rectSize.width / 0.9;
     TextPainter tp = TextPainter(
         text: span,
         textAlign: TextAlign.center,
         textDirection: TextDirection.ltr);
     tp.layout();
-    c.save();
-    c.translate(
-        (size.width - tp.width * cm * embiggen) / 2, size.height * 0.85);
-    c.scale(cm * embiggen, cm);
-    tp.paint(c, Offset.zero);
-    c.restore();
+    canvas.save();
+    canvas.translate(x, y);
+    canvas.translate((rectSize.width - tp.width * cm * embiggen) / 2,
+        rectSize.height * 0.85);
+    canvas.scale(cm * embiggen, cm);
+    tp.paint(canvas, Offset.zero);
+    canvas.restore();
   }
 
   @override
-  bool shouldRepaint(covariant _ScaledText oldDelegate) {
+  bool shouldRepaint(covariant JrpnIconPainter oldDelegate) {
     return false; // We never change
   }
 }

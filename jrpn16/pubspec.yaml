@@ -31,12 +31,12 @@ flutter_icons:
   android:
     generate: true
   macos:
-    generate: true
+    generate: false
     image_path: "assets_16/macos_icon.png"
   linux:
-    generate: true
+    generate: false
   windows:
-    generate: true
+    generate: false
   ios:
     generate: true
   # If changed, "dart run flutter_launcher_icons"
