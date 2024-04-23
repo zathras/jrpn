@@ -161,6 +161,11 @@ abstract class BackPanel extends OrientedScreen {
 ///
 class BPTable extends StatelessWidget {
   final List<BPRow> rows;
+  ///
+  /// The width of the box that encloses the widget.  Because there's no
+  /// clipping, the two widths don't need to be accurate, they just need to
+  /// agree.  This controls the scaling of the table.
+  ///
   final double widthCM;
   final BackPanel panel;
   final bool drawHorizontalLines;
@@ -213,7 +218,7 @@ class BPTablePainter extends BPItemPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Set the scale so one "pixel" is 1mm at the real caluclator's size
+    // Set the scale so one "pixel" is 1mm at the real calculator's size
     final thickW = table.thickLineWidth;
     final thinW = table.thinLineWidth;
     final heightMM = table.panel.rowHeightMM;
@@ -548,7 +553,7 @@ class _TextItem extends BPItem {
           Rect.fromLTWH(
               x + boxOffset.dx,
               panel.rowHeightMM * 0.1 + panel.thinLineWidth + boxOffset.dy,
-              width,
+              width + panel.thinLineWidth * 3,
               panel.rowHeightMM * 0.80 - panel.thinLineWidth * 2),
           p.thinLine);
     }
@@ -585,8 +590,8 @@ class _SqrtTextItem extends _TextItem {
     tp.layout();
     c.save();
     c.scale(0.75);
-    tp.paint(c, Offset(offset.dx + x / 0.75 + 1.35, 0.32 + offset.dy));
-    tp.paint(c, Offset(offset.dx + (x + width - 2.2) / 0.75, 0.32 + offset.dy));
+    tp.paint(c, Offset(offset.dx + x / 0.75 + 1.65, 0.32 + offset.dy));
+    tp.paint(c, Offset(offset.dx + (x + width - 1.8) / 0.75, 0.32 + offset.dy));
     c.restore();
   }
 }
