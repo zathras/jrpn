@@ -83,7 +83,10 @@ class BackPanel16 extends BackPanel {
         ]),
         row([
           cell(text('1', align: bpCenter)),
-          cell(list([text('\u200aFLOAT>9,GTO.>9,WINDOW>7,F>5', scale: 0.9), space(0.5)]))
+          cell(list([
+            text('\u200aFLOAT>9,GTO.>9,WINDOW>7,F>5', scale: 0.9),
+            space(0.5)
+          ]))
         ]),
         row([
           cell(text('2', align: bpCenter)),
@@ -108,7 +111,8 @@ class BackPanel16 extends BackPanel {
           cell(list([
             text('\u200a>4'),
             space(0.3),
-            text('\u200a\u200aRTN', offset: const Offset(0, 0.1), scale: 0.9, box: true)
+            text('\u200a\u200aRTN',
+                offset: const Offset(0, 0.1), scale: 0.9, box: true)
           ]))
         ]),
         row([
@@ -180,7 +184,11 @@ class BackPanel16 extends BackPanel {
             space(0.7),
             text(','),
             space(0.7),
-            text('ABS', offset: const Offset(0.0, 0), boxOffset: const Offset(-0.4, 0), box: true, scale: 0.75),
+            text('ABS',
+                offset: const Offset(0.0, 0),
+                boxOffset: const Offset(-0.4, 0),
+                box: true,
+                scale: 0.75),
             space(0.9)
           ]))),
           cell(text('--', align: bpCenter)),

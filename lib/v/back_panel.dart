@@ -161,6 +161,7 @@ abstract class BackPanel extends OrientedScreen {
 ///
 class BPTable extends StatelessWidget {
   final List<BPRow> rows;
+
   ///
   /// The width of the box that encloses the widget.  Because there's no
   /// clipping, the two widths don't need to be accurate, they just need to

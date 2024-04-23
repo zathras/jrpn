@@ -601,7 +601,6 @@ class CalculatorDotButton extends CalculatorOnSpecialButton {
 
   @override
   String get acceleratorLabel => settings.euroComma ? '\u2219\u201a' : '\u2219';
-
 }
 
 /// The on/off button, which is flat on the 16C.

@@ -112,8 +112,7 @@ class BackPanel15 extends BackPanel {
           cell(list([text('R'), space(0.05), subText('3')]))
         ]),
         row([
-          cell(list(
-              [text('\u03a3x', align: bpRight), supText('2'), space(0)])),
+          cell(list([text('\u03a3x', align: bpRight), supText('2'), space(0)])),
           cell(arrowRight(2)),
           cell(list([text('R'), space(0.05), subText('4')]))
         ]),
@@ -123,8 +122,7 @@ class BackPanel15 extends BackPanel {
           cell(list([text('R'), space(0.05), subText('5')]))
         ]),
         row([
-          cell(list(
-              [text('\u03a3y', align: bpRight), supText('2'), space(0)])),
+          cell(list([text('\u03a3y', align: bpRight), supText('2'), space(0)])),
           cell(arrowRight(2)),
           cell(list([text('R'), space(0.05), subText('6')]))
         ]),
