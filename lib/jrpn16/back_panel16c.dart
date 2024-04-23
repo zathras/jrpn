@@ -76,14 +76,14 @@ class BackPanel16 extends BackPanel {
           cell(list([
             text('\u200ay\u00F70,'),
             sqrtText('\u221A   '),
-            space(-3.4),
+            space(-3.2),
             text('-4', scale: 0.75, offset: const Offset(0.2, 0.3)),
             text(',...')
           ]))
         ]),
         row([
           cell(text('1', align: bpCenter)),
-          cell(text('\u200aFLOAT>9,GTO.>9,WINDOW>7,F>5', scale: 0.9))
+          cell(list([text('\u200aFLOAT>9,GTO.>9,WINDOW>7,F>5', scale: 0.9), space(0.5)]))
         ]),
         row([
           cell(text('2', align: bpCenter)),
@@ -107,7 +107,8 @@ class BackPanel16 extends BackPanel {
           cell(text('5', align: bpCenter)),
           cell(list([
             text('\u200a>4'),
-            text('RTN', offset: const Offset(0.2, 0.2), scale: 0.9, box: true)
+            space(0.3),
+            text('\u200a\u200aRTN', offset: const Offset(0, 0.1), scale: 0.9, box: true)
           ]))
         ]),
         row([
@@ -119,8 +120,8 @@ class BackPanel16 extends BackPanel {
   Widget operationTable(double widthCM) => table(widthCM, [
         row([
           cell(space(0)),
-          cell(text('C', align: bpCenter)),
-          cell(text('G', align: bpCenter)),
+          cell(text('C\u200a\u200a', align: bpCenter)),
+          cell(text('G\u200a\u200a', align: bpCenter)),
           cell(space(0))
         ]),
         row([
@@ -129,7 +130,7 @@ class BackPanel16 extends BackPanel {
                 offset: const Offset(0.3, -.1),
                 boxOffset: const Offset(-.2, 0),
                 box: true),
-            space(1.2),
+            space(1.8),
             text('\u2212',
                 offset: const Offset(0.3, 0),
                 boxOffset: const Offset(-.2, 0),
@@ -171,14 +172,16 @@ class BackPanel16 extends BackPanel {
         row([
           cell(center(list([
             space(0.7),
-            text('\u200aCHS',
-                offset: const Offset(0.2, 0),
-                boxOffset: const Offset(-.1, 0),
+            text('\CHS',
+                offset: const Offset(0.0, 0),
+                boxOffset: const Offset(-.3, 0),
                 box: true,
                 scale: 0.75),
+            space(0.7),
             text(','),
-            text(' ABS', offset: const Offset(-0.1, 0), box: true, scale: 0.75),
-            space(0.7)
+            space(0.7),
+            text('ABS', offset: const Offset(0.0, 0), boxOffset: const Offset(-0.4, 0), box: true, scale: 0.75),
+            space(0.9)
           ]))),
           cell(text('--', align: bpCenter)),
           cell(text('x', align: bpCenter)),
@@ -216,7 +219,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('\u200aSL',
               offset: const Offset(0.0, 0.0),
               box: true,
-              boxOffset: const Offset(0, -0.08),
+              boxOffset: const Offset(-0.3, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -234,8 +237,8 @@ class BackPanel16 extends BackPanel {
         row([
           cell(center(text('SR',
               offset: const Offset(0.20, 0.0),
+              boxOffset: const Offset(-0.3, -0.08),
               box: true,
-              boxOffset: const Offset(0, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -260,7 +263,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('\u200aASR',
               offset: const Offset(-0.07, 0.0),
               box: true,
-              boxOffset: const Offset(0, -0.08),
+              boxOffset: const Offset(-0.3, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -299,7 +302,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('\u200aRL',
               offset: const Offset(-0.10, -0.04),
               box: true,
-              boxOffset: const Offset(.07, -0.08),
+              boxOffset: const Offset(-0.3, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -328,7 +331,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('RR',
               offset: const Offset(0.10, -0.04),
               box: true,
-              boxOffset: const Offset(0, -0.08),
+              boxOffset: const Offset(-0.3, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -365,7 +368,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('\u200aRLC',
               offset: const Offset(-0.10, -0.04),
               box: true,
-              boxOffset: const Offset(0, -0.08),
+              boxOffset: const Offset(-0.3, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),
@@ -394,7 +397,7 @@ class BackPanel16 extends BackPanel {
           cell(center(text('RRC',
               offset: const Offset(0.10, -0.04),
               box: true,
-              boxOffset: const Offset(0, -0.08),
+              boxOffset: const Offset(-0.3, -0.08),
               scale: 0.88))),
           cell(text('x', align: bpCenter)),
           cell(text('--', align: bpCenter)),

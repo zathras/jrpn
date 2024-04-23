@@ -601,6 +601,7 @@ class CalculatorDotButton extends CalculatorOnSpecialButton {
 
   @override
   String get acceleratorLabel => settings.euroComma ? '\u2219\u201a' : '\u2219';
+
 }
 
 /// The on/off button, which is flat on the 16C.
@@ -957,14 +958,14 @@ class CalculatorButtonState extends State<CalculatorButton> {
               unawaited(SystemSound.play(SystemSoundType.click));
               break;
             case KeyFeedbackSetting.haptic:
-              unawaited(HapticFeedback.vibrate());
+              unawaited(HapticFeedback.selectionClick());
               break;
             case KeyFeedbackSetting.hapticHeavy:
               unawaited(HapticFeedback.heavyImpact());
               break;
             case KeyFeedbackSetting.both:
               unawaited(SystemSound.play(SystemSoundType.click));
-              unawaited(HapticFeedback.vibrate());
+              unawaited(HapticFeedback.selectionClick());
               break;
             case KeyFeedbackSetting.bothHeavy:
               unawaited(SystemSound.play(SystemSoundType.click));

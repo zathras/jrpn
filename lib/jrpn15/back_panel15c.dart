@@ -59,11 +59,11 @@ class BackPanel15 extends BackPanel {
             Image.asset(
                 'packages/jrpn/assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
         screen.box(const Rect.fromLTWH(0.78, 3.6, .75, 3), tryzub(1)),
-        screen.box(const Rect.fromLTWH(0.4, 7.23, 1.6, 2.2), sigmaTable(1.6)),
+        screen.box(const Rect.fromLTWH(0.6, 7.23, 1.6, 2.2), sigmaTable(1.6)),
         screen.box(const Rect.fromLTWH(2.52, 3.27, 5, 3.4), drawingTable(5)),
         ...jumpTableList(screen, 3.70, 0.2),
         screen.box(const Rect.fromLTWH(0.2, 1.57, 3.5, 2.2), metricTable(3.5)),
-        screen.box(const Rect.fromLTWH(2.10, 7.20, 4, 5), numberTable(4.0))
+        screen.box(const Rect.fromLTWH(2.00, 7.20, 4, 5), numberTable(4.0))
       ]);
 
   @override
@@ -80,17 +80,17 @@ class BackPanel15 extends BackPanel {
         screen.box(const Rect.fromLTWH(1.05, 1.0, .75, 3), tryzub(1)),
         screen.box(const Rect.fromLTWH(0.2, 3.96, 1.6, 2.2), sigmaTable(1.6)),
         screen.box(const Rect.fromLTWH(1.43, 3.76, 5, 3.4), drawingTable(5)),
-        ...jumpTableList(screen, 3.49, 0.7),
-        screen.box(const Rect.fromLTWH(6.83, 0.7, 3.5, 2.2), metricTable(3.5)),
-        screen.box(const Rect.fromLTWH(6.83, 2.40, 4, 5), numberTable(4.0))
+        ...jumpTableList(screen, 3.29, 0.7),
+        screen.box(const Rect.fromLTWH(6.73, 0.7, 3.5, 2.2), metricTable(3.5)),
+        screen.box(const Rect.fromLTWH(6.73, 2.40, 4, 5), numberTable(4.0))
       ]);
 
   List<Widget> jumpTableList(ScreenPositioner screen, double x, double y) => [
         screen.box(Rect.fromLTWH(x, y, 3.2, 2.9), jumpTable(3.2, 2.9)),
-        screen.box(Rect.fromLTWH(x - 3.49 + 4.05, y - 0.7 + 1.9, 1.5, 3),
-            jumpTableKey('\u200a\u200a\u200aISG', 1.9)),
-        screen.box(Rect.fromLTWH(x - 3.49 + 5.6, y - 0.7 + 1.9, 1.5, 3),
-            jumpTableKey('DSE', 1.9))
+        screen.box(Rect.fromLTWH(x - 3.49 + 4.05, y + 1.1, 1.5, 3),
+            jumpTableKey('\u200a\u200aISG\u200a', 1.5 * 1.2)),
+        screen.box(Rect.fromLTWH(x - 3.49 + 5.6, y + 1.1, 1.5, 3),
+            jumpTableKey('DSE', 1.5 * 1.2))
       ];
 
   Widget sigmaTable(double widthCM) => table(
@@ -104,34 +104,34 @@ class BackPanel15 extends BackPanel {
         row([
           cell(list([italicText('n', align: bpRight), space(.7)])),
           cell(arrowRight(2)),
-          cell(list([text('R'), space(-.5), subText('2'), space(.2)]))
+          cell(list([text('R'), space(.05), subText('2'), space(.2)]))
         ]),
         row([
           cell(list([text('\u03a3x', align: bpRight), space(.9)])),
           cell(arrowRight(2)),
-          cell(list([text('R'), space(-.5), subText('3')]))
+          cell(list([text('R'), space(0.05), subText('3')]))
         ]),
         row([
           cell(list(
-              [text('\u03a3x', align: bpRight), supText('2'), space(-.5)])),
+              [text('\u03a3x', align: bpRight), supText('2'), space(0)])),
           cell(arrowRight(2)),
-          cell(list([text('R'), space(-.5), subText('4')]))
+          cell(list([text('R'), space(0.05), subText('4')]))
         ]),
         row([
           cell(list([text('\u03a3y', align: bpRight), space(.9)])),
           cell(arrowRight(2)),
-          cell(list([text('R'), space(-.5), subText('5')]))
+          cell(list([text('R'), space(0.05), subText('5')]))
         ]),
         row([
           cell(list(
-              [text('\u03a3y', align: bpRight), supText('2'), space(-.5)])),
+              [text('\u03a3y', align: bpRight), supText('2'), space(0)])),
           cell(arrowRight(2)),
-          cell(list([text('R'), space(-.5), subText('6')]))
+          cell(list([text('R'), space(0.05), subText('6')]))
         ]),
         row([
           cell(text('\u03a3xy', align: bpRight)),
           cell(arrowRight(2)),
-          cell(list([text('R'), space(-.5), subText('7')]))
+          cell(list([text('R'), space(0.05), subText('7')]))
         ]),
       ],
       drawLines: false);
@@ -168,12 +168,12 @@ class BackPanel15 extends BackPanel {
         ]),
         row([
           cell(list([
-            space(.55),
+            space(.65),
             text(key,
                 box: true,
                 offset: const Offset(0, .1),
-                boxOffset: const Offset(-.1, -.55)),
-            space(.45)
+                boxOffset: const Offset(-0.3, -.55)),
+            space(.55)
           ])),
         ]),
         row([
@@ -266,10 +266,11 @@ class BackPanel15 extends BackPanel {
         ]),
         row([
           cell(list([
-            space(0.8),
+            space(0.6),
             text('RCL', box: true, boxOffset: const Offset(-.20, -.77)),
-            space(0.1),
-            text('\u03a3')
+            space(0.5),
+            text('\u03a3'),
+            space(0.1)
           ])),
           cell(text('\u03a3x', align: TextAlign.center)),
           cell(text(' \u03a3y ', align: TextAlign.center))
@@ -329,7 +330,7 @@ class BackPanel15 extends BackPanel {
         row([
           cell(text('')),
           cell(text('ERROR', align: bpCenter)),
-          cell(list([text('TEST', align: bpCenter)])),
+          cell(list([space(0.25), text('TEST', align: bpCenter), space(0.25)])),
           cell(text('MATRIX', align: bpCenter))
         ]),
         row([
@@ -344,17 +345,17 @@ class BackPanel15 extends BackPanel {
           cell(text('x\u200a>\u200a0', align: bpCenter)),
           cell(list([
             text(' 1'),
-            space(-1),
+            space(-0.1),
             arrowRight(2),
             text('R'),
-            space(-.5),
+            space(-.1),
             subText('0'),
-            space(-.4),
+            space(-.1),
             text(',\u200a1'),
-            space(-.8),
+            space(-.1),
             arrowRight(2),
             text('R'),
-            space(-.5),
+            space(-.1),
             subText('1')
           ]))
         ]),
@@ -364,12 +365,13 @@ class BackPanel15 extends BackPanel {
           cell(text('x\u200a<\u200a0', align: bpCenter)),
           cell(list([
             text(' A'),
-            space(-.8),
+            space(-0.2),
             supText('P'),
-            space(-.4),
+            space(.1),
             arrowRight(2),
+            space(0.2),
             text('A'),
-            space(-2.2),
+            space(-1.7),
             text('~', offset: const Offset(0, -1.3))
           ]))
         ]),
@@ -377,54 +379,55 @@ class BackPanel15 extends BackPanel {
           cell(text('3', align: bpCenter)),
           cell(list([
             text(' R?, A'),
-            space(-.2),
+            space(0.1),
             text('i\u200aj', scale: 0.8, offset: Offset(0, 0.15 * rowHeightMM)),
             text('?')
           ])),
           cell(text('x\u200a\u2265\u200a0', align: bpCenter)),
           cell(list([
             text(' A'),
-            space(-2.4),
+            space(-1.7),
             text('~', offset: const Offset(0, -1.3)),
+            space(0.6),
             arrowRight(2),
-            space(0.1),
+            space(0.2),
             text('A'),
-            space(-.6),
+            space(-0.2),
             supText('P')
           ]))
         ]),
         row([
           cell(text('4', align: bpCenter)),
-          cell(list([text('LBL?,GTO>MEM,PRGM>MEM'), space(-.9)])),
+          cell(list([space(0.1), text('LBL?,GTO>MEM,PRGM>MEM'), space(0.1)])),
           cell(text('x\u200a\u2264\u200a0', align: bpCenter)),
-          cell(list([text(' A'), space(-.9), supText('T')]))
+          cell(list([text(' A'), space(-.3), supText('T')]))
         ]),
         row([
           cell(text('5', align: bpCenter)),
           cell(list([
             text(' > 7 '),
-            text('RTN', boxOffset: const Offset(-.28, -.64), box: true)
+            text('RTN', boxOffset: const Offset(-0.28, -0.64), box: true)
           ])),
           cell(text('x\u200a=\u200ay', align: bpCenter)),
           cell(list(
-              [text(' A'), space(-.9), supText('T'), space(-.2), text('B')]))
+              [text(' A'), space(-.3), supText('T'), space(-.0), text('B')]))
         ]),
         row([
           cell(text('6', align: bpCenter)),
           cell(text(' SF > 9 , CF > 9 , F? > 9')),
           cell(text('x\u200a\u2260\u200ay', align: bpCenter)),
-          cell(text(' B = B - AC'))
+          cell(list([text(' B = B - AC'), space(1.0)]))
         ]),
         row([
           cell(text('7', align: bpCenter)),
           cell(list([
             text(' SOLVE(SOLVE), \u222b'),
-            space(-1),
+            space(0),
             subText('y'),
             space(-1),
             supText('x'),
             text('(\u222b'),
-            space(-1),
+            space(0),
             subText('y'),
             space(-1),
             supText('x'),
@@ -434,15 +437,16 @@ class BackPanel15 extends BackPanel {
           cell(list([
             space(.5),
             text('MAX', scale: .7, offset: const Offset(0, -1.2)),
-            space(-1.85),
+            space(-1.45),
             text('i', scale: .6, offset: const Offset(0, .85)),
             space(2.0),
-            text('j', scale: .6, offset: const Offset(0, .85)),
-            space(-1),
+            text('j', scale: .6, offset: const Offset(-0.2, .85)),
+            space(-0.8),
             text('\u03a3', scale: .8, offset: const Offset(0, -0.95)),
             text('|\u200aa', scale: .7, offset: const Offset(0, -1.2)),
-            space(-.45),
+            space(-.15),
             text('i\u200aj', scale: .65, offset: const Offset(.2, -0.5)),
+            space(0.2),
             text('|', scale: .7, offset: const Offset(-.2, -1.2)),
           ]))
         ]),
@@ -455,35 +459,35 @@ class BackPanel15 extends BackPanel {
             text('('),
             space(0.25),
             text('i\u200aj', scale: 0.6, offset: const Offset(0, 1)),
-            space(-1.4),
+            space(-1.1),
             text('\u03a3', scale: .8, offset: const Offset(0, -0.90)),
-            space(-.3),
+            space(-.0),
             text('|\u200aa', scale: .7, offset: const Offset(0, -1.2)),
-            space(-.4),
+            space(-.0),
             text('i\u200aj', scale: .65, offset: const Offset(0, -0.5)),
-            space(-.14),
+            space(-.04),
             text('|', scale: .7, offset: const Offset(0, -1.2)),
             space(-.1),
             text('2', scale: .4, offset: const Offset(0, -3.8)),
             text(')'),
             space(-.2),
-            text('1', scale: .4, offset: const Offset(0, -3.8)),
+            text('1', scale: .5, offset: const Offset(0, -2.6)),
             space(-.2),
-            text('/', scale: .4, offset: const Offset(0, -3.5)),
+            text('/', scale: .5, offset: const Offset(0, -2.3)),
             space(-.1),
-            text('2', scale: .4, offset: const Offset(0, -2.5)),
+            text('2', scale: .5, offset: const Offset(0, -1.3)),
           ]))
         ]),
         _NumberTableBottomRow([
           cell(text('9', align: bpCenter)),
           cell(list([
-            space(.55),
+            space(.75),
             text('ON', box: true, boxOffset: const Offset(-.28, -.64)),
             text(' / '),
             text('\u00d7',
                 box: true,
-                offset: const Offset(-.03, -.01),
-                boxOffset: const Offset(-.09, -.64))
+                offset: const Offset(0.04, -.01),
+                boxOffset: const Offset(-.19, -.64))
           ])),
           cell(text('x\u200a\u2265\u200ay', align: bpCenter)),
           cell(text(' |\u200aA\u200a| '))
@@ -620,7 +624,7 @@ class _TableWithDrawingPainter extends BPTablePainter {
 
   @override
   void drawOutline(Canvas canvas, double width, double height) {
-    super.drawOutline(canvas, width + 24.3, height);
+    super.drawOutline(canvas, width + 24.8, height);
     canvas.drawLine(Offset(width, 0), Offset(width, height), thinLine);
   }
 
@@ -662,7 +666,7 @@ class _TableWithDrawingPainter extends BPTablePainter {
         textDirection: TextDirection.ltr)
       ..layout();
 
-    canvas.translate(28.40, 0);
+    canvas.translate(26.40, 0);
     canvas.save();
     canvas.scale(1, 3.80 / .7);
     curlyT.paint(canvas, const Offset(0, 0.86));
