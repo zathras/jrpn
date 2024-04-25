@@ -361,7 +361,7 @@ class _Unsigned extends IntegerSignMode {
   }
 
   @override
-  String get statusText => 'U';
+  String get statusText => '0';
 
   @override
   bool get doesSignExtension => false;
