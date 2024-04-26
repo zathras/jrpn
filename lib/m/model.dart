@@ -1614,9 +1614,9 @@ class DisplayModel {
       } else {
         return ' $_current';
       }
-    } else if (_showingX && model.settings.windowLongNumbers) {
+    } else if (model.settings.windowLongNumbers) {
       final int maxWindow = ((_numDigits - 1) ~/ 8) * 8;
-      if (_window > maxWindow) {
+      if (_showingX && _window > maxWindow) {
         _window = maxWindow;
         // If, for example, the base changed out from under us, like in
         // https://github.com/zathras/jrpn/issues/12
