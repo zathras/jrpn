@@ -1614,7 +1614,7 @@ class DisplayModel {
       } else {
         return ' $_current';
       }
-    } else if (model.settings.windowLongNumbers) {
+    } else if (_showingX && model.settings.windowLongNumbers) {
       final int maxWindow = ((_numDigits - 1) ~/ 8) * 8;
       if (_window > maxWindow) {
         _window = maxWindow;
