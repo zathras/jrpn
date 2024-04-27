@@ -49,7 +49,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> makeIcons() async {
-    final base = '/Users/billf/github/jrpn';
+    const base = '/Users/billf/github/jrpn';
+    // ignore: avoid_print
     print('cwd is ${File(".").absolute}');
     for (final model in ['15', '16']) {
       // https://developer.android.com/distribute/google-play/resources/icon-design-specifications

@@ -1172,7 +1172,7 @@ class OnOffKeyPressed extends DoNothing {
       changeState(DoNothing(controller));
       Future<void> res = () async {
         try {
-          await model.writeToPersistentStorage();
+          await model.writeToPersistentStorage(unconditional: true);
         } finally {
           if (!kIsWeb && (Platform.isLinux || Platform.isWindows)) {
             // Current version on Linux dumps core on pop.

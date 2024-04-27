@@ -902,7 +902,7 @@ class CalculatorButtonState extends State<CalculatorButton> {
   @override
   void initState() {
     super.initState();
-    widget.bFactory.controller.model.settings.showAccelerators
+    widget.bFactory.controller.model.settings.showAcceleratorsObservable
         .addObserver(_repaint);
     widget.bFactory.controller.keyboard.register(this, widget.acceleratorKey);
   }
@@ -910,7 +910,7 @@ class CalculatorButtonState extends State<CalculatorButton> {
   @override
   void dispose() {
     super.dispose();
-    widget.bFactory.controller.model.settings.showAccelerators
+    widget.bFactory.controller.model.settings.showAcceleratorsObservable
         .removeObserver(_repaint);
     widget.bFactory.controller.keyboard.deregister(this, widget.acceleratorKey);
   }
@@ -993,7 +993,7 @@ class CalculatorButtonState extends State<CalculatorButton> {
                 pressed: _pressed,
                 pressedFromKeyboard: _pressedFromKeyboard,
                 showAccelerators:
-                    factory.controller.model.settings.showAccelerators.value)));
+                    factory.controller.model.settings.showAccelerators)));
   }
 
   /// When the button is "pressed" with an accelerator key

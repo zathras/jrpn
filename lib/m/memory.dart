@@ -36,9 +36,14 @@ abstract class MemoryPolicy {
 
 /// The calculator's internal memory that holds registers and
 /// programs.
+///
+/// Programs are stored starting at location 0.  Registers are stored
+/// starting
 abstract class Memory<OT extends ProgramOperation> {
   @protected
-  final ByteData storage;
+  ByteData _storage;
+  @protected
+  ByteData get storage => _storage;
   //  We hold one nybble (4 bits) in each byte of _storage.  The program
   // is also stored here, and we zero out that part of storage when
   // program lines are added/removed, to simulate the behavior of shared
@@ -47,6 +52,8 @@ abstract class Memory<OT extends ProgramOperation> {
   // The program is stored starting at the first byte, and register 0 is
   // stored at the end of _storage, with higher numbered registers at lower
   // addresses.
+  final int _minimumMemoryNybbles;
+
   late final ProgramMemory<OT> program;
   late final registers = Registers(this);
 
@@ -54,7 +61,9 @@ abstract class Memory<OT extends ProgramOperation> {
 
   MemoryPolicy get policy;
 
-  Memory({required int memoryNybbles}) : storage = ByteData(memoryNybbles);
+  Memory({required int memoryNybbles})
+      : _storage = ByteData(memoryNybbles),
+        _minimumMemoryNybbles = memoryNybbles;
 
   /// Total number of nybbles of storage
   int get totalNybbles => storage.lengthInBytes;
@@ -76,6 +85,43 @@ abstract class Memory<OT extends ProgramOperation> {
   // of initializing late final fields that we depend on.  Admittedly, this
   // is a little tricky - making initialization happen while keeping modules
   // decoupled sometimes is.
+
+  ///
+  /// Change the memory size.  Returns a descriptive error message string
+  /// on error.
+  ///
+  String? changeMemorySize(int newSize) {
+    newSize = min(max(_minimumMemoryNybbles, newSize), 1024 * 1024);
+    // Max of 1 mega-nybble.  On the 16c, this gives a max of 64K registers
+    // at 64 bits per.  That's ridiculously huge, and this size is small enough
+    // so we're well within any real constraint (probaby by a couple of orders
+    // of magnitude).
+
+    if (newSize == _storage.lengthInBytes) {
+      return null;
+    }
+    final oldStorage = _storage;
+    _storage = ByteData(newSize);
+    final error = checkMemorySize();
+    if (error != null) {
+      _storage = oldStorage;
+      return error;
+    }
+    for (int i = 0; i < programNybbles; i++) {
+      _storage.setUint8(i, oldStorage.getUint8(i));
+    }
+    final newLength = _storage.lengthInBytes;
+    final oldLength = oldStorage.lengthInBytes;
+    final other = min(newLength, oldLength) - programNybbles;
+    for (int i = 1; i <= other; i++) {
+      _storage.setUint8(newLength - i, oldStorage.getUint8(oldLength - i));
+    }
+    model.needsSave = true;
+    return null;
+  }
+
+  @protected
+  String? checkMemorySize();
 
   void reset() {
     for (int i = 0; i < totalNybbles; i++) {
@@ -100,6 +146,7 @@ abstract class Memory<OT extends ProgramOperation> {
 
   void decodeJson(Map<String, dynamic> json) {
     final sto = json['storage'] as String;
+    _storage = ByteData(sto.length);
     for (int i = 0; i < totalNybbles; i++) {
       storage.setUint8(i, int.parse(sto.substring(i, i + 1), radix: 16));
     }
@@ -164,7 +211,12 @@ class NumStatus68 implements NumStatus {
 ///
 /// A representation of the available memory as registers.  "Available memory"
 /// is what's left over of the 406 nybble data store after the program's
-/// storage is deducted.
+/// storage is deducted.  Registers are stored starting from the top of memory
+/// (register 0 has the highest address, working down).
+///
+/// On the 15C, matrices and some other things aren't stored in [Memory], but
+/// the space they take is deducted from what's available.  See
+/// `Model15.availableRegisters`.
 ///
 class Registers {
   final Memory _memory;

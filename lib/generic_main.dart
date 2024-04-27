@@ -779,6 +779,9 @@ class Jrpn extends StatefulWidget {
   static ScalableImage? _tryzub;
   static ScalableImage get tryzub => _tryzub!;
 
+  /// For error dialogs
+  static late BuildContext lastContext;
+
   /// The state for a calculator instance is held both in the Controller,
   /// and in the Model referenced by the controller.
   final RealController controller;
@@ -853,7 +856,6 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   late final AppLifecycleListener _appLifecycleListener;
   late final FocusNode keyboard;
   late final ScalableImage icon;
-  late final ScalableImage tryzub;
   late void Function(void) _uiChangeObserver;
 
   JrpnState() {
@@ -865,7 +867,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
 
   Future<AppExitResponse> exitRequested() async {
     // See https://github.com/zathras/jrpn/issues/46
-    await controller.model.writeToPersistentStorage(onlyIfNeeded: true);
+    await controller.model.writeToPersistentStorage();
     return AppExitResponse.exit;
   }
 
@@ -898,7 +900,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (_lastLifecycleState == AppLifecycleState.resumed &&
         state != AppLifecycleState.resumed) {
-      unawaited(controller.model.writeToPersistentStorage(onlyIfNeeded: true));
+      unawaited(controller.model.writeToPersistentStorage());
       // See discussion in https://github.com/zathras/jrpn/issues/46
     }
     _lastLifecycleState = state;
@@ -913,12 +915,15 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
           primarySwatch: Colors.blue,
         ),
         home: Material(
-            type: MaterialType.transparency, child: _buildScreen(context)));
+            type: MaterialType.transparency,
+            child: Builder(
+                builder: (BuildContext context) => _buildScreen(context))));
     // The Material widget is needed for text widgets to work:
     // https://stackoverflow.com/questions/47114639/yellow-lines-under-text-widgets-in-flutter
   }
 
   Widget _buildScreen(BuildContext context) {
+    Jrpn.lastContext = context;
     if (!_initDone) {
       return Container(color: Colors.black54);
     }

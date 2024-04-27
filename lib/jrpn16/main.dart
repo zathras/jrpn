@@ -228,7 +228,7 @@ class Memory16 extends Memory<Operation> {
   final Model<Operation> model;
 
   @override
-  late final policy = MemoryPolicy16(this);
+  late final MemoryPolicy16 policy = MemoryPolicy16(this);
 
   Memory16(this.model, {required super.memoryNybbles});
 
@@ -238,6 +238,14 @@ class Memory16 extends Memory<Operation> {
     final int opcode =
         (lbl.arg.matches(Operations.n0, false) as ArgDone).opcode;
     program = ProgramMemory16(this, layout, model.returnStackSize, opcode, rtn);
+  }
+
+  @override
+  String? checkMemorySize() {
+    if (totalNybbles < programNybbles) {
+      return "Memory size is too small for current program.";
+    }
+    return null;
   }
 }
 

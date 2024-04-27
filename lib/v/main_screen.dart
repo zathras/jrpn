@@ -470,13 +470,13 @@ class _MainMenuState extends State<MainMenu> {
 
   @override
   void initState() {
-    model.settings.menuEnabled.addObserver(_enabledChanged);
+    model.settings.menuEnabledObservable.addObserver(_enabledChanged);
     super.initState();
   }
 
   @override
   void dispose() {
-    model.settings.menuEnabled.removeObserver(_enabledChanged);
+    model.settings.menuEnabledObservable.removeObserver(_enabledChanged);
     super.dispose();
   }
 
@@ -492,7 +492,7 @@ class _MainMenuState extends State<MainMenu> {
       menuIconPosition = Rect.fromLTWH(screen.width - 1, 0.1, 1, 1);
       menuHitArea = Rect.fromLTWH(screen.width - 2, 0, 2, 2);
     }
-    if (model.settings.menuEnabled.value) {
+    if (model.settings.menuEnabled) {
       children.add(screen.box(menuIconPosition, Icon(Icons.adaptive.more)));
     }
     children.add(screen.box(menuHitArea, _buildMenu(context)));
@@ -657,9 +657,9 @@ class __SettingsMenuState extends State<_SettingsMenu> {
       onCanceled: () => Navigator.pop(context),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<void Function()>>[
         CheckedPopupMenuItem(
-            checked: settings.menuEnabled.value,
+            checked: settings.menuEnabled,
             value: () {
-              settings.menuEnabled.value = !settings.menuEnabled.value;
+              settings.menuEnabled = !settings.menuEnabled;
               unawaited(widget.app.model.writeToPersistentStorage());
             },
             child: const Text('Show Menu Icon')),
@@ -790,10 +790,9 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                     child: const Text('Integer Mode Commas')),
               ]),
         CheckedPopupMenuItem(
-            checked: settings.showAccelerators.value,
+            checked: settings.showAccelerators,
             value: () {
-              settings.showAccelerators.value =
-                  !settings.showAccelerators.value;
+              settings.showAccelerators = !settings.showAccelerators;
               unawaited(widget.app.model.writeToPersistentStorage());
             },
             child: const Text('Show Accelerators (toggle with "?")')),
@@ -934,7 +933,8 @@ class __FileSaveMenuState extends State<_FileSaveMenu> {
       },
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(
-          value: () => widget.app.model.writeToPersistentStorage(),
+          value: () =>
+              widget.app.model.writeToPersistentStorage(unconditional: true),
           child: const Text('Save as Starting State'),
         ),
         ...(_filesWork
@@ -1303,18 +1303,18 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
   Settings get settings => model.settings;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext outerContext) {
     return PopupMenuButton<Future<void> Function()>(
       // how much the submenu should offset from parent.
       offset: const Offset(-100, 0),
       onSelected: (Future<void> Function() action) async {
         await action();
         setState(() {});
-        if (context.mounted) {
-          Navigator.pop(context, () {});
+        if (outerContext.mounted) {
+          Navigator.pop(outerContext, () {});
         }
       },
-      onCanceled: () => Navigator.pop(context),
+      onCanceled: () => Navigator.pop(outerContext),
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(
             child: ListTile(
@@ -1331,6 +1331,30 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                               widget.app.model.writeToPersistentStorage());
                         })),
                 title: const Text('ms/Program Instruction'))),
+        PopupMenuItem(
+            child: ListTile(
+                leading: SizedBox(
+                    width: 70,
+                    child: _TextEntry(
+                        text: false,
+                        initial: model.memory.totalNybbles.toString(),
+                        onDone: (v) {
+                          final dv = double.tryParse(v);
+                          if (dv != null) {
+                            final err =
+                                model.memory.changeMemorySize(dv.round());
+                            if (err == null) {
+                              unawaited(
+                                  widget.app.model.writeToPersistentStorage());
+                            } else {
+                              Future.delayed(
+                                  const Duration(milliseconds: 30),
+                                  () => showErrorDialog(
+                                      Jrpn.lastContext, err, null));
+                            }
+                          }
+                        })),
+                title: const Text('Total memory (nybbles)'))),
         PopupMenuItem(
             child: ListTile(
                 leading: SizedBox(

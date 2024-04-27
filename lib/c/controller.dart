@@ -1033,8 +1033,8 @@ class KeyboardController {
       lastKeyDown = now;
       return KeyEventResult.handled;
     } else if (e.character == '?') {
-      controller.model.settings.showAccelerators.value =
-          !controller.model.settings.showAccelerators.value;
+      controller.model.settings.showAccelerators =
+          !controller.model.settings.showAccelerators;
       _physicalKeyThatIsDown = e.physicalKey;
       lastKeyDown = now;
       return KeyEventResult.handled;

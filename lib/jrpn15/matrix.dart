@@ -245,14 +245,6 @@ class Matrix extends AMatrix {
     } else if (rows == this.rows && columns == this.columns) {
       return;
     }
-    int totalMatrix = rows * columns - 2 * length;
-    for (final mat in m.matrices) {
-      totalMatrix += mat.length;
-    }
-    if (totalMatrix > 64) {
-      // bottom of page 148
-      throw CalculatorError(10);
-    }
     m.memory.policy.checkAvailable(rows * columns - length);
     isLU = false;
     final values = List<Value>.filled(rows * columns, Value.zero);

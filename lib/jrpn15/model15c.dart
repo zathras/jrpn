@@ -392,12 +392,20 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
   int get availableRegisters =>
       availableRegistersWithProgram(program.runner ?? program.suspendedProgram);
 
+  @override
+  String? checkMemorySize() {
+    final a = availableRegisters;
+    if (a < 0) {
+      return 'New memory size too small.\n'
+          'Available registers would be $a.';
+    }
+    return null;
+  }
+
   int availableRegistersWithProgram(MProgramRunner? runner) {
     int result = totalNybbles ~/ 14;
-    assert(totalNybbles % 14 == 0);
     result -= numRegisters;
     result -= program.programBytes ~/ 7;
-    assert(totalNybbles % 7 == 0);
     if (model.isComplexMode) {
       result -= 5;
     }

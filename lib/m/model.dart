@@ -204,13 +204,31 @@ enum LongNumbersSetting { window, growLCD, shrinkDigits }
 ///
 class Settings {
   final Model _model;
-  final Observable<bool> menuEnabled = Observable(true);
+
+  final Observable<bool> menuEnabledObservable = Observable(true);
+  bool get menuEnabled => menuEnabledObservable.value;
+  set menuEnabled(bool v) {
+    if (v != menuEnabledObservable.value) {
+      menuEnabledObservable.value = v;
+      _model.needsSave = true;
+    }
+  }
+
   LongNumbersSetting _longNumbers = LongNumbersSetting.window;
   bool _euroComma = false;
   bool _hideComplement = false;
   bool _showWordSize = false;
   bool _integerModeCommas = false;
-  final Observable<bool> showAccelerators = Observable(false);
+
+  final Observable<bool> showAcceleratorsObservable = Observable(false);
+  bool get showAccelerators => showAcceleratorsObservable.value;
+  set showAccelerators(bool v) {
+    if (v != showAcceleratorsObservable.value) {
+      showAcceleratorsObservable.value = v;
+      _model.needsSave = true;
+    }
+  }
+
   double? _msPerInstruction;
   bool _traceProgramToStdout = false;
   static const double _msPerInstructionDefault = 50;
@@ -239,19 +257,16 @@ class Settings {
   static const _lcdForegroundColorDefault = 0xff000000;
   int _lcdForegroundColor = _lcdForegroundColorDefault;
 
-  Settings(this._model) {
-    menuEnabled.addObserver((_) => _model.needsSave = true);
-    showAccelerators.addObserver((_) => _model.needsSave = true);
-  }
+  Settings(this._model);
 
   void _reset() {
-    menuEnabled.value = true;
+    menuEnabled = true;
     _longNumbers = LongNumbersSetting.window;
     _euroComma = false;
     _hideComplement = false;
     _showWordSize = false;
     _integerModeCommas = false;
-    showAccelerators.value = false;
+    showAccelerators = false;
     _msPerInstruction = null;
     _traceProgramToStdout = false;
     _orientation = OrientationSetting.auto;
@@ -272,14 +287,18 @@ class Settings {
   ///
   bool get showWordSize => _showWordSize;
   set showWordSize(bool v) {
-    _showWordSize = v;
-    _model.needsSave = true;
+    if (v != _showWordSize) {
+      _showWordSize = v;
+      _model.needsSave = true;
+    }
   }
 
   bool get integerModeCommas => _integerModeCommas;
   set integerModeCommas(bool v) {
-    _integerModeCommas = v;
-    _model.needsSave = true;
+    if (v != _integerModeCommas) {
+      _integerModeCommas = v;
+      _model.needsSave = true;
+    }
   }
 
   ///
@@ -290,8 +309,10 @@ class Settings {
   ///
   LongNumbersSetting get longNumbers => _longNumbers;
   set longNumbers(LongNumbersSetting v) {
-    _longNumbers = v;
-    _model.needsSave = true;
+    if (_longNumbers != v) {
+      _longNumbers = v;
+      _model.needsSave = true;
+    }
   }
 
   bool get windowLongNumbers => _longNumbers == LongNumbersSetting.window;
@@ -331,8 +352,10 @@ class Settings {
   ///
   bool get hideComplement => _hideComplement;
   set hideComplement(bool v) {
-    _hideComplement = v;
-    _model.needsSave = true;
+    if (v != _hideComplement) {
+      _hideComplement = v;
+      _model.needsSave = true;
+    }
   }
 
   ///
@@ -344,8 +367,10 @@ class Settings {
     if (msPerInstruction == _msPerInstructionDefault) {
       msPerInstruction = null;
     }
-    _msPerInstruction = msPerInstruction;
-    _model.needsSave = true;
+    if (msPerInstruction != _msPerInstruction) {
+      _msPerInstruction = msPerInstruction;
+      _model.needsSave = true;
+    }
   }
 
   ///
@@ -370,9 +395,11 @@ class Settings {
     if (!isMobilePlatform) {
       return;
     }
-    _systemOverlaysDisabled = v;
-    setPlatformOverlays();
-    _model.needsSave = true;
+    if (v != _systemOverlaysDisabled) {
+      _systemOverlaysDisabled = v;
+      setPlatformOverlays();
+      _model.needsSave = true;
+    }
   }
 
   void setPlatformOverlays() {
@@ -391,9 +418,11 @@ class Settings {
       isMobilePlatform ? _orientation : OrientationSetting.auto;
 
   set orientation(OrientationSetting v) {
-    _orientation = v;
-    _setPlatformOrientation();
-    _model.needsSave = true;
+    if (v != _orientation) {
+      _orientation = v;
+      _setPlatformOrientation();
+      _model.needsSave = true;
+    }
   }
 
   void _setPlatformOrientation() {
@@ -422,41 +451,55 @@ class Settings {
       isMobilePlatform ? _keyFeedback : KeyFeedbackSetting.platform;
 
   set keyFeedback(KeyFeedbackSetting v) {
-    _keyFeedback = v;
-    _model.needsSave = true;
+    if (_keyFeedback != v) {
+      _keyFeedback = v;
+      _model.needsSave = true;
+    }
   }
 
   int get gKeyColor => _gKeyColor;
-  set gKeyColor(int? v) => _gKeyColor = v ?? _gKeyColorDefault;
+  set gKeyColor(int? v) =>
+      _gKeyColor = _ifChanged(_gKeyColor, v, _gKeyColorDefault);
 
   int get gTextColor => _gTextColor;
-  set gTextColor(int? v) => _gTextColor = v ?? _gTextColorDefault;
+  set gTextColor(int? v) =>
+      _gTextColor = _ifChanged(_gTextColor, v, _gTextColorDefault);
 
   int get fKeyColor => _fKeyColor;
-  set fKeyColor(int? v) => _fKeyColor = v ?? _fKeyColorDefault;
+  set fKeyColor(int? v) =>
+      _fKeyColor = _ifChanged(_fKeyColor, v, _fKeyColorDefault);
 
   int get fTextColor => _fTextColor;
-  set fTextColor(int? v) => _fTextColor = v ?? _fTextColorDefault;
+  set fTextColor(int? v) =>
+      _fTextColor = _ifChanged(_fTextColor, v, _fTextColorDefault);
 
   int get lcdBackgroundColor => _lcdBackgroundColor;
-  set lcdBackgroundColor(int? v) =>
-      _lcdBackgroundColor = v ?? _lcdBackgroundColorDefault;
+  set lcdBackgroundColor(int? v) => _lcdBackgroundColor =
+      _ifChanged(_lcdBackgroundColor, v, _lcdBackgroundColorDefault);
 
   int get lcdForegroundColor => _lcdForegroundColor;
-  set lcdForegroundColor(int? v) =>
-      _lcdForegroundColor = v ?? _lcdForegroundColorDefault;
+  set lcdForegroundColor(int? v) => _lcdForegroundColor =
+      _ifChanged(_lcdForegroundColor, v, _lcdForegroundColorDefault);
+
+  int _ifChanged(int old, int? v, int defaultV) {
+    v = v ?? defaultV;
+    if (v != old) {
+      _model.needsSave = true;
+    }
+    return v;
+  }
 
   ///
   /// Convert to a data structure that can be serialized as JSON.
   ///
   Map<String, dynamic> toJson() {
     final r = <String, dynamic>{
-      'menuEnabled': menuEnabled.value,
+      'menuEnabled': menuEnabled,
       'windowEnabled': _longNumbers ==
           LongNumbersSetting.window, // For backwards compatibility
       'longNumbers': _longNumbers.index,
       'euroComma': _euroComma,
-      'showAccelerators': showAccelerators.value,
+      'showAccelerators': showAccelerators,
       'systemOverlaysDisabled': systemOverlaysDisabled,
       'orientation': orientation.index,
       'keyFeedback': keyFeedback.index
@@ -499,7 +542,7 @@ class Settings {
   /// that causes bad behavior in the calculator.
   ///
   void decodeJson(Map<String, dynamic> json) {
-    menuEnabled.value = json['menuEnabled'] as bool;
+    menuEnabled = json['menuEnabled'] as bool;
     final longNumbers = json['longNumbers'] as int?;
     if (longNumbers == null) {
       // Old settings
@@ -514,7 +557,7 @@ class Settings {
     _hideComplement = json['hideComplement'] as bool? ?? false;
     _showWordSize = json['showWordSize'] as bool? ?? false;
     _integerModeCommas = json['integerModeCommas'] as bool? ?? false;
-    showAccelerators.value = json['showAccelerators'] == true; // could be null
+    showAccelerators = json['showAccelerators'] == true; // could be null
     _msPerInstruction = (json['msPerInstruction'] as num?)?.toDouble();
     _traceProgramToStdout = (json['traceProgramToStdout'] as bool?) ?? false;
     _systemOverlaysDisabled =
@@ -1299,11 +1342,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     return readFromPersistentStorage();
   }
 
-  Future<void> writeToPersistentStorage({bool onlyIfNeeded = false}) async {
-    // We could query needsSave here, but this is called infrequently.
-    // A full audit to make sure needsSave is always updated would be needed
-    // to restore the query here.
-    if (onlyIfNeeded && !needsSave) {
+  Future<void> writeToPersistentStorage({bool unconditional = false}) async {
+    if (!unconditional && !needsSave) {
       return;
     }
     needsSave = false;
