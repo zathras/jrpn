@@ -1095,7 +1095,7 @@ class Controller16 extends RealController {
 
 void _doubleIntMultiply(Model m) {
   BigInt r = m.xI * m.yI; // Signed BigInt, up to 128 bits
-  Value big = m.integerSignMode.fromBigInt(r, m.doubleWordStatus);
+  Value big = m.integerSignMode.fromBigInt(r, m.doubleWordStatus, true);
   m.lastX = m.x;
   m.x = Value.fromInternal(big.internal >> m.wordSize);
   m.y = Value.fromInternal(big.internal & m.wordMask);

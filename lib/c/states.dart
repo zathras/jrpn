@@ -504,7 +504,7 @@ class DigitEntry extends ActiveState {
       intDigits = 0;
     } else {
       final ism = model.integerSignMode;
-      final maxV = ism.fromBigInt(ism.maxValue(model), model);
+      final maxV = ism.fromBigInt(ism.maxValue(model), model, false);
       intDigits =
           model.displayMode.format(maxV, model).replaceAll(',', '').length - 2;
     }

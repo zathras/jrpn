@@ -770,7 +770,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   /// Set x from a signed BigInt
-  set xI(BigInt v) => x = _integerSignMode.fromBigInt(v, this);
+  set xI(BigInt v) => x = _integerSignMode.fromBigInt(v, this, true);
 
   /// Set x from a Dart double
   set xF(double v) => x = Value.fromDouble(v);
@@ -792,7 +792,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// Pop the stack and set X from a signed BigInt, setting lastX
   // ignore: avoid_setters_without_getters
   set popSetResultXI(BigInt v) {
-    popSetResultX = _integerSignMode.fromBigInt(v, this);
+    popSetResultX = _integerSignMode.fromBigInt(v, this, true);
   }
 
   /// Pop the stack and set X from a Dart double, setting lastX
@@ -821,7 +821,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   // ignore: avoid_setters_without_getters
-  set resultXI(BigInt v) => resultX = _integerSignMode.fromBigInt(v, this);
+  set resultXI(BigInt v) =>
+      resultX = _integerSignMode.fromBigInt(v, this, true);
   // ignore: avoid_setters_without_getters
   set resultXF(double v) => resultX = Value.fromDouble(v);
   // ignore: avoid_setters_without_getters
@@ -842,7 +843,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     needsSave = true;
   }
 
-  set yI(BigInt v) => y = _integerSignMode.fromBigInt(v, this);
+  set yI(BigInt v) => y = _integerSignMode.fromBigInt(v, this, true);
   set yF(double v) => y = Value.fromDouble(v);
   set yC(Complex v) => _setComplex(1, v);
 

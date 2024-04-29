@@ -378,7 +378,7 @@ class _DecimalMode extends IntegerDisplayMode {
     if (v < sm.minValue(m) || v > sm.maxValue(m)) {
       return null;
     }
-    return sm.fromBigInt(v, m);
+    return sm.fromBigInt(v, m, false);
   }
 
   @override

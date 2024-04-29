@@ -67,7 +67,7 @@ abstract class IntegerSignMode extends SignMode {
   BigInt toBigInt(Value v, NumStatus m);
 
   // convert a BigInto to a Value, setting the G flag of NumStatus on overflow.
-  Value fromBigInt(BigInt v, NumStatus status);
+  Value fromBigInt(BigInt v, NumStatus status, bool setOverflow);
 
   BigInt maxValue(NumStatus m);
   BigInt minValue(NumStatus m);
@@ -115,7 +115,7 @@ abstract class IntegerSignMode extends SignMode {
 
   @override
   Value increment(NumStatus m, Value valueI, int by) =>
-      fromBigInt(toBigInt(valueI, m) + BigInt.from(by), m);
+      fromBigInt(toBigInt(valueI, m) + BigInt.from(by), m, true);
 
   static final BigInt _tooBig = BigInt.from(1000);
 
@@ -163,21 +163,29 @@ class _OnesComplement extends IntegerSignMode {
   }
 
   @override
-  Value fromBigInt(BigInt v, NumStatus m) {
+  Value fromBigInt(BigInt v, NumStatus m, bool setOverflow) {
     if (v >= BigInt.zero) {
       if (v <= maxValue(m)) {
-        m.gFlag = false;
+        if (setOverflow) {
+          m.gFlag = false;
+        }
         return Value.fromInternal(v);
       } else {
-        m.gFlag = true;
+        if (setOverflow) {
+          m.gFlag = true;
+        }
         return Value.fromInternal(v & m.wordMask);
       }
     } else {
       if (v >= minValue(m)) {
-        m.gFlag = false;
+        if (setOverflow) {
+          m.gFlag = false;
+        }
         return Value.fromInternal(v + m.wordMask);
       } else {
-        m.gFlag = true;
+        if (setOverflow) {
+          m.gFlag = true;
+        }
         return Value.fromInternal(
             (v + m.wordMask + (BigInt.one << (v.bitLength + 1))) & m.wordMask);
       }
@@ -251,21 +259,29 @@ class _TwosComplement extends IntegerSignMode {
   }
 
   @override
-  Value fromBigInt(BigInt v, NumStatus m) {
+  Value fromBigInt(BigInt v, NumStatus m, bool setOverflow) {
     if (v >= BigInt.zero) {
       if (v <= maxValue(m)) {
-        m.gFlag = false;
+        if (setOverflow) {
+          m.gFlag = false;
+        }
         return Value.fromInternal(v);
       } else {
-        m.gFlag = true;
+        if (setOverflow) {
+          m.gFlag = true;
+        }
         return Value.fromInternal(v & m.wordMask);
       }
     } else {
       if (v >= minValue(m)) {
-        m.gFlag = false;
+        if (setOverflow) {
+          m.gFlag = false;
+        }
         return Value.fromInternal(v + m.wordMask + BigInt.one);
       } else {
-        m.gFlag = true;
+        if (setOverflow) {
+          m.gFlag = true;
+        }
         return Value.fromInternal(
             (v + m.wordMask + BigInt.one + (BigInt.one << (v.bitLength + 1))) &
                 m.wordMask);
@@ -321,16 +337,22 @@ class _Unsigned extends IntegerSignMode {
   }
 
   @override
-  Value fromBigInt(BigInt v, NumStatus m) {
+  Value fromBigInt(BigInt v, NumStatus m, bool setOverflow) {
     if (v < BigInt.zero) {
-      m.gFlag = true;
+      if (setOverflow) {
+        m.gFlag = true;
+      }
       final bits = max(m.wordSize, v.bitLength + 1);
       return Value.fromInternal((v + (BigInt.one << bits)) & m.wordMask);
     } else if (v > maxValue(m)) {
-      m.gFlag = true;
+      if (setOverflow) {
+        m.gFlag = true;
+      }
       return Value.fromInternal(v & m.wordMask);
     } else {
-      m.gFlag = false;
+      if (setOverflow) {
+        m.gFlag = false;
+      }
       return Value.fromInternal(v);
     }
   }
