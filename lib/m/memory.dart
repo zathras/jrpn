@@ -396,7 +396,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   int get currentLine => _currentLine;
 
   int get bytesToNextAllocation =>
-      (memory.totalNybbles ~/ 2 - _lines - _extendedLines) % 7;
+      ((memory.totalNybbles ~/ 14) * 7 - _lines - _extendedLines) % 7;
 
   set currentLine(int v) {
     if (v < 0 || (v > lines && v != MProgramRunner.pseudoReturnAddress)) {
