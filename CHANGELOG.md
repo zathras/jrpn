@@ -1,6 +1,9 @@
 Version 2.1.14 (upcoming)
+  * Allow user-configurable extra memory:  Issue 95
   * Make haptic feedback the more iOS-friendly selection feedback
-  * 16C:  Unsigned status as "0", not "U":  Issue 93
+  * 16C:  Don't reset G flag when entering number:  Issue 98
+  * 16C:  Fix WINDOW in program:  Issue 94
+  * Cosmetic fixes:  Issues 93, 92
   * Run conditional operations ouside program: Issue 97
 
 Version 2.1.13
