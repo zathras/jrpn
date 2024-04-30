@@ -115,7 +115,8 @@ abstract class IntegerSignMode extends SignMode {
 
   @override
   Value increment(NumStatus m, Value valueI, int by) =>
-      fromBigInt(toBigInt(valueI, m) + BigInt.from(by), m, true);
+      fromBigInt(toBigInt(valueI, m) + BigInt.from(by), m, false);
+  // ISZ/DSZ does not affect carry or out-of-range flags:  16C p. 90
 
   static final BigInt _tooBig = BigInt.from(1000);
 

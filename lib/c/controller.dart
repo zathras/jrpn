@@ -156,8 +156,6 @@ abstract class Controller {
   @mustCallSuper
   void handlePSE() => _stackLiftEnabled = true;
 
-  bool _branchingOperationCalcDisabled();
-
   bool pasteToX(String clipboard) {
     clipboard = model.settings.swapCommaIfEuro(clipboard);
     final v = model.tryParseValue(clipboard);
@@ -299,9 +297,6 @@ abstract class RealController extends Controller {
     return false;
   }
 
-  @override
-  bool _branchingOperationCalcDisabled() => true;
-
   ButtonLayout getButtonLayout(
       ButtonFactory factory, double totalHeight, double totalButtonHeight);
 
@@ -400,9 +395,6 @@ class RunningController extends Controller {
   void buttonUp() {}
 
   @override
-  bool _branchingOperationCalcDisabled() => false;
-
-  @override
   void showCalculatorError(CalculatorError e, StackTrace? stack) =>
       pendingError = e;
 
@@ -467,10 +459,6 @@ abstract class Operation extends ProgramOperation {
   ControllerState makeInputState(
           Arg arg, Controller c, LimitedState fromState) =>
       ArgInputState(this, arg, c, fromState);
-
-  /// By default, operations, if present, work for all kinds of controllers,
-  /// but cf. [BranchingOperation]
-  bool calcDisabled(Controller controller) => false;
 
   void beforeCalculate(Resting resting) {}
 
@@ -896,36 +884,6 @@ class StackLift {
   static StackLift disable =
       StackLift._p((Controller c) => c._stackLiftEnabled = false);
   static StackLift neutral = StackLift._p((_) {});
-}
-
-///
-/// A program branching operation.  These operations only function when running
-/// a program.  They represent a condition.  If that condition is true, the next
-/// instruction executes normally; otherwise, it is skipped.
-///
-class BranchingOperation extends NormalOperation {
-  BranchingOperation(
-      {required super.name, required void Function(Model) super.calc});
-
-  /// Branching operations only perform a calculation when we are running
-  /// a program.
-  @override
-  bool calcDisabled(Controller controller) =>
-      controller._branchingOperationCalcDisabled();
-}
-
-///
-/// A [BranchingOperation] that takes an argument, namely B? (bit test)
-///
-class BranchingArgOperation extends NormalArgOperation {
-  BranchingArgOperation(
-      {required super.arg, required super.name, super.maxOneByteOpcodes});
-
-  /// Branching operations only perform a calculation when we are running
-  /// a program.
-  @override
-  bool calcDisabled(Controller controller) =>
-      controller._branchingOperationCalcDisabled();
 }
 
 class KeyboardController {

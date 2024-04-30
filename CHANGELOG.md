@@ -1,6 +1,7 @@
 Version 2.1.14 (upcoming)
   * Make haptic feedback the more iOS-friendly selection feedback
   * 16C:  Unsigned status as "0", not "U":  Issue 93
+  * Run conditional operations ouside program: Issue 97
 
 Version 2.1.13
   * Allow "," as keyboard accelerator in Euro comma mode:  Issue 90

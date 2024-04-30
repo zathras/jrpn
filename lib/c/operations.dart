@@ -197,19 +197,19 @@ class Operations {
   static final NormalOperation clx = NormalOperation(
       calc: (Model m) => m.clx(), stackLift: StackLift.disable, name: 'CLx');
 
-  static final BranchingOperation xLEy = BranchingOperation(
+  static final xLEy = NormalOperation(
       name: 'x<=y',
       calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) <= 0));
 
-  static final BranchingOperation xLT0 = BranchingOperation(
+  static final xLT0 = NormalOperation(
       name: 'x<0',
       calc: (Model m) => m.program.doNextIf(m.compare(m.x, Value.zero) < 0));
 
-  static final BranchingOperation xGTy = BranchingOperation(
+  static final xGTy = NormalOperation(
       name: 'x>y',
       calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) > 0));
 
-  static final BranchingOperation xGT0 = BranchingOperation(
+  static final xGT0 = NormalOperation(
       name: 'x>0',
       calc: (Model m) => m.program.doNextIf(m.compare(m.x, Value.zero) > 0));
 
@@ -221,18 +221,18 @@ class Operations {
       },
       name: 'LSTx');
 
-  static final BranchingOperation xNEy = BranchingOperation(
+  static final xNEy = NormalOperation(
       name: 'x!=y',
       calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) != 0));
 
-  static final BranchingOperation xNE0 = BranchingOperation(
+  static final xNE0 = NormalOperation(
       name: 'x!=0', calc: (Model m) => m.program.doNextIf(!m.isZero(m.x)));
 
-  static final BranchingOperation xEQy = BranchingOperation(
+  static final xEQy = NormalOperation(
       name: 'x==y',
       calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) == 0));
 
-  static final BranchingOperation xEQ0 = BranchingOperation(
+  static final xEQ0 = NormalOperation(
       name: 'x==0', calc: (Model m) => m.program.doNextIf(m.isZero(m.x)));
 
   // ================================

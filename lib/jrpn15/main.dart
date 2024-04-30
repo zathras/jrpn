@@ -519,7 +519,7 @@ class Operations15 extends Operations {
       arg: LabelArg(maxDigit: 9, f: (m, v) => m.setFlag(v ?? 999, false)),
       name: 'CF');
 
-  static final BranchingArgOperation fQuestion = BranchingArgOperation(
+  static final fQuestion = NormalArgOperation(
       maxOneByteOpcodes: 0,
       arg: LabelArg(
           maxDigit: 9, f: (m, v) => m.program.doNextIf(m.getFlag(v ?? 99))),
@@ -925,7 +925,7 @@ class Operations15 extends Operations {
       },
       name: 'Re<=>Im');
 
-  static final BranchingOperation xEQ0_15 = BranchingOperation(
+  static final xEQ0_15 = NormalOperation(
       name: 'x==0',
       calc: (Model m) {
         if (m.x.asMatrix != null) {

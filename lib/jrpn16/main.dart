@@ -632,7 +632,7 @@ class Operations16 extends Operations {
           }),
       name: 'GTO');
 
-  static final BranchingArgOperation fQuestion = BranchingArgOperation(
+  static final fQuestion = NormalArgOperation(
       arg: DigitArg(
           max: 5,
           calc: (model, arg) => model.program.doNextIf(model.getFlag(arg))),
@@ -715,14 +715,14 @@ class Operations16 extends Operations {
   static final NormalArgOperation lbl =
       NormalArgOperation(arg: DigitArg(max: 15, calc: (_, __) {}), name: 'LBL');
 
-  static final BranchingOperation dsz = BranchingOperation(
+  static final dsz = NormalOperation(
       name: 'DSZ',
       calc: (Model m) {
         Value v = m.memory.registers.incrementI(-1);
         m.program.doNextIf(!m.isZero(v));
       });
 
-  static final BranchingOperation isz = BranchingOperation(
+  static final isz = NormalOperation(
       name: 'ISZ',
       calc: (Model m) {
         Value v = m.memory.registers.incrementI(1);

@@ -187,20 +187,14 @@ class Resting extends ActiveState {
       // If it's a no-arg operation
       calculate(key, arg);
     } else {
-      if (key.calcDisabled(controller)) {
-        key.pressed(this);
-      } else {
-        // If our current mode doesn't disable calculations.  A branching
-        // operation disables itself when we're not running a program.
-        controller.getArgsAndRun(key, arg, this);
-      }
+      controller.getArgsAndRun(key, arg, this);
     }
   }
 
   void calculate(Operation op, ArgDone arg) {
     try {
       op.pressed(this);
-      final f = op.calcDisabled(controller) ? null : getCalculation(arg);
+      final f = getCalculation(arg);
       if (f != null) {
         // Give the argument a chance to veto or defer the beforeCalculate
         // step.  This is needed for operations with a timeout, like the
