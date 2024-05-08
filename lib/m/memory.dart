@@ -767,7 +767,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       if (result.isNotEmpty) {
         result.write(' ');
       }
-      if (k.startsWith('.')) {
+      if (k.startsWith('.') || k.startsWith(',')) {
         result.write('48 '); // decimal point, both 15C and 16C
         result.write(k.substring(1));
       } else {
