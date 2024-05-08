@@ -1,4 +1,4 @@
-Version 2.1.14 (upcoming)
+Version 2.1.14 - May 2024
   * Allow user-configurable extra memory:  Issue 95
   * Make haptic feedback the more iOS-friendly selection feedback
   * 16C:  Don't reset G flag when entering number:  Issue 98
