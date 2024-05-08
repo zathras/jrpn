@@ -13,8 +13,6 @@ dependencies:
     sdk: flutter
   jrpn:
     path: ..
-  meta: ^1.7.0
-  archive: ^3.1.2
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.0

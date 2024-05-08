@@ -31,7 +31,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:uni_links/uni_links.dart';
+import 'package:app_links/app_links.dart';
 
 import 'c/controller.dart';
 import 'm/model.dart';
@@ -1035,6 +1035,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     if (_disposed) {
       return;
     }
+    final appLinks = AppLinks();
     try {
       icon = await ScalableImage.fromSIAsset(
           rootBundle, 'packages/jrpn/assets/jupiter.si');
@@ -1044,7 +1045,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       String? link;
       bool done = false;
       try {
-        link = await getInitialLink();
+        link = await appLinks.getInitialLinkString();
       } on PlatformException catch (_) {
       } on MissingPluginException catch (_) {}
       if (link != null) {
@@ -1083,7 +1084,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     }
     if (!_disposed && (!kIsWeb && (Platform.isAndroid || Platform.isIOS))) {
       try {
-        _linksSubscription = linkStream.listen((String? link) {
+        _linksSubscription = appLinks.stringLinkStream.listen((String? link) {
           setState(() {
             _incomingLink = link;
           });
