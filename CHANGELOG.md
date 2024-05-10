@@ -4,7 +4,7 @@ Version 2.1.14 - May 2024
   * 16C:  Don't reset G flag when entering number:  Issue 98
   * 16C:  Fix WINDOW in program:  Issue 94
   * Cosmetic fixes:  Issues 93, 92
-  * Run conditional operations ouside program: Issue 97
+  * Run conditional operations outside program: Issue 97
 
 Version 2.1.13
   * Allow "," as keyboard accelerator in Euro comma mode:  Issue 90
