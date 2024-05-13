@@ -65,7 +65,10 @@ abstract class Memory<OT extends ProgramOperation> {
       : _storage = ByteData(memoryNybbles),
         _minimumMemoryNybbles = memoryNybbles;
 
-  /// Total number of nybbles of storage
+  ///
+  /// Total number of nybbles of storage, not including rI.  The index
+  /// register is 68 bits (17 nybbles) on the 16C, and 14 nybbles on the 15C.
+  ///
   int get totalNybbles => storage.lengthInBytes;
 
   /// Amount of memory taken up by program

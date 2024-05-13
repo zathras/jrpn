@@ -370,6 +370,9 @@ class Memory15<OT extends ProgramOperation> extends Memory<OT> {
   @override
   late final MemoryPolicy15 policy = MemoryPolicy15(this);
 
+  ///
+  /// Number of registers, not including rI
+  ///
   int _numRegisters = 20;
 
   Memory15(this.model, {required super.memoryNybbles});
