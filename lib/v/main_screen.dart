@@ -1304,6 +1304,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
 
   @override
   Widget build(BuildContext outerContext) {
+    final mem = model.memory;
     return PopupMenuButton<Future<void> Function()>(
       // how much the submenu should offset from parent.
       offset: const Offset(-100, 0),
@@ -1337,12 +1338,14 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                     width: 70,
                     child: _TextEntry(
                         text: false,
-                        initial: model.memory.totalNybbles.toString(),
+                        initial: (mem.totalNybbles - mem.minimumMemoryNybbles)
+                            .toString(),
                         onDone: (v) {
                           final dv = double.tryParse(v);
                           if (dv != null) {
+                            final mm = mem.minimumMemoryNybbles;
                             final err =
-                                model.memory.changeMemorySize(dv.round());
+                                mem.changeMemorySize(mm + dv.round());
                             if (err == null) {
                               unawaited(
                                   widget.app.model.writeToPersistentStorage());
@@ -1354,7 +1357,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                             }
                           }
                         })),
-                title: const Text('Total memory (nybbles)'))),
+                title: const Text('Extra memory (nybbles)'))),
         PopupMenuItem(
             child: ListTile(
                 leading: SizedBox(

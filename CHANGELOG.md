@@ -1,3 +1,6 @@
+Version 2.1.15 - Upcoming
+  * Change "total memory" to "extra memory" in settings
+
 Version 2.1.14 - May 2024
   * Allow user-configurable extra memory:  Issue 95
   * Make haptic feedback the more iOS-friendly selection feedback

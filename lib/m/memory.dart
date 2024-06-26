@@ -52,7 +52,7 @@ abstract class Memory<OT extends ProgramOperation> {
   // The program is stored starting at the first byte, and register 0 is
   // stored at the end of _storage, with higher numbered registers at lower
   // addresses.
-  final int _minimumMemoryNybbles;
+  final int minimumMemoryNybbles;
 
   late final ProgramMemory<OT> program;
   late final registers = Registers(this);
@@ -63,7 +63,7 @@ abstract class Memory<OT extends ProgramOperation> {
 
   Memory({required int memoryNybbles})
       : _storage = ByteData(memoryNybbles),
-        _minimumMemoryNybbles = memoryNybbles;
+        minimumMemoryNybbles = memoryNybbles;
 
   ///
   /// Total number of nybbles of storage, not including rI.  The index
@@ -94,11 +94,10 @@ abstract class Memory<OT extends ProgramOperation> {
   /// on error.
   ///
   String? changeMemorySize(int newSize) {
-    newSize = min(max(_minimumMemoryNybbles, newSize), 1024 * 1024);
-    // Max of 1 mega-nybble.  On the 16c, this gives a max of 64K registers
-    // at 64 bits per.  That's ridiculously huge, and this size is small enough
-    // so we're well within any real constraint (probaby by a couple of orders
-    // of magnitude).
+    newSize = min(
+        max(minimumMemoryNybbles, newSize), minimumMemoryNybbles + 1024 * 1024);
+    // Max of 1 mega-nybble extra memory.  This is big enough to be effectively
+    // infinite, and small enough to be trivially small on modern hardware.
 
     if (newSize == _storage.lengthInBytes) {
       return null;
