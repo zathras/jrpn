@@ -39,7 +39,6 @@ import '../c/controller.dart';
 import '../m/model.dart';
 import '../generic_main.dart';
 import 'buttons.dart';
-import 'isw.dart';
 import 'lcd_display.dart';
 
 // See the library comments, above!  (Android Studio  hides them by default.)
@@ -49,8 +48,6 @@ final _filesWork = kIsWeb ||
     Platform.isIOS ||
     Platform.isLinux ||
     Platform.isMacOS;
-
-final _canLaunchWindow = !kIsWeb && (Platform.isLinux || Platform.isMacOS);
 
 const _topSilverColor = Color(0xffcdcdcd);
 
@@ -583,16 +580,7 @@ class _HelpMenu extends StatelessWidget {
         PopupMenuItem(
             value: () {
               Navigator.pop<void>(context);
-              if (_canLaunchWindow) {
-                unawaited(
-                    InternalStateWindow.launch(context, controller.model));
-              } else {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                        builder: (context) =>
-                            InternalStatePanel(controller.model)));
-              }
+              controller.mainApp.showInternalsWindow();
             },
             child: const Text('See Calculator Internals')),
         PopupMenuItem(
@@ -605,10 +593,7 @@ class _HelpMenu extends StatelessWidget {
         PopupMenuItem(
             value: () {
               Navigator.pop<void>(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                      builder: (context) => controller.getBackPanel()));
+              controller.mainApp.showBackPanel();
             },
             child: const Text('Back Panel')),
         PopupMenuItem(

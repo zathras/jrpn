@@ -30,6 +30,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
+import 'package:jrpn/v/isw.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:app_links/app_links.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,6 +38,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'c/controller.dart';
 import 'm/model.dart';
 import 'v/main_screen.dart';
+
+final canLaunchWindow = !kIsWeb && (Platform.isLinux || Platform.isMacOS);
 
 const nonWarranty = '''
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -871,7 +874,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
         AppLifecycleListener(onExitRequested: exitRequested);
   }
 
-  Controller get controller => widget.controller;
+  RealController get controller => widget.controller;
 
   Future<AppExitResponse> exitRequested() async {
     // See https://github.com/zathras/jrpn/issues/46
@@ -887,6 +890,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     widget._changed.addObserver(_uiChangeObserver);
     WidgetsBinding.instance.addObserver(this);
     _lastLifecycleState = WidgetsBinding.instance.lifecycleState;
+    widget.controller.mainApp = this;
     unawaited(_init());
   }
 
@@ -901,7 +905,9 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   }
 
   void _uiChanged(void _) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    unawaited(Future(() => setState(() {})));
+    // Need to defer execution of setState() because the Flutter framework
+    // might be locked, e.g. if we're in a pop-up menu
   }
 
   @override
@@ -1106,13 +1112,37 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       }
     }
   }
+
+  void showInternalsWindow() {
+    if (Jrpn.lastContext.mounted) {
+      if (canLaunchWindow) {
+        unawaited(
+            InternalStateWindow.launch(Jrpn.lastContext, controller.model));
+      } else {
+        Navigator.push(
+            Jrpn.lastContext,
+            MaterialPageRoute<void>(
+                builder: (context) => InternalStatePanel(controller.model)));
+      }
+    }
+  }
+
+  void showBackPanel() {
+    if (Jrpn.lastContext.mounted) {
+      Navigator.push(
+          Jrpn.lastContext,
+          MaterialPageRoute<void>(
+              builder: (context) => controller.getBackPanel()));
+    }
+  }
 }
 
 ///
 /// User-modifiable screen configuration, with button layout and the like.
 ///
 /// Note that button colors more naturally belong here, but they were
-/// added to settings before this existed.
+/// added to settings before this existed (cf.
+/// https://github.com/zathras/jrpn/issues/17).
 ///
 /// Some useful dimensions:
 ///     Portrait:

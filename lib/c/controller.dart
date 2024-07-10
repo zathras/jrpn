@@ -42,7 +42,7 @@ library controller;
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:jrpn/generic_main.dart' show ScreenConfiguration;
+import 'package:jrpn/generic_main.dart' show ScreenConfiguration, JrpnState;
 import '../v/buttons.dart';
 import '../v/main_screen.dart';
 
@@ -226,6 +226,8 @@ abstract class RealController extends Controller {
 
   @override
   final KeyboardController keyboard = KeyboardController();
+
+  late JrpnState mainApp;
 
   RealController(
       {required List<NumberEntry> numbers,
@@ -1000,6 +1002,26 @@ class KeyboardController {
     } else if (e.character == '?') {
       controller.model.settings.showAccelerators =
           !controller.model.settings.showAccelerators;
+      _physicalKeyThatIsDown = e.physicalKey;
+      lastKeyDown = now;
+      return KeyEventResult.handled;
+    } else if (mapped != null) {
+      if (mapped == 'lcd_grow') {
+        controller.model.settings.longNumbers = LongNumbersSetting.growLCD;
+        controller.mainApp.widget.setChanged();
+      } else if (mapped == 'lcd_shrink') {
+        controller.model.settings.longNumbers = LongNumbersSetting.shrinkDigits;
+        controller.mainApp.widget.setChanged();
+      } else if (mapped == 'lcd_window') {
+        controller.model.settings.longNumbers = LongNumbersSetting.window;
+        controller.mainApp.widget.setChanged();
+      } else if (mapped == 'internals') {
+        controller.mainApp.showInternalsWindow();
+      } else if (mapped == 'back_panel') {
+        controller.mainApp.showBackPanel();
+      } else {
+        return KeyEventResult.ignored;
+      }
       _physicalKeyThatIsDown = e.physicalKey;
       lastKeyDown = now;
       return KeyEventResult.handled;

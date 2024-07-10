@@ -39,7 +39,12 @@ that rearranges the keyboard, and configures other configurable items:
         {
            "accelerators" : {
               "Z" : "N",
-              " " : "\n"
+              " " : "\n",
+              "!" : "lcd_grow",
+              "@" : "lcd_shrink",
+              "#" : "lcd_window",
+              "$" : "internals",
+              "%" : "back_panel"
            },
            "accelerator_labels" : {
               "N" : "NZ",
@@ -82,6 +87,13 @@ to a different keystroke.  For example, the first entry maps "Z" to "N",
 which on the 15C is the accelerator for the on/off button.  With this, typing
 "ZZ" in JRPN will cause the app to quite.  The second entry maps the space
 bar to newline, which is the accelerator for the enter key.
+<p>
+Acceleratos can also map to some functions normally accessed through the
+menu.  The three starting with "<code>lcd_</code>" change the handling
+of long numbers, where "window" is the 16C name for the default behavior,
+where the LCD display doesn't grow, and doesn't shrink down digits to fit.
+"<code>internals</code>" shows the Calculator Internals window, and
+"<code>back_panel</code>" shows the back panel.
 <p>
 <b><code>accelerator_labels</code></b>
 <p>

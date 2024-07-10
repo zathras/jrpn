@@ -24,6 +24,7 @@ import 'dart:async';
 import 'dart:math' as dart;
 import 'dart:math';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/v/buttons.dart';
@@ -39,6 +40,7 @@ import 'package:jrpn/jrpn15/main.dart';
 import 'package:jrpn/jrpn15/matrix.dart';
 import 'package:jrpn/jrpn15/model15c.dart';
 import 'package:jrpn/jrpn15/tests15c.dart';
+import 'package:jrpn/generic_main.dart' show ScreenConfiguration;
 import 'hyperbolic.dart';
 import 'opcodes15c.dart';
 import 'program_test_15c.dart';
@@ -55,7 +57,10 @@ Future<void> main() async {
 
   bool done = false;
   testWidgets('15C Buttons', (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues({});
     final controller = Controller15(createModel15());
+    controller.screenConfig =
+        await ScreenConfiguration.fromPersistentStorage('foo');
     final ScreenPositioner positioner = ScreenPositioner(12.7, 8);
     await tester.pumpWidget(Builder(builder: (BuildContext context) {
       final factory = LandscapeButtonFactory15(context, positioner, controller);
