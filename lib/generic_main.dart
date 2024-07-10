@@ -905,9 +905,11 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   }
 
   void _uiChanged(void _) {
-    unawaited(Future(() => setState(() {})));
+    scheduleMicrotask(() => setState(() {}));
     // Need to defer execution of setState() because the Flutter framework
-    // might be locked, e.g. if we're in a pop-up menu
+    // might be locked, e.g. if we're in a pop-up menu.  Must be a
+    // microtask, and not an unawaited future, because the latter
+    // creates a "fake timer" which messes up the testing framework.
   }
 
   @override
