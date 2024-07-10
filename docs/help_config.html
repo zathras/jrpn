@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
+<title>
+JRPN Screen Configuration Help
+</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+p {font-size: 20px; margin-left: 4%; margin-right: 5%}
+li {font-size: 20px; margin-left: 4%; margin-right: 10%; margin-bottom: 5px}
+li:last-child { margin-bottom: 0px; }
+blockquote {margin-left: 10%; margin-right: 12%}
+</style>
+</head>
+<body style="background-color: #ffffff">
+<p style="text-align: center; font-size: x-large; font-weight: bold;">
+    JRPN 15C/16C - Screen Configuration Guide
+</p>
+<p>
+The calculator's button layout and other screen configuration items
+can be customized.  For example, the button layout in portrait mode could
+changed - there's no "standard" portrait button layout for these calculators
+any.  The default 6x7 layout can be change to 5x8, to allow a taller and
+narrower calculator, too.  The landscape layout can also be changed, but
+that would of course mean not being faithful to the original calculator.
+<p>
+In addition, keyboard accelerators can be mapped and/or added.  The default
+keyboard acceleratos aren't standard in any way, and were chosen somewhat
+arbitrarily, so it could be interesting to re-map them.
+<p>
+The JSON file is read into the calculator from Settings, System Settings.  On
+desktop programs you read the JSON from a file; on mobile phones, it's read
+from the copy/paste buffer.  Following is a valid JSON file for the 15C
+that rearranges the keyboard, and configures other configurable items:
+</p>
+<pre>
+        {
+           "accelerators" : {
+              "Z" : "N",
+              " " : "\n"
+           },
+           "accelerator_labels" : {
+              "N" : "NZ",
+              "\n" : "\u23ce\u2420"
+           },
+           "portrait" : {
+              "buttons" : [
+                 [ "N", "A", "B", "C", "D" ],
+                 [ "E", "]", "L", "S", "O" ],
+                 [ "T", "V", "Y", "\b", "P" ],
+                 [ "U", "1", "2", "3", "/" ],
+                 [ "[", "4", "5", "6", "X" ],
+                 [ "\n", "7", "8", "9", "-" ],
+                 [ null, "0", ".", "W", "+" ],
+                 [ "F", "G", "H", "M", "R" ]
+              ],
+              "logo" : [ 6.11, 0.19, 0.5, 0.5 ],
+              "size" : [ 6.868, 14.0688 ],
+              "top_labels" : [
+                 [ "CLEAR", 2.914178, 5.557651, 3.303734, 0.22 ],
+                 [ "CLEAR", 0.7, 6.926476, 1.039557, 0.22 ]
+              ]
+           }
+        }
+</pre>
+<p>
+In thie file, keys are identified by their default primary 
+keyboard accelerator.  To find the accelerators, select
+Settings -> Show Accelerators.  Some of the settings have
+measurements.  These are approximately centimeters, when the
+calculator is sized to about the size of the physical
+calculator.
+<p>
+Taking the entries in turn:
+<p>
+<b><code>accelerators</code></b>
+<p>
+Defines keyboard accelerator mappings,  Each element maps a keystroke
+to a different keystroke.  For example, the first entry maps "Z" to "N",
+which on the 15C is the accelerator for the on/off button.  With this, typing
+"ZZ" in JRPN will cause the app to quite.  The second entry maps the space
+bar to newline, which is the accelerator for the enter key.
+<p>
+<b><code>accelerator_labels</code></b>
+<p>
+Each entry re-defines the green accelerator label for the given
+key.  For example, the first entry redefines the label for the
+on botton (identified by "N") to "NZ".  This is rendered with N on
+top of Z, to indicate to the user that both are acceptable
+accelerators for that key.  The second entry redefines enter
+to have the labels of a unicode symbol for enter, and the unicode
+space symbol
+<p>
+<b><code>portrait</code></b>
+<p>
+An object called "portrait" contains a screen layout for portrait
+mode.  If not present, the default layout will be used.
+<p>
+<b><code>portrait.buttons</code></b>
+<p>
+This object gives the keyboard layout.  Each key is defined
+by its primary default accelerator (if a key has two default
+accelerators, it's the first one).  <code>null</code> is used
+where there should not be a key.  The buttons section is mandatory.
+<p>
+
+<b><code>portrait.logo</code></b>
+<p>
+This gives the rectangle where the JRPN logo is to be drawn,
+given in cm as left, top, width and height.  If not present,
+it will be drawn in the default place; for portrait mode, this
+occupies the lower-right hand corner of the keyboard.  To suppress
+drawing of the logo, specify "[ ]" instead of rectangle
+coordinates.
+<p>
+
+<b><code>portrait.size</code></b>
+<p>
+This element, if present, changes the size of the calculator, in
+centimeters.  The default size is 12.7x8 or 8x12.7, depending on
+orientation.  The calculator's graphical elements are, generally
+speaking, drawn at fixed positions within the coordinate system
+defined by the size.  Of course, the actual drawing on a device is
+scaled so that it just fits within the available window.
+<p>
+<b><code>portrait.top_labels</code></b>
+<p>
+This element, if present, is used to re-define the drawing of
+the extra gold labels on the keyboard.  If you move the keys
+th at have upper labels, you need to re-define where they are
+drawn.  On the 15C, this is the "CLEAR" label above the four
+keys; on the 16C, it's "SHOW", "CLEAR" and "SET COMPL".
+<p>
+After the string lablel, give the x,y position and the width and
+height of the label to be drawn.  This rectangle includes the
+lines.  It's OK to repeat a label; in the sample given, the
+clear-sigma key isn't next to the other three clear keys, so the
+label needs to be repeated in two places.  On
+the 16C, "SHOW" is rendered in a bigger font; you can get this
+font by giving the string "big" after the coordinates.
+<p>
+<b><code>landscape</code></b>
+<p>
+An object called "landscape" contains a screen layout for portrait
+mode.  If not present, the default layout will be used.  The elements
+of the landscape object are the same as portrait.
+
+<p>
+<a href="help.html">Back to main help screen</a>
+<p style="float: right; align-items: center; font-style: italic;">
+<a href="http://en.wikipedia.org/wiki/Vi"><img alt="*" src="vi.powered.gif"></a>
+<p style="float: right; align-items: center; font-style: italic;">
+<a href="https://bill.jovial.com/">Bill Foote</a>&nbsp;&nbsp;&nbsp;&nbsp;
+</body>
+</html>

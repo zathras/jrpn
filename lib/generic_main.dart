@@ -32,6 +32,7 @@ import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:app_links/app_links.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'c/controller.dart';
 import 'm/model.dart';
@@ -840,12 +841,19 @@ class Jrpn extends StatefulWidget {
     return out.toString();
   }
 
+  ///
+  /// Force a redisplay of the main screen
+  ///
   void setChanged() => _changed.value = null;
 
   @override
   JrpnState createState() => JrpnState();
 }
 
+///
+/// Flutter's widget state for our top-level widget.  This mostly just contains
+/// lifecycle management, focus management, and the like.
+///
 class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   bool _initDone = false;
   bool _disposed = false;
@@ -1065,6 +1073,8 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
           debugPrintStack(stackTrace: st);
         }
       }
+      controller.screenConfig = await ScreenConfiguration.fromPersistentStorage(
+          'jrpn${widget.model.modelName}.config');
     } finally {
       setState(() {
         _initDone = true;
@@ -1096,4 +1106,191 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       }
     }
   }
+}
+
+///
+/// User-modifiable screen configuration, with button layout and the like.
+///
+/// Note that button colors more naturally belong here, but they were
+/// added to settings before this existed.
+///
+/// Some useful dimensions:
+///     Portrait:
+///       1.3688 cm  between the top of one row of buttons and the next
+///       1.1320 cm between the left side of one column of buttons and the next
+///     Landscape:
+///       1.2500 cm  between the top of one row of buttons and the next
+///       1.1496 cm between the left side of one column of buttons and the next
+class ScreenConfiguration {
+  final SharedPreferences _storage;
+  final String _configKey;
+  final LayoutConfiguration? portrait;
+  final LayoutConfiguration? landscape;
+  final Map<String, String>? acceleratorTranslation;
+  final Map<String, String>? acceleratorLabels;
+
+  ScreenConfiguration._p(this._storage, this._configKey, this.portrait,
+      this.landscape, this.acceleratorTranslation, this.acceleratorLabels);
+
+  static Future<ScreenConfiguration> fromPersistentStorage(
+      String configKey) async {
+    final storage = await SharedPreferences.getInstance();
+    try {
+      String json = storage.getString(configKey) ?? '{}';
+      return _fromString(storage, configKey, json);
+    } catch (e) {
+      debugPrint('Error reading configuration from persistent store:  $e');
+      return ScreenConfiguration._p(storage, configKey, null, null, null, null);
+    }
+  }
+
+  ///
+  /// Create a new configuration, and do error checking.  Throw an exception if
+  /// a problem is detected.
+  ///
+  ScreenConfiguration newFromJson(String json) =>
+      _fromString(_storage, _configKey, json);
+
+  static ScreenConfiguration _fromString(
+      SharedPreferences storage, String configKey, String jsonString) {
+    LayoutConfiguration? parseButtons(Map<String, dynamic>? json) {
+      if (json == null) {
+        return null;
+      }
+      final sizeL = json['size'] as List<dynamic>?;
+      final ScreenPositioner? size;
+      if (sizeL == null) {
+        size = null;
+      } else {
+        size = ScreenPositioner(
+            (sizeL[0] as num).toDouble(), (sizeL[1] as num).toDouble());
+      }
+      final List<List<String?>> buttons = [];
+      for (final row in json['buttons'] as List<dynamic>) {
+        final newRow = <String?>[];
+        for (final b in (row as List<dynamic>)) {
+          newRow.add(b as String?);
+        }
+        buttons.add(newRow);
+      }
+      for (int i = 0; i < buttons.length; i++) {
+        buttons[i] = List<String?>.unmodifiable(buttons[i]);
+      }
+      Rect? logoPos;
+      final logoList = json['logo'] as List<dynamic>?;
+      if (logoList != null) {
+        if (logoList.isEmpty) {
+          logoPos = const Rect.fromLTWH(0, 0, 0, 0); // Don't show logo
+        } else {
+          logoPos = Rect.fromLTWH(
+            (logoList[0] as num).toDouble(),
+            (logoList[1] as num).toDouble(),
+            (logoList[2] as num).toDouble(),
+            (logoList[3] as num).toDouble(),
+          );
+        }
+      }
+      final List<UpperGoldLabel>? labelsResult;
+      final labelsList = json['top_labels'] as List<dynamic>?;
+      if (labelsList == null) {
+        labelsResult = null;
+      } else {
+        List<UpperGoldLabel> r = [];
+        for (final l in labelsList) {
+          l as List<dynamic>;
+          double d(int i) => (l[i] as num).toDouble();
+          bool big = l.length > 5 && l[5] == 'big';
+          r.add(UpperGoldLabel(
+              l[0] as String, Rect.fromLTWH(d(1), d(2), d(3), d(4)), big));
+        }
+        labelsResult = List<UpperGoldLabel>.unmodifiable(r);
+      }
+      return LayoutConfiguration(size,
+          List<List<String?>>.unmodifiable(buttons), logoPos, labelsResult);
+    }
+
+    Map<String, String>? parseAccelerators(Map<String, dynamic>? json) {
+      if (json == null) {
+        return null;
+      }
+      return Map<String, String>.unmodifiable(json);
+    }
+
+    Map<String, dynamic>? jsonMap =
+        json.decode(jsonString) as Map<String, dynamic>?;
+    return ScreenConfiguration._p(
+        storage,
+        configKey,
+        parseButtons(jsonMap?['portrait'] as Map<String, dynamic>?),
+        parseButtons(jsonMap?['landscape'] as Map<String, dynamic>?),
+        parseAccelerators(jsonMap?['accelerators'] as Map<String, dynamic>?),
+        parseAccelerators(
+            jsonMap?['accelerator_labels'] as Map<String, dynamic>?));
+  }
+
+  Map<String, Object> toJson() {
+    final result = <String, Object>{};
+    void set(String key, Object? value) {
+      if (value != null) {
+        result[key] = value;
+      }
+    }
+
+    set('portrait', portrait?.toJson());
+    set('landscape', landscape?.toJson());
+    set('accelerators', acceleratorTranslation);
+    set('accelerator_labels', acceleratorLabels);
+    return result;
+  }
+
+  void saveToPersistentStore() {
+    final jsonStr = json.encoder.convert(toJson());
+    unawaited(_storage.setString(_configKey, jsonStr));
+  }
+}
+
+class LayoutConfiguration {
+  final List<List<String?>> buttonAccelerator;
+
+  /// A logoPos of null gives the default; width or height of zero suppresses
+  /// logo
+  final Rect? logoPos;
+  final List<UpperGoldLabel>? labels;
+
+  final ScreenPositioner? screenSize;
+
+  LayoutConfiguration(
+      this.screenSize, this.buttonAccelerator, this.logoPos, this.labels);
+
+  int get buttonRows => buttonAccelerator.length;
+  int get buttonCols => buttonAccelerator[0].length;
+
+  Map<String, Object> toJson() {
+    final result = <String, Object>{};
+    final sz = screenSize;
+    if (sz != null) {
+      result['size'] = [sz.width, sz.height];
+    }
+    result['buttons'] = buttonAccelerator;
+    final pos = logoPos;
+    if (pos != null) {
+      result['logo'] = [pos.left, pos.top, pos.width, pos.height];
+    }
+    final ll = labels;
+    if (ll != null) {
+      result['top_labels'] = ll
+          .map(
+              (l) => [l.text, l.pos.left, l.pos.top, l.pos.width, l.pos.height])
+          .toList(growable: false);
+    }
+    return result;
+  }
+}
+
+class UpperGoldLabel {
+  final String text;
+  final Rect pos;
+  final bool big;
+
+  UpperGoldLabel(this.text, this.pos, this.big);
 }

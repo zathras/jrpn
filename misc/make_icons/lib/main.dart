@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ..style = PaintingStyle.fill;
       c.drawRect(Rect.fromLTWH(0, 0, size.toDouble(), size.toDouble()), paint);
     }
-    final p = JrpnIconPainter(jupiter, modelName, adaptive: adaptive);
+    final p = JrpnLogoPainter(jupiter, modelName, adaptive: adaptive);
     c.translate(border.toDouble(), border.toDouble());
     p.paint(
         c, Size(size.toDouble() - 2 * border, size.toDouble() - 2 * border));
@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: CustomPaint(
                       size: const Size(double.infinity, double.infinity),
                       painter:
-                          JrpnIconPainter(jupiter, '15C', adaptive: false))),
+                          JrpnLogoPainter(jupiter, '15C', adaptive: false))),
             )));
   }
 }

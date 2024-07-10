@@ -1987,7 +1987,7 @@ class ButtonLayout15 extends ButtonLayout {
   List<List<CalculatorButton?>> get landscapeLayout => [
         [sqrt, eX, tenX, yX, reciprocal, chs, n7, n8, n9, div],
         [sst, gto, sin, cos, tan, eex, n4, n5, n6, mult],
-        [rs, gsb, rdown, xy, bsp, null, n1, n2, n3, minus],
+        [rs, gsb, rdown, xy, bsp, enter, n1, n2, n3, minus],
         [onOff, fShift, gShift, sto, rcl, null, n0, dot, sum, plus]
       ];
 
@@ -1998,7 +1998,7 @@ class ButtonLayout15 extends ButtonLayout {
         [rs, gsb, rdown, xy, bsp, eex],
         [sto, rcl, n7, n8, n9, div],
         [fShift, gShift, n4, n5, n6, mult],
-        [null, null, n1, n2, n3, minus],
+        [null, enter, n1, n2, n3, minus],
         [null, null, n0, dot, sum, plus],
       ];
 }
@@ -2037,7 +2037,7 @@ class LandscapeButtonFactory15 extends LandscapeButtonFactory {
   double get shiftDownTweak => 0.014;
 
   @override
-  double addUpperGoldLabels(List<Widget> result, Rect pos,
+  void addUpperGoldLabels(List<Widget> result, Rect pos,
       {required double th,
       required double tw,
       required double bh,
@@ -2049,7 +2049,6 @@ class LandscapeButtonFactory15 extends LandscapeButtonFactory {
         CustomPaint(
             painter: UpperLabel('CLEAR', fTextSmallLabelStyle,
                 height * (0.065 + 0.155) / bh))));
-    return shiftDownTweak;
   }
 }
 
@@ -2060,19 +2059,22 @@ class PortraitButtonFactory15 extends PortraitButtonFactory {
   Offset get fTextOffset => const Offset(0, -4);
 
   @override
-  double addUpperGoldLabels(List<Widget> result, Rect pos,
+  double get shiftDownTweak => 0.28;
+
+  @override
+  void addUpperGoldLabels(List<Widget> result, Rect pos,
       {required double th,
       required double tw,
       required double bh,
       required double bw}) {
     double y = pos.top;
+    final box = Rect.fromLTWH(
+        pos.left + tw - 0.05, y + 2 * th + 0.07, 3 * tw + bw + 0.10, 0.22);
     result.add(screen.box(
-        Rect.fromLTWH(
-            pos.left + tw - 0.05, y + 2 * th + 0.07, 3 * tw + bw + 0.10, 0.22),
+        box,
         CustomPaint(
             painter: UpperLabel('CLEAR', fTextSmallLabelStyle,
                 height * (0.065 + 0.155) / bh))));
-    return 0.28;
   }
 }
 

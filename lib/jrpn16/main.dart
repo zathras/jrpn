@@ -42,7 +42,7 @@ void main(List<String> args) async {
 }
 
 void runStaticInitialization16() {
-  // None of these operations has an argument, so there is no circular
+  // None of these operations have an argument, so there is no circular
   // initialization here.
   Arg.kI = Operations16.I;
   Arg.kParenI = Operations16.parenI;
@@ -914,7 +914,7 @@ class ButtonLayout16 extends ButtonLayout {
   List<List<CalculatorButton?>> get landscapeLayout => [
         [a, b, c, d, e, f, n7, n8, n9, div],
         [gsb, gto, hex, dec, oct, bin, n4, n5, n6, mult],
-        [rs, sst, rdown, xy, bsp, null, n1, n2, n3, minus],
+        [rs, sst, rdown, xy, bsp, enter, n1, n2, n3, minus],
         [onOff, fShift, gShift, sto, rcl, null, n0, dot, chs, plus]
       ];
 
@@ -925,7 +925,7 @@ class ButtonLayout16 extends ButtonLayout {
         [a, b, c, d, e, f],
         [rs, sst, n7, n8, n9, div],
         [sto, rcl, n4, n5, n6, mult],
-        [null, null, n1, n2, n3, minus],
+        [null, enter, n1, n2, n3, minus],
         [null, null, n0, dot, chs, plus],
       ];
 }
@@ -934,7 +934,10 @@ class LandscapeButtonFactory16 extends LandscapeButtonFactory {
   LandscapeButtonFactory16(super.context, super.screen, super.controller);
 
   @override
-  double addUpperGoldLabels(List<Widget> result, Rect pos,
+  double get shiftDownTweak => 0;
+
+  @override
+  void addUpperGoldLabels(List<Widget> result, Rect pos,
       {required double th,
       required double tw,
       required double bh,
@@ -958,7 +961,6 @@ class LandscapeButtonFactory16 extends LandscapeButtonFactory {
         CustomPaint(
             painter: UpperLabel('SET COMPL', fTextSmallLabelStyle,
                 height * (0.065 + 0.155) / bh))));
-    return 0;
   }
 }
 
@@ -966,7 +968,10 @@ class PortraitButtonFactory16 extends PortraitButtonFactory {
   PortraitButtonFactory16(super.context, super.screen, super.controller);
 
   @override
-  double addUpperGoldLabels(List<Widget> result, Rect pos,
+  double get shiftDownTweak => 0.28;
+
+  @override
+  void addUpperGoldLabels(List<Widget> result, Rect pos,
       {required double th,
       required double tw,
       required double bh,
@@ -989,7 +994,6 @@ class PortraitButtonFactory16 extends PortraitButtonFactory {
         CustomPaint(
             painter: UpperLabel('SET COMPL', fTextSmallLabelStyle,
                 height * (0.065 + 0.155) / bh))));
-    return 0.28;
   }
 }
 

@@ -81,8 +81,10 @@ class ScreenPositioner {
 abstract class OrientedScreen extends StatelessWidget {
   const OrientedScreen({super.key});
 
-  static final ScreenPositioner landscape = ScreenPositioner(12.7, 8);
-  static final ScreenPositioner portrait = ScreenPositioner(8, 12.7);
+  static final ScreenPositioner _landscape = ScreenPositioner(12.7, 8);
+  ScreenPositioner get landscape => _landscape;
+  static final ScreenPositioner _portrait = ScreenPositioner(8, 12.7);
+  ScreenPositioner get portrait => _portrait;
 
   Widget buildLandscape(BuildContext context, final ScreenPositioner screen);
   Widget buildPortrait(BuildContext context, final ScreenPositioner screen);
@@ -110,13 +112,14 @@ abstract class OrientedScreen extends StatelessWidget {
 ///
 class MainScreen extends OrientedScreen {
   final JrpnState jrpnState;
-  final Jrpn app;
+  final Jrpn topWidget;
   final ScalableImage icon;
 
-  MainScreen(this.jrpnState, this.icon, {super.key}) : app = jrpnState.widget;
+  MainScreen(this.jrpnState, this.icon, {super.key})
+      : topWidget = jrpnState.widget;
 
-  RealController get controller => app.controller;
-  Model get model => app.model;
+  RealController get controller => topWidget.controller;
+  Model get model => topWidget.model;
 
   /// Midnight blue for area outside of calculator UI
   static const deadZoneColor = Color(0xff00002f);
@@ -125,6 +128,14 @@ class MainScreen extends OrientedScreen {
 
   /// Silver frame around the keys keys
   static const keyFrameSilver = Color(0xffdbdad1);
+
+  @override
+  ScreenPositioner get landscape =>
+      jrpnState.controller.screenConfig.landscape?.screenSize ??
+      super.landscape;
+  @override
+  ScreenPositioner get portrait =>
+      jrpnState.controller.screenConfig.portrait?.screenSize ?? super.portrait;
 
   @override
   Widget buildPortrait(BuildContext context, ScreenPositioner screen) {
@@ -146,6 +157,12 @@ class MainScreen extends OrientedScreen {
       // rare thing, so I'm OK with the buttons and stuff moving around a
       // little.
     }
+    final Rect lp = controller.screenConfig.portrait?.logoPos ??
+        Rect.fromLTWH(0.60, screen.height - 1.5, 0.94, 0.94);
+    final lcdScale = min(6.7, screen.width - 1.3) / 6.7;
+    final lcdHeight = lcdScale * (1.5 * LcdDisplay.heightTweak + extraV);
+    final Rect lcdPos = Rect.fromLTWH(
+        0.63, 0.6 + lcdHeight * (1 - lcdScale) / 2, 6.7 * lcdScale, lcdHeight);
     return Container(
         alignment: Alignment.center,
         color: deadZoneColor,
@@ -154,17 +171,21 @@ class MainScreen extends OrientedScreen {
             child: Stack(fit: StackFit.expand, children: [
               screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
                   CustomPaint(painter: DrawnBackground(screen, extraV))),
-              screen.box(Rect.fromLTWH(0.60, screen.height - 1.5, 0.94, 0.94),
-                  _jrpnIcon()),
+              ...((lp.width == 0 || lp.height == 0)
+                  ? []
+                  : [
+                      screen.box(lp, _jrpnLogo()),
+                    ]),
               screen.box(
-                  Rect.fromLTWH(
-                      0.63, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak + extraV),
+                  lcdPos,
                   LcdDisplay(controller.model, _showMenu, 11, jrpnState,
                       extraTall: extraV > 0)),
               ...controller
                   .getPortraitButtonFactory(context, screen)
-                  .buildButtons(Rect.fromLTRB(0.7, 2.75 + extraV,
-                      screen.width - 0.7, screen.height - 0.47)),
+                  .buildButtons(
+                      controller.screenConfig.portrait,
+                      Rect.fromLTRB(0.7, 2.75 + extraV, screen.width - 0.7,
+                          screen.height - 0.47)),
               MainMenu(this, screen)
             ])));
   }
@@ -176,10 +197,15 @@ class MainScreen extends OrientedScreen {
     // Over 18 digits, we shrink the font.  18 is enough for
     // 16 hex digits, which fits a 64 bit number.
     assert(digitsH >= 11 && digitsH <= 18);
-    final expander = (digitsH - 11) / 7;
-    final lcdLeft = 2.0 - 1.47 * expander;
+    final maxLcdWidth = screen.width - 2.17; // 10.53 at default width of 12.7
+    final maxExpander = (maxLcdWidth - 6.7) / 3.83; // 1.0 at default width
+    final expander =
+        min(maxExpander, (digitsH - 11) / 7); // In the range [0, 1]
+    final lcdLeft = 2.0 - 1.47 * (expander / maxExpander);
     final lcdWidth = 6.7 + 3.83 * expander;
-    final iconL = screen.width - 1.82 + 0.056 * (digitsH - 11);
+    final iconL = screen.width - 1.82 + 0.392 * (expander / maxExpander);
+    final Rect lp = controller.screenConfig.landscape?.logoPos ??
+        Rect.fromLTWH(iconL, 0.65, 0.94, 0.94);
     return Container(
       // Midnight blue for slop when aspect ratio not matched
       alignment: Alignment.center,
@@ -191,15 +217,21 @@ class MainScreen extends OrientedScreen {
           children: [
             screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
                 CustomPaint(painter: DrawnBackground(screen, 0))),
-            screen.box(Rect.fromLTWH(iconL, 0.65, 0.94, 0.94), _jrpnIcon()),
+            ...((lp.width == 0 || lp.height == 0)
+                ? []
+                : [
+                    screen.box(lp, _jrpnLogo()),
+                  ]),
             screen.box(
                 Rect.fromLTWH(
                     lcdLeft, 0.6, lcdWidth, 1.5 * LcdDisplay.heightTweak),
                 LcdDisplay(controller.model, _showMenu, digitsH, jrpnState)),
             ...controller
                 .getLandscapeButtonFactory(context, screen)
-                .buildButtons(Rect.fromLTRB(
-                    0.7, 2.75, screen.width - 0.7, screen.height - 0.47)),
+                .buildButtons(
+                    controller.screenConfig.landscape,
+                    Rect.fromLTRB(
+                        0.7, 2.75, screen.width - 0.7, screen.height - 0.47)),
             MainMenu(this, screen)
           ],
         ),
@@ -267,8 +299,8 @@ class MainScreen extends OrientedScreen {
     }());
   }
 
-  Widget _jrpnIcon() =>
-      CustomPaint(painter: JrpnIconPainter(icon, model.modelName));
+  Widget _jrpnLogo() =>
+      CustomPaint(painter: JrpnLogoPainter(icon, model.modelName));
 }
 
 ///
@@ -363,12 +395,12 @@ class DrawnBackground extends CustomPainter {
 }
 
 @immutable
-class JrpnIconPainter extends CustomPainter {
+class JrpnLogoPainter extends CustomPainter {
   final ScalableImage jupiter;
   final String modelName;
   final bool adaptive;
 
-  const JrpnIconPainter(this.jupiter, this.modelName, {this.adaptive = false});
+  const JrpnLogoPainter(this.jupiter, this.modelName, {this.adaptive = false});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -443,7 +475,7 @@ class JrpnIconPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant JrpnIconPainter oldDelegate) {
+  bool shouldRepaint(covariant JrpnLogoPainter oldDelegate) {
     return false; // We never change
   }
 }
@@ -485,7 +517,7 @@ class _MainMenuState extends State<MainMenu> {
     final children = List<Widget>.empty(growable: true);
     final Rect menuIconPosition;
     final Rect menuHitArea;
-    if (widget.screen == OrientedScreen.portrait) {
+    if (widget.screen.width < widget.screen.height) {
       menuIconPosition = Rect.fromLTWH(screen.width - 1, 0.1, 0.7, 0.7);
       menuHitArea = Rect.fromLTWH(screen.width - 1, 0, 1, 1);
     } else {
@@ -505,10 +537,10 @@ class _MainMenuState extends State<MainMenu> {
         itemBuilder: (BuildContext context) {
           return <PopupMenuEntry<void Function()>>[
             PopupMenuItem(
-                value: () {}, child: _FileMenu('File', widget.main.app)),
+                value: () {}, child: _FileMenu('File', widget.main.topWidget)),
             PopupMenuItem(
                 value: () {},
-                child: _SettingsMenu('Settings', widget.main.app)),
+                child: _SettingsMenu('Settings', widget.main.topWidget)),
             // PopupMenuDivider(),
             PopupMenuItem(
                 value: () {},
@@ -1344,8 +1376,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                           final dv = double.tryParse(v);
                           if (dv != null) {
                             final mm = mem.minimumMemoryNybbles;
-                            final err =
-                                mem.changeMemorySize(mm + dv.round());
+                            final err = mem.changeMemorySize(mm + dv.round());
                             if (err == null) {
                               unawaited(
                                   widget.app.model.writeToPersistentStorage());
@@ -1358,6 +1389,184 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                           }
                         })),
                 title: const Text('Extra memory (nybbles)'))),
+        PopupMenuItem(child: _ColorSettingsMenu('Color Settings', widget.app)),
+        ...(_filesWork
+            ? [
+                PopupMenuItem(
+                    value: () => _importConfigurationFromFile(context),
+                    child: const Row(children: [
+                      SizedBox(width: 65),
+                      Text('Read layout from File...'),
+                    ])),
+                PopupMenuItem(
+                    value: () => _exportConfigurationToFile(context),
+                    child: const Row(children: [
+                      SizedBox(width: 65),
+                      Text('Write layout to File...'),
+                    ])),
+              ]
+            : [
+                PopupMenuItem(
+                    value: () => _importConfigurationFromClipboard(context),
+                    child: const Row(children: [
+                      SizedBox(width: 65),
+                      Text('Import layout from Clipboard'),
+                    ])),
+                PopupMenuItem(
+                    value: () => _exportConfigurationToClipboard(context),
+                    child: const Row(children: [
+                      SizedBox(width: 65),
+                      Text('Export layout to Clipboard'),
+                    ])),
+              ]),
+        CheckedPopupMenuItem(
+            padding: EdgeInsets.only(
+                // Space for the virtual keyboard on Android:
+                bottom: model.settings.isMobilePlatform ? 150 : 0),
+            checked: model.captureDebugLog,
+            value: () async {
+              model.captureDebugLog = !model.captureDebugLog;
+              model.display.update();
+            },
+            child: const Row(
+                children: [SizedBox(width: 30), Text('Capture Debug\nLog')])),
+      ],
+      child: Row(
+        children: [
+          const SizedBox(width: 65),
+          Text(widget.title),
+          const Spacer(),
+          const Icon(Icons.arrow_right, size: 30.0),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _exportConfigurationToClipboard(BuildContext context) {
+    final jsonMap = widget.app.controller.screenConfig.toJson();
+    Clipboard.setData(ClipboardData(text: json.encoder.convert(jsonMap)));
+    return Future.value(null);
+  }
+
+  Future<void> _exportConfigurationToFile(BuildContext context) async {
+    final jsonMap = widget.app.controller.screenConfig.toJson();
+    final jsonStr = json.encoder.convert(jsonMap);
+    final model = widget.app.model;
+    const ext = 'config';
+    final suggested = 'jrpn${model.modelName.toLowerCase()}.$ext';
+    final typeGroup = XTypeGroup(
+        label: 'JRPN Configuration (.$ext)',
+        extensions: [ext, ext.toUpperCase()]);
+    const any = XTypeGroup(label: 'JRPN Configuration (any extension)');
+    final String? path = (await getSaveLocation(
+            suggestedName: suggested, acceptedTypeGroups: [typeGroup, any]))
+        ?.path;
+    if (path == null) {
+      return;
+    }
+    final f = XFile.fromData(utf8.encoder.convert(jsonStr),
+        mimeType: 'application/json', name: suggested);
+    try {
+      await f.saveTo(path);
+    } catch (e, s) {
+      debugPrint('\n\n$e\n\n$s');
+      if (context.mounted) {
+        return showErrorDialog(context, 'Error saving', e);
+      }
+    }
+  }
+
+  void _setScreenConfiguration(ScreenConfiguration? config) {
+    final controller = widget.app.controller;
+    config ??= controller.screenConfig.newFromJson('{}');
+    controller.screenConfig = config;
+    config.saveToPersistentStore();
+    widget.app.setChanged();
+  }
+
+  Future<void> _importConfigurationFromClipboard(BuildContext context) async {
+    final String? cd;
+    try {
+      cd = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
+    } catch (e) {
+      _setScreenConfiguration(null);
+      if (context.mounted) {
+        return showErrorDialog(context, 'Error accessing clipboard', e);
+      } else {
+        return;
+      }
+    }
+    if (cd == null) {
+      _setScreenConfiguration(null);
+      widget.app.controller.showMessage('bad c1ip ');
+    } else {
+      try {
+        _setScreenConfiguration(
+            widget.app.controller.screenConfig.newFromJson(cd));
+      } catch (e, s) {
+        _setScreenConfiguration(null);
+        debugPrint('\n\n$e\n\n$s');
+        widget.app.controller.showMessage('bad c1ip ');
+        if (context.mounted) {
+          return showErrorDialog(context, 'Bad data in clipboard', e);
+        }
+      }
+    }
+  }
+
+  Future<void> _importConfigurationFromFile(BuildContext context) async {
+    const ext = 'config';
+    final typeGroup = XTypeGroup(
+        label: 'JRPN Configuration (.$ext)',
+        extensions: [ext, ext.toUpperCase()]);
+    const any = XTypeGroup(label: 'JRPN Configuration (any extension)');
+    final file = await openFile(acceptedTypeGroups: [typeGroup, any]);
+    if (file == null) {
+      return;
+    }
+    try {
+      final data = await file.readAsString();
+      _setScreenConfiguration(
+          widget.app.controller.screenConfig.newFromJson(data));
+    } catch (e, s) {
+      _setScreenConfiguration(null);
+      debugPrint('\n\n$e\n\n$s');
+      widget.app.controller.showMessage('bad fi1e ');
+      if (context.mounted) {
+        return showErrorDialog(context, 'Bad data in file', e);
+      }
+    }
+  }
+}
+
+class _ColorSettingsMenu extends StatefulWidget {
+  final String title;
+  final Jrpn app;
+
+  const _ColorSettingsMenu(this.title, this.app);
+
+  @override
+  _ColorSettingsMenuState createState() => _ColorSettingsMenuState();
+}
+
+class _ColorSettingsMenuState extends State<_ColorSettingsMenu> {
+  Model get model => widget.app.model;
+  Settings get settings => model.settings;
+
+  @override
+  Widget build(BuildContext outerContext) {
+    return PopupMenuButton<Future<void> Function()>(
+      // how much the submenu should offset from parent.
+      offset: const Offset(-100, 0),
+      onSelected: (Future<void> Function() action) async {
+        await action();
+        setState(() {});
+        if (outerContext.mounted) {
+          Navigator.pop(outerContext, () {});
+        }
+      },
+      onCanceled: () => Navigator.pop(outerContext),
+      itemBuilder: (BuildContext context) => [
         PopupMenuItem(
             child: ListTile(
                 leading: SizedBox(
@@ -1442,17 +1651,6 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                               widget.app.model.writeToPersistentStorage());
                         })),
                 title: const Text('LCD Foreground Color'))),
-        CheckedPopupMenuItem(
-            padding: EdgeInsets.only(
-                // Space for the virtual keyboard on Android:
-                bottom: model.settings.isMobilePlatform ? 150 : 0),
-            checked: model.captureDebugLog,
-            value: () async {
-              model.captureDebugLog = !model.captureDebugLog;
-              model.display.update();
-            },
-            child: const Row(
-                children: [SizedBox(width: 30), Text('Capture Debug\nLog')])),
       ],
       child: Row(
         children: [

@@ -42,6 +42,7 @@ library controller;
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:jrpn/generic_main.dart' show ScreenConfiguration;
 import '../v/buttons.dart';
 import '../v/main_screen.dart';
 
@@ -63,6 +64,7 @@ abstract class Controller {
   late ControllerState _state;
   @protected
   Operation? lastKey;
+  late ScreenConfiguration screenConfig;
 
   Controller();
 
@@ -936,7 +938,7 @@ class KeyboardController {
       lastKeyDown = now;
       return KeyEventResult.handled;
     }
-    final Characters ch;
+    Characters ch;
     if (e.physicalKey == PhysicalKeyboardKey.enter ||
         e.physicalKey == PhysicalKeyboardKey.numpadEnter) {
       // Bizarrely, on the web we get 'E' as the character in this case!
@@ -958,7 +960,7 @@ class KeyboardController {
       if (controlPressed && (sch == 'f' || sch == 'F')) {
         // Yes, JavaScript really does suck.  In case you were wondering.
         // This happens on Chrome (Still!  As of February 2024!).
-        // On the HP 16C, we *really* want ^F to me the gold F key, since
+        // On the HP 16C, we *really* want ^F to be the gold F key, since
         // plain F is taken for the hex digit.  For consistency, we allow
         // ^G for the G shift key.
         ch = Characters('\u0006');
@@ -972,6 +974,11 @@ class KeyboardController {
       if (ch.isEmpty) {
         return KeyEventResult.ignored;
       }
+    }
+    final String? mapped =
+        controller.screenConfig.acceleratorTranslation?[ch.first];
+    if (mapped != null) {
+      ch = Characters(mapped);
     }
     final CalculatorButtonState? b = button[ch.first];
     if (b != null) {

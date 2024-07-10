@@ -32,6 +32,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jrpn/generic_main.dart'
+    show LayoutConfiguration, UpperGoldLabel;
 
 import '../c/controller.dart';
 import '../m/model.dart';
@@ -113,19 +115,15 @@ abstract class ButtonFactory {
   int get numColumns;
   double totalButtonHeight(double height, double buttonHeight);
 
-  double addUpperGoldLabels(List<Widget> result, Rect pos,
+  double get shiftDownTweak => 0.0;
+
+  void addUpperGoldLabels(List<Widget> result, Rect pos,
       {required double th,
       required double tw,
       required double bh,
       required double bw});
 
-  Rect enterPos(Rect pos,
-      {required double th,
-      required double tw,
-      required double bh,
-      required double bw});
-
-  List<Widget> buildButtons(Rect pos) {
+  List<Widget> buildButtons(LayoutConfiguration? config, Rect pos) {
     double y = pos.top;
     final result = List<Widget>.empty(growable: true);
     final double bw = pos.width *
@@ -135,8 +133,21 @@ abstract class ButtonFactory {
     // Total height for each button, including any label
     final double th = totalButtonHeight(pos.height, bh);
 
+    y += shiftDownTweak;
     // Add the upper yellow labels
-    y += addUpperGoldLabels(result, pos, th: th, tw: tw, bh: bh, bw: bw);
+    final labels = config?.labels;
+    if (labels == null) {
+      addUpperGoldLabels(result, pos, th: th, tw: tw, bh: bh, bw: bw);
+    } else {
+      for (final UpperGoldLabel lbl in labels) {
+        final TextStyle s = lbl.big ? fTextStyle : fTextSmallLabelStyle;
+        result.add(screen.box(
+            lbl.pos,
+            CustomPaint(
+                painter:
+                    UpperLabel(lbl.text, s, height * (0.065 + 0.155) / bh))));
+      }
+    }
 
     final buttons = controller.getButtonLayout(this, th, bh);
     final List<List<CalculatorButton?>> rc = buttonLayout(buttons);
@@ -145,75 +156,106 @@ abstract class ButtonFactory {
       for (int j = 0; j < rc[i].length; j++) {
         final b = rc[i][j];
         if (b != null) {
-          result.add(screen.box(Rect.fromLTWH(x, y, bw, bh), b));
+          if (b.isEnter) {
+            final double dx;
+            // Scoot enter over to the left a bit if there's extra room because
+            // the logo is to our left
+            if (i < rc.length - 1 &&
+                j > 0 &&
+                rc[i][j - 1] == null &&
+                rc[i + 1][j - 1] == null) {
+              dx = -0.1;
+            } else {
+              dx = 0;
+            }
+            result.add(screen.box(Rect.fromLTWH(x + dx, y, bw, th + bh), b));
+          } else {
+            result.add(screen.box(Rect.fromLTWH(x, y, bw, bh), b));
+          }
         }
         x += tw;
       }
       y += th;
     }
-    result.add(screen.box(
-        enterPos(pos, th: th, tw: tw, bh: bh, bw: bw), buttons.enter));
 
     return result;
   }
 
   List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons);
+
+  List<List<CalculatorButton?>> applyButtonConfig(
+      LayoutConfiguration? config, List<List<CalculatorButton?>> buttons) {
+    if (config != null) {
+      final fromAccelerator = <String, CalculatorButton>{};
+      for (final row in buttons) {
+        for (final b in row) {
+          if (b != null) {
+            fromAccelerator[b.acceleratorKey.substring(0, 1)] = b;
+          }
+        }
+      }
+      final List<List<String?>> configLayout = config.buttonAccelerator;
+      buttons =
+          List.generate(configLayout.length, (_) => <CalculatorButton?>[]);
+      for (int i = 0; i < configLayout.length; i++) {
+        final row = buttons[i];
+        for (final String? accelerator in configLayout[i]) {
+          final b = fromAccelerator.remove(accelerator);
+          // Uses remove so a button can't be duplicated
+          row.add(b);
+        }
+      }
+    }
+    return buttons;
+  }
+
+  String? getConfigAcceleratorLabel(String acceleratorKey) {
+    final aLabels = controller.screenConfig.acceleratorLabels;
+    if (aLabels == null) {
+      return null;
+    }
+    return aLabels[acceleratorKey.substring(0, 1)];
+  }
 }
 
 abstract class LandscapeButtonFactory extends ButtonFactory {
   LandscapeButtonFactory(super.context, super.screen, super.controller);
 
   @override
-  int get numRows => 4;
+  int get numRows => controller.screenConfig.landscape?.buttonRows ?? 4;
 
   @override
-  int get numColumns => 10;
+  int get numColumns => controller.screenConfig.landscape?.buttonCols ?? 10;
 
   @override
   double totalButtonHeight(double height, double buttonHeight) =>
-      (height - numRows * buttonHeight) / (numRows - 1) * buttonHeight +
+      (0.033409 + height - numRows * buttonHeight) / (numRows - 1) +
       buttonHeight;
-
-  double get shiftDownTweak => 0;
-
-  @override
-  Rect enterPos(Rect pos,
-          {required double th,
-          required double tw,
-          required double bh,
-          required double bw}) =>
-      Rect.fromLTWH(
-          pos.left + 5 * tw, pos.top + 2 * th + shiftDownTweak, bw, bh + th);
 
   @override
   List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons) =>
-      buttons.landscapeLayout;
+      applyButtonConfig(
+          controller.screenConfig.landscape, buttons.landscapeLayout);
 }
 
 abstract class PortraitButtonFactory extends ButtonFactory {
   PortraitButtonFactory(super.context, super.screen, super.controller);
 
   @override
-  int get numRows => 7;
+  int get numRows => controller.screenConfig.portrait?.buttonRows ?? 7;
 
   @override
-  int get numColumns => 6;
+  int get numColumns => controller.screenConfig.portrait?.buttonCols ?? 6;
 
   @override
   double totalButtonHeight(double height, double buttonHeight) =>
-      (height - numRows * buttonHeight) / numRows * buttonHeight + buttonHeight;
-
-  @override
-  Rect enterPos(Rect pos,
-          {required double th,
-          required double tw,
-          required double bh,
-          required double bw}) =>
-      Rect.fromLTWH(pos.left + tw - 0.1, 0.28 + pos.top + 5 * th, bw, bh + th);
+      (height - 0.219672 - numRows * buttonHeight) / (numRows - 1) +
+      buttonHeight;
 
   @override
   List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons) =>
-      buttons.portraitLayout;
+      applyButtonConfig(
+          controller.screenConfig.portrait, buttons.portraitLayout);
 }
 
 ///
@@ -281,19 +323,22 @@ class UpperLabel extends CustomPainter {
     final double y = -1 + tp.height / 2;
     final double h = (size.height / sf) - 2 * x; // Yes, x
 
-    Path p = Path()
-      ..addPolygon(
-          [Offset(x, h), Offset(x, y), Offset(x + (w - tp.width) / 2 - 18, y)],
-          false);
-    canvas.drawPath(p, linePaint);
-    p = Path()
-      ..addPolygon([
-        Offset(x + (w + tp.width) / 2 + 18, y),
-        Offset(x + w, y),
-        Offset(x + w, h)
-      ], false);
-    canvas.drawPath(p, linePaint);
-    // Add in the lines...
+    if (w - tp.width > 50) {
+      Path p = Path()
+        ..addPolygon([
+          Offset(x, h),
+          Offset(x, y),
+          Offset(x + (w - tp.width) / 2 - 18, y)
+        ], false);
+      canvas.drawPath(p, linePaint);
+      p = Path()
+        ..addPolygon([
+          Offset(x + (w + tp.width) / 2 + 18, y),
+          Offset(x + w, y),
+          Offset(x + w, h)
+        ], false);
+      canvas.drawPath(p, linePaint);
+    }
   }
 
   @override
@@ -334,17 +379,18 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
 
   /// Key (or keys) to generate a press of this button
   final String acceleratorKey;
-  final String? _acceleratorLabel;
+  final String acceleratorLabel;
 
   CalculatorButton(this.bFactory, this.uText, this.fText, this.gText, this.uKey,
       this.fKey, this.gKey, this.acceleratorKey,
       {String? acceleratorLabel, super.key})
-      : _acceleratorLabel = acceleratorLabel;
+      : acceleratorLabel = bFactory.getConfigAcceleratorLabel(acceleratorKey) ??
+            acceleratorLabel ??
+            acceleratorKey;
 
   @override
   CalculatorButtonState createState() => CalculatorButtonState();
 
-  String get acceleratorLabel => _acceleratorLabel ?? acceleratorKey;
   double get width => bFactory.width;
   double get height => bFactory.height;
 
@@ -361,6 +407,7 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
   Offset get keyTextOffset => bFactory.keyTextOffset;
   Offset get gTextOffset => bFactory.gTextOffset;
   double get outerBorderPressedScale => 1.06;
+  bool get isEnter => false;
 
   void paintForPainter(final Canvas canvas, final Size size,
       {required final bool pressed,
@@ -865,6 +912,9 @@ class CalculatorEnterButton extends CalculatorButton {
 
   @override
   Offset get gTextOffset => _gTextOffset;
+
+  @override
+  bool get isEnter => true;
 
   static RRect _calculateOuterBorder(ButtonFactory f, double extraHeight) {
     final RRect r = f.outerBorder;
