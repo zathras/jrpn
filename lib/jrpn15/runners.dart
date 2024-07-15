@@ -308,70 +308,30 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
       signResult = 1;
     }
     final double span = b - a;
-
-    const okErrors = {0, 1};
-    try {
-      _lastEstimate = 0;
-      return await qromb(
-          okErrors, span, a, b, signResult, originalX, originalY);
-    } on CalculatorError catch (e) {
-      if (!okErrors.contains(e.num15)) {
-        rethrow;
-      }
-      while (returnStackStartPos < model.program.returnStackPos + 1) {
-        model.program.popReturnStack();
-      }
-    }
     _lastEstimate = 0;
     return qromo(span, a, b, signResult, originalX, originalY);
   }
 
-  Future<bool> qromb(Set<int> okErrors, double span, double a, double b,
-      double signResult, Value originalX, Value originalY) async {
-    final DisplayMode precision = model.displayMode;
-    // Try qromb.  See https://github.com/zathras/jrpn/issues/36
-    var ro = Float64List(maxIterations);
-    var ru = Float64List(maxIterations);
-    final fOfA = await runSubroutineErrorsOK(a, okErrors);
-    final fOfB = await runSubroutineErrorsOK(b, okErrors);
-    double h = span;
-    ro[0] = (fOfA + fOfB) * h / 2;
-    // Now that we made it here, errors are no longer allowed.
-    int i;
-    for (i = 1; i < maxIterations; i++) {
-      int k = 1 << i; // /k = 2^i, i is at most 12
-      int s = 1;
-      double sum = 0;
-      h /= 2;
-      for (int j = 1; j < k; j += 2) {
-        final f = await runSubroutine(a + j * h);
-        sum += f;
-      }
-      ru[0] = h * sum + ro[0] / 2;
-      for (int j = 1; j <= i; j++) {
-        s *= 4;
-        ru[j] = (s * ru[j - 1] - ro[j - 1]) / (s - 1);
-      }
-      final rt = ro;
-      ro = ru;
-      ru = rt;
-      final estimate = ro[i] * signResult;
-      final double digit = precision.leastSignificantDigitNoFloor(estimate);
-      final double eps = fpow(10.0, digit);
-      if (i > 2 && (ru[i - 1] - estimate).abs() <= eps) {
-        i++;
-        break;
-      }
-      _lastEstimate = estimate;
-    }
-    final err = (ru[i - 2] - ro[i - 1]).abs();
-    model.z = originalX;
-    model.t = originalY;
-    model.yF = err;
-    model.xF = ro[i - 1] * signResult;
-    return true;
-  }
-
+  ///
+  /// Compute the integral on an open interval.  Note that, up through
+  /// July of 2024, there was code here to first try computing on a
+  /// closed interval (`qromb`).  That seemed reasonable after an exchange
+  /// with the author of `qromb` and `qromo` on the HP Museum's Forum.
+  /// See https://github.com/zathras/jrpn/issues/36.
+  ///
+  /// However, trying the closed interval first raises the possibility that
+  /// the called function will have side effects.  It could set the overflow
+  /// flag, but in general it could have other stateful changes, too.  It's
+  /// not really clear that there is a robust solution, especially when you
+  /// consider that the user can single-step through function evaluations.
+  /// This all became clear when thinking about
+  /// https://github.com/zathras/jrpn/issues/108.
+  ///
+  ///
+  /// Eliminating `qromb` only changed one of the regression tests, and that
+  /// change was to give a result that's closer to what's in the Advanced
+  /// Functions Handbook.  The test in question is "...Pages 051-055.15c".
+  ///
   Future<bool> qromo(double span, double a, double b, double signResult,
       Value originalX, Value originalY) async {
     final DisplayMode precision = model.displayMode;
