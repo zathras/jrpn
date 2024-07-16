@@ -1,4 +1,6 @@
 Version 2.1.15 - Upcoming
+  * Improvements to 15C's solve and integrate:  Issue 108
+  * Let users customize keyboard layout with a JSON file:  Issue 106
   * Change "total memory" to "extra memory" in settings
 
 Version 2.1.14 - May 2024

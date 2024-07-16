@@ -1876,7 +1876,7 @@ class AdvancedFunctionTests {
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
     expect(model.xF, 5);
-    expect(model.yF, 4.999999999);
+    expect(model.yF, 4.999999922000001);
     expect(model.z.asDouble.abs() < 1e-9, true);
 
     model.yF = 0;

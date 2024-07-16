@@ -61,18 +61,12 @@ abstract class NontrivialProgramRunner extends ProgramRunner {
 
   ///
   /// Run the solve/integrate algorithm.
+  /// Returns true on success.  This value influences which instruction
+  /// executes next in a program.
   ///
   Future<bool> runCalculation();
 
-  Future<double> runSubroutine(double arg) =>
-      runSubroutineErrorsOK(arg, const {});
-
-  ///
-  /// If the subroutine we call generates a CalculatorError with an
-  /// acceptable error code, we throw the exception.
-  ///
-  Future<double> runSubroutineErrorsOK(
-      double arg, Set<int> acceptableErrors) async {
+  Future<double> runSubroutine(double arg) async {
     if (_subroutineStart == _subroutineNotStarted) {
       _subroutineStart = model.program.currentLine;
     } else {
@@ -81,7 +75,7 @@ abstract class NontrivialProgramRunner extends ProgramRunner {
       assert(returnStackStartPos == model.program.returnStackPos);
     }
     model.setXYZT(Value.fromDouble(arg));
-    await caller.runProgramLoop(acceptableErrors: acceptableErrors);
+    await caller.runProgramLoop();
     assert(returnStackStartPos == model.program.returnStackPos + 1);
     if (model.getFlag(9)) {
       model.setFlag(9, false);
@@ -127,23 +121,6 @@ class SolveProgramRunner extends NontrivialProgramRunner {
   }
 
   @override
-  Future<double> runSubroutine(double arg) async {
-    const okErrors = {0, 1};
-    try {
-      final r = await super.runSubroutineErrorsOK(arg, okErrors);
-      return r;
-    } on CalculatorError catch (e) {
-      if (!okErrors.contains(e.num15)) {
-        rethrow;
-      }
-      while (returnStackStartPos < model.program.returnStackPos + 1) {
-        model.program.popReturnStack();
-      }
-      return double.infinity;
-    }
-  }
-
-  @override
   Future<bool> runCalculation() async {
     // Algorithm translated from doc/HP-15C.tcl, secant, at line 5987
     double x0 = model.yF;
@@ -164,6 +141,16 @@ class SolveProgramRunner extends NontrivialProgramRunner {
       }
     }
 
+    //
+    // The 15C tries to keep the argument within the original range, which
+    // helps avoid blowing up the function being evaluated, e.g. with a
+    // negative sqrt or overflow.  See issue #108 discussion of
+    // "Reactance chart solver.15c".
+    //
+    final rangeMin = min(x0, x1);
+    final rangeMax = max(x0, x1);
+    int rangeHacksLeft = 0;
+
     double resultX0 = await runSubroutine(x0);
     double resultX1 = await runSubroutine(x1);
     if (resultX0.isInfinite || resultX1.isInfinite) {
@@ -175,6 +162,19 @@ class SolveProgramRunner extends NontrivialProgramRunner {
       model.yF = x0;
       model.xF = x1;
       return false;
+    } else if (resultX0 == 0) {
+      model.xF = x0;
+      model.yF = x0;
+      model.zF = 0;
+      return true;
+    } else if (resultX1 == 0) {
+      model.xF = x1;
+      model.yF = x1;
+      model.zF = 0;
+      return true;
+    }
+    if (resultX0.sign != resultX1.sign) {
+      rangeHacksLeft = 15; // Try to keep in range
     }
     for (;;) {
       double slope;
@@ -196,17 +196,24 @@ class SolveProgramRunner extends NontrivialProgramRunner {
       if (resultX0 * resultX1 < 0 && (x2 < min(x0, x1) || x2 > max(x0, x1))) {
         x2 = (x0 + x1) / 2;
       }
+
+      if (rangeHacksLeft > 0 && x2 < rangeMin) {
+        rangeHacksLeft--;
+        cntmax++;
+        x2 = rangeMin + (min(x0, x1) - rangeMin) / 2;
+      } else if (rangeHacksLeft > 0 && x2 > rangeMax) {
+        rangeHacksLeft--;
+        cntmax++;
+        x2 = rangeMax - (rangeMax - max(x0, x1)) / 2;
+      }
       double resultX2 = await runSubroutine(x2);
       while (resultX2.isInfinite && ii < cntmax) {
-        // Oops!  Try a less agressive estimate, by backing off the slope.
-        // "4" is a guess.  FWIW, this made
-        // "HP-15C_4.4.00_Programs/Users/Eddie Shore/Reactance chart solver.15c"
-        // work with the given example, and trying something when we get
-        // infinity from the function we call won't hurt.
+        // Oops!  Try a less aggressive estimate, by backing off the slope.
+        // "4" is a guess.
         slope /= 4;
         x2 = x1 - resultX1 * slope;
         resultX2 = await runSubroutine(x2);
-        cntmax++;
+        ii++;
       }
       x0 = x1;
       resultX0 = resultX1;
@@ -280,11 +287,10 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
   static double fpow(double a, double b) => math.pow(a, b).toDouble();
 
   @override
-  Future<double> runSubroutineErrorsOK(
-      double arg, Set<int> acceptableErrors) async {
+  Future<double> runSubroutine(double arg) async {
     model.lastX = Value.fromDouble(_lastEstimate);
     // See page 257 of User's Guide, third paragraph.
-    return super.runSubroutineErrorsOK(arg, acceptableErrors);
+    return super.runSubroutine(arg);
   }
 
   @override
