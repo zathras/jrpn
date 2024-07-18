@@ -1656,24 +1656,21 @@ class DisplayModel {
         return ' $_current';
       }
     } else if (model.settings.windowLongNumbers) {
-      final int maxWindow = ((_numDigits - 1) ~/ 8) * 8;
-      if (_showingX && _window > maxWindow) {
-        _window = maxWindow;
-        // If, for example, the base changed out from under us, like in
-        // https://github.com/zathras/jrpn/issues/12
-      }
+      String r = _current.substring(0, _current.length - 2); // Remove radix
       final int window = (_showingX) ? _window : 0;
-      final int count = _numDigits;
-      if (count <= 8) {
+      final int numDigits = _allDigits.allMatches(r).length;
+      if (numDigits <= 8) {
+        //  Because there aren't so many, or because this is a textual message
         return _current;
       }
       String radix = _current.substring(_current.length - 1);
-      String r = _current.substring(0, _current.length - 2);
 
       final bool negative = r.startsWith('-');
       if (negative) {
         r = r.substring(1);
       }
+      // The index in r of the digits can move around, due to commas
+      // (and maybe other stuff?), so we build an array of the indices.
       final List<int> digitPos = _allDigits
           .allMatches(r)
           .fold(List<int>.empty(growable: true), (List<int> l, RegExpMatch m) {
@@ -1681,12 +1678,17 @@ class DisplayModel {
         return l;
       });
       assert(digitPos[0] == 0);
-      final int end = 1 + digitPos[digitPos.length - 1 - window];
-      final int start = digitPos[max(0, digitPos.length - 8 - window)];
-
-      r = r.substring(start, end);
+      final int start;
+      if (digitPos.length > window) {
+        start = digitPos[max(0, digitPos.length - 8 - window)];
+        final int end = 1 + digitPos[digitPos.length - 1 - window];
+        r = r.substring(start, end);
+      } else {
+        start = 0;
+        r = '';
+      }
       final dot = (model.settings.euroComma ? ',' : '.');
-      if (window < maxWindow) {
+      if (start > 0) {
         // Dot before radix letter
         radix = dot + radix;
       }
@@ -1694,7 +1696,7 @@ class DisplayModel {
         // Dot after radix letter
         radix = radix + dot;
       }
-      if (negative && window >= maxWindow) {
+      if (negative && start == 0) {
         return '-$r $radix';
       } else {
         return '$r $radix';
@@ -1712,8 +1714,7 @@ class DisplayModel {
       assert(false);
       return;
     }
-    final int max = ((_numDigits - 1) ~/ 8) * 8;
-    if (v < 0 || v > max) {
+    if (v < 0 || v >= 64) {
       throw CalculatorError(1);
     }
     _window = v;
@@ -1724,8 +1725,6 @@ class DisplayModel {
 
   final RegExp _allDigits = RegExp('[a-f0-9]');
 
-  int get _numDigits =>
-      _allDigits.allMatches(_current.substring(0, _current.length - 1)).length;
   // Don't count the trailing 'b' for binary
 
   void addListener(void Function(LcdContents) f) => _lastShown.addObserver(f);

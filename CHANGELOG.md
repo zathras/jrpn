@@ -2,6 +2,7 @@ Version 2.1.15 - Upcoming
   * Improvements to 15C's solve and integrate:  Issue 108
   * Let users customize keyboard layout with a JSON file:  Issue 106
   * Change "total memory" to "extra memory" in settings
+  * 16C:  Allow 64 digit window in all modes:  Issue 109
 
 Version 2.1.14 - May 2024
   * Allow user-configurable extra memory:  Issue 95
