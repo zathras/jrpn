@@ -1656,7 +1656,8 @@ class DisplayModel {
         return ' $_current';
       }
     } else if (model.settings.windowLongNumbers) {
-      String r = _current.substring(0, _current.length - 2); // Remove radix
+      String r =
+          _current.substring(0, max(0, _current.length - 2)); // Remove radix
       final int window = (_showingX) ? _window : 0;
       final int numDigits = _allDigits.allMatches(r).length;
       if (numDigits <= 8) {
