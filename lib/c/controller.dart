@@ -899,6 +899,7 @@ class KeyboardController {
   CalculatorButtonState? _extraShiftThatIsDown;
   DateTime lastKeyDown = DateTime.now();
   bool controlPressed = false;
+  bool metaPressed = false;
 
   static final _ignored = <PhysicalKeyboardKey>{
     PhysicalKeyboardKey.shiftLeft,
@@ -913,13 +914,19 @@ class KeyboardController {
   };
 
   KeyEventResult onKey(KeyEvent e) {
-    final isControl = e.logicalKey == LogicalKeyboardKey.controlLeft ||
-        e.logicalKey == LogicalKeyboardKey.controlRight ||
-        e.logicalKey == LogicalKeyboardKey.control;
+    final lk = e.logicalKey;
+    final isControl = lk == LogicalKeyboardKey.controlLeft ||
+        lk == LogicalKeyboardKey.controlRight ||
+        lk == LogicalKeyboardKey.control;
+    final isMeta = lk == LogicalKeyboardKey.metaLeft ||
+        lk == LogicalKeyboardKey.metaRight ||
+        lk == LogicalKeyboardKey.meta;
     if (e is! KeyDownEvent) {
       if (e is KeyUpEvent) {
         if (isControl) {
           controlPressed = false;
+        } else if (isMeta) {
+          metaPressed = false;
         } else {
           if (e.physicalKey == _physicalKeyThatIsDown) {
             releasePressedButton();
@@ -931,6 +938,14 @@ class KeyboardController {
     }
     if (isControl) {
       controlPressed = true;
+      return KeyEventResult.ignored;
+    }
+    if (isMeta) {
+      metaPressed = true;
+      return KeyEventResult.ignored;
+    }
+    if (metaPressed) {
+      // Don't intercept e.g. meta-H (See issue 117)
       return KeyEventResult.ignored;
     }
     final now = DateTime.now();

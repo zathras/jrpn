@@ -3,6 +3,7 @@ Version 2.1.15 - Upcoming
   * Let users customize keyboard layout with a JSON file:  Issue 106
   * Change "total memory" to "extra memory" in settings
   * 16C:  Allow 64 digit window in all modes:  Issue 109
+  * Ignore meta-shifted keys (like meta-H on Mac):  Issue 117
 
 Version 2.1.14 - May 2024
   * Allow user-configurable extra memory:  Issue 95
