@@ -492,7 +492,7 @@ class DigitEntry extends ActiveState {
 
   static final _decimalDigits = RegExp('[0-9]');
 
-  bool _tryNewValue(String ent, String sign, final int? ex, final bool negEx) {
+  bool _tryNewValue(String ent, String sign, int? ex, final bool negEx) {
     final int intDigits;
     if (model.isFloatMode) {
       intDigits = 0;
@@ -554,6 +554,14 @@ class DigitEntry extends ActiveState {
         v = null;
       }
     } else {
+      if (kIsWeb && ex == 0) {
+        ex = 0;   //   alt.javascript.die.die.die.
+        // In Dart on the web (on JavaScript), the "int" -0 formats
+        // as "-0.0".  JS doesn't really support ints, and this case slipped
+        // through the cracks of the Dart implementation, I guess.  I do think
+        // it's fair to consider it a bug in Dart.  Filed as
+        // https://github.com/flutter/flutter/issues/152008
+      }
       v = model.tryParseValue(sign + ent + (ex < 0 ? 'E$ex' : 'E+$ex'));
     }
     // It's important to try to parse '1e+3' and not '1e3' so that it
