@@ -560,7 +560,7 @@ class DigitEntry extends ActiveState {
         // as "-0.0".  JS doesn't really support ints, and this case slipped
         // through the cracks of the Dart implementation, I guess.  I do think
         // it's fair to consider it a bug in Dart.  Filed as
-        // https://github.com/flutter/flutter/issues/152008
+        // https://github.com/dart-lang/sdk/issues/56292
       }
       v = model.tryParseValue(sign + ent + (ex < 0 ? 'E$ex' : 'E+$ex'));
     }

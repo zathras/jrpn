@@ -33,7 +33,8 @@ blockquote {margin-left: 10%; margin-right: 12%}
 </a>
 <p>&nbsp;
 <p style='text-align: center'><b>Click either calculator to run!</b>  Installation
-instructions <a href="#Install">here</a>.
+instructions <a href="#Install">here</a>; web version notes
+<a href="#Web">here</a>..
 <p>JRPN 16C is calculator simulator inspired by the 
 <a href="https://en.wikipedia.org/wiki/HP-16C" rel="nofollow">HP 16C</a>
 "Computer Scientist"
@@ -182,6 +183,18 @@ It includes a slight delay and a bit of a blink on the LCD
 when you do a calculator operation, and in other ways it
 attempts to behave like a 1982-vintage calculator running on a low-power
 4 bit CPU.
+
+<h2><a name="Web">Web Version</h2>
+<p>
+The web version of JRPN works pretty well, but the web target for
+Google's Flutter sometimes comes with nasty
+<a href="https://github.com/zathras/jrpn/issues/116">surprises</a>.  To
+be clear, I don't particularly blame the Dart team -- JavaScript is an
+awfully shaky foundation on which to implement decent language semantics,
+and I'm sure the team can't wait to jettison it in favor of WASM.  Anway,
+JRPN's web versions do work, but the primary, best-supported platforms for 
+JRPN are desktop and mobile phone.
+
 <h2><a name="Install">Installing</h2>
 <p>
 You can get JRPN 16C and 15C at the following locations:
