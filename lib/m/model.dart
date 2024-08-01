@@ -1636,11 +1636,19 @@ class DisplayModel {
     }
   }
 
+  ///
+  /// Set what's currently displayed, when it is NOT the x value.  Windowing
+  /// is disabled.
+  ///
   set current(String v) {
     _current = v;
     _showingX = false;
   }
 
+  ///
+  /// Set what's currently displayed, when it IS the x value.  Windowing may
+  /// be enabled.
+  ///
   set currentShowingX(String v) {
     _current = v;
     _showingX = true;
@@ -1656,14 +1664,13 @@ class DisplayModel {
         return ' $_current';
       }
     } else if (model.settings.windowLongNumbers) {
+      if (!_showingX) {
+        return _current;
+      }
       String r =
           _current.substring(0, max(0, _current.length - 2)); // Remove radix
       final int window = (_showingX) ? _window : 0;
       final int numDigits = _allDigits.allMatches(r).length;
-      if (numDigits <= 8) {
-        //  Because there aren't so many, or because this is a textual message
-        return _current;
-      }
       String radix = _current.substring(_current.length - 1);
 
       final bool negative = r.startsWith('-');
