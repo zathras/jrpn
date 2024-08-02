@@ -1765,7 +1765,7 @@ class RclIndirectArg extends ArgDone {
     if (miv == null) {
       opBeforeCalculate(); // noStackLift only relevant if I is a matrix
       final int reg = iv.asDouble.floor().abs();
-      m.resultX = m.memory.registers[reg]; // Index exception becomes Error 3
+      m.x = m.memory.registers[reg]; // Index exception becomes Error 3
     } else {
       final matrix = (m as Model15).matrices[miv];
       matPressed(m, matrix);

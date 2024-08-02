@@ -2013,6 +2013,15 @@ class AdvancedFunctionTests {
     expect(out.current, ProgramEvent.done);
     expect((model.xF - 1.60541).abs() < 0.00001, true);
     expect(model.yF.abs() < 0.00005, true);
+
+    // Issue 115:  RCL (i) shouldn't set LastX
+    _play([l.n0, l.sto, l.tan, l.sto, l.n0]); // Store 0 in I and R0
+    _play([l.n1, l.n0, l.sqrt, l.rcl, l.cos, l.gShift, l.enter]);
+    expect(model.xF, 10.0);
+    // Now try with a matrix in R0
+    _play([l.rcl, l.chs, l.sqrt, l.sto, l.n0]);
+    _play([l.n1, l.n0, l.sqrt, l.rcl, l.cos, l.gShift, l.enter]);
+    expect(model.xF, 10.0);
   }
 
   // Misc.
