@@ -533,6 +533,7 @@ class Operations15 extends Operations {
           maxDigit: 19,
           letters: _letterLabelsList,
           iFirst: true,
+          negativeIsLineNumber: true,
           f: (m, final int? label) {
             if (label == null) {
               throw CalculatorError(4);
@@ -547,6 +548,7 @@ class Operations15 extends Operations {
           iFirst: true,
           maxDigit: 19,
           letters: _letterLabelsList,
+          negativeIsLineNumber: true,
           f: (m, final int? label) {
             if (label == null) {
               throw CalculatorError(4);

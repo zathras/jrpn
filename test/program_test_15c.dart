@@ -33,6 +33,7 @@ import 'programs.dart';
 
 const _programs = [
   _Program('jrpn/issue_84.15c', 'A MATRIX 1 USER RCL B -> 0.25 RCL A -> 0.5'),
+  _Program('jrpn/issue_110.15c', 'A -> 78'),
   _Program('Date and Time/Julian Date from Gregorian Date.15c',
       '7 STO 1 23 STO 2 1982 STO 3 A -> 2445174'),
   _Program(

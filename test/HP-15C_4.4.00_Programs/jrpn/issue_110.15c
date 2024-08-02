@@ -1,0 +1,16 @@
+#  Program produced by JRPN 15C.
+#  Generated 2024-7-11 10:13 PDT.
+#  Program occupies 14 bytes.
+
+   000 {          } 
+   001 { 42 21 11 } f LBL A
+   002 {        7 } 7
+   003 {       16 } CHS
+   004 {    44 25 } STO I
+   005 {    22 25 } GTO I
+   006 {        6 } 6
+   007 {        7 } 7
+   008 {        8 } 8
+   009 {    43 32 } g RTN
+
+# End.

@@ -2,7 +2,10 @@ Version 2.1.15 - Upcoming
   * Improvements to 15C's solve and integrate:  Issue 108
   * Let users customize keyboard layout with a JSON file:  Issue 106
   * Change "total memory" to "extra memory" in settings
-  * 16C:  Allow 64 digit window in all modes:  Issue 109
+  * 16C:  Allow 64 digit window in all modes, scrolling fixes:  Issue 109
+  * 15C:  Fix GTO I with negative I:  Issue 110
+  * 15C:  Fix CHS after EEX on digit entry:  Issue 116
+  * 15C:  Fix RCL(i) to not set LastX:  Issue 115
   * Ignore meta-shifted keys (like meta-H on Mac):  Issue 117
 
 Version 2.1.14 - May 2024

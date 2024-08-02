@@ -307,7 +307,19 @@ class RegisterReadArg extends ArgAlternates {
 }
 
 class LabelArg extends ArgAlternates {
-  static int? _translate(Model m, Value v) => m.signMode.valueToLabel(v, m);
+  static int? _translate(Model m, Value v, bool negativeIsLineNumber) {
+    if (negativeIsLineNumber &&
+        m.signMode == SignMode.float &&
+        v.asMatrix == null) {
+      try {
+        double vf = v.asDouble;
+        if (vf <= -1) {
+          return vf.truncate();
+        }
+      } catch (ignored) { }
+    }
+    return m.signMode.valueToLabel(v, m);
+  }
 
   LabelArg(
       {required int maxDigit,
@@ -315,31 +327,35 @@ class LabelArg extends ArgAlternates {
       required void Function(Model m, int? v) f,
       bool indirect = false,
       bool iFirst = false,
-      bool noI = false})
+      bool noI = false,
+      bool negativeIsLineNumber = false})
       : super(
             synonyms: Arg.gsbLabelSynonyms,
-            children:
-                _makeChildren(maxDigit, indirect, iFirst, noI, letters, f));
+            children: _makeChildren(maxDigit, indirect, iFirst, noI,
+                negativeIsLineNumber, letters, f));
 
   static List<Arg> _makeChildren(
       int maxDigit,
       bool indirect,
       bool iFirst,
       bool noI,
+      bool negativeIsLineNumber,
       List<ProgramOperation> letters,
       void Function(Model, int? v) f) {
     final List<Arg> iList = List.empty(growable: true);
     if (indirect) {
       iList.add(KeyArg(
           key: Arg.kParenI,
-          child: ArgDone(
-              (m) => f(m, _translate(m, m.memory.registers.indirectIndex)))));
+          child: ArgDone((m) => f(
+              m,
+              _translate(m, m.memory.registers.indirectIndex,
+                  negativeIsLineNumber)))));
     }
     if (!noI) {
       iList.add(KeyArg(
           key: Arg.kI,
-          child:
-              ArgDone((m) => f(m, _translate(m, m.memory.registers.index)))));
+          child: ArgDone((m) => f(m,
+              _translate(m, m.memory.registers.index, negativeIsLineNumber)))));
     }
     // Note that (i) comes before I on the 16C keyboard, so I originally
     // did the opcodes in that order.  On the 15C, I has to come first, so it's
