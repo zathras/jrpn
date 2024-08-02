@@ -1670,7 +1670,6 @@ class DisplayModel {
       String r =
           _current.substring(0, max(0, _current.length - 2)); // Remove radix
       final int window = (_showingX) ? _window : 0;
-      final int numDigits = _allDigits.allMatches(r).length;
       String radix = _current.substring(_current.length - 1);
 
       final bool negative = r.startsWith('-');

@@ -74,9 +74,13 @@ class DigitArg extends Arg {
 
   @override
   Arg? matches(ProgramOperation key, bool userMode) {
-    for (int i = 0; i < _next.length; i++) {
+    for (int i = 0; i < Arg.kDigits.length; i++) {
       if (key == Arg.kDigits[i]) {
-        return _next[i];
+        if (i < _next.length) {
+          return _next[i];
+        } else {
+          return ArgError();
+        }
       }
     }
     if (key == Arg.kDot) {
@@ -398,4 +402,28 @@ class StackLiftingArgDone extends ArgDone {
 
   @override
   bool liftStackIfEnabled(Model m) => needsStackLiftIfEnabled(m);
+}
+
+///
+/// Retuned when matching calculator keys if there's a range error, like
+/// g-SF-9 on the 16C.
+///
+class ArgError extends Arg {
+  ArgError();
+
+  @override
+  void init(int registerBase,
+      {required OpInitFunction f,
+      required ProgramOperation? shift,
+      required bool argDot,
+      required ProgramOperation? arg,
+      required bool userMode}) {
+    assert(false);
+  }
+
+  @override
+  Arg? matches(ProgramOperation key, bool userMode) {
+    assert(false);
+    return this;
+  }
 }

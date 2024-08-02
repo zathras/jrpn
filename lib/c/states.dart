@@ -555,7 +555,7 @@ class DigitEntry extends ActiveState {
       }
     } else {
       if (kIsWeb && ex == 0) {
-        ex = 0;   //   alt.javascript.die.die.die.
+        ex = 0; //   alt.javascript.die.die.die.
         // In Dart on the web (on JavaScript), the "int" -0 formats
         // as "-0.0".  JS doesn't really support ints, and this case slipped
         // through the cracks of the Dart implementation, I guess.  I do think
@@ -828,6 +828,9 @@ class ArgInputState extends ControllerState {
       lastState.buttonDown(key);
     } else if (next is ArgDone) {
       done(next);
+    } else if (next is ArgError) {
+      changeState(lastState);
+      controller.showCalculatorError(CalculatorError(1), null);
     } else {
       _arg = next;
     }
