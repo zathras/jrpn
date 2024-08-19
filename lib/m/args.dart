@@ -312,11 +312,11 @@ class LabelArg extends ArgAlternates {
         m.signMode == SignMode.float &&
         v.asMatrix == null) {
       try {
-        double vf = v.asDouble;
-        if (vf <= -1) {
-          return vf.truncate();
+        final int vi = v.floatIntPart();
+        if (vi <= -1) {
+          return vi;
         }
-      } catch (ignored) { }
+      } catch (ignored) {}
     }
     return m.signMode.valueToLabel(v, m);
   }

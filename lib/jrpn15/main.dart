@@ -741,8 +741,8 @@ class Operations15 extends Operations {
     if (m.y == Value.zero || m.x == Value.zero) {
       r = c = 0;
     } else {
-      r = m.yF.truncate();
-      c = m.xF.truncate();
+      r = m.y.floatIntPart();
+      c = m.x.floatIntPart();
     }
     if (r < 0 || c < 0) {
       throw CalculatorError(1);
@@ -815,8 +815,7 @@ class Operations15 extends Operations {
   static Value _skipIf(Model m, Value val, bool Function(double n, int x) skip,
       double Function(double n, int y) f) {
     double n = val.intOp().asDouble;
-    final int frac =
-        val.fracOp().timesTenTo(5).intOp().asDouble.truncate().abs();
+    final int frac = val.fracOp().timesTenTo(5).floatIntPart().abs();
     final int x = frac ~/ 100;
     final int y = frac % 100;
     n = f(n, max(1, y));
@@ -1170,7 +1169,7 @@ class Operations15 extends Operations {
   static void _storeToMatrixRC(Model m, int matrixNumber, Value r, Value c,
       {bool increment = false}) {
     final matrix = (m as Model15).matrices[matrixNumber];
-    int toI(Value v) => v.asDouble.truncate().abs();
+    int toI(Value v) => v.floatIntPart().abs();
 
     int row = toI(r) - 1;
     int col = toI(c) - 1;
@@ -1191,7 +1190,7 @@ class Operations15 extends Operations {
   }
 
   static void _recallFromMatrix(Model m, Matrix matrix, bool increment) {
-    int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
+    int toI(int r) => m.memory.registers[r].floatIntPart().abs();
 
     int row = toI(0) - 1;
     int col = toI(1) - 1;
@@ -1203,8 +1202,16 @@ class Operations15 extends Operations {
 
   static void _incrementR0R1(Model m, int row, int col, Matrix matrix) {
     void storeI(int r, int v) {
-      final d = m.memory.registers[r].asDouble;
-      m.memory.registers[r] = Value.fromDouble(v * d.sign + (d - d.truncate()));
+      assert(v >= 0);
+      final reg = m.memory.registers[r];
+      final fractionPart = reg.fracOp();
+      final Value result;
+      if (reg.isNegative) {
+        result = Value.fromDouble(-v.toDouble()).decimalAdd(fractionPart);
+      } else {
+        result = Value.fromDouble(v.toDouble()).decimalAdd(fractionPart);
+      }
+      m.memory.registers[r] = result;
     }
 
     col++;
@@ -1221,7 +1228,7 @@ class Operations15 extends Operations {
   }
 
   static void _showMatrixR0R1(Model m, Matrix matrix) {
-    int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
+    int toI(int r) => m.memory.registers[r].floatIntPart().abs();
     int row = toI(0) - 1;
     int col = toI(1) - 1;
     matrix.checkIndices(row, col);
@@ -1274,8 +1281,8 @@ class Operations15 extends Operations {
             keys: _letterLabelsGShifted,
             generator: (i) => ArgDone((m) {
                   final matrix = (m as Model15).matrices[i];
-                  final int row = m.yF.truncate().abs() - 1;
-                  final int col = m.xF.truncate().abs() - 1;
+                  final int row = m.y.floatIntPart().abs() - 1;
+                  final int col = m.x.floatIntPart().abs() - 1;
                   m.z.asDouble; // Make sure it's a float
                   matrix.set(row, col, m.z);
                   m.popStack();
@@ -1381,13 +1388,13 @@ class Operations15 extends Operations {
                 matrixNumber: i,
                 noStackLift: true,
                 pressed: (m, matrix) {
-                  final int row = m.yF.truncate().abs() - 1;
-                  final int col = m.xF.truncate().abs() - 1;
+                  final int row = m.y.floatIntPart().abs() - 1;
+                  final int col = m.x.floatIntPart().abs() - 1;
                   _showMatrix(m, matrix, row, col);
                 },
                 released: (m, matrix) {
-                  final int row = m.yF.truncate().abs() - 1;
-                  final int col = m.xF.truncate().abs() - 1;
+                  final int row = m.y.floatIntPart().abs() - 1;
+                  final int col = m.x.floatIntPart().abs() - 1;
                   m.popStack();
                   m.x = matrix.get(row, col);
                 })),
@@ -1497,13 +1504,13 @@ class Operations15 extends Operations {
             child: RclIndirectArg(
                 noStackLift: true,
                 matPressed: (m, matrix) {
-                  final int row = m.yF.truncate().abs() - 1;
-                  final int col = m.xF.truncate().abs() - 1;
+                  final int row = m.y.floatIntPart().abs() - 1;
+                  final int col = m.x.floatIntPart().abs() - 1;
                   _showMatrix(m, matrix, row, col);
                 },
                 matReleased: (m, matrix) {
-                  final int row = m.yF.truncate().abs() - 1;
-                  final int col = m.xF.truncate().abs() - 1;
+                  final int row = m.y.floatIntPart().abs() - 1;
+                  final int col = m.x.floatIntPart().abs() - 1;
                   m.popStack();
                   m.x = matrix.get(row, col);
                 })),
@@ -1596,7 +1603,7 @@ class RegisterReadOpArg extends ArgAlternates {
   static void _forMatrix(
       Model15 m, int mi, final double Function(double, double) f) {
     final mat = m.matrices[mi];
-    int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
+    int toI(int r) => m.memory.registers[r].floatIntPart().abs();
     int row = toI(0) - 1;
     int col = toI(1) - 1;
     m.resultXF = f(m.xF, mat.getF(row, col));
@@ -1640,7 +1647,7 @@ class RegisterWriteOpArg extends ArgAlternates {
   static void _forMatrix(
       Model15 m, int mi, final Value Function(Model, Value, Value) f) {
     final mat = m.matrices[mi];
-    int toI(int r) => m.memory.registers[r].asDouble.truncate().abs();
+    int toI(int r) => m.memory.registers[r].floatIntPart().abs();
     int row = toI(0) - 1;
     int col = toI(1) - 1;
     mat.set(row, col, f(m, mat.get(row, col), m.x));

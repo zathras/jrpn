@@ -20,6 +20,9 @@ this program; if not, see https://www.gnu.org/licenses/ .
 
 library jrpn15.tests;
 
+import 'dart:math';
+
+import 'package:flutter/foundation.dart';
 import 'package:jrpn/m/complex.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/c/controller.dart';
@@ -375,11 +378,55 @@ class SelfTests15 extends SelfTests {
     });
   }
 
+  Future<void> testIssue119() async {
+    await test('15c Issue 119', () async {
+      // Make sure Value.flaotIntPart works
+      Future<void> testIntPart(final int x) async {
+        final Value v = Value.fromDouble(x.toDouble());
+        await expect(v.floatIntPart(), x);
+        await expect(v.negateAsFloat().floatIntPart(), -x);
+      }
+
+      await expect(Value.fromDouble(99.99999999).floatIntPart(), 99);
+      await expect(Value.fromDouble(-99.99999999).floatIntPart(), -99);
+      await testIntPart(0);
+      await testIntPart(42);
+      await testIntPart(1234567891);
+      await testIntPart(12345678910000);
+      final rand = Random();
+      for (int trial = 0; trial < 10; trial++) {
+        for (int digits = 1; digits <= 10; digits++) {
+          final int x;
+          if (digits <= 9) {
+            x = rand.nextInt(pow(10, digits).toInt());
+          } else {
+            x = rand.nextInt(pow(10, 9).toInt()) * 10 + rand.nextInt(10);
+          }
+          await testIntPart(x);
+          if (kIsWeb) {
+            await testIntPart(x * pow(10, rand.nextInt(5)).toInt());
+          } else {
+            await testIntPart(x * pow(10, rand.nextInt(9)).toInt());
+          }
+        }
+      }
+
+      // Check the operation that lead to the bug's discovery
+      final m = newModel() as Model<ProgramOperation>;
+      final v = Value.fromDouble(9.014);
+      m.memory.registers.index = v;
+      final arg = Operations15.isg.arg as RegisterWriteOpArg;
+      final r = arg.f(m, v, v);
+      await expect(r, Value.fromDouble(10.014));
+    });
+  }
+
   @override
   Future<void> runAll() async {
     await testFloatFunctions();
     await testComplexFunctions();
     await testStatisticsFunctions();
+    await testIssue119();
     return super.runAll();
   }
 }

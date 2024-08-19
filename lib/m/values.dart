@@ -234,6 +234,30 @@ class Value {
   }
 
   ///
+  /// For a Value holding a float, give the int part.
+  ///
+  int floatIntPart() {
+    if (asMatrix != null || isInfinite) {
+      throw CalculatorError(1);
+    }
+    int e = exponent;
+    int result = 0;
+    int d = 0;
+    while (e >= 0) {
+      result *= 10;
+      if (d < 10) {
+        result += mantissaDigit(d++);
+      }
+      e--;
+    }
+    if (isNegative) {
+      return -result;
+    } else {
+      return result;
+    }
+  }
+
+  ///
   /// Give the mantissa, essentially.  Used for f-CLEAR PREFIX, which shows
   /// the mantissa to the user.
   ///

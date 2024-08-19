@@ -1,3 +1,6 @@
+Version 2.1.15.2 - August 2024 (Web Only)
+  * Fix conversion of values to integers:  Issue 119
+
 Version 2.1.15 - August 2024
   * Improvements to 15C's solve and integrate:  Issue 108
   * Let users customize keyboard layout with a JSON file:  Issue 106
