@@ -237,7 +237,7 @@ class Value {
     final int sign = (upper52 >> 40).toInt();
     int intPart = 0;
     int fracPart = 0;
-    // Int part:
+    // int part:
     int d = 0;
     for (; d < min(e + 1, 10); d++) {
       intPart *= 10;
@@ -526,7 +526,7 @@ class ComplexValue {
   /// decimalishDivide.
   ///
   /// If we wanted *exactly* the 15C behavior, we'd have to implement
-  /// decimal math throught, but that's an explicit non-goal, at least
+  /// decimal math throughout, but that's an explicit non-goal, at least
   /// as of issue #78.
   ///
   ComplexValue decimalishMultiply(ComplexValue other) {
