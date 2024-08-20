@@ -102,6 +102,7 @@ class Value {
   static final BigInt _mantissaSign = BigInt.parse('90000000000', radix: 16);
   static final BigInt _mantissaMagnitude =
       BigInt.parse('ffffffffff', radix: 16);
+  static final BigInt _mantissaMsdMask = BigInt.parse('f000000000', radix: 16);
 
   static final BigInt _matrixMantissa = BigInt.parse('a111eeeeeee', radix: 16);
   // Not a valid float.  Also, matrices are painful, and vaguely French.
@@ -201,9 +202,12 @@ class Value {
     }
   }
 
+  ///
   /// Interpret this value as a floating point, and convert to a double.
-  /// There is no corresponding asInt method, because the int interpretation
-  /// depends on the bit size and the sign mode - cf. IntegerSignMode.toBigInt()
+  /// There is no corresponding asInt method, because on the 16C the int
+  /// interpretation depends on the bit size and the sign mode -
+  /// cf. IntegerSignMode.toBigInt(), and [floatIntPart]
+  ///
   double get asDouble {
     if (this == fInfinity) {
       return double.infinity;
@@ -212,25 +216,48 @@ class Value {
     }
     final BigInt upper52 = _upper52;
     String mantissa = (upper52 & _mantissaMagnitude).toRadixString(16);
-    final int sign = (upper52 >> 40).toInt();
-    double m = 0;
-    try {
-      m = double.parse(mantissa);
-    } catch (e) {
+    final asciiZero = '0'.codeUnitAt(0);
+    int getDigit(int d) {
+      int r = mantissa.codeUnitAt(d) - asciiZero;
+      if (r < 0 || r > 9) {
+        throw CalculatorError(6, num15: 1);
+      }
+      return r;
+    }
+
+    final int e = exponent;
+    if (mantissa == '0') {
+      if (e != 0) {
+        throw CalculatorError(6, num15: 1); // Issue 68
+      }
+      return 0.0;
+    } else if (mantissa.length != 10) {
       throw CalculatorError(6, num15: 1);
     }
+    final int sign = (upper52 >> 40).toInt();
+    int intPart = 0;
+    int fracPart = 0;
+    // Int part:
+    int d = 0;
+    for (; d < min(e + 1, 10); d++) {
+      intPart *= 10;
+      intPart += getDigit(d);
+    }
+    final int fracDigits = 10 - d;
+    for (; d < 10; d++) {
+      fracPart *= 10;
+      fracPart += getDigit(d);
+    }
+    double result = intPart * pow(10.0, e + fracDigits - 9).toDouble() +
+        fracPart * pow(10.0, e - 9).toDouble();
     if (sign != 0) {
       if (sign == 0x9) {
-        m = -m;
+        result = -result;
       } else {
         throw CalculatorError(6, num15: 1);
       }
     }
-    final e = exponent;
-    if (m == 0 && e != 0) {
-      throw CalculatorError(6, num15: 1); // Issue 68
-    }
-    return m * pow(10.0, (e - 9).toDouble());
+    return result;
   }
 
   ///
@@ -364,13 +391,21 @@ class Value {
       return this;
     }
     final BigInt u = _upper52;
-    final BigInt mag = (u << ((e + 1) * 4)) & _mantissaMagnitude;
+    BigInt mag = (u << ((e + 1) * 4)) & _mantissaMagnitude;
     if (mag == BigInt.zero) {
       return Value.zero;
-    } else if ((u & _mantissaSign) == BigInt.zero) {
-      return Value._fromMantissaAndRawExponent(mag, 0x999); // 0x999 is -1
     } else {
-      return Value._fromMantissaAndRawExponent(mag | _mantissaSign, 0x999);
+      // Need to normalize mag so MSD is non-zero
+      int exp = 0x999; // -1
+      while (mag & _mantissaMsdMask == BigInt.zero) {
+        exp--;
+        mag = mag << 4;
+      }
+      if ((u & _mantissaSign) == BigInt.zero) {
+        return Value._fromMantissaAndRawExponent(mag, exp); // 0x999 is -1
+      } else {
+        return Value._fromMantissaAndRawExponent(mag | _mantissaSign, exp);
+      }
     }
   }
 
