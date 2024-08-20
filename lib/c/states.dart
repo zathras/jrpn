@@ -1184,16 +1184,17 @@ class OnOffKeyPressed extends DoNothing {
             // Current version on Windows keeps window there.
             exit(0);
           } else {
-            await SystemNavigator.pop();
-            // That kills us on some platforms, but it doesn't make sense on
-            // web.  It's a NOP on iOS, because apps terminating themselves
+            // The upcoming pop kills us on some platforms, but is a NOP
+            // on iOS, because apps terminating themselves
             // is against the Apple human interface guidelines (which doesn't
             // make a bit of sense if you're turning a calculator off, but
-            // whatever.)  So, on platforms were we can't go away, we blank
+            // whatever.)  On web, it does a back, which is a NOP if we're
+            // the first page.  So, on platforms were we can't go away, we blank
             // the LCD display and wait for the ON button to be pressed.
             model.display
                 .show(LcdContents.blank(lcdDigits: model.display.lcdDigits));
             changeState(CalculatorOff(controller));
+            await SystemNavigator.pop();
           }
         }
       }();
