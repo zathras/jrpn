@@ -212,6 +212,10 @@ class Resting extends ActiveState {
       }
     } on CalculatorError catch (e, stack) {
       controller.showCalculatorError(e, stack);
+    } on FloatOverflow {
+      model.floatOverflow = true;
+      model.display.displayX();
+      op.possiblyAlterStackLift(controller);
       // ignore: avoid_catches_without_on_clauses
     } catch (e, s) {
       debugPrint('Unexpected exception $e\n\n$s');
@@ -1320,6 +1324,9 @@ class Running extends ControllerState {
     } on CalculatorError catch (e) {
       _fake.pendingError = e;
       program.programListener.onError(e);
+    } on FloatOverflow {
+      aborted = true;
+      model.floatOverflow = true;
     } on _Aborted {
       aborted = true;
       // We're unawaited, so we swallow exception.

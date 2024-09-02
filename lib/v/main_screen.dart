@@ -1366,10 +1366,13 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                               unawaited(
                                   widget.app.model.writeToPersistentStorage());
                             } else {
-                              Future.delayed(
-                                  const Duration(milliseconds: 30),
-                                  () => showErrorDialog(
-                                      Jrpn.lastContext, err, null));
+                              Future.delayed(const Duration(milliseconds: 30),
+                                  () {
+                                final ctx = Jrpn.lastContext;
+                                if (ctx.mounted) {
+                                  showErrorDialog(ctx, err, null);
+                                }
+                              });
                             }
                           }
                         })),

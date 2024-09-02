@@ -148,6 +148,7 @@ void appendixA() {
   final List<String> ieeeFormat = [
     '80000000', // -0
     '7f800000',
+    'ff800000',
     '00800000',
     '3f800001',
     '7f800000',
@@ -157,7 +158,8 @@ void appendixA() {
   final Map<int, String> canonicalIeee = {0: '0'};
   final List<double> floatFormat = [
     0.0,
-    1.0e100,
+    9.999999999e99,
+    -9.999999999e99,
     1.175494351e-38,
     1.000000119,
     8e72,
@@ -180,9 +182,9 @@ void appendixA() {
       p.enter(Operations16.letterB);
       expect(await out.moveNext(), true);
       expect(out.current, ProgramEvent.done);
-      if (floatFormat[i] >= 8e72) {
+      if (floatFormat[i].abs() >= 8e72) {
         // ieee infinity
-        expect(fd(p.model.xF), fd(1.0e100));
+        expect(fd(p.model.xF), fd(1.0e100 * floatFormat[i].sign));
       } else {
         expect(fd(p.model.xF), fd(floatFormat[i]));
       }

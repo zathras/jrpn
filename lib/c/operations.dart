@@ -154,10 +154,19 @@ class Operations {
 
   static final NormalOperation abs = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
-        m.resultXF = m.xF.abs();
+        m.resultX = m.x.abs();
       },
       complexCalc: (Model m) {
-        m.resultXF = m.xC.r; // Sets complex part to zero
+        final x = m.xCV;
+        if (x.imaginary == Value.zero) {
+          m.resultXCV = ComplexValue(x.real.abs(), Value.zero);
+        } else if (x.real == Value.zero) {
+          m.resultXCV = ComplexValue(x.imaginary.abs(), Value.zero);
+        } else {
+          final re = x.real.asDouble;
+          final im = x.imaginary.asDouble;
+          m.resultXF = sqrt(re * re + im * im); // Sets complex part to zero
+        }
       },
       intCalc: (Model m) => m.resultXI = m.xI.abs(),
       name: 'ABS');

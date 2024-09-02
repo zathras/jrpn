@@ -316,7 +316,9 @@ class LabelArg extends ArgAlternates {
         if (vi <= -1) {
           return vi;
         }
-      } catch (ignored) {}
+      } catch (ignored) {
+        // do nothing
+      }
     }
     return m.signMode.valueToLabel(v, m);
   }

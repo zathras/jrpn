@@ -168,7 +168,7 @@ class TrigInputTests {
         reason: '${b.uKey} $hyp expected, got $r');
     expect(r.imaginary.toStringAsExponential(digits),
         hyp.imaginary.toStringAsExponential(digits),
-        reason: '${b.uKey} $hyp expected, got $r');
+        reason: 'hyp ${b.uKey}($arg) inv $hyp expected, got $r');
   }
 
   /// Check that a function followed by its inverse gives the correct
@@ -191,13 +191,13 @@ class TrigInputTests {
     }
 
     _testInverse(layout.sin, const Complex(2.8, 2.7),
-        const Complex(0.341592654, -2.7), const Complex(-2.8, 0.441592654));
+        const Complex(0.341592654, -2.7), const Complex(-2.8, 0.4415926535));
     _testInverse(layout.sin, const Complex(2.8, -2.7),
-        const Complex(0.341592654, 2.7), const Complex(-2.8, -0.441592654));
+        const Complex(0.341592654, 2.7), const Complex(-2.8, -0.4415926535));
     _testInverse(layout.sin, const Complex(-2.8, 2.7),
-        const Complex(-0.341592654, -2.7), const Complex(2.8, 0.441592654));
+        const Complex(-0.341592654, -2.7), const Complex(2.8, 0.4415926535));
     _testInverse(layout.sin, const Complex(-2.8, -2.7),
-        const Complex(-0.341592654, 2.7), const Complex(2.8, -0.441592654));
+        const Complex(-0.341592654, 2.7), const Complex(2.8, -0.4415926535));
 
     _testInverse(layout.cos, const Complex(2.8, 2.7), const Complex(2.8, 2.7),
         const Complex(2.8, 2.7));

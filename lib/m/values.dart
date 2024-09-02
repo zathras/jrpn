@@ -54,7 +54,7 @@ class Value {
   final BigInt internal;
   static final BigInt _maxNormalInternal =
       BigInt.parse('ffffffffffffffff', radix: 16);
-  // The maximum value of internal, EXCEPT when we're doing the double-int
+  // The maximum value of internal, EXCEPT when we're doing the 16C double-int
   // operations
 
   Value.fromInternal(this.internal) {
@@ -91,10 +91,6 @@ class Value {
       BigInt.parse('09999999999', radix: 16), 0x099);
   static final Value fMinValue = Value._fromMantissaAndRawExponent(
       BigInt.parse('99999999999', radix: 16), 0x099);
-  static final Value fInfinity =
-      Value.fromInternal(BigInt.parse('0100000000009a', radix: 16));
-  static final Value fNegativeInfinity =
-      Value.fromInternal(BigInt.parse('9100000000009a', radix: 16));
 
   static final BigInt _mask12 = (BigInt.one << 12) - BigInt.one;
   static final BigInt _mask52 = (BigInt.one << 52) - BigInt.one;
@@ -107,13 +103,15 @@ class Value {
   static final BigInt _matrixMantissa = BigInt.parse('a111eeeeeee', radix: 16);
   // Not a valid float.  Also, matrices are painful, and vaguely French.
 
+  static final BigInt _ten = BigInt.from(10);
+
   static Value fromDouble(double num) {
     if (num == double.infinity) {
-      return fInfinity;
+      throw FloatOverflow(fMaxValue);
     } else if (num == double.negativeInfinity) {
-      return fNegativeInfinity;
+      throw FloatOverflow(fMinValue);
     } else if (num.isNaN) {
-      return fInfinity;
+      throw FloatOverflow(fMaxValue);
     }
 
     // Slow but simple
@@ -162,9 +160,9 @@ class Value {
         return zero;
       } else if (mantissa & _mantissaSign == BigInt.zero) {
         // positive mantissa
-        return fInfinity;
+        throw FloatOverflow(fMaxValue);
       } else {
-        return fNegativeInfinity;
+        throw FloatOverflow(fMinValue);
       }
     } else if (negativeExponent) {
       // 1000's complement in BCD
@@ -189,8 +187,6 @@ class Value {
   /// -0 isZero, too.
   bool isZero(Model m) => m.isZero(this);
 
-  bool get isInfinite => this == fInfinity || this == fNegativeInfinity;
-
   ///
   /// If this is a matrix descriptor, give the matrix number, where A is 0.
   ///
@@ -209,11 +205,6 @@ class Value {
   /// cf. IntegerSignMode.toBigInt(), and [floatIntPart]
   ///
   double get asDouble {
-    if (this == fInfinity) {
-      return double.infinity;
-    } else if (this == fNegativeInfinity) {
-      return double.negativeInfinity;
-    }
     final BigInt upper52 = _upper52;
     String mantissa = (upper52 & _mantissaMagnitude).toRadixString(16);
     final asciiZero = '0'.codeUnitAt(0);
@@ -248,8 +239,16 @@ class Value {
       fracPart *= 10;
       fracPart += getDigit(d);
     }
+    // ignore: prefer_interpolation_to_compose_strings
+    final sr = '$intPart.' +
+        '$fracPart'.padLeft(fracDigits, '0') +
+        'e${e + fracDigits - 9}';
+    var result = double.parse(sr);
+    /*
+    Parsing a string is marginally more accurate than this:
     double result = intPart * pow(10.0, e + fracDigits - 9).toDouble() +
         fracPart * pow(10.0, e - 9).toDouble();
+     */
     if (sign != 0) {
       if (sign == 0x9) {
         result = -result;
@@ -261,21 +260,27 @@ class Value {
   }
 
   ///
-  /// For a Value holding a float, give the int part.
+  /// For a Value holding a float, give the int part, for a line number, and
+  /// index, or a label in a program.  For suifficiently large integers, just
+  /// give something with a big magnitude
   ///
   int floatIntPart() {
-    if (asMatrix != null || isInfinite) {
+    if (asMatrix != null) {
       throw CalculatorError(1);
     }
     int e = exponent;
     int result = 0;
     int d = 0;
-    while (e >= 0) {
-      result *= 10;
-      if (d < 10) {
-        result += mantissaDigit(d++);
+    if (e > 14) {
+      result = 99999999999999;
+    } else {
+      while (e >= 0) {
+        result *= 10;
+        if (d < 10) {
+          result += mantissaDigit(d++);
+        }
+        e--;
       }
-      e--;
     }
     if (isNegative) {
       return -result;
@@ -320,9 +325,17 @@ class Value {
     if (r > -100 && r < 100) {
       return r;
     } else {
-      // Impossible, now that checking is stricter, but left in for robustness.
       throw CalculatorError(6, num15: 1);
     }
+  }
+
+  BigInt get _mantissa {
+    BigInt result = BigInt.from(mantissaDigit(0));
+    for (int i = 1; i <= 9; i++) {
+      result *= _ten;
+      result += BigInt.from(mantissaDigit(i));
+    }
+    return result;
   }
 
   Value negateAsFloat() {
@@ -331,6 +344,14 @@ class Value {
     } else {
       return Value._fromMantissaAndRawExponent(
           _mantissaSign ^ _upper52, _lower12);
+    }
+  }
+
+  Value abs() {
+    if (isNegative) {
+      return negateAsFloat();
+    } else {
+      return this;
     }
   }
 
@@ -381,9 +402,6 @@ class Value {
     if (asMatrix != null) {
       throw CalculatorError(1);
     }
-    if (isInfinite) {
-      return zero;
-    }
     final int e = exponent;
     if (e > 9) {
       return zero;
@@ -412,9 +430,6 @@ class Value {
   Value intOp() {
     if (asMatrix != null) {
       throw CalculatorError(1);
-    }
-    if (isInfinite) {
-      return this;
     }
     final e = exponent;
     if (e < 0) {
@@ -453,9 +468,9 @@ class Value {
     final e = exponent + power;
     if (e >= 100) {
       if (mantissaDigit(-1) == 0) {
-        return fInfinity;
+        throw FloatOverflow(Value.fMaxValue);
       } else {
-        return fNegativeInfinity;
+        throw FloatOverflow(Value.fMinValue);
       }
     } else if (e <= -100) {
       return zero;
@@ -465,39 +480,20 @@ class Value {
   }
 
   Value decimalAdd(Value other) {
-    if (this == fInfinity) {
-      return fInfinity;
-    } else if (this == fNegativeInfinity) {
-      if (other == fInfinity) {
-        return fInfinity; // We don't have NaN
-      } else {
-        return fNegativeInfinity;
-      }
-    } else if (other.isInfinite) {
-      return other;
-    }
-    final us = _InternalFP(this);
-    us.add(_InternalFP(other));
-    return us.toValue();
+    return (DecimalFP12(this) + DecimalFP12(other)).toValue();
   }
 
+  /// Return this - other
   Value decimalSubtract(Value other) {
-    if (this == fInfinity) {
-      return fInfinity;
-    } else if (this == fNegativeInfinity) {
-      if (other == fNegativeInfinity) {
-        return fInfinity; // We don't have NaN
-      } else {
-        return fNegativeInfinity; // We don't have NaN
-      }
-    } else if (other == fInfinity) {
-      return fNegativeInfinity;
-    } else if (other == fNegativeInfinity) {
-      return fInfinity;
-    }
-    final us = _InternalFP(this);
-    us.subtract(_InternalFP(other));
-    return us.toValue();
+    return (DecimalFP12(this) - DecimalFP12(other)).toValue();
+  }
+
+  Value decimalMultiply(Value other) {
+    return (DecimalFP12(this) * DecimalFP12(other)).toValue();
+  }
+
+  Value decimalDivideBy(Value other) {
+    return (DecimalFP12(this) / DecimalFP12(other)).toValue();
   }
 }
 
@@ -511,130 +507,133 @@ class ComplexValue {
 
   const ComplexValue(this.real, this.imaginary);
 
-  ComplexValue decimalAdd(ComplexValue other) => ComplexValue(
-      real.decimalAdd(other.real), imaginary.decimalAdd(other.imaginary));
+  ComplexValue decimalAdd(
+          ComplexValue other, Value Function(Value Function()) check) =>
+      ComplexValue(check(() => real.decimalAdd(other.real)),
+          check(() => imaginary.decimalAdd(other.imaginary)));
 
-  ComplexValue decimalSubtract(ComplexValue other) => ComplexValue(
-      real.decimalSubtract(other.real),
-      imaginary.decimalSubtract(other.imaginary));
+  ComplexValue decimalSubtract(
+          ComplexValue other, Value Function(Value Function()) check) =>
+      ComplexValue(check(() => real.decimalSubtract(other.real)),
+          check(() => imaginary.decimalSubtract(other.imaginary)));
 
-  ///
-  /// This is a little weird.  A complex multiply has a big element of
-  /// subtraction in it, and subtaction is something that can make
-  /// IEEE binary floating point "show through" in an obvious way.  AFAIK
-  /// that's not true of complex division, so there isn't a corresponding
-  /// decimalishDivide.
-  ///
-  /// If we wanted *exactly* the 15C behavior, we'd have to implement
-  /// decimal math throughout, but that's an explicit non-goal, at least
-  /// as of issue #78.
-  ///
-  ComplexValue decimalishMultiply(ComplexValue other) {
-    final usR = real.asDouble;
-    final usI = imaginary.asDouble;
-    final themR = other.real.asDouble;
-    final themI = other.imaginary.asDouble;
+  ComplexValue decimalMultiply(
+      ComplexValue other, Value Function(Value Function()) check) {
+    final usReal = DecimalFP22(real);
+    final usImaginary = DecimalFP22(imaginary);
+    final themReal = DecimalFP22(other.real);
+    final themImaginary = DecimalFP22(other.imaginary);
     return ComplexValue(
-        Value.fromDouble(usR * themR)
-            .decimalSubtract(Value.fromDouble(usI * themI)),
-        Value.fromDouble(usR * themI)
-            .decimalAdd(Value.fromDouble(usI * themR)));
+        check(() =>
+            ((usReal * themReal) - (usImaginary * themImaginary)).toValue()),
+        check(() =>
+            ((usReal * themImaginary) + (usImaginary * themReal)).toValue()));
   }
-}
 
-///
-/// An mutable, internal representation of a decimal floating point value,
-/// with 12 digits of mantissa.  Operations on two arguments are allowed
-/// to change *both* arguments.
-///
-class _InternalFP {
-  // A sign byte, 12 mantissa bytes, and an exponent byte.
-  final _bytes = Uint8List(14);
-
-  _InternalFP(Value v) {
-    assert(!v.isInfinite);
-    isNegative = v.isNegative;
-    for (int i = 0; i < 10; i++) {
-      setMantissa(i + 1, v.mantissaDigit(i));
-    }
-    // lsd and msd retain default value of zero
-    exponent = v.exponent;
+  ComplexValue decimalDivideBy(
+      ComplexValue other, Value Function(Value Function()) check) {
+    final usReal = DecimalFP22(real);
+    final usImaginary = DecimalFP22(imaginary);
+    final themReal = DecimalFP22(other.real);
+    final themImaginary = DecimalFP22(other.imaginary);
+    final mag = themReal * themReal + themImaginary * themImaginary;
+    final rePart = (usReal * themReal + usImaginary * themImaginary) / mag;
+    final imPart = (usImaginary * themReal - usReal * themImaginary) / mag;
+    return ComplexValue(
+        check(() => rePart.toValue()), check(() => imPart.toValue()));
   }
 
   @override
-  String toString() {
-    final sb = StringBuffer('_InternalFP ');
-    if (isNegative) {
-      sb.write('-');
+  String toString() => 'ComplexValue($real, $imaginary';
+
+  @override
+  bool operator ==(Object other) {
+    if (other is ComplexValue) {
+      return real == other.real && imaginary == other.imaginary;
     } else {
-      sb.write('+');
+      return false;
     }
-    final zero = '0'.codeUnitAt(0);
-    sb.writeCharCode(zero + getMantissa(0));
-    sb.writeCharCode(zero + getMantissa(1));
-    sb.write('.');
-    for (int i = 2; i < 12; i++) {
-      sb.writeCharCode(zero + getMantissa(i));
-    }
-    sb.write('e');
-    sb.write(exponent.toString());
-    return sb.toString();
   }
+
+  @override
+  int get hashCode => Object.hash(real, imaginary);
+}
+
+//
+// A decimal floating point value with a mantissa size that's fixed by
+// the subclass.  Operations truncated (they don't round); it is expected that
+// a result is rounded when it is converted to a Value.  Overflow and underflow
+// detection aren't done, but the exponent is a full dart int; it is up to the
+// caller to ensure that DecimalFP isn't used in such a way that this could
+// over/underflow.  Zero is represented as a mantissan and exponent of zero.
+// Otherwise, the mantissa is always normalzed to have a constant number of
+// digits.
+//
+abstract class DecimalFP {
+  final bool isNegative;
+  final int exponent;
+  final BigInt mantissa;
+
+  DecimalFP.fromValue(Value v, this.mantissa)
+      : isNegative = v.isNegative,
+        exponent = v.exponent {
+    _assertValid();
+  }
+
+  DecimalFP.raw(this.isNegative, this.exponent, this.mantissa) {
+    _assertValid();
+  }
+
+  @protected
+  void _assertValid() {
+    assert(
+        (mantissa == BigInt.zero && exponent == 0) ||
+            (mantissa >= _tenPow(mantissaDigits - 1) &&
+                mantissa < _tenPow(mantissaDigits)),
+        '$mantissa');
+    assert(!isNegative || mantissa != BigInt.zero);
+  }
+
+  @protected
+  DecimalFP newInstance(bool isNegative, int exponent, BigInt mantissa);
+
+  @protected
+  int get mantissaDigits;
+
+  static final _tenPowCache =
+      List<BigInt?>.generate(50, (_) => null, growable: false);
+
+  static BigInt _tenPow(int digits) =>
+      _tenPowCache[digits] ??= BigInt.parse('1'.padRight(digits + 1, '0'));
 
   ///
   /// Convert to a Value.  Calling this method changes the internal
   /// representation (to a normalized form).
   ///
   Value toValue() {
-    // First, normalize the mantissa, ensuring msd is 0
-    normalizeMantissa();
-    // Next, round away from zero.  Cf. issue #78
-    int d = 11;
-    bool carry = getMantissa(d--) >= 5;
-    setMantissa(11, 0);
-    while (carry && d >= 0) {
-      final v = getMantissa(d) + 1;
-      if (v > 9) {
-        setMantissa(d, 0);
-      } else {
-        carry = false;
-        setMantissa(d, v);
-      }
-      d--;
+    int mm = (mantissa ~/ _tenPow(mantissaDigits - 11)).toInt();
+    if (mm == 0) {
+      return Value.zero;
     }
-    assert(!carry);
-    // Rounding might have de-normalized the mantissa
-    normalizeMantissa();
-    assert(getMantissa(0) == 0);
-    // Check for a zero mantissa
-    for (d = 1;; d++) {
-      if (getMantissa(d) != 0) {
-        break;
-      } else if (d == 11) {
-        return Value.zero;
-      }
+    assert(mm >= 10000000000 && mm < 100000000000); // 1e10, 1e11
+    int exp = exponent;
+    if (mm + 5 >= 100000000000) {
+      // 1e11
+      mm ~/= 10;
+      exp++;
     }
-    // Now normalize so that mantissa[1] is non-zero
-    if (d > 1) {
-      final int delta = d - 1;
-      // Left shift so that msd is in mantissa[1]
-      exponent -= delta;
-      for (d = 1; d < 12; d++) {
-        setMantissa(d, getMantissa(d + delta));
-      }
-    }
-
-    // At this point, mantissa should be normalized, viz:
-    assert(getMantissa(0) == 0 && getMantissa(1) > 0 && getMantissa(11) == 0);
+    mm = (mm + 5) ~/ 10;
+    // Rounds away from zero.  Cf. issue #70
+    assert(mm < 10000000000 && mm >= 1000000000); // 1e10, 1e9
 
     // Check underflow and overflow
-    if (exponent > 99) {
+    if (exp > 99) {
       if (isNegative) {
-        return Value.fNegativeInfinity;
+        throw FloatOverflow(Value.fMinValue);
       } else {
-        return Value.fInfinity;
+        throw FloatOverflow(Value.fMaxValue);
       }
-    } else if (exponent < -99) {
+    } else if (exp < -99) {
       return Value.zero;
     }
 
@@ -642,179 +641,317 @@ class _InternalFP {
     // Going through hex is pretty horrible, but so is doing a bunch of
     // left-shifts using immutable BigInt instances.
     final internal = StringBuffer();
-    final asciiZero = '0'.codeUnitAt(0);
     if (isNegative) {
-      internal.writeCharCode(asciiZero + 9);
+      internal.write('9');
     }
-    for (d = 1; d <= 10; d++) {
-      internal.writeCharCode(asciiZero + getMantissa(d));
+    final ms = '$mm';
+    assert(ms.length == 10);
+    internal.write(ms);
+    if (exp < 0) {
+      exp += 1000;
     }
-    int e = exponent;
-    if (e < 0) {
-      e += 1000;
-    }
-    assert(e >= 0 && e <= 999, e);
-    for (int divisor = 100; divisor > 0; divisor ~/= 10) {
-      int digit = e ~/ divisor;
-      assert(digit >= 0 && digit <= 9);
-      internal.writeCharCode(asciiZero + digit);
-      e -= digit * divisor;
-    }
-    assert(e == 0);
+    assert(exp >= 0 && exp <= 999, exp);
+    internal.write(exp.toString().padLeft(3, '0'));
     return Value.fromInternal(BigInt.parse(internal.toString(), radix: 16));
   }
 
-  void normalizeMantissa() {
-    if (getMantissa(0) > 0) {
-      // Do a truncating shift right
-      exponent++;
-      for (int d = 11; d >= 0; d--) {
-        setMantissa(d, getMantissa(d - 1));
-      }
+  @protected
+  DecimalFP addOrSubtract(DecimalFP other, bool add) {
+    assert(mantissaDigits == other.mantissaDigits);
+    BigInt us = mantissa;
+    BigInt them = other.mantissa;
+    if (them == BigInt.zero) {
+      return this;
     }
-  }
-
-  bool get isNegative => _bytes[0] != 0;
-  set isNegative(bool v) => _bytes[0] = v ? 1 : 0;
-
-  bool get isZero {
-    for (int i = 0; i < 12; i++) {
-      if (getMantissa(i) > 0) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  // 0 is most significant digit.  Out of range digits return zero.
-  int getMantissa(int d) {
-    if (d >= 0 && d < 12) {
-      return _bytes[d + 1];
-    } else {
-      return 0;
-    }
-  }
-
-  void setMantissa(int d, int v) {
-    assert(d >= 0 && d < 12, '$d');
-    _bytes[d + 1] = v;
-  }
-
-  ///
-  /// The exponent of this value.  Because the MSD is maintained at zero for
-  /// a normalized value, our value is:
-  /// MM.MMMMMMMMMM * 10^exponent
-  ///
-  int get exponent => _bytes[13] - 128;
-  set exponent(int v) {
-    assert(v > -128 && v < 128);
-    _bytes[13] = v + 128;
-  }
-
-  void negate() => isNegative = !isNegative;
-
-  ///
-  /// Add other to ourself.  Possibly changes other.
-  ///
-  void add(_InternalFP other) {
-    assert(getMantissa(0) == 0 && other.getMantissa(0) == 0);
-    if (other.isZero) {
-      return;
-    } else if (isZero) {
-      _bytes.setRange(0, _bytes.length, other._bytes);
-      return;
-    } else if (isNegative != other.isNegative) {
-      other.negate();
-      return subtract(other);
-    }
-    final exponentDelta = exponent - other.exponent;
-    if (exponentDelta > 0) {
-      other.shiftRight(exponentDelta, 0);
-    } else if (exponentDelta < 0) {
-      shiftRight(-exponentDelta, 0);
-    }
-    int carry = 0;
-    for (int d = 11; d >= 0; d--) {
-      final v = getMantissa(d) + other.getMantissa(d) + carry;
-      setMantissa(d, v % 10);
-      carry = v ~/ 10;
-    }
-    assert(carry == 0);
-  }
-
-  ///
-  /// Subtract other from ourself.  Possibly changes other.
-  ///
-  void subtract(_InternalFP other) {
-    assert(getMantissa(0) == 0 && other.getMantissa(0) == 0);
-    if (isNegative != other.isNegative) {
-      other.negate();
-      return add(other);
-    } else if (isZero) {
-      _bytes.setRange(0, _bytes.length, other._bytes);
-      isNegative = !other.isNegative;
-      return;
-    } else if (other.isZero) {
-      return;
-    }
-    shiftLeft(1);
-    other.shiftLeft(1);
-    final exponentDelta = exponent - other.exponent;
-    if (exponentDelta > 0) {
-      other.complementMantissa();
-      other.shiftRight(exponentDelta, 9);
-    } else {
-      negate();
-      complementMantissa();
-      shiftRight(-exponentDelta, 9);
-    }
-    int carry = 0;
-    for (int d = 11; d >= 0; d--) {
-      final v = getMantissa(d) + other.getMantissa(d) + carry;
-      setMantissa(d, v % 10);
-      carry = v ~/ 10;
-    }
-    // If this has changed signs
-    if (carry == 0) {
-      negate();
-      complementMantissa();
-    }
-  }
-
-  // Form the 10s complement of the mantissa.
-  void complementMantissa() {
-    int borrow = 0;
-    for (int d = 11; d >= 0; d--) {
-      final v = 10 - borrow - getMantissa(d);
-      if (v == 10) {
-        borrow = 0;
-        setMantissa(d, 0);
+    if (us == BigInt.zero) {
+      if (add) {
+        return other;
       } else {
-        borrow = 1;
-        setMantissa(d, v);
+        return newInstance(!other.isNegative, other.exponent, them);
       }
     }
-    // borrow == 0 means we just formed the 10s complement of 0, which is 0
-    assert(borrow == 1 || isZero, toString());
+    if (isNegative != other.isNegative) {
+      add = !add;
+    }
+    int deltaExp = exponent - other.exponent;
+    int exp = exponent;
+    if (add) {
+      if (deltaExp > 0) {
+        if (deltaExp > mantissaDigits) {
+          them = BigInt.zero;
+        } else {
+          them ~/= _tenPow(deltaExp);
+        }
+      } else if (deltaExp < 0) {
+        exp = other.exponent;
+        if (-deltaExp > mantissaDigits) {
+          us = BigInt.zero;
+        } else {
+          us ~/= _tenPow(-deltaExp);
+        }
+      }
+      us += them;
+      if (us >= _tenPow(mantissaDigits)) {
+        us ~/= _tenPow(1);
+        exp++;
+      }
+      return newInstance(isNegative, exp, us);
+    } else {
+      // subtract
+      bool changeSign;
+      if (deltaExp > 0) {
+        // Form complement:
+        if (deltaExp > mantissaDigits) {
+          them = _tenPow(mantissaDigits) - BigInt.one;
+        } else {
+          them = _tenPow(mantissaDigits) - them; // Complement
+          final shiftIn = _tenPow(mantissaDigits - 1) * BigInt.from(9);
+          for (int i = 0; i < deltaExp; i++) {
+            them = (them ~/ _tenPow(1)) + shiftIn;
+          }
+        }
+        changeSign = false;
+      } else if (deltaExp < 0) {
+        deltaExp = -deltaExp;
+        // Form complement:
+        if (deltaExp > mantissaDigits) {
+          us = _tenPow(mantissaDigits) - BigInt.one;
+        } else {
+          us = _tenPow(mantissaDigits) - us; // Complement
+          final shiftIn = _tenPow(mantissaDigits - 1) * BigInt.from(9);
+          for (int i = 0; i < deltaExp; i++) {
+            us = (us ~/ _tenPow(1)) + shiftIn;
+          }
+        }
+        exp = other.exponent;
+        changeSign = true;
+      } else if (us > them) {
+        them = _tenPow(mantissaDigits) - them;
+        changeSign = false;
+      } else if (us < them) {
+        us = _tenPow(mantissaDigits) - us;
+        changeSign = true;
+      } else {
+        return newInstance(false, 0, BigInt.zero);
+      }
+      us = us + them - _tenPow(mantissaDigits);
+      assert(us > BigInt.zero, '$us');
+      while (us < _tenPow(mantissaDigits - 1)) {
+        us *= _tenPow(1);
+        exp--;
+      }
+      return newInstance(isNegative ^ changeSign, exp, us);
+    }
   }
 
-  void shiftRight(int delta, int shiftIn) {
-    assert(delta >= 0);
-    exponent += delta;
-    for (int d = 11; d >= delta; d--) {
-      setMantissa(d, getMantissa(d - delta));
+  @protected
+  DecimalFP multiply(DecimalFP other) {
+    if (mantissa == BigInt.zero) {
+      return this;
     }
-    for (int d = min(11, delta - 1); d >= 0; d--) {
-      setMantissa(d, shiftIn);
+    if (other.mantissa == BigInt.zero) {
+      return other;
+    }
+    int resultExp = exponent + other.exponent;
+    BigInt mm = mantissa * other.mantissa;
+    BigInt resultM;
+    // Do a truncating normalize.  Roounding happens when we convert to
+    // a Value.
+    if (mm < _tenPow(mantissaDigits * 2 - 1)) {
+      resultM = mm ~/ _tenPow(mantissaDigits - 1);
+    } else {
+      resultExp++;
+      resultM = mm ~/ _tenPow(mantissaDigits);
+    }
+    bool resultNegative = isNegative ^ other.isNegative;
+    return newInstance(resultNegative, resultExp, resultM);
+  }
+
+  @protected
+  DecimalFP divideBy(DecimalFP other) {
+    if (other.mantissa == BigInt.zero) {
+      throw CalculatorError(0);
+    } else if (mantissa == BigInt.zero) {
+      return this;
+    }
+    BigInt dm = (mantissa * _tenPow(mantissaDigits + 1)) ~/ other.mantissa;
+    int resultExp = exponent - other.exponent;
+    BigInt resultM;
+    // Do a truncating normalize.  Roounding happens when we convert to
+    // a Value.
+    if (dm < _tenPow(mantissaDigits + 1)) {
+      resultM = dm ~/ _tenPow(1);
+      resultExp--;
+    } else {
+      resultM = dm ~/ _tenPow(2);
+    }
+    bool resultNegative = isNegative ^ other.isNegative;
+    return newInstance(resultNegative, resultExp, resultM);
+  }
+
+  DecimalFP abs() => isNegative ? newInstance(false, exponent, mantissa) : this;
+
+  @protected
+  int compareTo(DecimalFP other) {
+    assert(mantissaDigits == other.mantissaDigits);
+    if (isNegative != other.isNegative) {
+      return isNegative ? -1 : 1;
+    }
+    if (mantissa == BigInt.zero) {
+      if (other.mantissa == BigInt.zero) {
+        return 0;
+      } else {
+        return other.isNegative ? 1 : -1;
+      }
+    } else if (other.mantissa == BigInt.zero) {
+      return isNegative ? -1 : 1;
+    }
+    final int r;
+    if (exponent != other.exponent) {
+      r = exponent - other.exponent;
+    } else {
+      r = mantissa.compareTo(other.mantissa);
+    }
+    return isNegative ? -r : r;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! DecimalFP || mantissaDigits != other.mantissaDigits) {
+      return false;
+    } else {
+      return compareTo(other) == 0;
     }
   }
 
-  void shiftLeft(int delta) {
-    assert(delta >= 0);
-    assert(!Iterable<int>.generate(delta).any((i) => getMantissa(i) > 0));
-    exponent -= delta;
-    for (int d = 0; d <= 11; d++) {
-      setMantissa(d, getMantissa(d + delta));
+  @override
+  int get hashCode => Object.hash(isNegative, exponent, mantissa);
+
+  @override
+  String toString() {
+    final sb = StringBuffer('DecimalFP$mantissaDigits(');
+    if (isNegative) {
+      sb.write('-');
+    } else {
+      sb.write('+');
     }
+    final ms = '$mantissa'.padLeft(mantissaDigits, '0');
+    sb.write(ms.substring(0, 1));
+    sb.write('.');
+    for (int i = 1; i < mantissaDigits; i++) {
+      sb.write(ms.substring(i, i + 1));
+    }
+    sb.write('e');
+    if (exponent < 0) {
+      sb.write('-');
+    } else {
+      sb.write('+');
+    }
+    sb.write(exponent.abs().toString().padLeft(3, '0'));
+    sb.write(')');
+    return sb.toString();
   }
+
+  // For testing, and feeding into things like sqrt:
+  double get asDouble {
+    final v = mantissa.toDouble() * pow(10.0, exponent - mantissaDigits + 1);
+    return isNegative ? -v : v;
+  }
+
+  // For integers that can't possibly overflow
+  int get asInt {
+    final BigInt v = mantissa ~/ _tenPow(mantissaDigits - 1 - exponent);
+    return isNegative ? -v.toInt() : v.toInt();
+  }
+}
+
+class DecimalFP12 extends DecimalFP {
+  DecimalFP12(Value v) : super.fromValue(v, v._mantissa * DecimalFP._tenPow(2));
+
+  DecimalFP12._raw(super.isNegative, super.exponent, super.mantissa)
+      : super.raw();
+
+  @override
+  int get mantissaDigits => 12;
+
+  @override
+  DecimalFP12 newInstance(bool isNegative, int exponent, BigInt mantissa) =>
+      DecimalFP12._raw(isNegative, exponent, mantissa);
+
+  DecimalFP12 negate() => DecimalFP12._raw(!isNegative, exponent, mantissa);
+
+  static DecimalFP12 tenTo(int pow, {bool negative = false}) =>
+      DecimalFP12._raw(negative, pow, DecimalFP._tenPow(11));
+
+  DecimalFP12 operator +(DecimalFP12 other) =>
+      addOrSubtract(other, true) as DecimalFP12;
+
+  DecimalFP12 operator -(DecimalFP12 other) =>
+      addOrSubtract(other, false) as DecimalFP12;
+
+  DecimalFP12 operator *(DecimalFP12 other) => multiply(other) as DecimalFP12;
+
+  DecimalFP12 operator /(DecimalFP12 other) => divideBy(other) as DecimalFP12;
+
+  @override
+  DecimalFP12 abs() => super.abs() as DecimalFP12;
+
+  bool operator >(DecimalFP12 other) => compareTo(other) > 0;
+  bool operator >=(DecimalFP12 other) => compareTo(other) >= 0;
+  bool operator <(DecimalFP12 other) => compareTo(other) < 0;
+  bool operator <=(DecimalFP12 other) => compareTo(other) <= 0;
+}
+
+class DecimalFP22 extends DecimalFP {
+  DecimalFP22(Value v)
+      : super.fromValue(v, v._mantissa * DecimalFP._tenPow(12));
+
+  DecimalFP22._raw(super.isNegative, super.exponent, super.mantissa)
+      : super.raw();
+
+  static DecimalFP22 zero = DecimalFP22._raw(false, 0, BigInt.zero);
+
+  static DecimalFP22 one = tenTo(0);
+
+  static DecimalFP22 negativeOne = tenTo(0, negative: true);
+
+  @override
+  int get mantissaDigits => 22;
+
+  @override
+  DecimalFP22 newInstance(bool isNegative, int exponent, BigInt mantissa) =>
+      DecimalFP22._raw(isNegative, exponent, mantissa);
+
+  DecimalFP22 negate() => DecimalFP22._raw(!isNegative, exponent, mantissa);
+
+  static DecimalFP22 tenTo(int pow, {bool negative = false}) =>
+      DecimalFP22._raw(negative, pow, DecimalFP._tenPow(21));
+
+  DecimalFP22 operator +(DecimalFP22 other) =>
+      addOrSubtract(other, true) as DecimalFP22;
+
+  DecimalFP22 operator -(DecimalFP22 other) =>
+      addOrSubtract(other, false) as DecimalFP22;
+
+  DecimalFP22 operator *(DecimalFP22 other) => multiply(other) as DecimalFP22;
+
+  DecimalFP22 operator /(DecimalFP22 other) => divideBy(other) as DecimalFP22;
+
+  @override
+  DecimalFP22 abs() => super.abs() as DecimalFP22;
+
+  bool operator >(DecimalFP22 other) => compareTo(other) > 0;
+  bool operator >=(DecimalFP22 other) => compareTo(other) >= 0;
+  bool operator <(DecimalFP22 other) => compareTo(other) < 0;
+  bool operator <=(DecimalFP22 other) => compareTo(other) <= 0;
+}
+
+///
+/// An exception when a floating point operation overflows.  Notably, this is
+/// used in the matrix operations.
+///
+class FloatOverflow {
+  final Value infinity; // Either the max or min value
+
+  FloatOverflow(this.infinity);
 }

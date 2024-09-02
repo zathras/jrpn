@@ -31,20 +31,31 @@ import 'model15c.dart';
 abstract class AMatrix {
   int get rows;
   int get columns;
-  void set(int row, int col, Value v);
   Value get(int row, int col);
+  void set(int row, int col, Value v);
 
-  void setF(int row, int col, double d) => set(row, col, Value.fromDouble(d));
-  double getF(int row, int col) => get(row, col).asDouble;
+  void setF(int row, int col, DecimalFP22 fp) {
+    try {
+      set(row, col, fp.toValue());
+    } on FloatOverflow catch (e) {
+      set(row, col, e.infinity);
+      rethrow;
+    }
+  }
+
+  DecimalFP22 getF(int row, int col) => DecimalFP22(get(row, col));
 
   ///
   /// Computes this = a dot b.  r, a and b must already be properly dimensioned.
+  /// this must not be identically the same matrix as a or b (though it can
+  /// of course be equivalent).
   ///
   void dot(AMatrix a, AMatrix b) {
+    assert(this != a && this != b);
     assert(a.columns == b.rows && rows == a.rows && columns == b.columns);
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < columns; j++) {
-        double v = 0;
+        var v = DecimalFP22.zero;
         for (int k = 0; k < a.columns; k++) {
           v += a.getF(i, k) * b.getF(k, j);
         }
@@ -61,7 +72,7 @@ abstract class AMatrix {
     assert(a.columns == b.rows && rows == a.rows && columns == b.columns);
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < columns; j++) {
-        double v = getF(i, j);
+        var v = getF(i, j);
         for (int k = 0; k < a.columns; k++) {
           v -= a.getF(i, k) * b.getF(k, j);
         }
@@ -114,9 +125,9 @@ abstract class AMatrix {
   void identity() {
     visit((r, c) {
       if (r == c) {
-        setF(r, c, 1);
+        set(r, c, Value.oneF);
       } else {
-        setF(r, c, 0);
+        set(r, c, Value.zero);
       }
     });
   }
@@ -530,30 +541,6 @@ class CopyMatrix extends AMatrix {
   void set(int row, int col, Value v) => _values[row * columns + col] = v;
   @override
   Value get(int row, int col) => _values[row * columns + col];
-}
-
-///
-/// A view of a 15C matrix giving the permutation matrix (P).  Only valid if
-/// the underlying matrix is in LU form.
-///
-class PermutationMatrix extends AMatrix {
-  final Matrix _m;
-
-  PermutationMatrix(this._m);
-
-  @override
-  int get rows => _m.rows;
-
-  @override
-  int get columns => _m.columns;
-
-  @override
-  Value get(int row, int col) => _m.getP(row, col) ? Value.oneF : Value.zero;
-
-  @override
-  void set(int row, int col, Value v) {
-    throw Error();
-  }
 }
 
 abstract class UpperOrLowerTriangular extends AMatrix {

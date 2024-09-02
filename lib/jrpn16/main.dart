@@ -307,10 +307,7 @@ class Operations16 extends Operations {
           maxDigit: 31,
           f: (m, v) {
             if (m.isFloatMode) {
-              final d = v.asDouble; // Throw exception if not
-              if (d == double.infinity || d == double.negativeInfinity) {
-                throw CalculatorError(6);
-              }
+              v.asDouble; // Throw exception if not
             }
             m.x = v;
           }),
@@ -426,20 +423,19 @@ class Operations16 extends Operations {
 
   static final NormalOperation reciprocal = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        double x = m.xF;
-        if (x == 0.0) {
-          throw CalculatorError(0);
-        } else {
-          m.floatOverflow = false;
-          m.resultXF = 1.0 / x;
+        if (m.x == Value.zero) {
+          throw CalculatorError(0); // Before resetting floatOverflow
         }
+        m.floatOverflow = false;
+        m.resultX = m.checkOverflow(
+            () => (DecimalFP12.tenTo(0) / DecimalFP12(m.x)).toValue());
       },
       name: '1/x');
 
   static final NormalOperation plus = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
         m.floatOverflow = false;
-        m.popSetResultX = m.y.decimalAdd(m.x);
+        m.popSetResultX = m.checkOverflow(() => m.y.decimalAdd(m.x));
       },
       intCalc: (Model m) => m.integerSignMode.intAdd(m),
       name: '+');
@@ -447,7 +443,7 @@ class Operations16 extends Operations {
   static final NormalOperation minus = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
         m.floatOverflow = false;
-        m.popSetResultX = m.y.decimalSubtract(m.x);
+        m.popSetResultX = m.checkOverflow(() => m.y.decimalSubtract(m.x));
       },
       intCalc: (Model m) => m.integerSignMode.intSubtract(m),
       name: '-');
@@ -455,19 +451,18 @@ class Operations16 extends Operations {
   static final NormalOperation mult = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
         m.floatOverflow = false;
-        m.popSetResultXF = m.yF * m.xF;
+        m.popSetResultX = m.checkOverflow(() => m.y.decimalMultiply(m.x));
       },
       intCalc: (Model m) => _storeMultDiv(m.yI * m.xI, m),
       name: '*');
 
   static final NormalOperation div = NormalOperation.differentFloatAndInt(
       floatCalc: (Model m) {
-        final x = m.xF;
-        if (x == 0) {
-          throw CalculatorError(0);
+        if (m.x == Value.zero) {
+          throw CalculatorError(0); // Before resetting floatOverflow
         }
         m.floatOverflow = false;
-        m.popSetResultXF = m.yF / x;
+        m.popSetResultX = m.checkOverflow(() => m.y.decimalDivideBy(m.x));
       },
       intCalc: (Model m) {
         try {

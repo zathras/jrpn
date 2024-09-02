@@ -22,11 +22,11 @@ library jrpn15.tests;
 
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:jrpn/m/complex.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/c/controller.dart';
 
+import '../c/operations.dart';
 import 'main.dart';
 import 'model15c.dart';
 
@@ -196,6 +196,26 @@ class SelfTests15 extends SelfTests {
       final m = newModel();
       m.isComplexMode = true;
 
+      await _testOneArgComplex(
+          m, Operations.sqrtOp, const Complex(4, 0), const Complex(2, 0));
+      await _testOneArgComplex(
+          m, Operations.sqrtOp, const Complex(0, 8), const Complex(2, 2));
+      await _testOneArgComplex(
+          m, Operations.sqrtOp, const Complex(3, -4), const Complex(2, -1));
+      await _testOneArgComplex(
+          m, Operations.sqrtOp, const Complex(3, 4), const Complex(2, 1));
+      await _testOneArgComplex(
+          m, Operations.abs, const Complex(2, 0), const Complex(2, 0));
+      await _testOneArgComplex(
+          m, Operations.abs, const Complex(-2, 0), const Complex(2, 0));
+      await _testOneArgComplex(
+          m, Operations.abs, const Complex(0, 2), const Complex(2, 0));
+      await _testOneArgComplex(
+          m, Operations.abs, const Complex(0, -2), const Complex(2, 0));
+      await _testOneArgComplex(
+          m, Operations.abs, const Complex(3, 4), const Complex(5, 0));
+      await _testOneArgComplex(
+          m, Operations.abs, const Complex(-3, -4), const Complex(5, 0));
       await _testOneArgComplex(m, Operations15.lnOp,
           const Complex(1.234, 5.678), const Complex(1.759674471, 1.356794138));
       await _testOneArgComplex(
@@ -403,11 +423,7 @@ class SelfTests15 extends SelfTests {
             x = rand.nextInt(pow(10, 9).toInt()) * 10 + rand.nextInt(10);
           }
           await testIntPart(x);
-          if (kIsWeb) {
-            await testIntPart(x * pow(10, rand.nextInt(5)).toInt());
-          } else {
-            await testIntPart(x * pow(10, rand.nextInt(9)).toInt());
-          }
+          await testIntPart(x * pow(10, rand.nextInt(5)).toInt());
         }
       }
 

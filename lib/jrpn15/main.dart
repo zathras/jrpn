@@ -21,7 +21,6 @@ this program; if not, see https://www.gnu.org/licenses/ .
 library jrpn15.main;
 
 import 'dart:async';
-import 'dart:math';
 import 'dart:math' as dart;
 
 import 'package:flutter/material.dart';
@@ -115,25 +114,22 @@ class Operations15 extends Operations {
           final result = (m as Model15).matrices[m.resultMatrix];
           result.copyFrom(m, m.matrices[matX]);
           linalg.invert(result);
-          final y = m.yF;
+          final y = DecimalFP12(m.y);
           result.visit((final int r, c) {
-            result.setF(r, c, result.getF(r, c) * y);
+            result.set(
+                r,
+                c,
+                m.checkOverflow(
+                    () => (DecimalFP12(result.get(r, c)) * y).toValue()));
           });
         } else {
           _scalarOrMatrix(m, scalar: (x, y) {
-            if (x == Value.zero) {
-              throw CalculatorError(0);
-            }
-            return Value.fromDouble(y.asDouble / x.asDouble);
+            return y.decimalDivideBy(x);
           }, matrix: (m, x, y, r) {
             if (x != r) {
               r.resize(m, y.rows, y.columns);
             }
-            try {
-              linalg.solve(x, y, r);
-            } on linalg.MatrixOverflow {
-              m.floatOverflow = true;
-            }
+            linalg.solve(x, y, r);
           });
         }
         m.needsSave = true;
@@ -144,7 +140,7 @@ class Operations15 extends Operations {
         } else if (m.xC == Complex.zero) {
           throw CalculatorError(0);
         } else {
-          m.popSetResultXC = m.yC / m.xC;
+          m.popSetResultXCV = m.yCV.decimalDivideBy(m.xCV, m.checkOverflow);
         }
       },
       name: '/');
@@ -156,7 +152,7 @@ class Operations15 extends Operations {
     final int? mx = m.x.asMatrix;
     final int? my = m.y.asMatrix;
     if (mx == null && my == null) {
-      m.popSetResultX = scalar(m.x, m.y);
+      m.popSetResultX = m.checkOverflow(() => scalar(m.x, m.y));
     } else {
       final result = m.matrices[m.resultMatrix];
       if (mx == null) {
@@ -164,20 +160,24 @@ class Operations15 extends Operations {
         final x = m.x;
         result.resize(m, matY.rows, matY.columns);
         matY.visit((r, c) {
-          result.set(r, c, scalar(x, matY.get(r, c)));
+          result.set(r, c, m.checkOverflow(() => scalar(x, matY.get(r, c))));
         });
       } else if (my == null) {
         final matX = m.matrices[mx];
         final y = m.y;
         result.resize(m, matX.rows, matX.columns);
         matX.visit((r, c) {
-          result.set(r, c, scalar(matX.get(r, c), y));
+          result.set(r, c, m.checkOverflow(() => scalar(matX.get(r, c), y)));
         });
       } else {
         final matX = m.matrices[mx];
         final matY = m.matrices[my];
         final result = m.matrices[m.resultMatrix];
-        matrix(m, matX, matY, result);
+        try {
+          matrix(m, matX, matY, result);
+        } on FloatOverflow {
+          m.floatOverflow = true;
+        }
       }
       m.popSetResultX = Value.fromMatrix(m.resultMatrix);
     }
@@ -186,14 +186,14 @@ class Operations15 extends Operations {
   static final NormalOperation mult = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         _scalarOrMatrix(m,
-            scalar: (x, y) => Value.fromDouble(y.asDouble * x.asDouble),
+            scalar: (x, y) => y.decimalMultiply(x),
             matrix: (m, x, y, r) => _matrixMultiply(m, x, y, r));
       },
       complexCalc: (Model m) {
         if (m.x.asMatrix != null || m.y.asMatrix != null) {
           mult.floatCalc!(m);
         } else {
-          m.popSetResultXCV = m.yCV.decimalishMultiply(m.xCV);
+          m.popSetResultXCV = m.yCV.decimalMultiply(m.xCV, m.checkOverflow);
         }
       },
       name: '*');
@@ -201,6 +201,7 @@ class Operations15 extends Operations {
   /// Calculate result = y * x
   static void _matrixMultiply(Model15 m, AMatrix x, AMatrix y, Matrix result) {
     if (result == x || result == y) {
+      // Identity, not equivalence
       throw CalculatorError(11);
     }
     if (y.columns != x.rows) {
@@ -215,25 +216,27 @@ class Operations15 extends Operations {
         _scalarOrMatrix(m,
             scalar: (x, y) => y.decimalAdd(x),
             matrix: (m, x, y, r) {
-              _addOrSubtractMatricesXY((x, y) => y.decimalAdd(x), m, x, y, r);
+              _addOrSubtractMatricesXY(
+                  (x, y) => y.decimalAdd(x), m, x, y, r, m);
             });
       },
       complexCalc: (Model m) {
         if (m.x.asMatrix != null || m.y.asMatrix != null) {
           plus.floatCalc!(m);
         } else {
-          m.popSetResultXCV = m.yCV.decimalAdd(m.xCV);
+          m.popSetResultXCV = m.yCV.decimalAdd(m.xCV, m.checkOverflow);
         }
       },
       name: '+');
 
   static void _addOrSubtractMatricesXY(Value Function(Value, Value) f,
-      Model15 m, Matrix x, Matrix y, Matrix result) {
+      Model15 m, Matrix x, Matrix y, Matrix result, Model model) {
     if (x.rows != y.rows || x.columns != y.columns) {
       throw CalculatorError(11);
     }
     result.resize(m, x.rows, x.columns);
-    result.visit((r, c) => result.set(r, c, f(x.get(r, c), y.get(r, c))));
+    result.visit((r, c) => result.set(
+        r, c, model.checkOverflow(() => f(x.get(r, c), y.get(r, c)))));
   }
 
   static final NormalOperation minus = NormalOperation.floatOnly(
@@ -242,14 +245,14 @@ class Operations15 extends Operations {
             scalar: (x, y) => y.decimalSubtract(x),
             matrix: (m, x, y, r) {
               _addOrSubtractMatricesXY(
-                  (x, y) => y.decimalSubtract(x), m, x, y, r);
+                  (x, y) => y.decimalSubtract(x), m, x, y, r, m);
             });
       },
       complexCalc: (Model m) {
         if (m.x.asMatrix != null || m.y.asMatrix != null) {
           minus.floatCalc!(m);
         } else {
-          m.popSetResultXCV = m.yCV.decimalSubtract(m.xCV);
+          m.popSetResultXCV = m.yCV.decimalSubtract(m.xCV, m.checkOverflow);
         }
       },
       name: '-');
@@ -282,7 +285,7 @@ class Operations15 extends Operations {
       letter: letterLabelB,
       floatCalc: (Model m) {
         double x = m.xF;
-        m.resultXF = pow(e, x) as double;
+        m.resultXF = dart.pow(dart.e, x) as double;
       },
       complexCalc: (Model m) {
         m.resultXC = m.xC.exp();
@@ -292,12 +295,12 @@ class Operations15 extends Operations {
       argShift: Operations.gShift,
       programListingArgName: 'g A',
       floatCalc: (Model m) {
-        double x = m.xF;
-        m.resultXF = x * x;
+        final x = DecimalFP22(m.x);
+        m.resultX = m.checkOverflow(() => (x * x).toValue());
       },
       complexCalc: (Model m) {
-        final v = m.xC;
-        m.resultXC = v * v;
+        final v = m.xCV;
+        m.resultXCV = v.decimalMultiply(v, m.checkOverflow);
       },
       name: 'x^2');
   static final NormalOperation lnOp = NormalOperationShiftedArg.floatOnly(
@@ -308,7 +311,7 @@ class Operations15 extends Operations {
         if (x <= 0) {
           throw CalculatorError(0);
         }
-        m.resultXF = _checkResult(() => log(x), 0);
+        m.resultXF = _checkResult(() => dart.log(x), 0);
       },
       complexCalc: (Model m) {
         m.resultXC = _checkResultC(m.xC.ln, 0);
@@ -318,10 +321,10 @@ class Operations15 extends Operations {
       letter: letterLabelC,
       floatCalc: (Model m) {
         double x = m.xF;
-        m.resultXF = pow(10, x) as double;
+        m.resultXF = dart.pow(10.0, x) as double;
       },
       complexCalc: (Model m) {
-        m.resultXC = (m.xC * const Complex(ln10, 0)).exp();
+        m.resultXC = (m.xC * const Complex(dart.ln10, 0)).exp();
       },
       name: '10^x');
   static final NormalOperation logOp = NormalOperationShiftedArg.floatOnly(
@@ -332,16 +335,16 @@ class Operations15 extends Operations {
         if (x <= 0) {
           throw CalculatorError(0);
         }
-        m.resultXF = log(x) / ln10;
+        m.resultXF = dart.log(x) / dart.ln10;
       },
       complexCalc: (Model m) {
-        m.resultXC = _checkResultC(m.xC.ln, 0) / const Complex(ln10, 0);
+        m.resultXC = _checkResultC(m.xC.ln, 0) / const Complex(dart.ln10, 0);
       },
       name: 'log');
   static final NormalOperation yX15 = NormalOperationOrLetter.floatOnly(
       letter: letterLabelD,
       floatCalc: (Model m) {
-        m.popSetResultXF = pow(m.yF, m.xF) as double;
+        m.popSetResultXF = dart.pow(m.yF, m.xF) as double;
       },
       complexCalc: (Model m) {
         m.popSetResultXC = m.yC.pow(m.xC);
@@ -351,7 +354,10 @@ class Operations15 extends Operations {
       programListingArgName: 'g D',
       argShift: Operations.gShift,
       floatCalc: (Model m) {
-        m.resultXF = m.xF * 0.01 * m.yF;
+        final x = DecimalFP12(m.x);
+        final y = DecimalFP12(m.y);
+        final hundred = DecimalFP12(Value.fromDouble(100));
+        m.resultX = m.checkOverflow(() => ((x * y) / hundred).toValue());
       },
       name: '%');
 
@@ -361,29 +367,26 @@ class Operations15 extends Operations {
           floatCalc: (Model m) {
             final mat = m.x.asMatrix;
             if (mat == null) {
-              double x = m.xF;
-              if (x == 0.0) {
-                throw CalculatorError(0);
-              } else {
-                m.resultXF = 1.0 / x;
-              }
+              Value x = m.x;
+              final one = DecimalFP12.tenTo(0);
+              m.resultX =
+                  m.checkOverflow(() => (one / DecimalFP12(x)).toValue());
             } else {
               final result = (m as Model15).matrices[m.resultMatrix];
               result.copyFrom(m, m.matrices[mat]);
-              linalg.invert(result);
-              m.resultX = Value.fromMatrix(m.resultMatrix);
+              try {
+                linalg.invert(result);
+              } finally {
+                m.resultX = Value.fromMatrix(m.resultMatrix);
+              }
             }
           },
           complexCalc: (Model m) {
             if (m.x.asMatrix != null) {
               return reciprocal15.floatCalc!(m);
             }
-            final x = m.xC;
-            if (x == Complex.zero) {
-              throw CalculatorError(0);
-            } else {
-              m.resultXC = const Complex(1, 0) / x;
-            }
+            final one = ComplexValue(Value.fromDouble(1), Value.zero);
+            m.resultXCV = one.decimalDivideBy(m.xCV, m.checkOverflow);
           },
           name: '1/x');
 
@@ -392,7 +395,11 @@ class Operations15 extends Operations {
           programListingArgName: 'g E',
           argShift: Operations.gShift,
           floatCalc: (Model m) {
-            m.resultXF = ((m.xF - m.yF) / m.yF) * 100.0;
+            final x = DecimalFP12(m.x);
+            final y = DecimalFP12(m.y);
+            final hundred = DecimalFP12(Value.fromDouble(100));
+            final result = ((x - y) / y) * hundred;
+            m.resultX = m.checkOverflow(() => result.toValue());
           },
           name: 'delta%');
   static final NormalArgOperation matrix = NormalArgOperation(
@@ -439,7 +446,11 @@ class Operations15 extends Operations {
               final x = _getMatrixFromValue(m, m.x);
               final y = _getMatrixFromValue(m, m.y);
               final yt = TransposeMatrix(y);
-              _matrixMultiply(m, x, yt, result);
+              try {
+                _matrixMultiply(m, x, yt, result);
+              } on FloatOverflow {
+                m.floatOverflow = true;
+              }
               m.popSetResultX = Value.fromMatrix(m.resultMatrix);
             })),
         KeyArg(
@@ -457,7 +468,11 @@ class Operations15 extends Operations {
               if (result.rows != y.rows || result.columns != x.columns) {
                 throw CalculatorError(11);
               }
-              result.residual(y, x);
+              try {
+                result.residual(y, x);
+              } on FloatOverflow {
+                m.floatOverflow = true;
+              }
               m.popSetResultX = Value.fromMatrix(m.resultMatrix);
             })),
         KeyArg(
@@ -465,7 +480,8 @@ class Operations15 extends Operations {
             child: ArgDone((m) {
               final mat = m.x.asMatrix;
               if (mat != null) {
-                m.resultXF = linalg.rowNorm((m as Model15).matrices[mat]);
+                m.resultX = m.checkOverflow(() =>
+                    linalg.rowNorm((m as Model15).matrices[mat]).toValue());
               } else {
                 m.program.skipIfRunning();
               }
@@ -489,7 +505,8 @@ class Operations15 extends Operations {
               }
               final result = (m as Model15).matrices[m.resultMatrix];
               result.copyFrom(m, m.matrices[mat]);
-              m.resultXF = linalg.determinant(result);
+              m.resultX =
+                  m.checkOverflow(() => linalg.determinant(result).toValue());
             })),
       ]),
       name: 'MATRIX');
@@ -766,7 +783,7 @@ class Operations15 extends Operations {
         KeyArg(
             key: Operations15.parenI15,
             child: ArgDone((m) => (m as Model15).memory.numRegisters =
-                max(m.x.intOp().asDouble.abs().toInt(), 1) + 1)),
+                dart.max(m.x.floatIntPart().abs(), 1) + 1)),
       ]),
       name: 'DIM');
 
@@ -812,22 +829,26 @@ class Operations15 extends Operations {
           }),
       name: 'ISG');
 
-  static Value _skipIf(Model m, Value val, bool Function(double n, int x) skip,
-      double Function(double n, int y) f) {
-    double n = val.intOp().asDouble;
-    final int frac = val.fracOp().timesTenTo(5).floatIntPart().abs();
+  static Value _skipIf(
+      Model m,
+      Value val,
+      bool Function(DecimalFP12 n, DecimalFP12 x) skip,
+      DecimalFP12 Function(DecimalFP12 n, DecimalFP12 y) f) {
+    var n = DecimalFP12(val.intOp());
+    final fracV = val.fracOp().timesTenTo(5).intOp().abs();
+    final int frac = fracV.floatIntPart();
     final int x = frac ~/ 100;
     final int y = frac % 100;
-    n = f(n, max(1, y));
-    if (skip(n, x)) {
+    n = f(n, DecimalFP12(Value.fromDouble(dart.max(1, y).toDouble())));
+    if (skip(n, DecimalFP12(Value.fromDouble(x.toDouble())))) {
       m.program.incrementCurrentLine(); // Even if not running
     }
-    if (n > 0) {
-      n = n * 100000 + frac;
+    if (n.isNegative) {
+      n = n - DecimalFP12(fracV) * DecimalFP12.tenTo(-5);
     } else {
-      n = n * 100000 - frac;
+      n = n + DecimalFP12(fracV) * DecimalFP12.tenTo(-5);
     }
-    return Value.fromDouble(n).timesTenTo(-5);
+    return n.toValue();
   }
 
   static final NormalArgOperation integrate = RunProgramOperation(
@@ -894,13 +915,14 @@ class Operations15 extends Operations {
       floatCalc: (Model m) {
         double x = m.xF;
         double y = m.yF;
-        m.resultXF = sqrt(x * x + y * y);
-        m.yF = atan2(y, x) / m.trigMode.scaleFactor;
+        m.resultXF = dart.sqrt(x * x + y * y);
+        m.yF = dart.atan2(y, x) / m.trigMode.scaleFactor;
       },
       complexCalc: (Model m) {
         Complex v = m.xC;
-        m.resultXC = Complex(sqrt(v.real * v.real + v.imaginary * v.imaginary),
-            atan2(v.imaginary, v.real) / m.trigMode.scaleFactor);
+        m.resultXC = Complex(
+            dart.sqrt(v.real * v.real + v.imaginary * v.imaginary),
+            dart.atan2(v.imaginary, v.real) / m.trigMode.scaleFactor);
       },
       name: '->P');
   static final NormalOperation toHMS =
@@ -934,7 +956,7 @@ class Operations15 extends Operations {
         } else if (m.isComplexMode) {
           m.program.doNextIf(m.xC == Complex.zero);
         } else {
-          m.program.doNextIf(m.xF == 0.0);
+          m.program.doNextIf(m.x == Value.zero);
         }
       });
 
@@ -946,7 +968,7 @@ class Operations15 extends Operations {
         } else if (m.isComplexMode) {
           m.program.doNextIf(m.xC != Complex.zero);
         } else {
-          m.program.doNextIf(m.xF != 0.0);
+          m.program.doNextIf(m.x != Value.zero);
         }
         break;
       case 1: // x > 0
@@ -1014,67 +1036,71 @@ class Operations15 extends Operations {
       name: 'USER');
   static final NormalOperation xFactorial = NormalOperation.floatOnly(
       floatCalc: (Model m) {
-        m.resultXF = factorial(m.xF);
+        m.resultX = m.checkOverflow(() => factorial(m.x));
       },
       name: 'x!');
   static final NormalOperation xBar = StackLiftingNormalOperation.floatOnly(
       floatCalc: (Model m) {
-        final denom = m.memory.registers[2].asDouble;
-        m.xF = m.memory.registers[5].asDouble / denom;
+        final denom = m.memory.registers[2];
+        m.x =
+            m.checkOverflow(() => m.memory.registers[5].decimalDivideBy(denom));
         // Don't set LastX - checked on 15C
         m.pushStack();
-        m.xF = m.memory.registers[3].asDouble / denom;
+        m.x =
+            m.checkOverflow(() => m.memory.registers[3].decimalDivideBy(denom));
       },
       needsStackLiftIfEnabled: _statsLift,
       name: 'xBar');
   static final NormalOperation yHatR = NormalOperation.floatOnly(
       floatCalc: (Model m) {
         final lr = LinearRegression(m.memory.registers);
-        final x = m.xF;
-        m.resultXF = lr.r;
+        final x = m.x;
+        m.resultX = m.checkOverflow(() => lr.r.toValue());
         // Do set LastX - checked on 15C.
         m.pushStack();
         // We do push the stack, without regard to stack lift.  This is how
         // the real 15C behaves, and is checked with a regression test.
-        m.yF = lr.r;
-        m.xF = lr.yHat(x);
+        m.y = m.checkOverflow(() => lr.r.toValue());
+        m.x = m.checkOverflow(() => lr.yHat(DecimalFP22(x)).toValue());
       },
       name: 'yHat,r');
   static final NormalOperation stdDeviation =
       StackLiftingNormalOperation.floatOnly(
           floatCalc: (Model m) {
-            final n = m.memory.registers[2].asDouble;
-            m.x = _stdDev(m.memory.registers, 5, 6, n);
+            final n = m.memory.registers[2];
+            m.x = m.checkOverflow(() => _stdDev(m.memory.registers, 5, 6, n));
             // Don't set LastX - checked on 15C
             m.pushStack();
-            m.x = _stdDev(m.memory.registers, 3, 4, n);
+            m.x = m.checkOverflow(() => _stdDev(m.memory.registers, 3, 4, n));
           },
           needsStackLiftIfEnabled: (m) =>
-              _statsLift(m) && m.memory.registers[2].asDouble != 1,
+              _statsLift(m) && m.memory.registers[2] != Value.oneF,
           name: 's');
   static bool _statsLift(Model m) {
     m.memory.registers[7]; // Throw exception if not valid
-    if (m.memory.registers[2].asDouble == 0) {
+    if (m.memory.registers[2] == Value.zero) {
       throw CalculatorError(0);
     }
     return true;
   }
 
-  static Value _stdDev(Registers r, int sumR, int sumSqR, double n) {
-    final double sum = r[sumR].asDouble;
-    final double sumSq = r[sumSqR].asDouble;
+  static Value _stdDev(Registers r, int sumR, int sumSqR, Value nV) {
+    final n = DecimalFP22(nV);
+    final sum = DecimalFP22(r[sumR]);
+    final sumSq = DecimalFP22(r[sumSqR]);
     final m = n * sumSq - sum * sum;
-    return Value.fromDouble(dart.sqrt(m / (n * (n - 1))));
+    return Value.fromDouble(
+        dart.sqrt(m.asDouble / (n.asDouble * (n.asDouble - 1))));
   }
 
   static final NormalOperation linearRegression =
       StackLiftingNormalOperation.floatOnly(
           floatCalc: (Model m) {
             final lr = LinearRegression(m.memory.registers);
-            m.xF = lr.slope;
+            m.x = m.checkOverflow(() => lr.slope.toValue());
             // Don't set LastX - checked on 15C
             m.pushStack();
-            m.xF = lr.yIntercept;
+            m.x = m.checkOverflow(() => lr.yIntercept.toValue());
           },
           needsStackLiftIfEnabled: (m) {
             LinearRegression(m.memory.registers); // Throw exception if error
@@ -1086,21 +1112,21 @@ class Operations15 extends Operations {
       stackLift: StackLift.disable,
       floatCalc: (Model m) {
         final reg = m.memory.registers;
-        final x = m.xF;
-        final y = m.yF;
-        reg[7] = Value.fromDouble(reg[7].asDouble + x * y);
-        reg[6] = Value.fromDouble(reg[6].asDouble + y * y);
-        reg[5] = Value.fromDouble(reg[5].asDouble + y);
-        reg[4] = Value.fromDouble(reg[4].asDouble + x * x);
-        reg[3] = Value.fromDouble(reg[3].asDouble + x);
-        final newReg = reg[2].asDouble + 1;
-        reg[2] = Value.fromDouble(newReg);
+        final x = DecimalFP22(m.x);
+        final y = DecimalFP22(m.y);
+        reg[7] = m.checkOverflow(() => (DecimalFP22(reg[7]) + x * y).toValue());
+        reg[6] = m.checkOverflow(() => (DecimalFP22(reg[6]) + y * y).toValue());
+        reg[5] = m.checkOverflow(() => (DecimalFP22(reg[5]) + y).toValue());
+        reg[4] = m.checkOverflow(() => (DecimalFP22(reg[4]) + x * x).toValue());
+        reg[3] = m.checkOverflow(() => (DecimalFP22(reg[3]) + x).toValue());
+        final newReg = m.checkOverflow(() => reg[2].decimalAdd(Value.oneF));
+        reg[2] = newReg;
         if (m.isComplexMode) {
-          m.lastXC = m.xC;
-          m.xC = Complex(m.xF, newReg);
+          m.lastXCV = m.xCV;
+          m.xCV = ComplexValue(newReg, m.xCV.imaginary);
         } else {
           m.lastX = m.x;
-          m.x = reg[2];
+          m.x = newReg;
         }
       },
       name: 'E+');
@@ -1108,18 +1134,19 @@ class Operations15 extends Operations {
       stackLift: StackLift.disable,
       floatCalc: (Model m) {
         final reg = m.memory.registers;
-        final x = m.xF;
-        final y = m.yF;
-        reg[7] = Value.fromDouble(reg[7].asDouble - x * y);
-        reg[6] = Value.fromDouble(reg[6].asDouble - y * y);
-        reg[5] = Value.fromDouble(reg[5].asDouble - y);
-        reg[4] = Value.fromDouble(reg[4].asDouble - x * x);
-        reg[3] = Value.fromDouble(reg[3].asDouble - x);
-        final newReg = reg[2].asDouble - 1;
-        reg[2] = Value.fromDouble(newReg);
+        final x = DecimalFP22(m.x);
+        final y = DecimalFP22(m.y);
+        reg[7] = m.checkOverflow(() => (DecimalFP22(reg[7]) - x * y).toValue());
+        reg[6] = m.checkOverflow(() => (DecimalFP22(reg[6]) - y * y).toValue());
+        reg[5] = m.checkOverflow(() => (DecimalFP22(reg[5]) - y).toValue());
+        reg[4] = m.checkOverflow(() => (DecimalFP22(reg[4]) - x * x).toValue());
+        reg[3] = m.checkOverflow(() => (DecimalFP22(reg[3]) - x).toValue());
+        final newReg =
+            m.checkOverflow(() => reg[2].decimalSubtract(Value.oneF));
+        reg[2] = newReg;
         if (m.isComplexMode) {
-          m.lastXC = m.xC;
-          m.xC = Complex(m.xF, newReg);
+          m.lastXCV = m.xCV;
+          m.xCV = ComplexValue(newReg, m.xCV.imaginary);
         } else {
           m.lastX = m.x;
           m.x = reg[2];
@@ -1130,7 +1157,7 @@ class Operations15 extends Operations {
       floatCalc: (Model m) {
         final mx = m.x.asMatrix;
         if (mx == null) {
-          m.popSetResultXF = permutations(m.yF, m.xF);
+          m.popSetResultX = m.checkOverflow(() => permutations(m.y, m.x));
         } else {
           (m as Model15).matrices[mx].convertToZP();
           m.needsSave = true;
@@ -1141,7 +1168,8 @@ class Operations15 extends Operations {
       floatCalc: (Model m) {
         final mx = m.x.asMatrix;
         if (mx == null) {
-          m.popSetResultXF = binomialCoefficient(m.yF, m.xF);
+          m.popSetResultX =
+              m.checkOverflow(() => binomialCoefficient(m.y, m.x));
         } else {
           (m as Model15).matrices[mx].convertToZC();
           m.needsSave = true;
@@ -1326,22 +1354,26 @@ class Operations15 extends Operations {
             key: Operations15.plus,
             child: RegisterWriteOpArg(
                 maxDigit: 19,
-                f: (m, r, x) => Value.fromDouble(r.asDouble + x.asDouble))),
+                f: (m, r, x) => m.checkOverflow(
+                    () => (DecimalFP12(r) + DecimalFP12(x)).toValue()))),
         KeyArg(
             key: Operations15.minus,
             child: RegisterWriteOpArg(
                 maxDigit: 19,
-                f: (m, r, x) => Value.fromDouble(r.asDouble - x.asDouble))),
+                f: (m, r, x) => m.checkOverflow(
+                    () => (DecimalFP12(r) - DecimalFP12(x)).toValue()))),
         KeyArg(
             key: Operations15.mult,
             child: RegisterWriteOpArg(
                 maxDigit: 19,
-                f: (m, r, x) => Value.fromDouble(r.asDouble * x.asDouble))),
+                f: (m, r, x) => m.checkOverflow(
+                    () => (DecimalFP12(r) * DecimalFP12(x)).toValue()))),
         KeyArg(
             key: Operations15.div,
             child: RegisterWriteOpArg(
                 maxDigit: 19,
-                f: (m, r, x) => Value.fromDouble(r.asDouble / x.asDouble))),
+                f: (m, r, x) => m.checkOverflow(
+                    () => (DecimalFP12(r) / DecimalFP12(x)).toValue()))),
         KeyArg(
             key: Operations15.cosInverse, // That's g (i)
             child: ArgDone((m) {
@@ -1350,7 +1382,7 @@ class Operations15 extends Operations {
               if (miv != null) {
                 _storeToMatrixRC(m, miv, m.y, m.x);
               } else {
-                final int reg = iv.asDouble.floor().abs();
+                final int reg = iv.floatIntPart().abs();
                 m.memory.registers[reg] = m.z;
               }
               // I checked on a real 15C:  Even when I is a register,
@@ -1486,19 +1518,19 @@ class Operations15 extends Operations {
         KeyArg(
             key: Operations15.plus,
             child: RegisterReadOpArg(
-                maxDigit: 19, f: (double r, double x) => r + x)),
+                maxDigit: 19, f: (DecimalFP12 r, DecimalFP12 x) => r + x)),
         KeyArg(
             key: Operations15.minus,
             child: RegisterReadOpArg(
-                maxDigit: 19, f: (double r, double x) => r - x)),
+                maxDigit: 19, f: (DecimalFP12 r, DecimalFP12 x) => r - x)),
         KeyArg(
             key: Operations15.mult,
             child: RegisterReadOpArg(
-                maxDigit: 19, f: (double r, double x) => r * x)),
+                maxDigit: 19, f: (DecimalFP12 r, DecimalFP12 x) => r * x)),
         KeyArg(
             key: Operations15.div,
             child: RegisterReadOpArg(
-                maxDigit: 19, f: (double r, double x) => r / x)),
+                maxDigit: 19, f: (DecimalFP12 r, DecimalFP12 x) => r / x)),
         KeyArg(
             key: Operations15.cosInverse, // That's g (i)
             child: RclIndirectArg(
@@ -1548,7 +1580,8 @@ class Operations15 extends Operations {
 class PrecisionArg extends ArgAlternates {
   final void Function(Model m, int v) f;
 
-  static int _translate(Model m, Value v) => min(9, max(0, v.asDouble)).floor();
+  static int _translate(Model m, Value v) =>
+      dart.min(9, dart.max(0, v.floatIntPart()));
 
   PrecisionArg({required this.f})
       : super(synonyms: Arg.registerISynonyms, children: [
@@ -1561,7 +1594,7 @@ class PrecisionArg extends ArgAlternates {
 }
 
 class RegisterReadOpArg extends ArgAlternates {
-  final double Function(double, double) f;
+  final DecimalFP12 Function(DecimalFP12, DecimalFP12) f;
 
   RegisterReadOpArg({required int maxDigit, required this.f})
       : super(synonyms: Operations15._letterAndRegisterISynonyms, children: [
@@ -1570,7 +1603,9 @@ class RegisterReadOpArg extends ArgAlternates {
               child: RegisterReadOpArgDone((m) {
                 final mi = m.memory.registers.index.asMatrix;
                 if (mi == null) {
-                  m.xRealF = f(m.xF, m.memory.registers.indirectIndex.asDouble);
+                  final xr = f(DecimalFP12(m.x),
+                      DecimalFP12(m.memory.registers.indirectIndex));
+                  m.xReal = m.checkOverflow(() => xr.toValue());
                   // Do not set LastX, as per real 15C's behavior, so no resultX
                   // Do not alter imaginary part
                 } else {
@@ -1578,14 +1613,22 @@ class RegisterReadOpArg extends ArgAlternates {
                   _forMatrix(m as Model15, mi, f);
                 }
               })),
-          KeyArg(key: Arg.kI, child: RegisterReadOpArgDone(
-              // Do not set LastX, as per real 15C's behavior
-              (m) => m.xRealF = f(m.xF, m.memory.registers.index.asDouble))),
+          KeyArg(
+              key: Arg.kI,
+              child: RegisterReadOpArgDone((m) {
+                // Do not set LastX, as per real 15C's behavior
+                final x =
+                    f(DecimalFP12(m.x), DecimalFP12(m.memory.registers.index));
+                m.xReal = m.checkOverflow(() => x.toValue());
+              })),
           DigitArg(
               max: maxDigit,
-              calc: (m, i) =>
-                  m.xRealF = f(m.xF, m.memory.registers[i].asDouble),
-              // The 15C doesn't doesn't do real complex operation, it just
+              calc: (m, i) {
+                final x =
+                    f(DecimalFP12(m.x), DecimalFP12(m.memory.registers[i]));
+                m.xReal = m.checkOverflow(() => x.toValue());
+              },
+              // The 15C doesn't doesn't do the real complex operation, it just
               // maintains imaginary part.  So, if x contains 1+2i, and you
               // multiply by a register containing 3, you get 3+2i.  Oopsie!'
               //
@@ -1600,13 +1643,14 @@ class RegisterReadOpArg extends ArgAlternates {
                   }))),
         ]);
 
-  static void _forMatrix(
-      Model15 m, int mi, final double Function(double, double) f) {
+  static void _forMatrix(Model15 m, int mi,
+      final DecimalFP12 Function(DecimalFP12, DecimalFP12) f) {
     final mat = m.matrices[mi];
     int toI(int r) => m.memory.registers[r].floatIntPart().abs();
     int row = toI(0) - 1;
     int col = toI(1) - 1;
-    m.resultXF = f(m.xF, mat.getF(row, col));
+    final x = f(DecimalFP12(m.x), DecimalFP12(mat.get(row, col)));
+    m.resultX = m.checkOverflow(() => x.toValue());
   }
 }
 

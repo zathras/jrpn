@@ -142,10 +142,19 @@ abstract class SelfTests {
       await expect(fd(Value.fromDouble(-1e-101).asDouble), fd(0.0));
     });
     await test('Float rounding to infinity', () async {
-      await expect(Value.fromDouble(9.9999999996e99), Value.fInfinity);
-      await expect(Value.fromDouble(-9.9999999996e99), Value.fNegativeInfinity);
-      await expect(Value.fromDouble(9.9999999996e99), Value.fInfinity);
-      await expect(Value.fromDouble(-9.9999999996e99), Value.fNegativeInfinity);
+      Future<void> expectInfinity(double d, Value expected) async {
+        try {
+          Value.fromDouble(d);
+          await expect(true, false);
+        } on FloatOverflow catch (e) {
+          await expect(e.infinity, expected);
+        }
+      }
+
+      await expectInfinity(9.9999999996e99, Value.fMaxValue);
+      await expectInfinity(-9.9999999996e99, Value.fMinValue);
+      await expectInfinity(9.9999999996e99, Value.fMaxValue);
+      await expectInfinity(-9.9999999996e99, Value.fMinValue);
     });
   }
 

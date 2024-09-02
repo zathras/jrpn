@@ -694,14 +694,14 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   ComplexValue _getComplexValue(int i) =>
       ComplexValue(_stack[i], _imaginaryStack![i]);
   void _setComplex(int i, Complex v) {
-    _stack[i] = _checkOverflow(Value.fromDouble(v.real));
-    _imaginaryStack![i] = _checkOverflow(Value.fromDouble(v.imaginary));
+    _stack[i] = checkOverflow(() => Value.fromDouble(v.real));
+    _imaginaryStack![i] = checkOverflow(() => Value.fromDouble(v.imaginary));
     needsSave = true;
   }
 
   void _setComplexV(int i, ComplexValue v) {
-    _stack[i] = _checkOverflow(v.real);
-    _imaginaryStack![i] = _checkOverflow(v.imaginary);
+    _stack[i] = v.real;
+    _imaginaryStack![i] = v.imaginary;
     needsSave = true;
   }
 
@@ -722,20 +722,18 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// Just the imaginary part of x
   Value get xImaginary => _imaginaryStack![0];
 
-  Value _checkOverflow(Value v) {
-    if (v == Value.fInfinity) {
+  Value checkOverflow(Value Function() f) {
+    try {
+      return f();
+    } on FloatOverflow catch (e) {
       floatOverflow = true;
-      return Value.fMaxValue;
-    } else if (v == Value.fNegativeInfinity) {
-      floatOverflow = true;
-      return Value.fMinValue;
+      return e.infinity;
     }
-    return v;
   }
 
   /// Just set the real part of X.  All x setters come here.
   set _justSetXReal(Value v) {
-    _stack[0] = _checkOverflow(v);
+    _stack[0] = v;
     needsSave = true;
     display.window = 0;
   }
@@ -758,14 +756,14 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// the real part is already set.
   ///
   set xImaginary(Value v) {
-    _imaginaryStack![0] = _checkOverflow(v);
+    _imaginaryStack![0] = v;
     needsSave = true;
   }
 
   /// Set the real part of X, leaving the imaginary part alone, and not
   /// setting LastX.  Clear clxDone.  The 15C's stack management is simple!  ;-)
-  set xRealF(double v) {
-    _justSetXReal = Value.fromDouble(v);
+  set xReal(Value v) {
+    _justSetXReal = v;
     _clxDone = false;
   }
 
@@ -773,11 +771,17 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set xI(BigInt v) => x = _integerSignMode.fromBigInt(v, this, true);
 
   /// Set x from a Dart double
-  set xF(double v) => x = Value.fromDouble(v);
+  set xF(double v) => checkOverflow(() => x = Value.fromDouble(v));
 
   /// Set x from a complex value
   set xC(Complex v) {
     _setComplex(0, v);
+    _clxDone = false;
+  }
+
+  /// Set x from a complex value
+  set xCV(ComplexValue v) {
+    _setComplexV(0, v);
     _clxDone = false;
   }
 
@@ -797,7 +801,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   /// Pop the stack and set X from a Dart double, setting lastX
   // ignore: avoid_setters_without_getters
-  set popSetResultXF(double v) => popSetResultX = Value.fromDouble(v);
+  set popSetResultXF(double v) =>
+      popSetResultX = checkOverflow(() => Value.fromDouble(v));
 
   /// Pop the stack and set X from a Complex, setting lastX
   // ignore: avoid_setters_without_getters
@@ -824,12 +829,19 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set resultXI(BigInt v) =>
       resultX = _integerSignMode.fromBigInt(v, this, true);
   // ignore: avoid_setters_without_getters
-  set resultXF(double v) => resultX = Value.fromDouble(v);
+  set resultXF(double v) => resultX = checkOverflow(() => Value.fromDouble(v));
+
   // ignore: avoid_setters_without_getters
   set resultXC(Complex v) {
     lastX = x;
     _lastXImaginary = _imaginaryStack![0];
     xC = v;
+  }
+
+  set resultXCV(ComplexValue v) {
+    lastX = x;
+    _lastXImaginary = _imaginaryStack![0];
+    xCV = v;
   }
 
   Value get y => _stack[1];
@@ -838,29 +850,32 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Complex get yC => _getComplex(1);
   ComplexValue get yCV => _getComplexValue(1);
   set y(Value v) {
-    _stack[1] = _checkOverflow(v);
+    _stack[1] = v;
     _imaginaryStack?[1] = Value.zero;
     needsSave = true;
   }
 
   set yI(BigInt v) => y = _integerSignMode.fromBigInt(v, this, true);
-  set yF(double v) => y = Value.fromDouble(v);
+  set yF(double v) {
+    y = checkOverflow(() => Value.fromDouble(v));
+  }
+
   set yC(Complex v) => _setComplex(1, v);
 
   Value get z => _stack[2];
   Complex get zC => _getComplex(2);
 
   set z(Value v) {
-    _stack[2] = _checkOverflow(v);
+    _stack[2] = v;
     _imaginaryStack?[2] = Value.zero;
     needsSave = true;
   }
 
-  set zF(double v) => z = Value.fromDouble(v);
+  set zF(double v) => z = checkOverflow(() => Value.fromDouble(v));
 
   Value get t => _stack[3];
   set t(Value v) {
-    _stack[3] = _checkOverflow(v);
+    _stack[3] = v;
     _imaginaryStack?[3] = Value.zero;
     needsSave = true;
   }
@@ -868,12 +883,12 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   void setYZT(Value v) {
     assert(!isComplexMode);
     // This is only used converting between int and float
-    _stack[3] = _stack[2] = _stack[1] = _checkOverflow(v);
+    _stack[3] = _stack[2] = _stack[1] = v;
     needsSave = true;
   }
 
   void setXYZT(Value v) {
-    _stack[3] = _stack[2] = _stack[1] = _stack[0] = _checkOverflow(v);
+    _stack[3] = _stack[2] = _stack[1] = _stack[0] = v;
     final im = _imaginaryStack;
     if (im != null) {
       im[3] = im[2] = im[1] = im[0] = Value.zero;
@@ -889,7 +904,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   Value get lastXImaginary => _lastXImaginary!;
   Complex get lastXC => Complex(_lastX.asDouble, _lastXImaginary!.asDouble);
   set lastX(Value v) {
-    _lastX = _checkOverflow(v);
+    _lastX = v;
     if (isComplexMode) {
       _lastXImaginary = Value.zero;
     }
@@ -897,8 +912,14 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   set lastXC(Complex v) {
-    _lastX = _checkOverflow(Value.fromDouble(v.real));
-    _lastXImaginary = _checkOverflow(Value.fromDouble(v.imaginary));
+    _lastX = checkOverflow(() => Value.fromDouble(v.real));
+    _lastXImaginary = checkOverflow(() => Value.fromDouble(v.imaginary));
+    needsSave = true;
+  }
+
+  set lastXCV(ComplexValue v) {
+    _lastX = v.real;
+    _lastXImaginary = v.imaginary;
     needsSave = true;
   }
 

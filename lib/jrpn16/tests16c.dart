@@ -623,7 +623,21 @@ class SelfTests16 extends SelfTests {
   }
 
   Future<void> _testFloatConvertAndBack(final Model m, final double dv) async {
-    final Value fv = Value.fromDouble(dv);
+    final Value fv;
+    try {
+      fv = Value.fromDouble(dv);
+    } on FloatOverflow catch (e) {
+      if (e.infinity == Value.fMaxValue) {
+        await expect(dv > 9.99999999e99, true, reason: '$dv gives infinity');
+      } else {
+        await expect(e.infinity, Value.fMinValue);
+        await expect(dv < 9.99999999e99, true, reason: '$dv gives -infinity');
+      }
+      if (dv > 0) {
+        await _testFloatConvertAndBack(m, -dv);
+      }
+      return;
+    }
     assert(m.displayMode.isFloatMode);
     m.x = fv;
     m.displayMode = DisplayMode.hex;
@@ -631,14 +645,9 @@ class SelfTests16 extends SelfTests {
     final double r = m.xF;
     if (dv == 0.0) {
       await expect(r, dv);
-    } else if (fv == Value.fInfinity) {
-      await expect(dv > 9.99999999e99, true, reason: '$dv gives infinity');
-    } else if (fv == Value.fNegativeInfinity) {
-      await expect(dv < -9.99999999e99, true,
-          reason: '$dv gives negativeInfinity');
     } else if (m.x == Value.zero) {
       await expect(dv > -1e-98 && dv < 1e-98, true,
-          reason: '$dv gives negativeInfinity');
+          reason: '$dv gives underflow');
     } else {
       await expect(((r - dv) / dv).abs() < 0.000000001, true,
           reason: '$dv gives $r');

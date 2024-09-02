@@ -465,11 +465,14 @@ class _FloatMode extends DisplayMode {
     } else {
       final double x = m.xI.toDouble();
       final double y = m.yI.toDouble();
-      final Value r = Value.fromDouble(y * pow(2.0, x));
-      m.x = r;
-      if (r.isInfinite) {
+      Value r;
+      try {
+        r = Value.fromDouble(y * pow(2.0, x));
+      } on FloatOverflow catch (e) {
+        r = e.infinity;
         m.floatOverflow = true;
       }
+      m.x = r;
     }
     m.setYZT(Value.zero);
     m.lastX = Value.zero;

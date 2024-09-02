@@ -66,7 +66,7 @@ const _programs = [
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 069-072.15c',
       '0 A -> 1.6279 B -> -0.1487 B -> -0.1497 B -> -0.1497 '
-          'RE<=>IM -> 2.8319 RE<=>IM C -> 1.1662e-9 X<=>Y -> -0.1497'),
+          'RE<=>IM -> 2.8319 RE<=>IM C -> 1.0000e-10 X<=>Y -> -0.1497'),
   _Program(
       'HP-15C Advanced Functions Handbook/HP-15C Advanced Functions Handbook - Pages 056-058.15c',
       'B 4.2 A -> 2.0486 FIX 9 -> 2.048555637 3.2 x! -> 7.756689536 '

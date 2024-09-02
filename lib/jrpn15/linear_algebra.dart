@@ -48,7 +48,7 @@ void decomposeLU(Matrix m) {
   for (int j = 0; j < m.columns; j++) {
     for (int i = 0; i < m.rows; i++) {
       int kMax = min(i, j);
-      double s = 0;
+      var s = DecimalFP22.zero;
       for (int k = 0; k < kMax; k++) {
         s += m.getF(i, k) * m.getF(k, j);
       }
@@ -66,8 +66,8 @@ void decomposeLU(Matrix m) {
       m.swapRowsLU(pivot, j);
     }
     if (j < m.rows) {
-      final double vj = m.getF(j, j);
-      if (vj.abs() > 0) {
+      final vj = m.getF(j, j);
+      if (vj.abs() > DecimalFP22.zero) {
         for (int i = j + 1; i < m.rows; i++) {
           m.setF(i, j, m.getF(i, j) / vj);
         }
@@ -77,19 +77,18 @@ void decomposeLU(Matrix m) {
 
   // Avoid a singular matrix by perturbing the pivots, if needed, so they fall
   // within the 15C's precision.  See Advanced Functions, 98-99.
-  double maxPivot = 0;
+  DecimalFP22 maxPivot = DecimalFP22.zero;
   for (int i = 0; i < m.rows; i++) {
-    maxPivot = max(maxPivot, m.getF(i, i).abs());
+    final us = m.getF(i, i).abs();
+    if (us > maxPivot) {
+      maxPivot = us;
+    }
   }
-  final int minExp = max(-99, Value.fromDouble(maxPivot).exponent - 10);
+  final int minExp = max(-99, maxPivot.exponent - 10);
   for (int i = 0; i < m.rows; i++) {
     final v = m.get(i, i);
     if (v.exponent < minExp) {
-      if (v.asDouble < 0) {
-        m.setF(i, i, -pow(10.0, minExp).toDouble());
-      } else {
-        m.setF(i, i, pow(10.0, minExp).toDouble());
-      }
+      m.setF(i, i, DecimalFP22.tenTo(minExp, negative: v.isNegative));
     }
   }
 }
@@ -104,42 +103,39 @@ void solve(Matrix a, AMatrix b, AMatrix result) {
   if (x.rows != n || x.columns != b.columns || a.rows != n) {
     throw CalculatorError(11);
   }
-  if (!a.isLU) {
-    decomposeLU(a);
-  }
+  try {
+    if (!a.isLU) {
+      decomposeLU(a);
+    }
 
-  for (int rCol = 0; rCol < x.columns; rCol++) {
-    for (int i = 0; i < n; i++) {
+    for (int rCol = 0; rCol < x.columns; rCol++) {
+      for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+          if (a.getP(i, j)) {
+            x.set(i, rCol, b.get(j, rCol));
+            break;
+          }
+        }
+      }
+
       for (int j = 0; j < n; j++) {
-        if (a.getP(i, j)) {
-          x.set(i, rCol, b.get(j, rCol));
-          break;
+        for (int i = j + 1; i < n; i++) {
+          x.setF(i, rCol, x.getF(i, rCol) - x.getF(j, rCol) * a.getF(i, j));
+        }
+      }
+
+      for (int j = n - 1; j >= 0; j--) {
+        x.setF(j, rCol, x.getF(j, rCol) / a.getF(j, j));
+        for (int i = 0; i < j; i++) {
+          x.setF(i, rCol, x.getF(i, rCol) - x.getF(j, rCol) * a.getF(i, j));
         }
       }
     }
-
-    for (int j = 0; j < n; j++) {
-      for (int i = j + 1; i < n; i++) {
-        x.setF(i, rCol, x.getF(i, rCol) - x.getF(j, rCol) * a.getF(i, j));
-      }
-    }
-
-    for (int j = n - 1; j >= 0; j--) {
-      x.setF(j, rCol, x.getF(j, rCol) / a.getF(j, j));
-      for (int i = 0; i < j; i++) {
-        x.setF(i, rCol, x.getF(i, rCol) - x.getF(j, rCol) * a.getF(i, j));
-      }
-    }
+  } finally {
+    x.visit((r, c) {
+      result.set(r, c, x.get(r, c));
+    });
   }
-  x.visit((r, c) {
-    final v = x.get(r, c);
-    if (v.isInfinite) {
-      throw MatrixOverflow();
-    }
-  });
-  x.visit((r, c) {
-    result.set(r, c, x.get(r, c));
-  });
 }
 
 ///
@@ -149,76 +145,82 @@ void invert(final Matrix m) {
   if (!m.isLU) {
     decomposeLU(m);
   }
-  // Clone the matrix to a native double matrix, for better internal precision.
+  // Clone the matrix to a native float matrix, for better internal precision.
   // This seems to give results closer to the real 15C than the version that
   // did the internal math using Value's precision, in a quick test.  I suspect
   // that the 15C may be using a more clever algorithm, but brute force works,
   // too!
-  final dm = List<List<double>>.generate(m.rows,
-      (row) => List<double>.generate(m.columns, (col) => m.getF(row, col)));
+  final dm = List<List<DecimalFP22>>.generate(
+      m.rows,
+      (row) =>
+          List<DecimalFP22>.generate(m.columns, (col) => m.getF(row, col)));
 
-  /// Now use A^-1 = U^-1 * l^-1 * P, as per HP 15C Advanced Functions p. 83
+  try {
+    /// Now use A^-1 = U^-1 * l^-1 * P, as per HP 15C Advanced Functions p. 83
 
-  // Calculate U^-1.  Adapted from dtri2.f in LAPACK from www.netlib.org.
-  for (int j = 0; j < m.rows; j++) {
-    final ajj = -1 / dm[j][j];
-    dm[j][j] = -ajj;
-    // Compute elements 0..j-1 of the jth column
-    // DTRMV call:
-    for (int jj = 0; jj < j; jj++) {
-      final temp = dm[jj][j];
-      for (int i = 0; i < jj; i++) {
-        dm[i][j] = dm[i][j] + temp * dm[i][jj];
+    // Calculate U^-1.  Adapted from dtri2.f in LAPACK from www.netlib.org.
+    for (int j = 0; j < m.rows; j++) {
+      final ajj = DecimalFP22.negativeOne / dm[j][j];
+      dm[j][j] = ajj.negate();
+      // Compute elements 0..j-1 of the jth column
+      // DTRMV call:
+      for (int jj = 0; jj < j; jj++) {
+        final temp = dm[jj][j];
+        for (int i = 0; i < jj; i++) {
+          dm[i][j] = dm[i][j] + temp * dm[i][jj];
+        }
+        dm[jj][j] = dm[jj][j] * dm[jj][jj];
       }
-      dm[jj][j] = dm[jj][j] * dm[jj][jj];
-    }
-    // DSCAL call:
-    for (int i = 0; i < j; i++) {
-      dm[i][j] = dm[i][j] * ajj;
-    }
-  }
-
-  // Calculate L^-1, adapted from dtri2.f.
-  for (int j = m.rows - 2; j >= 0; j--) {
-    const ajj = -1;
-    // DTRMV call:
-    for (int jj = m.rows - 2 - j; jj >= 0; jj--) {
-      final temp = dm[j + jj + 1][j];
-      for (int i = m.rows - 2 - j; i > jj; i--) {
-        dm[j + 1 + i][j] = dm[j + 1 + i][j] + temp * dm[j + i + 1][j + jj + 1];
+      // DSCAL call:
+      for (int i = 0; i < j; i++) {
+        dm[i][j] = dm[i][j] * ajj;
       }
     }
-    // DSCAL call:
-    for (int i = j + 1; i < m.rows; i++) {
-      dm[i][j] = dm[i][j] * ajj;
-    }
-  }
 
-  // Calculate m = U^-1 dot L^-1 in-place:
-  for (int r = 0; r < m.rows; r++) {
-    for (int c = 0; c < m.columns; c++) {
-      double v = 0;
-      for (int k = max(r, c); k < m.columns; k++) {
-        assert(r <= k); // Otherwise U is zero
-        assert(c <= k); // Otherwise L is zero;
-        final uv = dm[r][k];
-        final lv = (k == c) ? 1 : dm[k][c];
-        v += uv * lv;
+    // Calculate L^-1, adapted from dtri2.f.
+    for (int j = m.rows - 2; j >= 0; j--) {
+      final ajj = DecimalFP22.negativeOne;
+      // DTRMV call:
+      for (int jj = m.rows - 2 - j; jj >= 0; jj--) {
+        final temp = dm[j + jj + 1][j];
+        for (int i = m.rows - 2 - j; i > jj; i--) {
+          dm[j + 1 + i][j] =
+              dm[j + 1 + i][j] + temp * dm[j + i + 1][j + jj + 1];
+        }
       }
-      dm[r][c] = v;
+      // DSCAL call:
+      for (int i = j + 1; i < m.rows; i++) {
+        dm[i][j] = dm[i][j] * ajj;
+      }
     }
+
+    // Calculate m = U^-1 dot L^-1 in-place:
+    for (int r = 0; r < m.rows; r++) {
+      for (int c = 0; c < m.columns; c++) {
+        DecimalFP22 v = DecimalFP22.zero;
+        for (int k = max(r, c); k < m.columns; k++) {
+          assert(r <= k); // Otherwise U is zero
+          assert(c <= k); // Otherwise L is zero;
+          final uv = dm[r][k];
+          final DecimalFP22 lv = (k == c) ? DecimalFP22.one : dm[k][c];
+          v += uv * lv;
+        }
+        dm[r][c] = v;
+      }
+    }
+  } finally {
+// Now copy back into m...
+    m.visit((r, c) => m.setF(r, c, dm[r][c]));
+    m.dotByP();
+    m.isLU = false;
   }
-  // Now copy back into m...
-  m.visit((r, c) => m.setF(r, c, dm[r][c]));
-  m.dotByP();
-  m.isLU = false;
 }
 
-double determinant(Matrix mat) {
+DecimalFP22 determinant(Matrix mat) {
   if (!mat.isLU) {
     decomposeLU(mat);
   }
-  double result = 1;
+  var result = DecimalFP22.one;
   final rs = mat.cloneRowSwaps();
   // Figure out how many row swaps r there were
   for (int c = 0; c < rs.length;) {
@@ -228,7 +230,7 @@ double determinant(Matrix mat) {
     } else {
       rs[c] = rs[sc];
       rs[sc] = sc;
-      result = -result;
+      result = result.negate();
     }
   }
   // result is now -1^(number of row swaps)
@@ -238,14 +240,16 @@ double determinant(Matrix mat) {
   return result;
 }
 
-double rowNorm(AMatrix mat) {
-  double result = 0;
+DecimalFP22 rowNorm(AMatrix mat) {
+  var result = DecimalFP22.zero;
   for (int r = 0; r < mat.rows; r++) {
-    double sum = 0;
+    var sum = DecimalFP22.zero;
     for (int c = 0; c < mat.columns; c++) {
       sum += mat.getF(r, c).abs();
     }
-    result = max(result, sum);
+    if (sum > result) {
+      result = sum;
+    }
   }
   return result;
 }
@@ -254,11 +258,9 @@ double frobeniusNorm(AMatrix mat) {
   double result = 0;
   for (int r = 0; r < mat.rows; r++) {
     for (int c = 0; c < mat.columns; c++) {
-      final v = mat.getF(r, c);
+      final v = mat.get(r, c).asDouble;
       result += v * v;
     }
   }
   return sqrt(result);
 }
-
-class MatrixOverflow {}

@@ -49,6 +49,9 @@ import 'package:jrpn/jrpn15/linear_algebra.dart' as linalg;
 
 Future<void> main() async {
   runStaticInitialization15();
+  test('Decimal complex', decimalComplex);
+  test('Decimal multiplication', decimalMultiplyAndDivide);
+  test('Decimal addition/subtraction', decimalAddSubtract);
 
   // Note that passing Jrpn into testWidgets actually tests very little, because
   // the deferred initialization doesn't happen.  I think it stalls on a plugin
@@ -90,7 +93,6 @@ Future<void> main() async {
   test('Value exponent test', valueExponentTest);
   test('Value frac op test', valueFracOpTest);
   test('Value int op test', valueIntOpTest);
-  test('Decimal addition/subtraction', decimalAddSubtract);
   test15cPrograms();
 }
 
@@ -596,53 +598,53 @@ class AdvancedFunctionTests {
     final Matrix mat2 = model.matrices[4];
     final Matrix mat = model.matrices[3];
     mat2.resize(model, 2, 2);
-    mat2.setF(0, 0, 0.1);
-    mat2.setF(0, 1, 0.1);
-    mat2.setF(1, 0, 0.2);
-    mat2.setF(1, 1, 0.4);
+    mat2.set(0, 0, _toValue(0.1));
+    mat2.set(0, 1, _toValue(0.1));
+    mat2.set(1, 0, _toValue(0.2));
+    mat2.set(1, 1, _toValue(0.4));
     AMatrix mat2c = CopyMatrix(mat2);
     invert(mat2);
-    expect(mat2.getF(0, 0), 20);
-    expect(mat2.getF(0, 1), -5);
-    expect(mat2.getF(1, 0), -10);
-    expect(mat2.getF(1, 1), 5);
+    expect(mat2.get(0, 0).asDouble, 20);
+    expect(mat2.get(0, 1).asDouble, -5);
+    expect(mat2.get(1, 0).asDouble, -10);
+    expect(mat2.get(1, 1).asDouble, 5);
     invert(mat2);
     expect(mat2.equivalent(mat2c), true);
 
     mat2.resize(model, 3, 3);
-    mat2.setF(0, 0, 0.1);
-    mat2.setF(0, 1, 0.1);
-    mat2.setF(0, 2, 0.1);
-    mat2.setF(1, 0, 0.2);
-    mat2.setF(1, 1, 0.4);
-    mat2.setF(1, 2, 0.8);
-    mat2.setF(2, 0, 0.1);
-    mat2.setF(2, 1, 0.3);
-    mat2.setF(2, 2, 0.6);
+    mat2.set(0, 0, _toValue(0.1));
+    mat2.set(0, 1, _toValue(0.1));
+    mat2.set(0, 2, _toValue(0.1));
+    mat2.set(1, 0, _toValue(0.2));
+    mat2.set(1, 1, _toValue(0.4));
+    mat2.set(1, 2, _toValue(0.8));
+    mat2.set(2, 0, _toValue(0.1));
+    mat2.set(2, 1, _toValue(0.3));
+    mat2.set(2, 2, _toValue(0.6));
     mat2c = CopyMatrix(mat2);
     invert(mat2);
-    expect(mat2.getF(0, 0), 0);
-    expect(mat2.getF(0, 1), 15);
-    expect(mat2.getF(0, 2), -20);
-    expect(mat2.getF(1, 0), 20);
-    expect(mat2.getF(1, 1), -25);
-    expect(mat2.getF(1, 2), 30);
-    expect(mat2.getF(2, 0), -10);
-    expect(mat2.getF(2, 1), 10);
-    expect(mat2.getF(2, 2), -10);
+    expect(mat2.get(0, 0).asDouble, 0);
+    expect(mat2.get(0, 1).asDouble, 15);
+    expect(mat2.get(0, 2).asDouble, -20);
+    expect(mat2.get(1, 0).asDouble, 20);
+    expect(mat2.get(1, 1).asDouble, -25);
+    expect(mat2.get(1, 2).asDouble, 30);
+    expect(mat2.get(2, 0).asDouble, -10);
+    expect(mat2.get(2, 1).asDouble, 10);
+    expect(mat2.get(2, 2).asDouble, -10);
     invert(mat2);
     expectMatrix(mat2, mat2c, useInvert ? 5e-10 : 2e-9);
 
     // Test 1/x on matrix E
-    mat2.setF(0, 0, 0.1);
-    mat2.setF(0, 1, 0.1);
-    mat2.setF(0, 2, 0.1);
-    mat2.setF(1, 0, 0.2);
-    mat2.setF(1, 1, 0.4);
-    mat2.setF(1, 2, 0.8);
-    mat2.setF(2, 0, 0.1);
-    mat2.setF(2, 1, 0.5);
-    mat2.setF(2, 2, 0.9);
+    mat2.set(0, 0, _toValue(0.1));
+    mat2.set(0, 1, _toValue(0.1));
+    mat2.set(0, 2, _toValue(0.1));
+    mat2.set(1, 0, _toValue(0.2));
+    mat2.set(1, 1, _toValue(0.4));
+    mat2.set(1, 2, _toValue(0.8));
+    mat2.set(2, 0, _toValue(0.1));
+    mat2.set(2, 1, _toValue(0.5));
+    mat2.set(2, 2, _toValue(0.9));
     final result = model.matrices[model.resultMatrix = 2];
     controller.buttonWidgetDown(layout.rcl);
     controller.buttonWidgetDown(layout.chs); // Matrix
@@ -710,8 +712,8 @@ class AdvancedFunctionTests {
             take(0);
             for (int r = 0; r < 5; r++) {
               for (int c = 0; c < 5; c++) {
-                mat.setF(r, map[c], orig[r][c]);
-                mat2.setF(map[r], c, inverted[r][c]);
+                mat.set(r, map[c], Value.fromDouble(orig[r][c]));
+                mat2.set(map[r], c, Value.fromDouble(inverted[r][c]));
               }
             }
             final o = CopyMatrix(mat);
@@ -844,8 +846,8 @@ class AdvancedFunctionTests {
       for (int startPos = 0; startPos < random.length; startPos++) {
         int pos = startPos;
         mat.visit((r, c) {
-          mat2.setF(r, c, random[pos]);
-          mat.setF(r, c, random[pos++]);
+          mat2.set(r, c, Value.fromDouble(random[pos]));
+          mat.set(r, c, Value.fromDouble(random[pos++]));
           pos = pos % random.length;
         });
         //
@@ -853,19 +855,21 @@ class AdvancedFunctionTests {
         //
         if (sz == 2) {
           final dm = dart_mat.Matrix2.zero();
-          mat2.visit((r, c) => dm.setEntry(r, c, mat.getF(r, c)));
-          expectRounded(2e-9, Value.fromDouble(linalg.determinant(mat2)),
+          mat2.visit((r, c) => dm.setEntry(r, c, mat.get(r, c).asDouble));
+          expectRounded(
+              2e-9,
+              Value.fromDouble(linalg.determinant(mat2).asDouble),
               dm.determinant());
         } else if (sz == 3) {
           final dm = dart_mat.Matrix3.zero();
-          mat2.visit((r, c) => dm.setEntry(r, c, mat.getF(r, c)));
-          expectRounded(2e-9, Value.fromDouble(linalg.determinant(mat2)),
-              dm.determinant());
+          mat2.visit((r, c) => dm.setEntry(r, c, mat.get(r, c).asDouble));
+          expectRounded(
+              2e-9, linalg.determinant(mat2).toValue(), dm.determinant());
         } else if (sz == 4) {
           final dm = dart_mat.Matrix4.zero();
-          mat2.visit((r, c) => dm.setEntry(r, c, mat.getF(r, c)));
-          expectRounded(2e-9, Value.fromDouble(linalg.determinant(mat2)),
-              dm.determinant());
+          mat2.visit((r, c) => dm.setEntry(r, c, mat.get(r, c).asDouble));
+          expectRounded(
+              2e-9, linalg.determinant(mat2).toValue(), dm.determinant());
         }
         invert(mat2);
         result.dot(mat, mat2);
@@ -889,14 +893,14 @@ class AdvancedFunctionTests {
     // the real 15C does, but it was chosen to work for this known example.
     final mat = model.matrices[0];
     mat.resize(model, 2, 2);
-    mat.setF(0, 0, 3);
-    mat.setF(0, 1, 3);
-    mat.setF(1, 0, 1);
-    mat.setF(1, 1, 1);
+    mat.set(0, 0, Value.fromDouble(3));
+    mat.set(0, 1, Value.fromDouble(3));
+    mat.set(1, 0, Value.fromDouble(1));
+    mat.set(1, 1, Value.fromDouble(1));
     final mat2 = model.matrices[1];
     mat2.resize(model, 2, 1);
-    mat2.setF(0, 0, 1);
-    mat2.setF(1, 0, 1);
+    mat2.set(0, 0, Value.fromDouble(1));
+    mat2.set(1, 0, Value.fromDouble(1));
     final result = model.matrices[model.resultMatrix = 2];
     controller.buttonDown(Operations15.rcl15);
     controller.buttonDown(Operations15.matrix);
@@ -924,7 +928,7 @@ class AdvancedFunctionTests {
     for (int rows = 1; rows <= 50; rows++) {
       for (int cols = 1; cols <= 50 ~/ rows; cols++) {
         mat.resize(model, rows, cols);
-        mat.visit((r, c) => mat.setF(r, c, 100.0 * r + c));
+        mat.visit((r, c) => mat.set(r, c, _toValue(100.0 * r + c)));
         final orig = CopyMatrix(mat);
         controller.buttonDown(Operations15.rcl15);
         controller.buttonDown(Operations15.matrix);
@@ -948,7 +952,7 @@ class AdvancedFunctionTests {
     for (int rows = 1; rows <= 50; rows++) {
       for (int cols = 2; cols <= 50 ~/ rows; cols += 2) {
         mat.resize(model, rows, cols);
-        mat.visit((r, c) => mat.setF(r, c, 100.0 * r + c));
+        mat.visit((r, c) => mat.set(r, c, _toValue(100.0 * r + c)));
         final orig = CopyMatrix(mat);
         controller.buttonDown(Operations15.rcl15);
         controller.buttonDown(Operations15.matrix);
@@ -969,8 +973,8 @@ class AdvancedFunctionTests {
         mat.resize(model, rows * 2, cols);
         for (int r = 0; r < rows; r++) {
           for (int c = 0; c < cols; c++) {
-            mat.setF(r, c, 1 + r + 100.0 * c);
-            mat.setF(r + rows, c, 1001 + r + 100.0 * c);
+            mat.set(r, c, _toValue(1 + r + 100.0 * c));
+            mat.set(r + rows, c, _toValue(1001 + r + 100.0 * c));
           }
         }
         final copy = CopyMatrix(mat);
@@ -1004,7 +1008,7 @@ class AdvancedFunctionTests {
       <double>[210, -37, 5, 16, 7]
     ];
 
-    mat.visit((r, c) => mat.setF(r, c, vals[r][c]));
+    mat.visit((r, c) => mat.set(r, c, _toValue(vals[r][c])));
     controller.buttonDown(Operations15.rcl15);
     controller.buttonDown(Operations15.matrix);
     controller.buttonDown(Operations15.letterLabelB);
@@ -1121,7 +1125,7 @@ class AdvancedFunctionTests {
         model.xF = s;
         controller.buttonDown(op);
         expect(Value.fromDouble(f(s, values[r][c])), model.x);
-        mat.setF(r, c, values[r][c]);
+        mat.set(r, c, _toValue(values[r][c]));
       });
     }
     for (final s in scalarValues) {
@@ -1277,7 +1281,7 @@ class AdvancedFunctionTests {
       [-24, -10, -57],
       [-8, -4, -17]
     ];
-    mA.visit((r, c) => mA.setF(r, c, residO[r][c].toDouble()));
+    mA.visit((r, c) => mA.set(r, c, _toValue(residO[r][c].toDouble())));
     mB.resize(model, 3, 3);
     mB.identity();
     _play([l.rcl, l.chs, l.sqrt, l.sto, l.chs, l.yX]); // RCL m A, STO m D
@@ -1406,7 +1410,7 @@ class AdvancedFunctionTests {
         mat.resize(model, 2, 3);
         model.memory.registers[0] = Value.fromDouble(2);
         model.memory.registers[1] = Value.fromDouble(3);
-        mat.setF(1, 2, val);
+        mat.set(1, 2, _toValue(val));
         _play(op);
         controller.buttonWidgetDown(matButton);
         controller.buttonUp();
@@ -1905,8 +1909,8 @@ class AdvancedFunctionTests {
     _play([l.fShift, l.div, l.sqrt]); // f solve A
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
-    expect(model.xF, 9.284255085);
-    expect(model.yF, 9.284255109);
+    expect(model.xF, 9.284255091);
+    expect(model.yF, 9.284255115);
     expect(model.z.asDouble.abs() < 1e-9, true);
 
     // Test "do if true" if solve A done in program B
@@ -1914,7 +1918,7 @@ class AdvancedFunctionTests {
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
     expect(model.xF, 42);
-    expect(model.yF, 9.284255085);
+    expect(model.yF, 9.284255091);
 
     // Example from page 186:
     _play([l.gShift, l.rs, l.fShift, l.rdown]); // Program, clear program
@@ -2188,7 +2192,8 @@ class AdvancedFunctionTests {
         if (m.get(r, c) != expected.get(r, c)) {
           bad = true;
         }
-      } else if ((m.getF(r, c) - expected.getF(r, c)).abs() > epsilon) {
+      } else if ((m.getF(r, c) - expected.getF(r, c)).asDouble.abs() >
+          epsilon) {
         print('Value differs by ${(m.getF(r, c) - expected.getF(r, c)).abs()}');
         print('    This is more than tolerance of $epsilon');
         print('Expected: $expected');
@@ -2215,8 +2220,8 @@ class AdvancedFunctionTests {
             print('${m.get(r, c)} != ${Value.fromDouble(row[c].toDouble())}');
             bad = true;
           }
-        } else if ((m.getF(r, c) - row[c]).abs() > epsilon) {
-          print('Value differs by ${(m.getF(r, c) - row[c]).abs()}');
+        } else if ((m.get(r, c).asDouble - row[c]).abs() > epsilon) {
+          print('Value differs by ${(m.get(r, c).asDouble - row[c]).abs()}');
           print('    This is more than tolerance of $epsilon');
           // print(m.getF(r, c).toStringAsFixed(10));
           // print(row[c].toStringAsFixed(10));
@@ -2237,7 +2242,7 @@ class AdvancedFunctionTests {
     } else {
       m.resize(model, val.length, val[0].length);
     }
-    m.visit((r, c) => m.setF(r, c, val[r][c].toDouble()));
+    m.visit((r, c) => m.set(r, c, _toValue(val[r][c].toDouble())));
   }
 }
 
@@ -2260,8 +2265,16 @@ Future<void> valueExponentTest() async {
   }
   expect(Value.fromDouble(5e-100).asDouble, 0.0);
   expect(Value.fromDouble(-5e-100).asDouble, 0.0);
-  expect(Value.fromDouble(5e100).asDouble, double.infinity);
-  expect(Value.fromDouble(-5e100).asDouble, double.negativeInfinity);
+  try {
+    expect(Value.fromDouble(5e100), false);
+  } on FloatOverflow catch (e) {
+    expect(e.infinity, Value.fMaxValue);
+  }
+  try {
+    expect(Value.fromDouble(-5e100), false);
+  } on FloatOverflow catch (e) {
+    expect(e.infinity, Value.fMinValue);
+  }
 }
 
 Future<void> valueFracOpTest() async {
@@ -2304,8 +2317,8 @@ Future<void> valueFracOpTest() async {
     expect(Value.fromDouble(d).fracOp(), Value.zero);
   }
   expect(Value.zero.fracOp(), Value.zero);
-  expect(Value.fInfinity.fracOp(), Value.zero);
-  expect(Value.fNegativeInfinity.fracOp(), Value.zero);
+  expect(Value.fMaxValue.fracOp(), Value.zero);
+  expect(Value.fMinValue.fracOp(), Value.zero);
 }
 
 Future<void> valueIntOpTest() async {
@@ -2329,28 +2342,72 @@ Future<void> valueIntOpTest() async {
     expect(Value.fromDouble(d).intOp(), Value.fromDouble(d));
   }
   expect(Value.zero.intOp(), Value.zero);
-  expect(Value.fInfinity.intOp(), Value.fInfinity);
-  expect(Value.fNegativeInfinity.intOp(), Value.fNegativeInfinity);
+  expect(Value.fMaxValue.intOp(), Value.fMaxValue);
+  expect(Value.fMinValue.intOp(), Value.fMinValue);
 }
 
 Future<void> decimalAddSubtract() async {
   void testDoubles(double n1, double n2) {
     Value v1 = Value.fromDouble(n1);
     Value v2 = Value.fromDouble(n2);
-    expect(v1.decimalAdd(v2), Value.fromDouble(n1 + n2));
-    expect(v1.decimalSubtract(v2), Value.fromDouble(n1 - n2));
+    try {
+      expect(v1.decimalAdd(v2), Value.fromDouble(n1 + n2));
+    } on FloatOverflow {
+      try {
+        expect(v1.decimalAdd(v2), false);
+      } on FloatOverflow {
+        // ignore
+      }
+      try {
+        expect(Value.fromDouble(v1.asDouble + v2.asDouble), false);
+      } on FloatOverflow {
+        // ignore
+      }
+    }
+    try {
+      expect(v1.decimalSubtract(v2), Value.fromDouble(n1 - n2),
+          reason: 'for $n1, $n2');
+    } on FloatOverflow {
+      try {
+        expect(v1.decimalSubtract(v2), false);
+      } on FloatOverflow {
+        // ignore
+      }
+      try {
+        expect(Value.fromDouble(v1.asDouble - v2.asDouble), false);
+      } on FloatOverflow {
+        // ignore
+      }
+    }
   }
 
   void testAddNoReverse(double n1, double n2, double expected) {
+    check(Value Function() f1, Value Function() f2) {
+      try {
+        expect(f1(), f2());
+      } on FloatOverflow {
+        try {
+          expect(f1(), false);
+        } on FloatOverflow {
+          // test passes
+        }
+        try {
+          expect(f2(), false);
+        } on FloatOverflow {
+          // test passes
+        }
+      }
+    }
+
     try {
-      expect(Value.fromDouble(n1).decimalAdd(Value.fromDouble(n2)),
-          Value.fromDouble(expected));
-      expect(Value.fromDouble(n1).decimalSubtract(Value.fromDouble(-n2)),
-          Value.fromDouble(expected));
-      expect(Value.fromDouble(-n1).decimalAdd(Value.fromDouble(-n2)),
-          Value.fromDouble(-expected));
-      expect(Value.fromDouble(-n1).decimalSubtract(Value.fromDouble(n2)),
-          Value.fromDouble(-expected));
+      check(() => Value.fromDouble(n1).decimalAdd(Value.fromDouble(n2)),
+          () => Value.fromDouble(expected));
+      check(() => Value.fromDouble(n1).decimalSubtract(Value.fromDouble(-n2)),
+          () => Value.fromDouble(expected));
+      check(() => Value.fromDouble(-n1).decimalAdd(Value.fromDouble(-n2)),
+          () => Value.fromDouble(-expected));
+      check(() => Value.fromDouble(-n1).decimalSubtract(Value.fromDouble(n2)),
+          () => Value.fromDouble(-expected));
     } catch (e) {
       print("Failed for $n1 $n2");
       rethrow;
@@ -2366,7 +2423,37 @@ Future<void> decimalAddSubtract() async {
     testAdd(n1, -n2, expected);
   }
 
+  void testComparison(double n1, double n2) {
+    {
+      final f1 = DecimalFP12(Value.fromDouble(n1));
+      final f2 = DecimalFP12(Value.fromDouble(n2));
+      expect(f1 > f2, n1 > n2);
+      expect(f1 >= f2, n1 >= n2);
+      expect(f1 < f2, n1 < n2);
+      expect(f1 <= f2, n1 <= n2);
+      expect(f1 == f2, n1 == n2);
+    }
+    {
+      final f1 = DecimalFP22(Value.fromDouble(n1));
+      final f2 = DecimalFP22(Value.fromDouble(n2));
+      expect(f1 > f2, n1 > n2);
+      expect(f1 >= f2, n1 >= n2);
+      expect(f1 < f2, n1 < n2);
+      expect(f1 <= f2, n1 <= n2);
+      expect(f1 == f2, n1 == n2);
+    }
+    // Also check DecimalFP.asDouble
+    final v = Value.fromDouble(n1);
+    expect(Value.fromDouble(DecimalFP22(v).asDouble), v);
+    expect(Value.fromDouble(DecimalFP12(v).asDouble), v);
+  }
+
+  testSubtract(100, 58, 42);
+  testSubtract(100, 99, 1);
   testAdd(0, 0, 0);
+  for (int i in [-1, 0, 1, 101, -3000, 65536]) {
+    expect(DecimalFP12(Value.fromDouble(i.toDouble())).asInt, i);
+  }
 
   // Do additions and subtractions where athe difference in magnitude is
   // great enough that we get the same answer in decimal and double
@@ -2374,13 +2461,19 @@ Future<void> decimalAddSubtract() async {
     final numbers = {
       9.123456789e99,
       1.567891234e42,
+      1.567891235e41,
       0.0,
+      1.567891235e-41,
       1.567891234e-42,
       9.123456789e-99
     };
     for (final n1 in numbers) {
       for (final n2 in numbers) {
         testDoubles(n1, n2);
+        testComparison(n1, n2);
+        testComparison(n1, -n2);
+        testComparison(-n1, n2);
+        testComparison(-n1, -n2);
       }
     }
   }
@@ -2434,67 +2527,6 @@ Future<void> decimalAddSubtract() async {
   testSubtract(2e-99, 1.000000000e-99, 1e-99);
   testSubtract(2e-99, 1.000000001e-99, 0); // It's 9.9999999990e-100
 
-  // Test infinity
-  expect(
-      Value.fromDouble(double.infinity)
-          .decimalAdd(Value.fromDouble(double.infinity)),
-      Value.fromDouble(double.infinity));
-  expect(
-      Value.fromDouble(double.infinity)
-          .decimalAdd(Value.fromDouble(double.negativeInfinity)),
-      Value.fromDouble(double.infinity));
-  expect(
-      Value.fromDouble(double.negativeInfinity)
-          .decimalAdd(Value.fromDouble(double.infinity)),
-      Value.fromDouble(double.infinity));
-  expect(
-      Value.fromDouble(double.negativeInfinity)
-          .decimalAdd(Value.fromDouble(double.negativeInfinity)),
-      Value.fromDouble(double.negativeInfinity));
-  expect(Value.fromDouble(double.infinity).decimalAdd(Value.fromDouble(42)),
-      Value.fromDouble(double.infinity));
-  expect(Value.fromDouble(42).decimalAdd(Value.fromDouble(double.infinity)),
-      Value.fromDouble(double.infinity));
-  expect(
-      Value.fromDouble(double.negativeInfinity)
-          .decimalAdd(Value.fromDouble(42)),
-      Value.fromDouble(double.negativeInfinity));
-  expect(
-      Value.fromDouble(42)
-          .decimalAdd(Value.fromDouble(double.negativeInfinity)),
-      Value.fromDouble(double.negativeInfinity));
-
-  expect(
-      Value.fromDouble(double.infinity)
-          .decimalSubtract(Value.fromDouble(double.infinity)),
-      Value.fromDouble(double.infinity));
-  expect(
-      Value.fromDouble(double.infinity)
-          .decimalSubtract(Value.fromDouble(double.negativeInfinity)),
-      Value.fromDouble(double.infinity));
-  expect(
-      Value.fromDouble(double.negativeInfinity)
-          .decimalSubtract(Value.fromDouble(double.infinity)),
-      Value.fromDouble(double.negativeInfinity));
-  expect(
-      Value.fromDouble(double.negativeInfinity)
-          .decimalSubtract(Value.fromDouble(double.negativeInfinity)),
-      Value.fromDouble(double.infinity));
-  expect(
-      Value.fromDouble(double.infinity).decimalSubtract(Value.fromDouble(42)),
-      Value.fromDouble(double.infinity));
-  expect(
-      Value.fromDouble(42).decimalSubtract(Value.fromDouble(double.infinity)),
-      Value.fromDouble(double.negativeInfinity));
-  expect(
-      Value.fromDouble(double.negativeInfinity)
-          .decimalSubtract(Value.fromDouble(42)),
-      Value.fromDouble(double.negativeInfinity));
-  expect(
-      Value.fromDouble(42)
-          .decimalSubtract(Value.fromDouble(double.negativeInfinity)),
-      Value.fromDouble(double.infinity));
-
   // Test a bunch of random numbers
   final random = Random();
   // No real point in setting a seed, since Random() can change across
@@ -2505,23 +2537,175 @@ Future<void> decimalAddSubtract() async {
 
   const fmt = SciFloatFormatter(9);
   for (int i = 0; i < 1000; i++) {
-    final int exp = random.nextInt(201) - 100;
-    final v1 = Value.fromDouble(getRandom(exp));
-    final v2 = Value.fromDouble(getRandom(exp + random.nextInt(25) - 12));
-    if (!v1.isInfinite && !v2.isInfinite) {
-      final d1 = Decimal.fromJson(fmt.format(v1, false));
-      final d2 = Decimal.fromJson(fmt.format(v2, false));
-      final plus =
-          Value.fromDouble(double.parse((d1 + d2).toStringAsExponential(9)));
-      final minus =
-          Value.fromDouble(double.parse((d1 - d2).toStringAsExponential(9)));
-      testAdd(v1.asDouble, v2.asDouble, plus.asDouble);
-      testSubtract(v1.asDouble, v2.asDouble, minus.asDouble);
-    }
     if (i % 1000 == 0 && i > 0) {
       print('$i');
     }
+    final int exp = random.nextInt(201) - 100;
+    final Value v1;
+    final Value v2;
+    try {
+      v1 = Value.fromDouble(getRandom(exp));
+      v2 = Value.fromDouble(getRandom(exp + random.nextInt(25) - 12));
+    } on FloatOverflow {
+      continue;
+    }
+    final d1 = Decimal.fromJson(fmt.format(v1, false));
+    final d2 = Decimal.fromJson(fmt.format(v2, false));
+    final Value plus;
+    final Value minus;
+    try {
+      plus = Value.fromDouble(double.parse((d1 + d2).toStringAsExponential(9)));
+      minus =
+          Value.fromDouble(double.parse((d1 - d2).toStringAsExponential(9)));
+    } on FloatOverflow {
+      continue;
+    }
+    testAdd(v1.asDouble, v2.asDouble, plus.asDouble);
+    testSubtract(v1.asDouble, v2.asDouble, minus.asDouble);
   }
+}
+
+Future<void> decimalMultiplyAndDivide() async {
+  void checkResult(
+      Value result, double expected, bool lenient, String Function() msg) {
+    final e = Value.fromDouble(expected);
+
+    if (result != e &&
+        (!lenient ||
+            result != Value.fromDouble(expected * 1.0000000000001) &&
+                result != Value.fromDouble(expected / 1.0000000000001))) {
+      expect(result, e, reason: msg());
+    }
+  }
+
+  void testDoubles(double n1, double n2, {bool lenient = false}) {
+    Value v1 = Value.fromDouble(n1);
+    Value v2 = Value.fromDouble(n2);
+    try {
+      checkResult(v1.decimalMultiply(v2), v1.asDouble * v2.asDouble, lenient,
+          () => ' for $v1 * $v2');
+    } on FloatOverflow {
+      try {
+        expect(v1.decimalMultiply(v2), false);
+      } on FloatOverflow {
+        // ignore
+      }
+      try {
+        expect(Value.fromDouble(v1.asDouble * v2.asDouble), false);
+      } on FloatOverflow {
+        // ignore
+      }
+    }
+    if (v2 != Value.zero) {
+      lenient = lenient ||
+          (n1 == 5 &&
+              (n2 == 9999999999e0 ||
+                  n2 == 9999999999e1 ||
+                  n2 == 9999999999e2 ||
+                  n2 == 9999999999e3 ||
+                  n2 == 9999999999e4 ||
+                  n2 == 9999999999e5));
+      lenient = lenient || (n1 == 9876543 && n2 == 98765432);
+      try {
+        checkResult(v1.decimalDivideBy(v2), v1.asDouble / v2.asDouble, lenient,
+            () => ' for $v1 / $v2');
+      } on FloatOverflow {
+        try {
+          expect(v1.decimalDivideBy(v2), false);
+        } on FloatOverflow {
+          // ignore
+        }
+        try {
+          expect(Value.fromDouble(v1.asDouble / v2.asDouble), false);
+        } on FloatOverflow {
+          // ignore
+        }
+      }
+    }
+  }
+
+  expect(
+      Value.fromDouble(-6.087e+14)
+          .decimalMultiply(Value.fromDouble(0.000013838095)),
+      Value.fromDouble(-8423248427.0));
+  try {
+    expect(Value.oneF.decimalDivideBy(Value.zero), false);
+  } on CalculatorError catch (e) {
+    expect(e.num15, 0);
+    expect(e.num16, 0);
+  }
+  // The actual answer is -8423248426.5, and IEEE FP rounds down, wheras
+  // the 15C rounds up.
+  testDoubles(1, 1);
+  testDoubles(1, -1);
+  testDoubles(-1, -1);
+  testDoubles(-1, 1);
+
+  // Try some numbers at the extremes
+  {
+    final numbers = {
+      9.123456789e99,
+      1.567891234e42,
+      0.0,
+      1.567891234e-42,
+      9.123456789e-99,
+    };
+    for (final n1 in numbers) {
+      for (final n2 in numbers) {
+        testDoubles(n1, n2);
+      }
+    }
+  }
+
+  // Do a bunch of operations that are represented exactly in
+  // IEEE double-precision (53 bits of mantissa; 2^^53 is a 15 digit number
+  for (int n1 = 1; n1 <= 15; n1++) {
+    for (int n2 = 1; n2 <= 15; n2++) {
+      const patterns = {
+        '000000000000000',
+        '111111111100000',
+        '999999999900000',
+        '123456789100000',
+        '567891234700000',
+        '987654321900000',
+        '891521596500000',
+        '281902729800000'
+      };
+      for (final d1 in patterns) {
+        for (final d2 in patterns) {
+          testDoubles(double.parse(d1.substring(0, n1)),
+              double.parse(d2.substring(0, n2)));
+        }
+      }
+    }
+  }
+
+  // Test a bunch of random numbers...
+  final random = Random();
+  // No real point in setting a seed, since Random() can change across
+  // platforms and versions of the library.
+  double getRandom(final int exp) {
+    return 2 * (random.nextDouble() - 0.5) * pow(10.0, exp);
+  }
+
+  for (int i = 0; i < 1000; i++) {
+    final v1 = getRandom(random.nextInt(201) - 100);
+    final v2 = getRandom(random.nextInt(201) - 100);
+    testDoubles(v1, v2, lenient: true);
+    if (i % 100000 == 0 && i > 0) {
+      print('$i');
+    }
+  }
+}
+
+Future<void> decimalComplex() async {
+  ComplexValue c(double re, double im) =>
+      ComplexValue(Value.fromDouble(re), Value.fromDouble(im));
+
+  expect(
+      c(9961222200, 4314481542)
+          .decimalMultiply(c(9157785135, 3984172017), (v) => v()),
+      c(7.403309596e19, 7.919831767e19));
 }
 
 Future<void> lastX15C() async {
@@ -2657,3 +2841,5 @@ Future<void> lastX15C() async {
     play([Operations.clx]);
   }
 }
+
+Value _toValue(double v) => Value.fromDouble(v);
