@@ -2628,14 +2628,14 @@ Future<void> decimalMultiplyAndDivide() async {
       Value.fromDouble(-6.087e+14)
           .decimalMultiply(Value.fromDouble(0.000013838095)),
       Value.fromDouble(-8423248427.0));
+  // The actual answer is -8423248426.5, and IEEE FP rounds down, wheras
+  // the 15C rounds up.
   try {
     expect(Value.oneF.decimalDivideBy(Value.zero), false);
   } on CalculatorError catch (e) {
     expect(e.num15, 0);
     expect(e.num16, 0);
   }
-  // The actual answer is -8423248426.5, and IEEE FP rounds down, wheras
-  // the 15C rounds up.
   testDoubles(1, 1);
   testDoubles(1, -1);
   testDoubles(-1, -1);
