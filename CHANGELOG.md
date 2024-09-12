@@ -6,6 +6,7 @@ Version 2.1.16 (Upcoming)
     statistics operations on the 15C.
   * Change internal overflow detection architecture to be more robust.
   * 15C: Fix complex ABS function
+  * 16C: Fix CHS in integer unsigned mode (Issue 121)
 
 Version 2.1.15.2 - August 2024 (Web Only)
   * Fix conversion of values to integers:  Issue 119

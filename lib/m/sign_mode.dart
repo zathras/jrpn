@@ -328,8 +328,11 @@ class _Unsigned extends IntegerSignMode {
 
   @override
   Value negate(Value v, Model m) {
+    // Set overflow and return the two's complement negation, as per page
+    // 30 of the users guide.  See issue #121.
     m.gFlag = true;
-    return v;
+    BigInt i = v.internal;
+    return Value.fromInternal(((i ^ m.wordMask) + BigInt.one) & m.wordMask);
   }
 
   @override
