@@ -533,18 +533,18 @@ class Operations16 extends Operations {
       stackLift: StackLift.neutral,
       name: 'WINDOW');
 
-  static final NormalOperation onesCompl = NormalOperation.intOnly(
-      intCalc: (Model m) => m.integerSignMode = SignMode.onesComplement,
+  static final NormalOperation onesCompl = NormalOperation(
+      calc: (Model m) => m.integerSignMode = SignMode.onesComplement,
       stackLift: StackLift.neutral,
       name: "1's");
 
-  static final NormalOperation twosCompl = NormalOperation.intOnly(
-      intCalc: (Model m) => m.integerSignMode = SignMode.twosComplement,
+  static final NormalOperation twosCompl = NormalOperation(
+      calc: (Model m) => m.integerSignMode = SignMode.twosComplement,
       stackLift: StackLift.neutral,
       name: "2's");
 
-  static final NormalOperation unsign = NormalOperation.intOnly(
-      intCalc: (Model m) => m.integerSignMode = SignMode.unsigned,
+  static final NormalOperation unsign = NormalOperation(
+      calc: (Model m) => m.integerSignMode = SignMode.unsigned,
       stackLift: StackLift.neutral,
       name: 'UNSGN');
 
