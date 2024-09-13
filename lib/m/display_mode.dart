@@ -391,7 +391,7 @@ class _DecimalMode extends IntegerDisplayMode {
       // non-negative
       return super.format(v, m);
     }
-    return '-${super.format(m.signMode.negate(v, m), m)}';
+    return '-${super.format(m.signMode.negateNoOverflow(v, m), m)}';
   }
 
   @override

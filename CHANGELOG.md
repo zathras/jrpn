@@ -2,7 +2,7 @@ Version 2.1.16 (Upcoming)
   * Implement decimal floating point multiplication and division
     to replace platform's IEEE binary floating point math (Issue 76).
   * Round away from zero to more closely match HP's rounding behavior.
-  * Use Decimal FP where appropriate, including matrix operations and
+  * Use decimal FP where appropriate, including matrix operations and
     statistics operations on the 15C.
   * Change internal overflow detection architecture to be more robust.
   * 15C:  Fix complex ABS function

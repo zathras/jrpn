@@ -31,6 +31,8 @@ abstract class SignMode {
 
   Value negate(Value v, Model m);
 
+  Value negateNoOverflow(Value v, Model m);
+
   bool get doesSignExtension;
 
   bool isZero(NumStatus m, Value value) => value == Value.zero;
@@ -148,6 +150,11 @@ class _OnesComplement extends IntegerSignMode {
   @override
   Value negate(Value v, Model m) {
     m.gFlag = false;
+    return negateNoOverflow(v, m);
+  }
+
+  @override
+  Value negateNoOverflow(Value v, Model m) {
     // 0 negates to -0, and -0 negates to 0.
     // Source:  https://github.com/zathras/jrpn/issues/85
     return Value.fromInternal(v.internal ^ m.wordMask);
@@ -248,6 +255,12 @@ class _TwosComplement extends IntegerSignMode {
       // overflow
       m.gFlag = true;
     }
+    return negateNoOverflow(v, m);
+  }
+
+  @override
+  Value negateNoOverflow(Value v, Model m) {
+    BigInt i = v.internal;
     return Value.fromInternal(((i ^ m.wordMask) + BigInt.one) & m.wordMask);
   }
 
@@ -334,6 +347,12 @@ class _Unsigned extends IntegerSignMode {
     // 30 of the users guide.  See issue #121.
     BigInt i = v.internal;
     m.gFlag = i != BigInt.zero;
+    return negateNoOverflow(v, m);
+  }
+
+  @override
+  Value negateNoOverflow(Value v, Model m) {
+    BigInt i = v.internal;
     return Value.fromInternal(((i ^ m.wordMask) + BigInt.one) & m.wordMask);
   }
 
@@ -406,6 +425,9 @@ class _Float extends SignMode {
 
   @override
   Value negate(Value v, Model m) => v.negateAsFloat();
+
+  @override
+  Value negateNoOverflow(Value v, Model m) => v.negateAsFloat();
 
   @override
   bool get doesSignExtension => false;
