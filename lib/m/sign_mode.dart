@@ -147,6 +147,7 @@ class _OnesComplement extends IntegerSignMode {
 
   @override
   Value negate(Value v, Model m) {
+    m.gFlag = false;
     // 0 negates to -0, and -0 negates to 0.
     // Source:  https://github.com/zathras/jrpn/issues/85
     return Value.fromInternal(v.internal ^ m.wordMask);
@@ -241,6 +242,7 @@ class _TwosComplement extends IntegerSignMode {
 
   @override
   Value negate(Value v, Model m) {
+    m.gFlag = false;
     BigInt i = v.internal;
     if (-i == m.signMask) {
       // overflow
@@ -330,8 +332,8 @@ class _Unsigned extends IntegerSignMode {
   Value negate(Value v, Model m) {
     // Set overflow and return the two's complement negation, as per page
     // 30 of the users guide.  See issue #121.
-    m.gFlag = true;
     BigInt i = v.internal;
+    m.gFlag = i != BigInt.zero;
     return Value.fromInternal(((i ^ m.wordMask) + BigInt.one) & m.wordMask);
   }
 
