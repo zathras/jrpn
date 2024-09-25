@@ -6,6 +6,7 @@ Version 2.1.16 (Upcoming)
     statistics operations on the 15C.
   * Change internal overflow detection architecture to be more robust.
   * 15C:  Fix complex ABS function
+  * 15C:  Use 1e-11 as minumum pivot in matrix LU decompositon (Issue 123)
   * 16C:  Fix CHS in integer unsigned mode (Issue 121)
   * 16C:  Allow changing integer sign mode from float mode (Issue 122)
 

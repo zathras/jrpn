@@ -77,18 +77,25 @@ void decomposeLU(Matrix m) {
 
   // Avoid a singular matrix by perturbing the pivots, if needed, so they fall
   // within the 15C's precision.  See Advanced Functions, 98-99.
-  DecimalFP22 maxPivot = DecimalFP22.zero;
+  //
+  // Based on https://en.wikipedia.org/wiki/Machine_epsilon, a reasonable value
+  // for machine epsilon is 5e-12 (b^(-p-1)/2, b = base = 10, p =
+  // precision = 10).
+  // https://link.springer.com/content/pdf/10.1007/3-540-48311-X_153
+  // suggests that the pivot value does not vary with the magnitude
+  // of other values of the matrix (!).  I experimented with the singular
+  // matrices [[3 3] [1 1]] and [3e20 3e20] [1 1]], and both showed a minimum
+  // pivot value of 1e-10, so I'll go with that.
+
+  const minPivot = 1e-10;
   for (int i = 0; i < m.rows; i++) {
-    final us = m.getF(i, i).abs();
-    if (us > maxPivot) {
-      maxPivot = us;
-    }
-  }
-  final int minExp = max(-99, maxPivot.exponent - 10);
-  for (int i = 0; i < m.rows; i++) {
-    final v = m.get(i, i);
-    if (v.exponent < minExp) {
-      m.setF(i, i, DecimalFP22.tenTo(minExp, negative: v.isNegative));
+    final v = m.get(i, i).asDouble;
+    if (v.abs() < minPivot) {
+      if (v < 0) {
+        m.set(i, i, Value.fromDouble(-minPivot));
+      } else {
+        m.set(i, i, Value.fromDouble(minPivot));
+      }
     }
   }
 }
