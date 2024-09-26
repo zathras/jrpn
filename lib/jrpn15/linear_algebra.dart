@@ -76,7 +76,9 @@ void decomposeLU(Matrix m) {
   }
 
   // Avoid a singular matrix by perturbing the pivots, if needed, so they fall
-  // within the 15C's precision.  See Advanced Functions, 98-99.
+  // within the 15C's precision.  See Advanced Functions, 98-99.  Note that page
+  // 98 say "Then, theoretically, a matrix is singular if at least one of the
+  // diagonal elements of U, the pivots, is zero; otherwise it is nonsingular."
   //
   // Based on https://en.wikipedia.org/wiki/Machine_epsilon, a reasonable value
   // for machine epsilon is 5e-12 (b^(-p-1)/2, b = base = 10, p =
@@ -86,7 +88,6 @@ void decomposeLU(Matrix m) {
   // of other values of the matrix (!).  I experimented with the singular
   // matrices [[3 3] [1 1]] and [3e20 3e20] [1 1]], and both showed a minimum
   // pivot value of 1e-10, so I'll go with that.
-
   const minPivot = 1e-10;
   for (int i = 0; i < m.rows; i++) {
     final v = m.get(i, i).asDouble;
