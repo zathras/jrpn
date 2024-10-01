@@ -754,7 +754,7 @@ Public License instead of this License.  But first, please read
 
 /// package_info doesn't exist for all platforms, so I'm doing the version
 /// number the old fashioned way.
-const applicationVersion = '2.1.16beta1';
+const applicationVersion = '2.1.16';
 final Uri applicationWebAddress = Uri.https('jrpn.jovial.com', '');
 final Uri applicationHelpAddress = Uri.https('jrpn.jovial.com', 'help.html');
 final Uri applicationIssueAddress =

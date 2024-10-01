@@ -1,4 +1,4 @@
-Version 2.1.16 (Upcoming)
+Version 2.1.16 - October 2024
   * Implement decimal floating point multiplication and division
     to replace platform's IEEE binary floating point math (Issue 76).
   * Round away from zero to more closely match HP's rounding behavior.
