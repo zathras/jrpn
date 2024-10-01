@@ -25,7 +25,7 @@ by Torsten Manz, https://hp-15c.homepage.t-online.de/content_web.htm, which
 is offered under the GPL.
 */
 
-library jrpn15.linalg;
+library;
 
 import 'dart:math';
 

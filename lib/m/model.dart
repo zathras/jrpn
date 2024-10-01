@@ -34,7 +34,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 /// gets displayed in the view's `LcdDisplay`.  The model is only loosely
 /// coupled to the view, by making the display contents [Observable].
 ///
-library model;
+library;
 
 import 'dart:async';
 import 'dart:convert';

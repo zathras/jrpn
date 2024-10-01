@@ -43,7 +43,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 /// for the type of operation; this helped simplify development, and removes
 /// a potential source of bugs.
 ///
-library controller.states;
+library;
 
 import 'dart:async';
 import 'dart:io';

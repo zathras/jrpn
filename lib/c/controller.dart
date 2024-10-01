@@ -37,7 +37,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 /// <img src="dartdoc/controller/main.svg" style="width: 100%;"/>
 /// <br>
 ///
-library controller;
+library;
 
 import 'dart:convert';
 import 'package:flutter/services.dart';

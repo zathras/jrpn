@@ -19,7 +19,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 
 */
 
-library jrpn15.more_math;
+library;
 
 import 'dart:math';
 

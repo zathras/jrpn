@@ -41,7 +41,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 ///     style="align: center; width: 75%;"/>
 /// <br>
 /// (More is available under [Segments].)
-library view.lcd_display;
+library;
 
 import 'dart:async';
 import 'dart:math';

@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see https://www.gnu.org/licenses/ .
 */
 
-library jrpn15.matrix;
+library;
 
 import 'package:jrpn/m/model.dart';
 import 'package:meta/meta.dart';

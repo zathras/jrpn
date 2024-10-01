@@ -33,7 +33,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 /// state typess.  This is discussed in more detail in the
 /// `controller.states` library description.
 ///
-library controller.operations;
+library;
 
 import 'dart:math';
 

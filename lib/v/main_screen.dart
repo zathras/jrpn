@@ -21,7 +21,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 /// The main screen of the calculator.  It uses [ScreenPositioner] to
 /// exactly position widgets, and scale them to the screen size.
 ///
-library view.main_screen;
+library;
 
 import 'dart:async';
 import 'dart:convert';

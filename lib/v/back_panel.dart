@@ -21,7 +21,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 ///
 /// The back panel of the calculator.
 ///
-library view.back_panel;
+library;
 
 import 'dart:math';
 

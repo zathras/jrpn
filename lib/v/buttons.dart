@@ -25,7 +25,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 /// <img src="dartdoc/view.buttons/buttons.svg" style="width: 100%;"/>
 /// <br>
 /// See [CalculatorButton] for more details.
-library view.buttons;
+library;
 
 import 'dart:async';
 import 'dart:math';
