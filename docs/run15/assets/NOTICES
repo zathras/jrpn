@@ -2309,7 +2309,6 @@ async
 cli_util
 collection
 mime
-source_map_stack_trace
 stream_channel
 typed_data
 
@@ -5213,6 +5212,7 @@ fake_async
 convert
 crypto
 shelf_static
+source_map_stack_trace
 vm_service
 
 Copyright 2015, the Dart project authors.
