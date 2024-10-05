@@ -755,7 +755,7 @@ abstract class DecimalFP {
     int resultExp = exponent + other.exponent;
     BigInt mm = mantissa * other.mantissa;
     BigInt resultM;
-    // Do a truncating normalize.  Roounding happens when we convert to
+    // Do a truncating normalize.  Rounding happens when we convert to
     // a Value.
     if (mm < _tenPow(mantissaDigits * 2 - 1)) {
       resultM = mm ~/ _tenPow(mantissaDigits - 1);
@@ -777,7 +777,7 @@ abstract class DecimalFP {
     BigInt dm = (mantissa * _tenPow(mantissaDigits + 1)) ~/ other.mantissa;
     int resultExp = exponent - other.exponent;
     BigInt resultM;
-    // Do a truncating normalize.  Roounding happens when we convert to
+    // Do a truncating normalize.  Rounding happens when we convert to
     // a Value.
     if (dm < _tenPow(mantissaDigits + 1)) {
       resultM = dm ~/ _tenPow(1);
