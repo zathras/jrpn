@@ -604,18 +604,28 @@ abstract class DecimalFP {
       List<BigInt?>.generate(50, (_) => null, growable: false);
 
   static BigInt _tenPow(int digits) =>
-      _tenPowCache[digits] ??= BigInt.parse('1'.padRight(digits + 1, '0'));
+      _tenPowCache[digits] ??= _tenPowRaw(digits);
+
+  static BigInt _tenPowRaw(int digits) =>
+      BigInt.parse('1'.padRight(digits + 1, '0'));
 
   ///
   /// Convert to a Value.  Calling this method changes the internal
   /// representation (to a normalized form).
   ///
   Value toValue() {
-    int mm = (mantissa ~/ _tenPow(mantissaDigits - 11)).toInt();
+    int mm;
+    if (mantissaDigits > 11) {
+      mm = (mantissa ~/ _tenPow(mantissaDigits - 11)).toInt();
+    } else if (mantissaDigits == 11) {
+      mm = mantissa.toInt();
+    } else {
+      mm = (mantissa * _tenPow(11 - mantissaDigits)).toInt();
+    }
     if (mm == 0) {
       return Value.zero;
     }
-    assert(mm >= 10000000000 && mm < 100000000000); // 1e10, 1e11
+    assert(mm >= 10000000000 && mm < 100000000000); // 1e11, 1e12
     int exp = exponent;
     if (mm + 5 >= 100000000000) {
       // 1e11
@@ -858,30 +868,50 @@ abstract class DecimalFP {
     return isNegative ? -v : v;
   }
 
-  // For integers that can't possibly overflow
+  /// For integers that can't possibly overflow
   int get asInt {
     final BigInt v = mantissa ~/ _tenPow(mantissaDigits - 1 - exponent);
     return isNegative ? -v.toInt() : v.toInt();
+  }
+
+  /// Give the integer part of this value
+  DecimalFP intOp() {
+    if (mantissa == BigInt.zero) {
+      return this;
+    }
+    int extraDigits = mantissaDigits - exponent - 1;
+    if (extraDigits <= 0) {
+      return this;
+    }
+    if (extraDigits >= mantissaDigits) {
+      return newInstance(false, 0, BigInt.zero);
+    }
+    final newMantissa = mantissa - mantissa.remainder(_tenPowRaw(extraDigits));
+    if (newMantissa == BigInt.zero) {
+      return newInstance(false, 0, BigInt.zero);
+    }
+    return newInstance(isNegative, exponent, newMantissa);
   }
 }
 
 class DecimalFP12 extends DecimalFP {
   DecimalFP12(Value v) : super.fromValue(v, v._mantissa * DecimalFP._tenPow(2));
 
-  DecimalFP12._raw(super.isNegative, super.exponent, super.mantissa)
+  DecimalFP12.raw(super.isNegative, super.exponent, super.mantissa)
       : super.raw();
 
   @override
   int get mantissaDigits => 12;
 
   @override
+  @protected
   DecimalFP12 newInstance(bool isNegative, int exponent, BigInt mantissa) =>
-      DecimalFP12._raw(isNegative, exponent, mantissa);
+      DecimalFP12.raw(isNegative, exponent, mantissa);
 
-  DecimalFP12 negate() => DecimalFP12._raw(!isNegative, exponent, mantissa);
+  DecimalFP12 negate() => DecimalFP12.raw(!isNegative, exponent, mantissa);
 
   static DecimalFP12 tenTo(int pow, {bool negative = false}) =>
-      DecimalFP12._raw(negative, pow, DecimalFP._tenPow(11));
+      DecimalFP12.raw(negative, pow, DecimalFP._tenPow(11));
 
   DecimalFP12 operator +(DecimalFP12 other) =>
       addOrSubtract(other, true) as DecimalFP12;
@@ -896,6 +926,9 @@ class DecimalFP12 extends DecimalFP {
   @override
   DecimalFP12 abs() => super.abs() as DecimalFP12;
 
+  @override
+  DecimalFP12 intOp() => super.intOp() as DecimalFP12;
+
   bool operator >(DecimalFP12 other) => compareTo(other) > 0;
   bool operator >=(DecimalFP12 other) => compareTo(other) >= 0;
   bool operator <(DecimalFP12 other) => compareTo(other) < 0;
@@ -906,10 +939,10 @@ class DecimalFP22 extends DecimalFP {
   DecimalFP22(Value v)
       : super.fromValue(v, v._mantissa * DecimalFP._tenPow(12));
 
-  DecimalFP22._raw(super.isNegative, super.exponent, super.mantissa)
+  DecimalFP22.raw(super.isNegative, super.exponent, super.mantissa)
       : super.raw();
 
-  static DecimalFP22 zero = DecimalFP22._raw(false, 0, BigInt.zero);
+  static DecimalFP22 zero = DecimalFP22.raw(false, 0, BigInt.zero);
 
   static DecimalFP22 one = tenTo(0);
 
@@ -919,13 +952,14 @@ class DecimalFP22 extends DecimalFP {
   int get mantissaDigits => 22;
 
   @override
+  @protected
   DecimalFP22 newInstance(bool isNegative, int exponent, BigInt mantissa) =>
-      DecimalFP22._raw(isNegative, exponent, mantissa);
+      DecimalFP22.raw(isNegative, exponent, mantissa);
 
-  DecimalFP22 negate() => DecimalFP22._raw(!isNegative, exponent, mantissa);
+  DecimalFP22 negate() => DecimalFP22.raw(!isNegative, exponent, mantissa);
 
   static DecimalFP22 tenTo(int pow, {bool negative = false}) =>
-      DecimalFP22._raw(negative, pow, DecimalFP._tenPow(21));
+      DecimalFP22.raw(negative, pow, DecimalFP._tenPow(21));
 
   DecimalFP22 operator +(DecimalFP22 other) =>
       addOrSubtract(other, true) as DecimalFP22;
@@ -940,10 +974,32 @@ class DecimalFP22 extends DecimalFP {
   @override
   DecimalFP22 abs() => super.abs() as DecimalFP22;
 
+  @override
+  DecimalFP22 intOp() => super.intOp() as DecimalFP22;
+
   bool operator >(DecimalFP22 other) => compareTo(other) > 0;
   bool operator >=(DecimalFP22 other) => compareTo(other) >= 0;
   bool operator <(DecimalFP22 other) => compareTo(other) < 0;
   bool operator <=(DecimalFP22 other) => compareTo(other) <= 0;
+}
+
+///
+/// Only used for testing.  Compiler should strip this out of executable
+/// in deployment.
+///
+class DecimalFP6 extends DecimalFP {
+  DecimalFP6(Value v) : super.fromValue(v, v._mantissa ~/ DecimalFP._tenPow(4));
+
+  DecimalFP6.raw(super.isNegative, super.exponent, super.mantissa)
+      : super.raw();
+
+  @override
+  int get mantissaDigits => 6;
+
+  @override
+  @protected
+  DecimalFP6 newInstance(bool isNegative, int exponent, BigInt mantissa) =>
+      DecimalFP6.raw(isNegative, exponent, mantissa);
 }
 
 ///

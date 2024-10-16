@@ -283,16 +283,20 @@ class LinearRegression {
 ///
 /// Special case of sin() for HP15, so that sin(180) gives exactly 0, etc.
 ///
-/// rightAngleInt is 90 for degrees, 100 for grad, and null for radians.
+/// mode.rightAngleInt is 90 for degrees, 100 for grad, and null for radians.
 ///
-double? sin15(double angle, int? rightAngleInt) {
-  if (rightAngleInt != null) {
-    double? a = _normalizeAngle(angle, rightAngleInt);
-    if (a == 0 || a == rightAngleInt * 2) {
+double sin15(Value angle, TrigMode mode) {
+  final int? ra = mode.rightAngleInt;
+  if (ra != null) {
+    double a = _normalizeAngle(angle, ra);
+    if (a == 0 || a == ra * 2 || a == ra * 4) {
       return 0;
     }
+    return sin(a * mode.scaleFactor);
+  } else {
+    assert(mode.scaleFactor == 1);
+    return sin(angle.asDouble);
   }
-  return null;
 }
 
 ///
@@ -300,14 +304,18 @@ double? sin15(double angle, int? rightAngleInt) {
 ///
 /// rightAngleInt is 90 for degrees, 100 for grad, and null for radians.
 ///
-double? cos15(double angle, int? rightAngleInt) {
-  if (rightAngleInt != null) {
-    double? a = _normalizeAngle(angle, rightAngleInt);
-    if (a == rightAngleInt || a == rightAngleInt * 3) {
+double cos15(Value angle, TrigMode mode) {
+  final int? ra = mode.rightAngleInt;
+  if (ra != null) {
+    double a = _normalizeAngle(angle, ra);
+    if (a == ra || a == ra * 3) {
       return 0;
     }
+    return cos(a * mode.scaleFactor);
+  } else {
+    assert(mode.scaleFactor == 1);
+    return cos(angle.asDouble);
   }
-  return null;
 }
 
 ///
@@ -316,32 +324,52 @@ double? cos15(double angle, int? rightAngleInt) {
 ///
 /// rightAngleInt is 90 for degrees, 100 for grad, and null for radians.
 ///
-double? tan15(double angle, int? rightAngleInt) {
-  if (rightAngleInt != null) {
-    double? a = _normalizeAngle(angle, rightAngleInt);
-    if (a == rightAngleInt || a == 3 * rightAngleInt) {
+double tan15(Value angle, TrigMode mode) {
+  final int? ra = mode.rightAngleInt;
+  if (ra != null) {
+    double a = _normalizeAngle(angle, ra);
+    if (a == ra || a == ra * 3) {
       return double.infinity;
-    } else if (a == 0 || a == rightAngleInt * 2) {
+    } else if (a == 0 || a == ra * 2 || a == ra * 4) {
       return 0;
     }
+    return tan(a * mode.scaleFactor);
+  } else {
+    assert(mode.scaleFactor == 1);
+    return tan(angle.asDouble);
   }
-  return null;
 }
 
 //
-// Return null if angle isn't worth considering, or a number between
-// 0 (inclusive) and 4*rightAngleInt (exclusive) if it is.
+// Return a number between 0 (inclusive) and 4*rightAngleInt
+// (Usually exclusive, but I think it might be possible for it to
+// round to exactly 4*rightAngleInt).
 //
-double? _normalizeAngle(double angle, int rightAngleInt) {
-  if (angle > 9999999999.0 || angle < -9999999999.0) {
-    // If the angle's units aren't exactly represented, don't bother.  This
-    // prevents us having round-off problems with the remainder call, below.
-    return null;
+double _normalizeAngle(Value angle, int rightAngleInt) {
+  final fullCircle = DecimalFP22(Value.fromDouble(rightAngleInt * 4));
+  final oneE6 = BigInt.from(1000000);
+  // Leave six guard digits at the bottom of the mantissa.  I think two
+  // would be fine, and would be a bit faster, so six is a nice conservative
+  // value to use.
+  var angle22 = DecimalFP22(angle);
+  if (!angle.isNegative && angle22 < fullCircle) {
+    return angle.asDouble;
   }
-  angle = angle.remainder(rightAngleInt * 4);
-  if (angle >= 0) {
-    return angle;
-  } else {
-    return 4 * rightAngleInt + angle;
+  for (int i = 0; i < 10; i++) {
+    var circles = (angle22 / fullCircle).intOp();
+    if (circles.mantissa != BigInt.zero) {
+      // Zero out the bottom of the mantissa, so we stay within numbers
+      // we represent exactly.
+      final m = (circles.mantissa ~/ oneE6) * oneE6;
+      circles = DecimalFP22.raw(circles.isNegative, circles.exponent, m);
+    }
+    angle22 = angle22 - circles * fullCircle;
+    if (angle22.isNegative && angle22.exponent < 5) {
+      angle22 = angle22 + fullCircle;
+    }
+    if (!angle22.isNegative && angle22 < fullCircle) {
+      break;
+    }
   }
+  return angle22.toValue().asDouble;
 }

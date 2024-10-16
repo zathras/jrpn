@@ -1,3 +1,6 @@
+Version 2.1.17 - Upcoming
+  * Improvements to trig function at big angles in deg, grad (Issue 124).
+
 Version 2.1.16 - October 2024
   * Implement decimal floating point multiplication and division
     to replace platform's IEEE binary floating point math (Issue 76).

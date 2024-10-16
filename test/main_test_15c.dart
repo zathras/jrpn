@@ -24,6 +24,7 @@ import 'dart:async';
 import 'dart:math' as dart;
 import 'dart:math';
 
+import 'package:jrpn/jrpn15/more_math.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:jrpn/c/controller.dart';
@@ -93,6 +94,8 @@ Future<void> main() async {
   test('Value exponent test', valueExponentTest);
   test('Value frac op test', valueFracOpTest);
   test('Value int op test', valueIntOpTest);
+  test('DecimalFP int op test', decimalFPIntOpTest);
+  test('Trig test', trigTest);
   test15cPrograms();
 }
 
@@ -2344,6 +2347,92 @@ Future<void> valueIntOpTest() async {
   expect(Value.zero.intOp(), Value.zero);
   expect(Value.fMaxValue.intOp(), Value.fMaxValue);
   expect(Value.fMinValue.intOp(), Value.fMinValue);
+}
+
+Future<void> decimalFPIntOpTest() async {
+  for (int e = -99; e <= 99; e++) {
+    for (String sign in ['', '-']) {
+      var v = Value.fromDouble(double.parse('${sign}1.234567891e$e'));
+      var vi = v.intOp();
+      expect(DecimalFP12(v).intOp(), DecimalFP12(vi));
+      expect(DecimalFP22(v).intOp(), DecimalFP22(vi));
+
+      v = Value.fromDouble(double.parse('${sign}1.23456e$e'));
+      vi = v.intOp();
+      expect(DecimalFP6(v).intOp().toValue(), vi);
+    }
+  }
+  expect(DecimalFP22.zero.intOp(), DecimalFP22.zero);
+}
+
+Future<void> trigTest() async {
+  final List<List<double>> degValuesInUnitCircle = [
+    [0.0, 0.0, 1.0, 0.0],
+    [45.0, 0.7071067812, 0.7071067812, 1.0],
+    [90.0, 1.0, 0.0, double.infinity],
+    [135.0, 0.7071067812, -0.7071067812, -1.0],
+    [180.0, 0.0, -1.0, 0.0],
+    [225.0, -0.7071067812, -0.7071067812, 1.0],
+    [270.0, -1.0, 0.0, double.infinity],
+    [315.0, -0.7071067812, 0.7071067812, -1.0],
+  ];
+  // Expect, rounded to Value's precision
+  void er(double v, double e, Value explain) {
+    if (v == double.infinity || e == double.infinity) {
+      expect(v, e, reason: '$explain');
+    } else {
+      expect(Value.fromDouble(v), Value.fromDouble(e), reason: '$explain');
+    }
+  }
+
+  for (double mult in [1e7, 1e4, 100.0, 10.0, 7.0, 3.0, 2.0, 1.0, 0.0]) {
+    for (final vals in degValuesInUnitCircle) {
+      final deg = Value.fromDouble(vals[0] + 360 * mult);
+      final nDeg = Value.fromDouble(vals[0] - 360 - 360 * mult);
+      final grad = Value.fromDouble(vals[0] * 100 / 90 + 400 * mult);
+      final nGrad = Value.fromDouble((vals[0] * 100 / 90) - 400 - 400 * mult);
+      er(sin15(deg, TrigMode.deg), vals[1], deg);
+      er(sin15(nDeg, TrigMode.deg), vals[1], nDeg);
+      er(sin15(grad, TrigMode.grad), vals[1], grad);
+      er(sin15(nGrad, TrigMode.grad), vals[1], nGrad);
+      er(cos15(deg, TrigMode.deg), vals[2], deg);
+      er(cos15(nDeg, TrigMode.deg), vals[2], nDeg);
+      er(cos15(grad, TrigMode.grad), vals[2], grad);
+      er(cos15(nGrad, TrigMode.grad), vals[2], nGrad);
+      er(tan15(deg, TrigMode.deg), vals[3], deg);
+      er(tan15(nDeg, TrigMode.deg), vals[3], nDeg);
+      er(tan15(grad, TrigMode.grad), vals[3], grad);
+      er(tan15(nGrad, TrigMode.grad), vals[3], nGrad);
+    }
+  }
+  final List<List<double>> bigDegValues = [
+    [360.0000001, 1.745329252e-9, 1.0, 1.745329252e-9],
+    [720e7, 0.0, 1.0, 0.0],
+    [720e8, 0.0, 1.0, 0.0],
+    [720e9, 0.0, 1.0, 0.0],
+    [7.2e99, 0.0, 1.0, 0.0],
+    [-7.2e99, 0.0, 1.0, 0.0],
+    [7.21e99, -0.9848077530, 0.1736481777, -5.671281820],
+    [-7.21e99, 0.9848077530, 0.1736481777, 5.671281820],
+  ];
+  for (final vals in bigDegValues) {
+    final deg = Value.fromDouble(vals[0]);
+    er(sin15(deg, TrigMode.deg), vals[1], deg);
+    er(cos15(deg, TrigMode.deg), vals[2], deg);
+    er(tan15(deg, TrigMode.deg), vals[3], deg);
+  }
+  final List<List<double>> bigGradValues = [
+    [8e99, 0.0, 1.0, 0.0],
+    [-8e99, 0.0, 1.0, 0.0],
+    [8.1e99, 0.0, 1.0, 0.0],
+    [-8.1e99, 0.0, 1.0, 0.0],
+  ];
+  for (final vals in bigGradValues) {
+    final grad = Value.fromDouble(vals[0]);
+    er(sin15(grad, TrigMode.grad), vals[1], grad);
+    er(cos15(grad, TrigMode.grad), vals[2], grad);
+    er(tan15(grad, TrigMode.grad), vals[3], grad);
+  }
 }
 
 Future<void> decimalAddSubtract() async {
