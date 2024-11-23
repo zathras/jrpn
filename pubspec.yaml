@@ -24,8 +24,8 @@ dependencies:
       path: packages/desktop_multi_window
       ref: main
   vector_math: ^2.1.0
-  jovial_svg: ^1.0.2
-  jovial_misc: ^0.8.5
+  jovial_svg: ^1.0.24
+  jovial_misc: ^0.9.0
 
 dev_dependencies:
   flutter_lints: ^5.0.0
