@@ -344,6 +344,10 @@ class Operations15 extends Operations {
   static final NormalOperation yX15 = NormalOperationOrLetter.floatOnly(
       letter: letterLabelD,
       floatCalc: (Model m) {
+        if (m.x == Value.zero && m.y == Value.zero) {
+          throw CalculatorError(0);
+          // https://github.com/zathras/jrpn/issues/126
+        }
         m.popSetResultXF = dart.pow(m.yF, m.xF) as double;
       },
       complexCalc: (Model m) {

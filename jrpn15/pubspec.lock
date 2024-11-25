@@ -362,18 +362,18 @@ packages:
     dependency: transitive
     description:
       name: jovial_misc
-      sha256: f6e64f789ee311025bb367be9c9afe9759f76dd8209070b7f38e735b5f529eb1
+      sha256: "4b10a4cac4f492d9692e97699bff775efa84abdba29909124cbccf3126e31cea"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.5"
+    version: "0.9.0"
   jovial_svg:
     dependency: transitive
     description:
       name: jovial_svg
-      sha256: "893dab3d9bbb8dd03e8225d457004950b9cf828d0009fd14c185cedacb96839c"
+      sha256: ca14d42956b9949c36333065c9141f100e930c918f57f4bd8dd59d35581bd3fc
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.22"
+    version: "1.1.24"
   jrpn:
     dependency: "direct main"
     description:
@@ -573,14 +573,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
-  pointycastle:
-    dependency: transitive
-    description:
-      name: pointycastle
-      sha256: "4be0097fcf3fd3e8449e53730c631200ebc7b88016acecab2b0da2f0149222fe"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.9.1"
   pool:
     dependency: transitive
     description:
