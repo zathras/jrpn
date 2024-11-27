@@ -50,19 +50,35 @@ class InternalStateWindow extends StatelessWidget {
     await window.show();
 
     late final void Function(void) observerRef;
+    bool firstCall = true;
     bool hasLaunched = false;
+    Timer? pending;
     void observer(void _) async {
-      try {
-        await DesktopMultiWindow.invokeMethod(
-            window.windowId, 'frob', model.internalSnapshot.value.text);
-        hasLaunched = true;
-      } catch (ex) {
-        if (hasLaunched) {
-          model.internalSnapshot.removeObserver(observerRef);
-          model.optimizeInternalSnapshot();
-          hasLaunched = false;
+      Future<void> sendToIswIsolate() async {
+        try {
+          if (firstCall) {
+            firstCall = false;
+            // DesktopMultiWindow doesn't reliably work at first on all platforms,
+            // so we ignore exceptions at the start.  In case it completely fails,
+            // after a second we consider the window launched no matter what.
+            Timer(Duration(seconds: 1), () => hasLaunched = true);
+          }
+
+          await DesktopMultiWindow.invokeMethod(
+              window.windowId, 'frob', model.internalSnapshot.value.text);
+          hasLaunched = true;
+        } catch (ex) {
+          if (hasLaunched) {
+            model.internalSnapshot.removeObserver(observerRef);
+            model.optimizeInternalSnapshot();
+          }
         }
       }
+
+      pending ??= Timer(Duration(milliseconds: 30), () {
+        unawaited(sendToIswIsolate());
+        pending = null;
+      });
     }
 
     observerRef = observer;
