@@ -1227,6 +1227,8 @@ abstract class MProgramRunner {
   }
 
   void abort();
+
+  String snapshotText();
 }
 
 ///

@@ -100,6 +100,8 @@ abstract class NontrivialProgramRunner extends ProgramRunner {
 }
 
 class SolveProgramRunner extends NontrivialProgramRunner {
+  double x0 = 0; // One end of estimate
+  double x1 = 0; // Other end of estimate
   @override
   int get registersRequired => max(5, (parent?.registersRequired ?? 0));
 
@@ -123,8 +125,8 @@ class SolveProgramRunner extends NontrivialProgramRunner {
   @override
   Future<bool> runCalculation() async {
     // Algorithm translated from doc/HP-15C.tcl, secant, at line 5987
-    double x0 = model.yF;
-    double x1 = model.xF;
+    x0 = model.yF;
+    x1 = model.xF;
     const ebs = 1e-14;
     int cntmax = 25;
     int ii = 2;
@@ -177,6 +179,7 @@ class SolveProgramRunner extends NontrivialProgramRunner {
       rangeHacksLeft = 15; // Try to keep in range
     }
     for (;;) {
+      model.notifySnapshot();
       double slope;
       if (resultX1 - resultX0 != 0) {
         slope = (x1 - x0) / (resultX1 - resultX0);
@@ -239,10 +242,17 @@ class SolveProgramRunner extends NontrivialProgramRunner {
     model.xF = x1;
     return rc;
   }
+
+  @override
+  String snapshotText() {
+    final c = child?.snapshotText() ?? '';
+    return 'SOLVE:  x0=$x0, x1=$x1\n\n$c';
+  }
 }
 
 class IntegrateProgramRunner extends NontrivialProgramRunner {
   double _lastEstimate = 0;
+  int iteration = 0;
 
   @override
   int get registersRequired => max(23, (parent?.registersRequired ?? 0));
@@ -385,8 +395,8 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
     int k = 1;
     ro[0] = await runSubroutine((a + b) / 2) * h;
     _lastEstimate = ro[0] * signResult;
-    int i;
-    for (i = 1; i < maxIterations; i++) {
+    for (iteration = 1; iteration < maxIterations; iteration++) {
+      model.notifySnapshot();
       int s = 1;
       double sum = 0;
       k *= 3;
@@ -397,30 +407,34 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
         sum += f1 + f2;
       }
       ru[0] = h * sum + ro[0] / 3;
-      for (int j = 1; j <= i; ++j) {
+      for (int j = 1; j <= iteration; ++j) {
         s *= 9;
         ru[j] = (s * ru[j - 1] - ro[j - 1]) / (s - 1);
       }
       final rt = ro;
       ro = ru;
       ru = rt;
-      final estimate = ro[i] * signResult;
+      final estimate = ro[iteration] * signResult;
       final double digit = precision.leastSignificantDigitNoFloor(estimate);
       final double eps = fpow(10.0, digit);
-      if (i > 1 && (ru[i - 1] - estimate).abs() <= eps) {
+      if (iteration > 1 && (ru[iteration - 1] - estimate).abs() <= eps) {
         break;
       }
       _lastEstimate = estimate;
     }
-    final ok = i < maxIterations;
-    if (!ok) {
-      i--;
-    }
+    final ok = iteration < maxIterations;
+    int i = ok ? iteration : (iteration - 1);
     final err = ((ru[i - 1] - ro[i]) / ro[i]).abs();
     model.z = originalX;
     model.t = originalY;
     model.yF = err;
     model.xF = ro[i] * signResult;
     return true; // The 15C never gives CalculatorError on failure to converge
+  }
+
+  @override
+  String snapshotText() {
+    final c = child?.snapshotText() ?? '';
+    return 'INTEGRATE iteration $iteration:  $_lastEstimate\n\n$c';
   }
 }

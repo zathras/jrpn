@@ -38,7 +38,7 @@ const _linuxBugText =
 /// A separate (desktop) window showing the internal state
 ///
 class InternalStateWindow extends StatelessWidget {
-  final state = Observable<ModelSnapshot>(ModelSnapshot(null, ''));
+  final Observable<String> state = Observable('');
 
   InternalStateWindow({super.key});
 
@@ -65,24 +65,28 @@ class InternalStateWindow extends StatelessWidget {
           }
 
           await DesktopMultiWindow.invokeMethod(
-              window.windowId, 'frob', model.internalSnapshot.value.text);
+              window.windowId, 'frob', model.makeSnapshotText());
           hasLaunched = true;
         } catch (ex) {
           if (hasLaunched) {
-            model.internalSnapshot.removeObserver(observerRef);
+            model.internalSnapshot.listeners.removeObserver(observerRef);
             model.optimizeInternalSnapshot();
           }
         }
       }
 
-      pending ??= Timer(Duration(milliseconds: 30), () {
-        unawaited(sendToIswIsolate());
-        pending = null;
-      });
+      if (firstCall) {
+        await sendToIswIsolate();
+      } else {
+        pending ??= Timer(Duration(milliseconds: 30), () {
+          pending = null;
+          unawaited(sendToIswIsolate());
+        });
+      }
     }
 
     observerRef = observer;
-    model.internalSnapshot.addObserver(observerRef);
+    model.internalSnapshot.listeners.addObserver(observerRef);
   }
 
   static Future<bool> takeControl(List<String> args) async {
@@ -101,8 +105,9 @@ class InternalStateWindow extends StatelessWidget {
   }
 
   Future<void> _handler(MethodCall call, int fromWindowID) async {
-    // Could check call.method, but we only get the update call
-    state.value = ModelSnapshot(null, call.arguments as String);
+    // Could check call.method to ensure it's 'frob', but we only get the
+    // one kind of call
+    state.value = call.arguments as String;
   }
 
   @override
@@ -130,7 +135,8 @@ class InternalStatePanel extends StatelessWidget {
         child: Stack(children: [
           Container(
               color: Colors.black,
-              child: _TextViewer(model.internalSnapshot, directModel: model)),
+              child: _TextViewer(model.internalSnapshot.listeners,
+                  directModel: model)),
           const Positioned(
               top: 16,
               right: 16,
@@ -140,10 +146,10 @@ class InternalStatePanel extends StatelessWidget {
 }
 
 class _TextViewer extends StatefulWidget {
-  final Observable<ModelSnapshot> text;
+  final Observable<Object?> snapshot;
   final Model? directModel;
 
-  const _TextViewer(this.text, {this.directModel});
+  const _TextViewer(this.snapshot, {this.directModel});
 
   @override
   State<_TextViewer> createState() => _TextViewerState();
@@ -155,22 +161,27 @@ class _TextViewerState extends State<_TextViewer> {
   @override
   void initState() {
     super.initState();
-    widget.text.addObserver(_newTextRef);
+    widget.snapshot.addObserver(_newTextRef);
   }
 
   @override
   void dispose() {
     super.dispose();
-    widget.text.removeObserver(_newTextRef);
+    widget.snapshot.removeObserver(_newTextRef);
     widget.directModel?.optimizeInternalSnapshot();
   }
 
-  void _newText(ModelSnapshot text) {
+  void _newText(void _) {
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    String text = widget.directModel?.makeSnapshotText() ??
+        (widget.snapshot.value as String);
+    // If we're on desktop, directModel is null, and snapshot is an
+    // Observable<String>.  If we're not, directModel is null and
+    // snapshot is Observable<void>.
     return Container(
         padding: const EdgeInsets.fromLTRB(10, 25, 10, 10),
         color: Colors.black,
@@ -180,9 +191,7 @@ class _TextViewerState extends State<_TextViewer> {
             maxScale: 10,
             boundaryMargin: const EdgeInsets.all(double.infinity),
             child: Text(
-              _linuxBug
-                  ? _linuxBugText + widget.text.value.text
-                  : widget.text.value.text,
+              _linuxBug ? _linuxBugText + text : text,
               softWrap: false,
               overflow: TextOverflow.visible,
               style: const TextStyle(

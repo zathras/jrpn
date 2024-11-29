@@ -1345,7 +1345,7 @@ class Running extends ControllerState {
   void _onStart() {
     assert(model.displayDisabled); // Because buttonUp() set it
     showRunningTimer = _showRunning();
-    model.program.runner = _runner;
+    model.program.runner = _runner.root;
     pendingDelay = model.settings.msPerInstruction;
   }
 
@@ -1418,9 +1418,11 @@ class Running extends ControllerState {
           program.currentLine = oldLine;
         }
       }
-      model.addProgramTraceToSnapshot(
-          () => '   ${line.toString().padLeft(3, '0')}'
-              ' ${instr.programListing.padRight(14)}');
+      if (model.hasInternalSnapshot) {
+        model.internalSnapshot.program
+            .add('   ${line.toString().padLeft(3, '0')} '
+                '${instr.programListing.padRight(14)}');
+      }
       if (settings.traceProgramToStdout) {
         final out = StringBuffer();
         // ignore: dead_code
@@ -1503,12 +1505,14 @@ class Running extends ControllerState {
         _onStart();
       }
       if (_pushedRunner != null) {
-        final parent = _runner;
+        final ProgramRunner parent = _runner;
         _runner = _pushedRunner!;
         _pushedRunner = null;
         _runner.pushPseudoReturn(model);
         _runner.returnStackStartPos = program.returnStackPos;
+        parent._child = _runner;
         await _runner._run(this, false);
+        parent._child = null;
         _runner = parent;
       }
     }
@@ -1536,6 +1540,16 @@ class Running extends ControllerState {
 abstract class ProgramRunner extends MProgramRunner {
   ProgramRunner? _parent;
   ProgramRunner? get parent => _parent;
+  ProgramRunner? _child;
+  ProgramRunner? get child => _child;
+  ProgramRunner get root {
+    ProgramRunner r = this;
+    while (r.parent != null) {
+      r = r.parent!;
+    }
+    return r;
+  }
+
   late Running _caller;
   Running get caller => _caller;
   Model get model => _caller.model;
@@ -1560,7 +1574,11 @@ abstract class ProgramRunner extends MProgramRunner {
   ///
   @override
   void startRunningProgram(ProgramRunner newRunner) {
-    newRunner._parent = this;
+    ProgramRunner c = this;
+    while (c.child != null) {
+      c = c.child!;
+    }
+    newRunner._parent = c;
     newRunner._caller = _caller;
     newRunner.checkStartRunning();
     _caller._pushedRunner = newRunner;
@@ -1615,9 +1633,15 @@ class GosubProgramRunner extends ProgramRunner {
   Future<void> run() => _caller.runProgramLoop();
 
   @override
-  void checkStartRunning() {}
-  // Nothing special needs to happen when a GSB happens within a program; we
-  // just keep using the existing runner.
+  void checkStartRunning() {
+    // Nothing special needs to happen when a GSB happens within a program; we
+    // just keep using the existing runner.
+  }
+
+  @override
+  String snapshotText() {
+    return child?.snapshotText() ?? '';
+  }
 }
 
 ///

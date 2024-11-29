@@ -289,7 +289,6 @@ double sin15(Value angle, TrigMode mode) {
   final int? ra = mode.rightAngleInt;
   if (ra != null) {
     double a = _normalizeAngle(angle, ra);
-    print(a);
     if (a == 0 || a == ra * 2 || a == ra * 4) {
       return 0;
     }

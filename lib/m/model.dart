@@ -614,7 +614,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   late final settings = Settings(this);
   @protected
   bool _needsSave = false;
-  Observable<ModelSnapshot>? _internalSnapshot;
+  ModelSnapshot? _internalSnapshot;
 
   ShiftKey _shift = ShiftKey.none;
   int _wordSize;
@@ -927,24 +927,26 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   set needsSave(bool v) {
     _needsSave = v;
     if (v) {
-      _internalSnapshot?.value = _createSnapshot();
+      notifySnapshot();
     }
   }
 
-  Observable<ModelSnapshot> get internalSnapshot {
-    final r = _internalSnapshot;
-    if (r == null) {
-      return _internalSnapshot = Observable(_createSnapshot());
-    } else {
-      return r;
+  void notifySnapshot() {
+    final s = _internalSnapshot;
+    if (s != null) {
+      s.listeners.value = null; // Notify observer(s)
     }
   }
+
+  ModelSnapshot get internalSnapshot => _internalSnapshot ??= ModelSnapshot();
 
   void optimizeInternalSnapshot() {
-    if (_internalSnapshot?.hasObservers == false) {
+    if (_internalSnapshot?.listeners.hasObservers == false) {
       _internalSnapshot = null;
     }
   }
+
+  bool get hasInternalSnapshot => _internalSnapshot != null;
 
   String formatValue(Value v) {
     try {
@@ -1427,15 +1429,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     }
   }
 
-  void addProgramTraceToSnapshot(String Function() f) {
-    final s = _internalSnapshot;
-    if (s != null) {
-      s.value.program.add(f());
-      s.value = _createSnapshot();
-    }
-  }
-
-  ModelSnapshot _createSnapshot() {
+  String makeSnapshotText() {
     final buf = StringBuffer();
     if (isComplexMode) {
       buf.writeln('     T:  $t + ${_imaginaryStack![3]}i');
@@ -1468,9 +1462,10 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       buf.writeln(
           'r[${i.toString().padLeft(2, '0')}] = ${memory.registers[i]}');
     }
-    final program = _internalSnapshot?.value.program;
+    addStuffToSnapshot(buf);
+    buf.write(memory.program.runner?.snapshotText() ?? '');
+    final program = _internalSnapshot?.program;
     if (program != null && program.isNotEmpty) {
-      buf.writeln();
       buf.write('Program Trace:');
       bool first = true;
       for (final p in program) {
@@ -1483,8 +1478,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       }
       buf.writeln();
     }
-    addStuffToSnapshot(buf);
-    return ModelSnapshot(_internalSnapshot?.value, buf.toString());
+    return buf.toString();
   }
 
   @protected
@@ -1493,12 +1487,15 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   LcdContents selfTestContents();
 }
 
+///
+/// Bookkeeping for when the internal calculator state is being shown.  We
+/// don't recorde the actual text of the snapshot, because it's re-generated
+/// more often than it's shown.  We just generate it on demand from the model
+/// where neeced.
+///
 class ModelSnapshot {
-  final CircularBuffer<String> program;
-  final String text;
-
-  ModelSnapshot(ModelSnapshot? other, this.text)
-      : program = other?.program ?? CircularBuffer<String>.create(10, '');
+  final CircularBuffer<String> program = CircularBuffer<String>.create(10, '');
+  final Observable<void> listeners = Observable(null);
 }
 
 ///

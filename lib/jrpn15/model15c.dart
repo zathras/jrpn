@@ -242,9 +242,10 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
     for (final m in matrices) {
       if (m.length > 0) {
         buf.writeln();
-        buf.writeln(m.toString());
+        buf.write(m.toString());
       }
     }
+    buf.writeln();
   }
 }
 
