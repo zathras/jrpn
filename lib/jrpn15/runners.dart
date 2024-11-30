@@ -256,6 +256,8 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
 
   @override
   int get registersRequired => max(23, (parent?.registersRequired ?? 0));
+  // "Integrate requires 23 registers to operate. ... A routine that combines
+  // integrate and solve also requires 23 registers to operate."
 
   @override
   bool get runImplicitRtnOnSST => true;
