@@ -45,7 +45,6 @@ import 'lcd_display.dart';
 
 final _filesWork = kIsWeb ||
     Platform.isWindows ||
-    Platform.isIOS ||
     Platform.isLinux ||
     Platform.isMacOS;
 
