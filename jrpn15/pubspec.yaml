@@ -1,9 +1,9 @@
 name: jrpn15
-description: Jovial RPN 15C Beta, a calculator simulator inspired by the HP-15C "Computer Scientist" Calculator
+description: Jovial RPN 15C, a calculator simulator inspired by the HP-15C "Computer Scientist" Calculator
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.1.16+30    # See also lib/generic_main.dart
+version: 2.1.17+31    # See also lib/generic_main.dart
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
