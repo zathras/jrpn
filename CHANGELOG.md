@@ -1,5 +1,8 @@
-Version 2.1.17 - Upcoming
-  * Improvements to trig function at big angles in deg, grad (Issue 124).
+Version 2.1.17 - January 2025
+  * 15C; Improvements to trig function at big angles in deg, grad (Issue 124).
+  * 15C: Add integrate, solve intermediate results to calculator internals (issue 127)
+  * 15C: Fix 0^0 result (issue 126)
+  * Disable file read/write menu options on iOS
 
 Version 2.1.16 - October 2024
   * Implement decimal floating point multiplication and division
