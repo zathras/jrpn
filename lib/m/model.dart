@@ -1105,7 +1105,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     _clxDone = false;
   }
 
-  /// the R<down arrow> key
+  /// the R(down arrow) key
   void rotateStackDown() {
     void f(final List<Value>? st) {
       if (st != null) {
@@ -1124,7 +1124,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     _clxDone = false;
   }
 
-  /// The R<up arrow> key
+  /// The R(up arrow) key
   void rotateStackUp() {
     void f(final List<Value>? st) {
       if (st != null) {

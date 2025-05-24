@@ -805,13 +805,15 @@ class Jrpn extends StatefulWidget {
   }
 
   Future<void> sendJsonToExternalApp() =>
-      Share.share(_getJson(), subject: 'JRPN Calculator State');
+      SharePlus.instance.share(
+          ShareParams(text: _getJson(), subject: 'JRPN Calculator State'));
 
   Future<void> sendJsonToClipboard() =>
       Clipboard.setData(ClipboardData(text: _getJson()));
 
   Future<void> sendProgramToExternalApp() =>
-      Share.share(_getJson(), subject: 'JRPN Calculator State');
+      SharePlus.instance.share(
+          ShareParams(text: _getJson(), subject: 'JRPN Calculator State'));
 
   Future<void> sendProgramToClipboard() =>
       Clipboard.setData(ClipboardData(text: getProgram(null)));

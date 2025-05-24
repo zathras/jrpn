@@ -509,7 +509,7 @@ class AdvancedFunctionTests {
   }
 
   ///
-  /// Test STO-G-<matrix> and RCL-G-Matrix
+  /// Test STO-G-(matrix) and RCL-G-Matrix
   ///
   void _page146() {
     final Matrix mat = model.matrices[3];

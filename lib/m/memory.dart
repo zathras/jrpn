@@ -888,7 +888,7 @@ abstract class ProgramOperation {
   int get maxOneByteOpcodes => 9999;
 
   /// If used as an argument, the shift key needed for that argument.
-  /// Rare:  sto g <LETTER> and rcl g <LETTER> do this.
+  /// Rare:  sto g (LETTER) and rcl g (LETTER) do this.
   ProgramOperation? get argShift => null;
 
   static const _invalidOpcodeStart = -1;
