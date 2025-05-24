@@ -587,7 +587,7 @@ abstract class FloatFormatter {
   /// (potentially overridden) constrainExponent function.
   ///
   @protected
-  String formatScientific(Value v, int digits) {
+  String formatScientific(Value v, int digits, bool windowEnabled) {
     int exp = v.exponent;
     String m = formatMantissaU(v, digits);
     String minus = v.mantissaDigit(-1) == 9 ? '-' : '';
@@ -597,10 +597,14 @@ abstract class FloatFormatter {
         if (digits == 7) {
           return '${minus}9.999999E+99';
         } else {
-          return formatScientific(v, 7);
+          return formatScientific(v, 7, windowEnabled);
         }
       }
       m = formatMantissaU(v, digits - 1);
+    }
+    if (digits > 7 && windowEnabled) {
+      // Truncate.  cf. #137
+      m = m.substring(0, 7);
     }
     int shownExp = constrainExponent(exp);
     final int dpOffset = exp - shownExp;
@@ -686,10 +690,7 @@ class SciFloatFormatter extends FloatFormatter {
 
   @override
   String format(Value v, bool windowEnabled) {
-    return formatScientific(
-      v,
-      windowEnabled ? min(7, fractionDigits + 1) : fractionDigits + 1,
-    );
+    return formatScientific(v, fractionDigits + 1, windowEnabled);
   }
 
   @override
@@ -714,10 +715,7 @@ class FixFloatFormatter extends FloatFormatter {
   @override
   String format(Value v, bool windowEnabled) =>
       formatFixed(v, fractionDigits) ??
-      formatScientific(
-        v,
-        windowEnabled ? min(7, fractionDigits + 1) : fractionDigits + 1,
-      );
+      formatScientific(v, fractionDigits + 1, windowEnabled);
 
   @override
   double leastSignificantDigitNoFloor(double value) {
@@ -761,7 +759,11 @@ class _Fix16FloatFormatter extends FixFloatFormatter {
   @override
   String format(Value v, windowEnabled) =>
       formatFixed(v, fractionDigits) ??
-      formatScientific(v, windowEnabled ? 7 : max(7, fractionDigits + 1));
+      formatScientific(
+        v,
+        windowEnabled ? 7 : max(7, fractionDigits + 1),
+        windowEnabled,
+      );
 }
 
 ///
