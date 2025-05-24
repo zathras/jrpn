@@ -217,7 +217,8 @@ abstract class IntegerDisplayMode extends DisplayMode {
       final int digits = (m.wordSize + _bitsPerDigit - 1) ~/ _bitsPerDigit;
       final int n = digits - s.length;
       // 64 zeroes (63 would actually do):
-      s = '0000000000000000000000000000000000000000000000000000000000000000'
+      s =
+          '0000000000000000000000000000000000000000000000000000000000000000'
               .substring(0, n) +
           s;
     }
@@ -248,8 +249,10 @@ abstract class IntegerDisplayMode extends DisplayMode {
         exp++;
         m = BigInt.from((x / pow(2.0, exp)).round());
       }
-      assert(m.abs() >= minM && m.abs() <= maxM,
-          '$minM <= ${m.abs()} <= $maxM for $x (exponent $exp)');
+      assert(
+        m.abs() >= minM && m.abs() <= maxM,
+        '$minM <= ${m.abs()} <= $maxM for $x (exponent $exp)',
+      );
 
       model.yI = m;
       model.xI = BigInt.from(exp);
@@ -272,7 +275,6 @@ abstract class _Pow2IntegerMode extends IntegerDisplayMode {
   _Pow2IntegerMode() : super._protected();
 
   @override
-
   /// When a hex, octal or binary number is entered, the sign bit is
   /// given in the bit pattern, not as a minus sign.  We can't go through
   /// a signed BigInt; that's more complicated, and it loses the distinction
@@ -490,8 +492,9 @@ class _FloatMode extends DisplayMode {
   /// exponent with a sign, like "E+07'.
   @override
   String format(Value v, Model m) => addCommas(
-      _formatter.format(v, m.settings.windowLongNumbers),
-      m.settings.integerModeCommas);
+    _formatter.format(v, m.settings.windowLongNumbers),
+    m.settings.integerModeCommas,
+  );
 
   @override
   int get hashCode => Object.hash(_jsonName, _formatter);
@@ -684,7 +687,9 @@ class SciFloatFormatter extends FloatFormatter {
   @override
   String format(Value v, bool windowEnabled) {
     return formatScientific(
-        v, windowEnabled ? min(7, fractionDigits + 1) : fractionDigits + 1);
+      v,
+      windowEnabled ? min(7, fractionDigits + 1) : fractionDigits + 1,
+    );
   }
 
   @override
@@ -710,7 +715,9 @@ class FixFloatFormatter extends FloatFormatter {
   String format(Value v, bool windowEnabled) =>
       formatFixed(v, fractionDigits) ??
       formatScientific(
-          v, windowEnabled ? min(7, fractionDigits + 1) : fractionDigits + 1);
+        v,
+        windowEnabled ? min(7, fractionDigits + 1) : fractionDigits + 1,
+      );
 
   @override
   double leastSignificantDigitNoFloor(double value) {

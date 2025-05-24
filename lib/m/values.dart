@@ -52,8 +52,10 @@ class Value {
   /// reason.  Hopefully WASM will fix that eventually.  Anyway, using BigInt
   /// does let us handle the double integer operations easily.
   final BigInt internal;
-  static final BigInt _maxNormalInternal =
-      BigInt.parse('ffffffffffffffff', radix: 16);
+  static final BigInt _maxNormalInternal = BigInt.parse(
+    'ffffffffffffffff',
+    radix: 16,
+  );
   // The maximum value of internal, EXCEPT when we're doing the 16C double-int
   // operations
 
@@ -62,7 +64,7 @@ class Value {
   }
 
   Value._fromMantissaAndRawExponent(BigInt mantissa, int exponent)
-      : internal = (mantissa << 12) | BigInt.from(exponent) {
+    : internal = (mantissa << 12) | BigInt.from(exponent) {
     assert(exponent >= 0, 'Exponent must be thousands complement');
     // Assert a valid float bit pattern by throwing CaclulatorError(6)
     // if malformed.
@@ -88,16 +90,22 @@ class Value {
   static final Value zero = Value.fromInternal(BigInt.from(0));
   static final Value oneF = Value.fromDouble(1);
   static final Value fMaxValue = Value._fromMantissaAndRawExponent(
-      BigInt.parse('09999999999', radix: 16), 0x099);
+    BigInt.parse('09999999999', radix: 16),
+    0x099,
+  );
   static final Value fMinValue = Value._fromMantissaAndRawExponent(
-      BigInt.parse('99999999999', radix: 16), 0x099);
+    BigInt.parse('99999999999', radix: 16),
+    0x099,
+  );
 
   static final BigInt _mask12 = (BigInt.one << 12) - BigInt.one;
   static final BigInt _mask52 = (BigInt.one << 52) - BigInt.one;
   static final BigInt _maskF = BigInt.from(0xf);
   static final BigInt _mantissaSign = BigInt.parse('90000000000', radix: 16);
-  static final BigInt _mantissaMagnitude =
-      BigInt.parse('ffffffffff', radix: 16);
+  static final BigInt _mantissaMagnitude = BigInt.parse(
+    'ffffffffff',
+    radix: 16,
+  );
   static final BigInt _mantissaMsdMask = BigInt.parse('f000000000', radix: 16);
 
   static final BigInt _matrixMantissa = BigInt.parse('a111eeeeeee', radix: 16);
@@ -179,7 +187,7 @@ class Value {
   }
 
   Value.fromMatrix(int matrixNumber)
-      : internal = (_matrixMantissa << 12) | BigInt.from(matrixNumber) {
+    : internal = (_matrixMantissa << 12) | BigInt.from(matrixNumber) {
     assert(matrixNumber >= 0 && matrixNumber < 5);
   }
 
@@ -240,7 +248,8 @@ class Value {
       fracPart += getDigit(d);
     }
     // ignore: prefer_interpolation_to_compose_strings
-    final sr = '$intPart.' +
+    final sr =
+        '$intPart.' +
         '$fracPart'.padLeft(fracDigits, '0') +
         'e${e + fracDigits - 9}';
     var result = double.parse(sr);
@@ -298,7 +307,8 @@ class Value {
     final BigInt upper52 = _upper52;
     for (int d = 0; d < 10; d++) {
       sb.writeCharCode(
-          '0'.codeUnitAt(0) + ((upper52 >> 36 - (d * 4)) & _maskF).toInt());
+        '0'.codeUnitAt(0) + ((upper52 >> 36 - (d * 4)) & _maskF).toInt(),
+      );
     }
     return sb.toString();
   }
@@ -343,7 +353,9 @@ class Value {
       return this;
     } else {
       return Value._fromMantissaAndRawExponent(
-          _mantissaSign ^ _upper52, _lower12);
+        _mantissaSign ^ _upper52,
+        _lower12,
+      );
     }
   }
 
@@ -508,30 +520,43 @@ class ComplexValue {
   const ComplexValue(this.real, this.imaginary);
 
   ComplexValue decimalAdd(
-          ComplexValue other, Value Function(Value Function()) check) =>
-      ComplexValue(check(() => real.decimalAdd(other.real)),
-          check(() => imaginary.decimalAdd(other.imaginary)));
+    ComplexValue other,
+    Value Function(Value Function()) check,
+  ) => ComplexValue(
+    check(() => real.decimalAdd(other.real)),
+    check(() => imaginary.decimalAdd(other.imaginary)),
+  );
 
   ComplexValue decimalSubtract(
-          ComplexValue other, Value Function(Value Function()) check) =>
-      ComplexValue(check(() => real.decimalSubtract(other.real)),
-          check(() => imaginary.decimalSubtract(other.imaginary)));
+    ComplexValue other,
+    Value Function(Value Function()) check,
+  ) => ComplexValue(
+    check(() => real.decimalSubtract(other.real)),
+    check(() => imaginary.decimalSubtract(other.imaginary)),
+  );
 
   ComplexValue decimalMultiply(
-      ComplexValue other, Value Function(Value Function()) check) {
+    ComplexValue other,
+    Value Function(Value Function()) check,
+  ) {
     final usReal = DecimalFP22(real);
     final usImaginary = DecimalFP22(imaginary);
     final themReal = DecimalFP22(other.real);
     final themImaginary = DecimalFP22(other.imaginary);
     return ComplexValue(
-        check(() =>
-            ((usReal * themReal) - (usImaginary * themImaginary)).toValue()),
-        check(() =>
-            ((usReal * themImaginary) + (usImaginary * themReal)).toValue()));
+      check(
+        () => ((usReal * themReal) - (usImaginary * themImaginary)).toValue(),
+      ),
+      check(
+        () => ((usReal * themImaginary) + (usImaginary * themReal)).toValue(),
+      ),
+    );
   }
 
   ComplexValue decimalDivideBy(
-      ComplexValue other, Value Function(Value Function()) check) {
+    ComplexValue other,
+    Value Function(Value Function()) check,
+  ) {
     final usReal = DecimalFP22(real);
     final usImaginary = DecimalFP22(imaginary);
     final themReal = DecimalFP22(other.real);
@@ -540,7 +565,9 @@ class ComplexValue {
     final rePart = (usReal * themReal + usImaginary * themImaginary) / mag;
     final imPart = (usImaginary * themReal - usReal * themImaginary) / mag;
     return ComplexValue(
-        check(() => rePart.toValue()), check(() => imPart.toValue()));
+      check(() => rePart.toValue()),
+      check(() => imPart.toValue()),
+    );
   }
 
   @override
@@ -575,8 +602,8 @@ abstract class DecimalFP {
   final BigInt mantissa;
 
   DecimalFP.fromValue(Value v, this.mantissa)
-      : isNegative = v.isNegative,
-        exponent = v.exponent {
+    : isNegative = v.isNegative,
+      exponent = v.exponent {
     _assertValid();
   }
 
@@ -587,10 +614,11 @@ abstract class DecimalFP {
   @protected
   void _assertValid() {
     assert(
-        (mantissa == BigInt.zero && exponent == 0) ||
-            (mantissa >= _tenPow(mantissaDigits - 1) &&
-                mantissa < _tenPow(mantissaDigits)),
-        '$mantissa');
+      (mantissa == BigInt.zero && exponent == 0) ||
+          (mantissa >= _tenPow(mantissaDigits - 1) &&
+              mantissa < _tenPow(mantissaDigits)),
+      '$mantissa',
+    );
     assert(!isNegative || mantissa != BigInt.zero);
   }
 
@@ -600,8 +628,11 @@ abstract class DecimalFP {
   @protected
   int get mantissaDigits;
 
-  static final _tenPowCache =
-      List<BigInt?>.generate(50, (_) => null, growable: false);
+  static final _tenPowCache = List<BigInt?>.generate(
+    50,
+    (_) => null,
+    growable: false,
+  );
 
   static BigInt _tenPow(int digits) =>
       _tenPowCache[digits] ??= _tenPowRaw(digits);
@@ -898,7 +929,7 @@ class DecimalFP12 extends DecimalFP {
   DecimalFP12(Value v) : super.fromValue(v, v._mantissa * DecimalFP._tenPow(2));
 
   DecimalFP12.raw(super.isNegative, super.exponent, super.mantissa)
-      : super.raw();
+    : super.raw();
 
   @override
   int get mantissaDigits => 12;
@@ -937,10 +968,10 @@ class DecimalFP12 extends DecimalFP {
 
 class DecimalFP22 extends DecimalFP {
   DecimalFP22(Value v)
-      : super.fromValue(v, v._mantissa * DecimalFP._tenPow(12));
+    : super.fromValue(v, v._mantissa * DecimalFP._tenPow(12));
 
   DecimalFP22.raw(super.isNegative, super.exponent, super.mantissa)
-      : super.raw();
+    : super.raw();
 
   static DecimalFP22 zero = DecimalFP22.raw(false, 0, BigInt.zero);
 
@@ -991,7 +1022,7 @@ class DecimalFP6 extends DecimalFP {
   DecimalFP6(Value v) : super.fromValue(v, v._mantissa ~/ DecimalFP._tenPow(4));
 
   DecimalFP6.raw(super.isNegative, super.exponent, super.mantissa)
-      : super.raw();
+    : super.raw();
 
   @override
   int get mantissaDigits => 6;

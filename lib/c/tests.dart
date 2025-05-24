@@ -95,8 +95,8 @@ abstract class SelfTests {
     }
   }
 
-// Format a double to a couple more digits than we need, and a couple
-// less than we have.
+  // Format a double to a couple more digits than we need, and a couple
+  // less than we have.
   @protected
   String fd(double d) => d.toStringAsExponential(12);
 
@@ -111,13 +111,21 @@ abstract class SelfTests {
       m.displayMode = DisplayMode.float(4);
       await expect(m.tryParseValue('0')!.internal, BigInt.from(0));
       await expect(
-          m.tryParseValue('42')!.internal, BigInt.from(0x04200000000001));
-      await expect(m.tryParseValue('-42')!.internal,
-          BigInt.parse('94200000000001', radix: 16));
+        m.tryParseValue('42')!.internal,
+        BigInt.from(0x04200000000001),
+      );
       await expect(
-          m.tryParseValue('1e42')!.internal, BigInt.from(0x1000000000042));
+        m.tryParseValue('-42')!.internal,
+        BigInt.parse('94200000000001', radix: 16),
+      );
       await expect(
-          m.tryParseValue('1e-42')!.internal, BigInt.from(0x1000000000958));
+        m.tryParseValue('1e42')!.internal,
+        BigInt.from(0x1000000000042),
+      );
+      await expect(
+        m.tryParseValue('1e-42')!.internal,
+        BigInt.from(0x1000000000958),
+      );
     });
     await test('FloatValue from double to double', () async {
       await expect(fd(Value.fromDouble(42.0).asDouble), fd(42.0));
@@ -127,11 +135,17 @@ abstract class SelfTests {
       await expect(fd(Value.fromDouble(-12.3456e78).asDouble), fd(-12.3456e78));
       await expect(fd(Value.fromDouble(12.3456e-78).asDouble), fd(12.3456e-78));
       await expect(
-          fd(Value.fromDouble(-12.3456e-78).asDouble), fd(-12.3456e-78));
+        fd(Value.fromDouble(-12.3456e-78).asDouble),
+        fd(-12.3456e-78),
+      );
       await expect(
-          fd(Value.fromDouble(9.999999999e-99).asDouble), fd(9.999999999e-99));
-      await expect(fd(Value.fromDouble(-9.999999999e-99).asDouble),
-          fd(-9.999999999e-99));
+        fd(Value.fromDouble(9.999999999e-99).asDouble),
+        fd(9.999999999e-99),
+      );
+      await expect(
+        fd(Value.fromDouble(-9.999999999e-99).asDouble),
+        fd(-9.999999999e-99),
+      );
     });
     await test('Float rounding to zero', () async {
       await expect(Value.fromDouble(1e-100), Value.zero);
@@ -161,10 +175,14 @@ abstract class SelfTests {
   Future<void> testJson() async {
     final Model<Operation> m = newModel();
     final String s = json.encoder.convert(m.toJson());
-    m.decodeJson(json.decoder.convert(s) as Map<String, dynamic>,
-        needsSave: false);
+    m.decodeJson(
+      json.decoder.convert(s) as Map<String, dynamic>,
+      needsSave: false,
+    );
     await expect(
-        json.encoder.convert(m.toJson()), s); // It's not much of a test :-)
+      json.encoder.convert(m.toJson()),
+      s,
+    ); // It's not much of a test :-)
   }
 
   Future<void> testNumbers() async {

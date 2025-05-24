@@ -94,7 +94,7 @@ Future<void> noScrollReset() async {
     Operations16.rlcn,
     Operations16.rrn,
     Operations16.poundB,
-    Operations.chs
+    Operations.chs,
   ];
   final fops = [
     Operations16.minus,
@@ -172,7 +172,7 @@ Future<void> lastX() async {
     Operations16.rlcn,
     Operations16.rrn,
     Operations16.poundB,
-    Operations.chs
+    Operations.chs,
   ];
   final fops = [
     Operations16.minus,

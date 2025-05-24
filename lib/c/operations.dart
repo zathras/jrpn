@@ -64,29 +64,38 @@ class Operations {
   static final n6 = NumberEntry('6', 6);
 
   static final NormalOperation rs = NormalOperation(
-      stackLift: StackLift.neutral,
-      pressed: (ActiveState s) => s.handleRunStop(),
-      calc: null,
-      name: 'R/S');
+    stackLift: StackLift.neutral,
+    pressed: (ActiveState s) => s.handleRunStop(),
+    calc: null,
+    name: 'R/S',
+  );
 
   static final sst = NonProgrammableOperation(
-      name: 'SST', pressed: (LimitedState s) => s.handleSST());
+    name: 'SST',
+    pressed: (LimitedState s) => s.handleSST(),
+  );
 
-  static final NormalOperation rDown =
-      NormalOperation(calc: (Model m) => m.rotateStackDown(), name: 'Rv');
+  static final NormalOperation rDown = NormalOperation(
+    calc: (Model m) => m.rotateStackDown(),
+    name: 'Rv',
+  );
 
-  static final NormalOperation xy =
-      NormalOperation(calc: (Model m) => m.swapXY(), name: 'X<=>Y');
+  static final NormalOperation xy = NormalOperation(
+    calc: (Model m) => m.swapXY(),
+    name: 'X<=>Y',
+  );
 
   static final bsp = NonProgrammableOperation(
-      endsDigitEntry: false,
-      pressed: (LimitedState c) => c.handleBackspace(),
-      name: 'BSP');
+    endsDigitEntry: false,
+    pressed: (LimitedState c) => c.handleBackspace(),
+    name: 'BSP',
+  );
 
   static final NormalOperation enter = NormalOperation(
-      calc: (Model m) => m.pushStack(),
-      stackLift: StackLift.disable,
-      name: 'ENTER');
+    calc: (Model m) => m.pushStack(),
+    stackLift: StackLift.disable,
+    name: 'ENTER',
+  );
 
   static final n1 = NumberEntry('1', 1);
   static final n2 = NumberEntry('2', 2);
@@ -98,151 +107,194 @@ class Operations {
   //            Error 9 on failure
   // on -  clears everything, displays 'Pr Error'
   static final onOff = NonProgrammableOperation(
-      pressed: (LimitedState s) => s.handleOnOff(), name: 'ON');
+    pressed: (LimitedState s) => s.handleOnOff(),
+    name: 'ON',
+  );
 
   static final fShift = ShiftOperation(
-      pressed: (LimitedState c) => c.handleShift(ShiftKey.f), name: 'f');
+    pressed: (LimitedState c) => c.handleShift(ShiftKey.f),
+    name: 'f',
+  );
 
   static final gShift = ShiftOperation(
-      pressed: (LimitedState c) => c.handleShift(ShiftKey.g), name: 'g');
+    pressed: (LimitedState c) => c.handleShift(ShiftKey.g),
+    name: 'g',
+  );
 
   static final n0 = NumberEntry('0', 0);
 
   static final LimitedOperation dot = LimitedOperation(
-      endsDigitEntry: false,
-      pressed: (LimitedState c) => c.handleDecimalPoint(),
-      name: '.');
+    endsDigitEntry: false,
+    pressed: (LimitedState c) => c.handleDecimalPoint(),
+    name: '.',
+  );
 
   static final NormalOperation chs = NormalOperation(
-      endsDigitEntry: false,
-      calc: null,
-      pressed: (ActiveState c) => c.handleCHS(),
-      name: 'CHS');
+    endsDigitEntry: false,
+    calc: null,
+    pressed: (ActiveState c) => c.handleCHS(),
+    name: 'CHS',
+  );
 
   static final NormalOperation xSwapParenI = NormalOperation(
-      calc: (Model m) {
-        Value tmp = m.x;
-        m.resultX = m.memory.registers.indirectIndex;
-        m.memory.registers.indirectIndex = tmp;
-      },
-      name: 'x<=>(i)');
+    calc: (Model m) {
+      Value tmp = m.x;
+      m.resultX = m.memory.registers.indirectIndex;
+      m.memory.registers.indirectIndex = tmp;
+    },
+    name: 'x<=>(i)',
+  );
 
   static final clearPrgm = NonProgrammableOperation(
-      pressed: (LimitedState s) => s.handleClearProgram(), name: 'CLEAR PRGM');
+    pressed: (LimitedState s) => s.handleClearProgram(),
+    name: 'CLEAR PRGM',
+  );
 
   static final NormalOperation clearReg = NormalOperation(
-      stackLift: StackLift.neutral,
-      calc: (Model m) => m.memory.registers.clear(),
-      name: 'CLEAR REG');
+    stackLift: StackLift.neutral,
+    calc: (Model m) => m.memory.registers.clear(),
+    name: 'CLEAR REG',
+  );
 
   static final clearPrefix = NonProgrammableOperation(
-      pressed: (LimitedState cs) => cs.handleClearPrefix(),
-      endsDigitEntry: false,
-      name: 'CLEAR PREFIX');
+    pressed: (LimitedState cs) => cs.handleClearPrefix(),
+    endsDigitEntry: false,
+    name: 'CLEAR PREFIX',
+  );
 
   static final mem = NonProgrammableOperation(
-      name: 'MEM', pressed: (LimitedState s) => s.handleShowMem());
+    name: 'MEM',
+    pressed: (LimitedState s) => s.handleShowMem(),
+  );
 
   static final status = NonProgrammableOperation(
-      pressed: (LimitedState cs) => cs.handleShowStatus(), name: 'STATUS');
+    pressed: (LimitedState cs) => cs.handleShowStatus(),
+    name: 'STATUS',
+  );
 
   static final NormalOperation eex = NormalOperation(
-      endsDigitEntry: false,
-      pressed: (ActiveState c) => c.handleEEX(),
-      calc: null,
-      name: 'EEX');
+    endsDigitEntry: false,
+    pressed: (ActiveState c) => c.handleEEX(),
+    calc: null,
+    name: 'EEX',
+  );
 
   static final NormalOperation abs = NormalOperation.differentFloatAndInt(
-      floatCalc: (Model m) {
-        m.resultX = m.x.abs();
-      },
-      complexCalc: (Model m) {
-        final x = m.xCV;
-        if (x.imaginary == Value.zero) {
-          m.resultXCV = ComplexValue(x.real.abs(), Value.zero);
-        } else if (x.real == Value.zero) {
-          m.resultXCV = ComplexValue(x.imaginary.abs(), Value.zero);
-        } else {
-          final re = x.real.asDouble;
-          final im = x.imaginary.asDouble;
-          m.resultXF = sqrt(re * re + im * im); // Sets complex part to zero
-        }
-      },
-      intCalc: (Model m) => m.resultXI = m.xI.abs(),
-      name: 'ABS');
+    floatCalc: (Model m) {
+      m.resultX = m.x.abs();
+    },
+    complexCalc: (Model m) {
+      final x = m.xCV;
+      if (x.imaginary == Value.zero) {
+        m.resultXCV = ComplexValue(x.real.abs(), Value.zero);
+      } else if (x.real == Value.zero) {
+        m.resultXCV = ComplexValue(x.imaginary.abs(), Value.zero);
+      } else {
+        final re = x.real.asDouble;
+        final im = x.imaginary.asDouble;
+        m.resultXF = sqrt(re * re + im * im); // Sets complex part to zero
+      }
+    },
+    intCalc: (Model m) => m.resultXI = m.xI.abs(),
+    name: 'ABS',
+  );
 
   static final NormalOperation rtn = NormalOperation(
-      calc: (Model m) => m.memory.program.popReturnStack(), name: 'RTN');
+    calc: (Model m) => m.memory.program.popReturnStack(),
+    name: 'RTN',
+  );
 
   static final NormalOperation sqrtOp = NormalOperation.differentFloatAndInt(
-      floatCalc: (Model m) {
-        final x = m.xF;
-        if (x < 0) {
-          throw CalculatorError(0);
-        }
-        m.resultXF = sqrt(x);
-      },
-      complexCalc: (Model m) {
-        m.resultXC = m.xC.sqrt();
-      },
-      intCalc: (Model m) => m.resultXI = _sqrtI(m.xI, m),
-      name: 'sqrt(x)');
+    floatCalc: (Model m) {
+      final x = m.xF;
+      if (x < 0) {
+        throw CalculatorError(0);
+      }
+      m.resultXF = sqrt(x);
+    },
+    complexCalc: (Model m) {
+      m.resultXC = m.xC.sqrt();
+    },
+    intCalc: (Model m) => m.resultXI = _sqrtI(m.xI, m),
+    name: 'sqrt(x)',
+  );
 
   static final pr = NonProgrammableOperation(
-      pressed: (LimitedState s) => s.handlePR(), name: 'P/R');
+    pressed: (LimitedState s) => s.handlePR(),
+    name: 'P/R',
+  );
 
   static final bst = NonProgrammableOperation(
-      name: 'BST', pressed: (LimitedState s) => s.handleBST());
+    name: 'BST',
+    pressed: (LimitedState s) => s.handleBST(),
+  );
 
-  static final NormalOperation rUp =
-      NormalOperation(calc: (Model m) => m.rotateStackUp(), name: 'R^');
+  static final NormalOperation rUp = NormalOperation(
+    calc: (Model m) => m.rotateStackUp(),
+    name: 'R^',
+  );
 
   static final NormalOperation pse = NormalOperation(
-      name: 'PSE',
-      pressed: (ActiveState s) => s.handlePSE(),
-      stackLift: StackLift.neutral,
-      calc: (Model m) => m.display.displayX());
+    name: 'PSE',
+    pressed: (ActiveState s) => s.handlePSE(),
+    stackLift: StackLift.neutral,
+    calc: (Model m) => m.display.displayX(),
+  );
 
   static final NormalOperation clx = NormalOperation(
-      calc: (Model m) => m.clx(), stackLift: StackLift.disable, name: 'CLx');
+    calc: (Model m) => m.clx(),
+    stackLift: StackLift.disable,
+    name: 'CLx',
+  );
 
   static final xLEy = NormalOperation(
-      name: 'x<=y',
-      calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) <= 0));
+    name: 'x<=y',
+    calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) <= 0),
+  );
 
   static final xLT0 = NormalOperation(
-      name: 'x<0',
-      calc: (Model m) => m.program.doNextIf(m.compare(m.x, Value.zero) < 0));
+    name: 'x<0',
+    calc: (Model m) => m.program.doNextIf(m.compare(m.x, Value.zero) < 0),
+  );
 
   static final xGTy = NormalOperation(
-      name: 'x>y',
-      calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) > 0));
+    name: 'x>y',
+    calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) > 0),
+  );
 
   static final xGT0 = NormalOperation(
-      name: 'x>0',
-      calc: (Model m) => m.program.doNextIf(m.compare(m.x, Value.zero) > 0));
+    name: 'x>0',
+    calc: (Model m) => m.program.doNextIf(m.compare(m.x, Value.zero) > 0),
+  );
 
   static final NormalOperation lstx = NormalOperation(
-      pressed: (ActiveState s) => s.liftStackIfEnabled(),
-      calc: (Model m) {
-        m.x = m.lastX;
-        m.display.displayX();
-      },
-      name: 'LSTx');
+    pressed: (ActiveState s) => s.liftStackIfEnabled(),
+    calc: (Model m) {
+      m.x = m.lastX;
+      m.display.displayX();
+    },
+    name: 'LSTx',
+  );
 
   static final xNEy = NormalOperation(
-      name: 'x!=y',
-      calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) != 0));
+    name: 'x!=y',
+    calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) != 0),
+  );
 
   static final xNE0 = NormalOperation(
-      name: 'x!=0', calc: (Model m) => m.program.doNextIf(!m.isZero(m.x)));
+    name: 'x!=0',
+    calc: (Model m) => m.program.doNextIf(!m.isZero(m.x)),
+  );
 
   static final xEQy = NormalOperation(
-      name: 'x==y',
-      calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) == 0));
+    name: 'x==y',
+    calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) == 0),
+  );
 
   static final xEQ0 = NormalOperation(
-      name: 'x==0', calc: (Model m) => m.program.doNextIf(m.isZero(m.x)));
+    name: 'x==0',
+    calc: (Model m) => m.program.doNextIf(m.isZero(m.x)),
+  );
 
   // ================================
   // Useful collections of operations
@@ -260,7 +312,7 @@ class Operations {
     Operations.sst,
     Operations.bst,
     Operations.mem,
-    Operations.status
+    Operations.status,
   ];
 }
 

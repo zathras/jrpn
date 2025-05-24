@@ -940,7 +940,7 @@ const expectedOpcodes = [
   [712, '-45,10,13', 'RCL / C'],
   [713, '-45,10,14', 'RCL / D'],
   [714, '-45,10,15', 'RCL / E'],
-  [715, '-45,43,24', 'RCL g (i)']
+  [715, '-45,43,24', 'RCL g (i)'],
 ];
 
 ///
@@ -1043,13 +1043,21 @@ Future<void> opcodeTest15C() async {
     final tclOpcode = tcl.remove(pd);
     expect(tclOpcode == null, false);
     if (instr.opcode <= 0xff) {
-      expect(tclOpcode!.length, 2,
-          reason: '$instr ($tclOpcode, '
-              '0x${instr.opcode.toRadixString(16)}) should be two bytes');
+      expect(
+        tclOpcode!.length,
+        2,
+        reason:
+            '$instr ($tclOpcode, '
+            '0x${instr.opcode.toRadixString(16)}) should be two bytes',
+      );
     } else {
-      expect(tclOpcode!.length, 4,
-          reason: '$instr ($tclOpcode, '
-              '0x${instr.opcode.toRadixString(16)}) should be one byte');
+      expect(
+        tclOpcode!.length,
+        4,
+        reason:
+            '$instr ($tclOpcode, '
+            '0x${instr.opcode.toRadixString(16)}) should be one byte',
+      );
     }
   }
   tcl.remove('44_42_36'); // Synonym for 44_36, sto-random
@@ -1061,8 +1069,13 @@ Future<void> opcodeTest15C() async {
 
   // Make sure the opcodes don't move between releases
   final currentOpcodes = instructions
-      .map<List<Object>>((instr) =>
-          <Object>[instr.opcode, instr.programDisplay, instr.programListing])
+      .map<List<Object>>(
+        (instr) => <Object>[
+          instr.opcode,
+          instr.programDisplay,
+          instr.programListing,
+        ],
+      )
       .toList();
   // An easy way to generate expectedOpcodes:
   // print(JsonEncoder().convert(currentOpcodes));
@@ -1087,9 +1100,13 @@ Future<void> opcodeTest15C() async {
     mem.reset();
     expect(mem.program.listing.length, 1);
     mem.program.importProgram(exported);
-    expect(mem.program[1].opcode, instr.opcode,
-        reason: '${mem.program[1].programListing}'
-            ' != ${instr.programListing} ($exported)');
+    expect(
+      mem.program[1].opcode,
+      instr.opcode,
+      reason:
+          '${mem.program[1].programListing}'
+          ' != ${instr.programListing} ($exported)',
+    );
   }
 
   // Note that JRPN doesn't use the same numerical opcodes as the original

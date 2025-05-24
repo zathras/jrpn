@@ -55,37 +55,50 @@ abstract class BackPanel extends OrientedScreen {
   @override
   Widget buildPortrait(BuildContext context, final ScreenPositioner screen) {
     return GestureDetector(
-        onTap: () => Navigator.pop(context),
-        child: Container(
-            alignment: Alignment.center,
-            color: MainScreen.deadZoneColor,
-            child: AspectRatio(
-                aspectRatio: screen.width / screen.height,
-                child: buildBackPanelPortrait(context, screen))));
+      onTap: () => Navigator.pop(context),
+      child: Container(
+        alignment: Alignment.center,
+        color: MainScreen.deadZoneColor,
+        child: AspectRatio(
+          aspectRatio: screen.width / screen.height,
+          child: buildBackPanelPortrait(context, screen),
+        ),
+      ),
+    );
   }
 
   Widget buildBackPanelPortrait(
-      BuildContext context, final ScreenPositioner screen);
+    BuildContext context,
+    final ScreenPositioner screen,
+  );
 
   @override
   Widget buildLandscape(BuildContext context, final ScreenPositioner screen) {
     return GestureDetector(
-        onTap: () => Navigator.pop(context),
-        child: Container(
-            alignment: Alignment.center,
-            color: MainScreen.deadZoneColor,
-            child: AspectRatio(
-                aspectRatio: screen.width / screen.height,
-                child: buildBackPanelLandscape(context, screen))));
+      onTap: () => Navigator.pop(context),
+      child: Container(
+        alignment: Alignment.center,
+        color: MainScreen.deadZoneColor,
+        child: AspectRatio(
+          aspectRatio: screen.width / screen.height,
+          child: buildBackPanelLandscape(context, screen),
+        ),
+      ),
+    );
   }
 
   Widget buildBackPanelLandscape(
-      BuildContext context, final ScreenPositioner screen);
+    BuildContext context,
+    final ScreenPositioner screen,
+  );
 
   @protected
-  Widget table(double widthCM, List<BPRow> rows,
-          {bool drawLines = true, bool? drawVerticalLines}) =>
-      BPTable(widthCM, rows, drawLines, drawVerticalLines ?? drawLines, this);
+  Widget table(
+    double widthCM,
+    List<BPRow> rows, {
+    bool drawLines = true,
+    bool? drawVerticalLines,
+  }) => BPTable(widthCM, rows, drawLines, drawVerticalLines ?? drawLines, this);
 
   @protected
   final TextAlign bpCenter = TextAlign.center;
@@ -103,32 +116,40 @@ abstract class BackPanel extends OrientedScreen {
   BPCell cellEB(BPItem item) => BPCell(item, eraseBottom: true);
 
   @protected
-  BPItem text(String text,
-          {bool box = false,
-          double scale = 1,
-          TextAlign align = TextAlign.left,
-          Offset offset = Offset.zero,
-          Offset boxOffset = Offset.zero}) =>
-      _TextItem(text, this,
-          box: box,
-          scale: scale,
-          align: align,
-          offset: offset,
-          boxOffset: boxOffset);
+  BPItem text(
+    String text, {
+    bool box = false,
+    double scale = 1,
+    TextAlign align = TextAlign.left,
+    Offset offset = Offset.zero,
+    Offset boxOffset = Offset.zero,
+  }) => _TextItem(
+    text,
+    this,
+    box: box,
+    scale: scale,
+    align: align,
+    offset: offset,
+    boxOffset: boxOffset,
+  );
   @protected
-  BPItem italicText(String text,
-          {bool box = false,
-          double scale = 1,
-          TextAlign align = TextAlign.left,
-          Offset offset = Offset.zero,
-          Offset boxOffset = Offset.zero}) =>
-      _TextItem(text, this,
-          box: box,
-          scale: scale,
-          align: align,
-          offset: offset,
-          boxOffset: boxOffset,
-          fontStyle: FontStyle.italic);
+  BPItem italicText(
+    String text, {
+    bool box = false,
+    double scale = 1,
+    TextAlign align = TextAlign.left,
+    Offset offset = Offset.zero,
+    Offset boxOffset = Offset.zero,
+  }) => _TextItem(
+    text,
+    this,
+    box: box,
+    scale: scale,
+    align: align,
+    offset: offset,
+    boxOffset: boxOffset,
+    fontStyle: FontStyle.italic,
+  );
   BPItem subText(String t) =>
       text(t, scale: 0.7, offset: Offset(0, 0.25 * rowHeightMM));
   BPItem supText(String t) =>
@@ -142,10 +163,12 @@ abstract class BackPanel extends OrientedScreen {
   BPItem registerBox(double width, BPItem content) =>
       _RegisterBoxItem(width, content, this);
   BPItem point() => _PointItem(this);
-  BPItem sqrtText(String text,
-          {bool box = false,
-          Offset boxOffset = Offset.zero,
-          Offset offset = Offset.zero}) =>
+  BPItem sqrtText(
+    String text, {
+    bool box = false,
+    Offset boxOffset = Offset.zero,
+    Offset offset = Offset.zero,
+  }) =>
       _SqrtTextItem(text, this, box: box, boxOffset: boxOffset, offset: offset);
   BPItem carry() =>
       registerBox(2.1, text('c', scale: 0.72, offset: const Offset(.62, -.08)));
@@ -172,9 +195,14 @@ class BPTable extends StatelessWidget {
   final bool drawHorizontalLines;
   final bool drawVerticalLines;
 
-  const BPTable(this.widthCM, this.rows, this.drawHorizontalLines,
-      this.drawVerticalLines, this.panel,
-      {super.key});
+  const BPTable(
+    this.widthCM,
+    this.rows,
+    this.drawHorizontalLines,
+    this.drawVerticalLines,
+    this.panel, {
+    super.key,
+  });
 
   double get thickLineWidth => panel.thickLineWidth;
   double get thinLineWidth => panel.thinLineWidth;
@@ -201,19 +229,27 @@ class BPTablePainter extends BPItemPainter {
   final List<double> columnWidths;
 
   BPTablePainter(this.table)
-      : columnWidths = _makeColumnWidths(table.rows),
-        super(table.panel);
+    : columnWidths = _makeColumnWidths(table.rows),
+      super(table.panel);
 
   static List<double> _makeColumnWidths(List<BPRow> rows) =>
       List<double>.generate(
-          rows[0].cells.length,
-          (i) => rows.fold(
-              0.0, (double soFar, BPRow r) => max(soFar, r.cells[i].width)));
+        rows[0].cells.length,
+        (i) => rows.fold(
+          0.0,
+          (double soFar, BPRow r) => max(soFar, r.cells[i].width),
+        ),
+      );
 
   void drawOutline(Canvas canvas, double width, double height) {
     final thickW = table.thickLineWidth;
-    RRect frame = RRect.fromLTRBR(thickW / 2, thickW / 2, width - thickW / 2,
-        height - thickW / 2, const Radius.circular(0.1));
+    RRect frame = RRect.fromLTRBR(
+      thickW / 2,
+      thickW / 2,
+      width - thickW / 2,
+      height - thickW / 2,
+      const Radius.circular(0.1),
+    );
     canvas.drawRRect(frame, thickLine);
   }
 
@@ -225,7 +261,8 @@ class BPTablePainter extends BPItemPainter {
     final heightMM = table.panel.rowHeightMM;
     final drawLines = table.drawHorizontalLines;
     canvas.scale(size.width / (table.widthCM * 10));
-    double width = columnWidths.fold(0.0, (double x, double e) => x + e) +
+    double width =
+        columnWidths.fold(0.0, (double x, double e) => x + e) +
         2 * thickW +
         (thinW * (columnWidths.length - 1));
     double height = table.rows.length * heightMM + 2 * thickW - thinW;
@@ -283,7 +320,8 @@ class BPRow {
       }
     }
     if (!drawLastTwoColumnsBottomLine) {
-      x -= p.columnWidths[cells.length - 1] +
+      x -=
+          p.columnWidths[cells.length - 1] +
           p.columnWidths[cells.length - 2] +
           2 * panel.thinLineWidth;
     } else {
@@ -334,7 +372,7 @@ class _ArrowRightItem extends BPItem {
       ..addPolygon([
         Offset(x + w, y),
         Offset(x + w - sz, y - sz * 1.2 / 2),
-        Offset(x + w - sz, y + sz * 1.2 / 2)
+        Offset(x + w - sz, y + sz * 1.2 / 2),
       ], true);
     c.drawPath(path, p.fill);
   }
@@ -354,13 +392,16 @@ class _ArrowLeftItem extends BPItem {
     const double sz = 1.1;
     if (width > 0) {
       c.drawLine(
-          Offset(x + sz / 2, rowHeightMM / 2), Offset(x + w, y), p.thinLine);
+        Offset(x + sz / 2, rowHeightMM / 2),
+        Offset(x + w, y),
+        p.thinLine,
+      );
     }
     final path = Path()
       ..addPolygon([
         Offset(x, y),
         Offset(x + sz, y - sz * 1.2 / 2),
-        Offset(x + sz, y + sz * 1.2 / 2)
+        Offset(x + sz, y + sz * 1.2 / 2),
       ], true);
     c.drawPath(path, p.fill);
   }
@@ -493,27 +534,40 @@ class _TextItem extends BPItem {
   @override
   final double width;
 
-  _TextItem._p(this.painter, this.panel, this.box, this.scale, this.width,
-      this.offset, this.boxOffset);
+  _TextItem._p(
+    this.painter,
+    this.panel,
+    this.box,
+    this.scale,
+    this.width,
+    this.offset,
+    this.boxOffset,
+  );
 
-  factory _TextItem(String text, BackPanel panel,
-      {bool box = false,
-      double scale = 1,
-      TextAlign align = TextAlign.left,
-      Offset offset = Offset.zero,
-      Offset boxOffset = Offset.zero,
-      FontStyle fontStyle = FontStyle.normal}) {
+  factory _TextItem(
+    String text,
+    BackPanel panel, {
+    bool box = false,
+    double scale = 1,
+    TextAlign align = TextAlign.left,
+    Offset offset = Offset.zero,
+    Offset boxOffset = Offset.zero,
+    FontStyle fontStyle = FontStyle.normal,
+  }) {
     final painter = TextPainter(
-        text: TextSpan(
-            style: TextStyle(
-                color: MainScreen.keyFrameSilver,
-                fontSize: panel.fontSize,
-                fontFamily: 'KeyLabelFont',
-                fontStyle: fontStyle,
-                fontWeight: FontWeight.normal),
-            text: text),
-        textAlign: align,
-        textDirection: TextDirection.ltr);
+      text: TextSpan(
+        style: TextStyle(
+          color: MainScreen.keyFrameSilver,
+          fontSize: panel.fontSize,
+          fontFamily: 'KeyLabelFont',
+          fontStyle: fontStyle,
+          fontWeight: FontWeight.normal,
+        ),
+        text: text,
+      ),
+      textAlign: align,
+      textDirection: TextDirection.ltr,
+    );
     painter.layout();
     var width = (painter.width) * scale;
     if (text == 'SR' || text == 'RR') {
@@ -534,8 +588,10 @@ class _TextItem extends BPItem {
       c.scale(scale);
     }
     painter.layout(minWidth: w / scale);
-    painter.paint(c,
-        Offset(offset.dx + x / scale, -0.0038 * panel.rowHeightMM + offset.dy));
+    painter.paint(
+      c,
+      Offset(offset.dx + x / scale, -0.0038 * panel.rowHeightMM + offset.dy),
+    );
     if (scale != 1.0) {
       c.restore();
     }
@@ -551,29 +607,53 @@ class _TextItem extends BPItem {
         // Do nothing
       }
       c.drawRect(
-          Rect.fromLTWH(
-              x + boxOffset.dx,
-              panel.rowHeightMM * 0.1 + panel.thinLineWidth + boxOffset.dy,
-              width + panel.thinLineWidth * 3,
-              panel.rowHeightMM * 0.80 - panel.thinLineWidth * 2),
-          p.thinLine);
+        Rect.fromLTWH(
+          x + boxOffset.dx,
+          panel.rowHeightMM * 0.1 + panel.thinLineWidth + boxOffset.dy,
+          width + panel.thinLineWidth * 3,
+          panel.rowHeightMM * 0.80 - panel.thinLineWidth * 2,
+        ),
+        p.thinLine,
+      );
     }
   }
 }
 
 class _SqrtTextItem extends _TextItem {
-  _SqrtTextItem._p(super.painter, super.panel, super.box, super.scale,
-      super.width, super.offset, super.boxOffset)
-      : super._p();
+  _SqrtTextItem._p(
+    super.painter,
+    super.panel,
+    super.box,
+    super.scale,
+    super.width,
+    super.offset,
+    super.boxOffset,
+  ) : super._p();
 
-  factory _SqrtTextItem(String text, BackPanel panel,
-      {bool box = false,
-      Offset boxOffset = Offset.zero,
-      Offset offset = Offset.zero}) {
-    final init = _TextItem(text, panel,
-        scale: 0.75, box: box, boxOffset: boxOffset, offset: offset);
-    return _SqrtTextItem._p(init.painter, panel, init.box, init.scale,
-        init.width, init.offset, init.boxOffset);
+  factory _SqrtTextItem(
+    String text,
+    BackPanel panel, {
+    bool box = false,
+    Offset boxOffset = Offset.zero,
+    Offset offset = Offset.zero,
+  }) {
+    final init = _TextItem(
+      text,
+      panel,
+      scale: 0.75,
+      box: box,
+      boxOffset: boxOffset,
+      offset: offset,
+    );
+    return _SqrtTextItem._p(
+      init.painter,
+      panel,
+      init.box,
+      init.scale,
+      init.width,
+      init.offset,
+      init.boxOffset,
+    );
   }
 
   @override
@@ -585,9 +665,10 @@ class _SqrtTextItem extends _TextItem {
     // Extend the line on the top of the square root symbol
     TextSpan span = TextSpan(style: painter.text!.style, text: '\u203E');
     TextPainter tp = TextPainter(
-        text: span,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr);
+      text: span,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
     tp.layout();
     c.save();
     c.scale(0.75);

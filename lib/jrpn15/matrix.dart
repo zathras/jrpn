@@ -117,7 +117,8 @@ abstract class AMatrix {
       sb.writeln(':');
     }
     sb.write(
-        formatValueWith((v) => (const FixFloatFormatter(4)).format(v, false)));
+      formatValueWith((v) => (const FixFloatFormatter(4)).format(v, false)),
+    );
     return sb.toString();
   }
 
@@ -335,23 +336,29 @@ class Matrix extends AMatrix {
   }
 
   Map<String, Object?> toJson() => {
-        'columns': _columns,
-        'values': _values.map((v) => v.toJson()).toList(),
-        'rowSwaps': _rowSwaps
-      };
+    'columns': _columns,
+    'values': _values.map((v) => v.toJson()).toList(),
+    'rowSwaps': _rowSwaps,
+  };
 
   void decodeJson(Map<String, dynamic> m) {
     final rsRaw = m['rowSwaps'] as List?;
     if (rsRaw == null) {
       _rowSwaps = null;
     } else {
-      _rowSwaps =
-          List.generate(rsRaw.length, (i) => rsRaw[i] as int, growable: false);
+      _rowSwaps = List.generate(
+        rsRaw.length,
+        (i) => rsRaw[i] as int,
+        growable: false,
+      );
     }
     _columns = m['columns'] as int;
     final v = m['values'] as List;
-    _values = List.generate(v.length, (i) => Value.fromJson(v[i] as String),
-        growable: false);
+    _values = List.generate(
+      v.length,
+      (i) => Value.fromJson(v[i] as String),
+      growable: false,
+    );
   }
 
   @override
@@ -531,11 +538,13 @@ class CopyMatrix extends AMatrix {
   final List<Value> _values;
 
   CopyMatrix(AMatrix src)
-      : rows = src.rows,
-        columns = src.columns,
-        _values = List.generate(src.rows * src.columns,
-            (i) => src.get(i ~/ src.columns, i % src.columns),
-            growable: false);
+    : rows = src.rows,
+      columns = src.columns,
+      _values = List.generate(
+        src.rows * src.columns,
+        (i) => src.get(i ~/ src.columns, i % src.columns),
+        growable: false,
+      );
 
   @override
   void set(int row, int col, Value v) => _values[row * columns + col] = v;
@@ -567,7 +576,9 @@ abstract class UpperOrLowerTriangular extends AMatrix {
       _m.set(row, col, v);
     } else {
       assert(
-          v == f, 'Attempt to set fixed part of triangle to $v ($f expected)');
+        v == f,
+        'Attempt to set fixed part of triangle to $v ($f expected)',
+      );
     }
   }
 }

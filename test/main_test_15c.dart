@@ -63,26 +63,37 @@ Future<void> main() async {
   testWidgets('15C Buttons', (WidgetTester tester) async {
     SharedPreferences.setMockInitialValues({});
     final controller = Controller15(createModel15());
-    controller.screenConfig =
-        await ScreenConfiguration.fromPersistentStorage('foo');
+    controller.screenConfig = await ScreenConfiguration.fromPersistentStorage(
+      'foo',
+    );
     final ScreenPositioner positioner = ScreenPositioner(12.7, 8);
-    await tester.pumpWidget(Builder(builder: (BuildContext context) {
-      final factory = LandscapeButtonFactory15(context, positioner, controller);
-      final layout = ButtonLayout15(factory, 10, 0.1);
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          final factory = LandscapeButtonFactory15(
+            context,
+            positioner,
+            controller,
+          );
+          final layout = ButtonLayout15(factory, 10, 0.1);
 
-      TrigInputTests(controller, layout).run();
-      MiscTests(controller, layout).run();
-      unawaited(() async {
-        try {
-          await AdvancedFunctionTests(TestCalculator(for15C: true), layout)
-              .run();
-        } finally {
-          done = true;
-        }
-      }());
+          TrigInputTests(controller, layout).run();
+          MiscTests(controller, layout).run();
+          unawaited(() async {
+            try {
+              await AdvancedFunctionTests(
+                TestCalculator(for15C: true),
+                layout,
+              ).run();
+            } finally {
+              done = true;
+            }
+          }());
 
-      return Container(); // placeholder
-    }));
+          return Container(); // placeholder
+        },
+      ),
+    );
     await tester.pumpAndSettle(const Duration(milliseconds: 10000));
     expect(done, true);
   });
@@ -229,9 +240,9 @@ class AdvancedFunctionTests {
   final StreamIterator<ProgramEvent> out;
 
   AdvancedFunctionTests(this.calculator, this.layout)
-      : controller = calculator.controller as Controller15,
-        model = calculator.controller.model as Model15,
-        out = StreamIterator<ProgramEvent>(calculator.output.stream);
+    : controller = calculator.controller as Controller15,
+      model = calculator.controller.model as Model15,
+      out = StreamIterator<ProgramEvent>(calculator.output.stream);
 
   Future<void> _statistics() async {
     final l = layout;
@@ -289,7 +300,7 @@ class AdvancedFunctionTests {
     expect(m.xF, 5);
     for (final enterOrNot in [
       <CalculatorButton>[],
-      [l.enter]
+      [l.enter],
     ]) {
       _play([l.n9, l.enter, l.n8]); // Test stack lift
       _play(enterOrNot); // Test stack lift
@@ -860,19 +871,26 @@ class AdvancedFunctionTests {
           final dm = dart_mat.Matrix2.zero();
           mat2.visit((r, c) => dm.setEntry(r, c, mat.get(r, c).asDouble));
           expectRounded(
-              2e-9,
-              Value.fromDouble(linalg.determinant(mat2).asDouble),
-              dm.determinant());
+            2e-9,
+            Value.fromDouble(linalg.determinant(mat2).asDouble),
+            dm.determinant(),
+          );
         } else if (sz == 3) {
           final dm = dart_mat.Matrix3.zero();
           mat2.visit((r, c) => dm.setEntry(r, c, mat.get(r, c).asDouble));
           expectRounded(
-              2e-9, linalg.determinant(mat2).toValue(), dm.determinant());
+            2e-9,
+            linalg.determinant(mat2).toValue(),
+            dm.determinant(),
+          );
         } else if (sz == 4) {
           final dm = dart_mat.Matrix4.zero();
           mat2.visit((r, c) => dm.setEntry(r, c, mat.get(r, c).asDouble));
           expectRounded(
-              2e-9, linalg.determinant(mat2).toValue(), dm.determinant());
+            2e-9,
+            linalg.determinant(mat2).toValue(),
+            dm.determinant(),
+          );
         }
         invert(mat2);
         result.dot(mat, mat2);
@@ -964,8 +982,10 @@ class AdvancedFunctionTests {
         expect(mat.rows, orig.rows * 2);
         expect(mat.columns, orig.columns ~/ 2);
         mat.visit((r, c) {
-          expect(mat.get(r, c),
-              orig.get(r % orig.rows, c * 2 + (r >= orig.rows ? 1 : 0)));
+          expect(
+            mat.get(r, c),
+            orig.get(r % orig.rows, c * 2 + (r >= orig.rows ? 1 : 0)),
+          );
         });
         controller.buttonDown(Operations15.cYX);
         expectMatrix(mat, orig);
@@ -1008,7 +1028,7 @@ class AdvancedFunctionTests {
       <double>[27, -3, 5, 24, 3.14],
       <double>[99, 86, 8, 42, 6.66],
       <double>[23, 6.022, 51, 52, 88],
-      <double>[210, -37, 5, 16, 7]
+      <double>[210, -37, 5, 16, 7],
     ];
 
     mat.visit((r, c) => mat.set(r, c, _toValue(vals[r][c])));
@@ -1116,7 +1136,7 @@ class AdvancedFunctionTests {
   void _testScalar(NormalOperation op, double Function(double x, double y) f) {
     final values = [
       [1.1, -2.2, 3.3],
-      [4.4, 5.5, 6.6]
+      [4.4, 5.5, 6.6],
     ];
     final scalarValues = [327.1, -56.0, 1.99, 42.24];
     final Matrix mat = model.matrices[0];
@@ -1180,12 +1200,12 @@ class AdvancedFunctionTests {
     }
     expectMatrixVals(mA, [
       [1, 2, 3],
-      [4, 5, 6]
+      [4, 5, 6],
     ]);
     _play([l.n2, l.sto, l.n0, l.n3, l.sto, l.n1, l.n9, l.sto, l.sqrt]);
     expectMatrixVals(mA, [
       [1, 2, 3],
-      [4, 5, 9]
+      [4, 5, 9],
     ]);
     _play([l.n2, l.enter, l.n1, l.rcl, l.gShift, l.sqrt]);
     expect(model.x, Value.fromDouble(4));
@@ -1195,7 +1215,7 @@ class AdvancedFunctionTests {
     expectMatrixVals(mB, [
       [1, 4],
       [2, 5],
-      [3, 9]
+      [3, 9],
     ]);
 
     // p. 152:
@@ -1206,21 +1226,21 @@ class AdvancedFunctionTests {
     expect(model.x, Value.fromMatrix(1));
     expectMatrixVals(mB, [
       [1, 3, 5],
-      [7, 9, 17]
+      [7, 9, 17],
     ]);
     _play([l.fShift, l.eex, l.tenX, l.rcl, l.chs, l.eX]); // result C, RCL mat B
     _play([l.rcl, l.fShift, l.chs, l.sqrt, l.plus]); // Matrix add
     expect(model.x, Value.fromMatrix(2));
     expectMatrixVals(mC, [
       [2, 5, 8],
-      [11, 14, 26]
+      [11, 14, 26],
     ]);
     _play([l.rcl, l.chs, l.eX]); // RCL mat B
     _play([l.rcl, l.fShift, l.chs, l.sqrt, l.minus]); // matrix subtract
     expect(model.x, Value.fromMatrix(2));
     expectMatrixVals(mC, [
       [0, 1, 2],
-      [3, 4, 8]
+      [3, 4, 8],
     ]);
 
     _play([l.n0, l.enter, l.fShift, l.sin, l.tenX]); // dim(C) = 0,0
@@ -1234,7 +1254,7 @@ class AdvancedFunctionTests {
     const aTstarB = [
       [29, 39, 73],
       [37, 51, 95],
-      [66, 90, 168]
+      [66, 90, 168],
     ];
     expectMatrixVals(mC, aTstarB);
     _play([l.rcl, l.chs, l.sqrt, l.fShift, l.chs, l.n4]); // RCL A, transpose
@@ -1282,7 +1302,7 @@ class AdvancedFunctionTests {
     final residO = [
       [33, 16, 72],
       [-24, -10, -57],
-      [-8, -4, -17]
+      [-8, -4, -17],
     ];
     mA.visit((r, c) => mA.set(r, c, _toValue(residO[r][c].toDouble())));
     mB.resize(model, 3, 3);
@@ -1301,14 +1321,11 @@ class AdvancedFunctionTests {
     // print(mC.formatValueWith((v) => v.asDouble.toStringAsFixed(9)));
     expect(model.y, Value.fromMatrix(0));
     expect(model.x, Value.fromMatrix(2));
-    expectMatrixVals(
-        mC,
-        [
-          [-9.666666881, -2.666666726, -32.00000071],
-          [8.000000167, 2.500000046, 25.50000055],
-          [2.666666728, 0.6666666836, 9.000000203]
-        ],
-        0.000000015);
+    expectMatrixVals(mC, [
+      [-9.666666881, -2.666666726, -32.00000071],
+      [8.000000167, 2.500000046, 25.50000055],
+      [2.666666728, 0.6666666836, 9.000000203],
+    ], 0.000000015);
     _play([l.fShift, l.eex, l.eX]); // result B
     _play([l.fShift, l.chs, l.n6]); // Matrix 6 (residual)
     _play([l.rcl, l.chs, l.yX, l.div]); // RCL mat D, divide
@@ -1316,7 +1333,7 @@ class AdvancedFunctionTests {
     expectMatrixVals(mB, [
       [-9.666666667, -2.666666667, -32],
       [8, 2.5, 25.5],
-      [2.666666667, 0.6666666667, 9]
+      [2.666666667, 0.6666666667, 9],
     ]);
 
     // Complex matrices, page 163:
@@ -1336,19 +1353,19 @@ class AdvancedFunctionTests {
       [4, 7],
       [1, 3],
       [3, -2],
-      [5, 8]
+      [5, 8],
     ]);
     _play([l.gShift, l.plus]); // Cy,x
     expectMatrixVals(mA, [
       [4, 3, 7, -2],
-      [1, 5, 3, 8]
+      [1, 5, 3, 8],
     ]);
     _play([l.fShift, l.plus]); // Py,x
     expectMatrixVals(mA, [
       [4, 7],
       [1, 3],
       [3, -2],
-      [5, 8]
+      [5, 8],
     ]);
 
     // Page 165:
@@ -1356,28 +1373,22 @@ class AdvancedFunctionTests {
     _play([l.fShift, l.eex, l.eX, l.fShift, l.reciprocal]);
     expect(model.x, Value.fromMatrix(1));
     _play([l.fShift, l.chs, l.n3]);
-    expectMatrixVals(
-        mB,
-        [
-          [-0.02541436465, 0.2419889503],
-          [-0.01215469613, -0.1016574586],
-          [-0.2828729282, -0.002209944705],
-          [0.1690607735, -0.1314917127]
-        ],
-        1.5e-10);
+    expectMatrixVals(mB, [
+      [-0.02541436465, 0.2419889503],
+      [-0.01215469613, -0.1016574586],
+      [-0.2828729282, -0.002209944705],
+      [0.1690607735, -0.1314917127],
+    ], 1.5e-10);
 
     // page 167:
     _play([l.rcl, l.chs, l.sqrt, l.rcl, l.chs, l.eX]);
     _play([l.fShift, l.eex, l.tenX, l.mult]);
-    expectMatrixVals(
-        mC,
-        [
-          [1, -2.85e-10],
-          [4e-11, 1],
-          [1e-11, 3.8e-10],
-          [1e-11, -1.05e-10]
-        ],
-        1.5e-9);
+    expectMatrixVals(mC, [
+      [1, -2.85e-10],
+      [4e-11, 1],
+      [1e-11, 3.8e-10],
+      [1e-11, -1.05e-10],
+    ], 1.5e-9);
 
     // page 170:
     _play([l.fShift, l.chs, l.n0, l.fShift, l.chs, l.n1]);
@@ -1398,16 +1409,17 @@ class AdvancedFunctionTests {
     _play([l.fShift, l.chs, l.n2, l.fShift, l.eex, l.tenX, l.div]);
     expect(model.x, Value.fromMatrix(2));
     _play([l.gShift, l.plus]);
-    expectMatrixVals(
-        mC,
-        [
-          [0.03715608128, 0.1311391104],
-          [0.04371303680, 0.1542813064]
-        ],
-        1.5e-10);
+    expectMatrixVals(mC, [
+      [0.03715608128, 0.1311391104],
+      [0.04371303680, 0.1542813064],
+    ], 1.5e-10);
 
-    void testMatrixAccess(List<CalculatorButton> op, double val, double r,
-        [double? xr]) {
+    void testMatrixAccess(
+      List<CalculatorButton> op,
+      double val,
+      double r, [
+      double? xr,
+    ]) {
       void forMatrix(CalculatorButton matButton, Matrix mat) {
         model.userMode = false;
         mat.resize(model, 2, 3);
@@ -1547,14 +1559,14 @@ class AdvancedFunctionTests {
     _play([l.gShift, l.rs]); // P/R
     expectMatrixVals(mD, [
       [3, 5],
-      [7, 2]
+      [7, 2],
     ]);
     _play([l.gsb, l.sqrt]); // GSB A
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
     expectMatrixVals(mD, [
       [3 * 3, 5 * 5],
-      [7 * 7, 2 * 2]
+      [7 * 7, 2 * 2],
     ]);
     // Check that row-norm and Frobenius norm act as conditional branch
     for (final asProgram in [true, false]) {
@@ -1592,7 +1604,7 @@ class AdvancedFunctionTests {
 
     setMatrix(model, mD, [
       [1, 2.7, -3],
-      [5, 24, 0.33]
+      [5, 24, 0.33],
     ]);
     _play([l.rcl, l.chs, l.yX]);
     expect(model.x, Value.fromMatrix(3));
@@ -1600,13 +1612,13 @@ class AdvancedFunctionTests {
     expect(model.x, Value.fromMatrix(3));
     expectMatrixVals(mD, [
       [-1, -2.7, 3],
-      [-5, -24, -0.33]
+      [-5, -24, -0.33],
     ]);
 
     setMatrix(model, mD, [
       [1, 2.7, -3],
       [5, 24, 0.33],
-      [-31, 3.14, -6.22]
+      [-31, 3.14, -6.22],
     ]);
     _play([l.rcl, l.chs, l.yX, l.fShift, l.chs, l.n7]); // mat 7 on D
     expect(model.xF, 40.36);
@@ -1619,13 +1631,13 @@ class AdvancedFunctionTests {
     setMatrix(model, mD, [
       [1, 2.7, -3],
       [5, 24, 0.33],
-      [-31, 3.14, -6.22]
+      [-31, 3.14, -6.22],
     ]);
     setMatrix(model, mC, [
       [19, 20.7, -73],
       [19, 27, 2.33],
       [-310, 0.314, -6.22222],
-      [22.1, 22.2, 22.3]
+      [22.1, 22.2, 22.3],
     ]);
     _play([l.rcl, l.chs, l.tenX, l.sto, l.tan]); // I := mC
     _play([l.n2, l.sto, l.n0, l.n3, l.sto, l.n1]); // r = 2, c = 3
@@ -1671,50 +1683,50 @@ class AdvancedFunctionTests {
 
     model.userMode = false;
     setMatrix(model, mD, [
-      [1.1, 2.2]
+      [1.1, 2.2],
     ]);
     _play([l.rcl, l.chs, l.yX, l.sto, l.tan]); // I := D
     _play([l.fShift, l.chs, l.n1]); // F matrix 1
     _play([l.n3, l.sto, l.yX]);
     expectMatrixVals(mD, [
-      [3, 2.2]
+      [3, 2.2],
     ]);
     _play([l.fShift, l.rcl]); // toggle user mode
     _play([l.n4, l.sto, l.cos]);
     _play([l.n5, l.sto, l.yX, l.n6, l.sto, l.cos]);
     expectMatrixVals(mD, [
-      [6, 5]
+      [6, 5],
     ]);
     _play([l.fShift, l.rcl]); // toggle user (to off)
     setMatrix(model, mD, [
       [1.1, 2.2],
       [3.1, 4.2],
-      [5.1, 6.2]
+      [5.1, 6.2],
     ]);
     _play([l.n1, l.enter, l.n3, l.enter, l.n2, l.sto, l.gShift, l.yX]);
     expectMatrixVals(mD, [
       [1.1, 2.2],
       [3.1, 4.2],
-      [5.1, 1]
+      [5.1, 1],
     ]);
     _play([l.n2, l.chs, l.enter, l.n2, l.enter, l.n1, l.sto, l.gShift, l.cos]);
     expectMatrixVals(mD, [
       [1.1, 2.2],
       [-2, 4.2],
-      [5.1, 1]
+      [5.1, 1],
     ]);
 
     _play([l.rcl, l.chs, l.yX, l.sto, l.chs, l.sqrt]); // A := D
     expectMatrixVals(mA, [
       [1.1, 2.2],
       [-2, 4.2],
-      [5.1, 1]
+      [5.1, 1],
     ]);
     _play([l.n9, l.chs, l.sto, l.chs, l.sqrt]); // A := 9
     expectMatrixVals(mA, [
       [-9, -9],
       [-9, -9],
-      [-9, -9]
+      [-9, -9],
     ]);
 
     final testOpAndResults = [
@@ -1722,54 +1734,54 @@ class AdvancedFunctionTests {
         l.plus,
         [
           [8.2, 10.4],
-          [9.2, 13.4]
+          [9.2, 13.4],
         ],
         [
           [-36.8, -35.7],
-          [-34.8, -33.7]
-        ]
+          [-34.8, -33.7],
+        ],
       ],
       [
         l.minus,
         [
           [-6, -6],
-          [-3, -5]
+          [-3, -5],
         ],
         [
           [39, 40.1],
-          [41, 42.1]
+          [41, 42.1],
         ],
         [
           [-39, -40.1],
-          [-41, -42.1]
-        ]
+          [-41, -42.1],
+        ],
       ],
       [
         l.mult,
         [
           [21.23, 29.26],
-          [47.63, 64.06]
+          [47.63, 64.06],
         ],
         [
           [-41.69, -83.38],
-          [-117.49, -159.18]
-        ]
+          [-117.49, -159.18],
+        ],
       ],
       [
         l.div,
         [
           [-1, -0.9281045754],
-          [1, 1.071895425]
+          [1, 1.071895425],
         ],
         [
           [-0.02902374670, -0.05804749340],
-          [-0.08179419525, -0.1108179420]
+          [-0.08179419525, -0.1108179420],
         ],
         [
           [72.35454545, -37.9],
-          [-53.40454545, 18.95]
-        ]
-      ]
+          [-53.40454545, 18.95],
+        ],
+      ],
     ];
     // Test +, -, *, and / on matrices and scalars
     _play([l.fShift, l.eex, l.tenX]); // f result C
@@ -2087,7 +2099,7 @@ class AdvancedFunctionTests {
           1e71,
           1e-71,
           1e72,
-          1e-72
+          1e-72,
         ]) {
           _play([l.fShift, roundMode, l.n3]);
           model.xF = sign * 1.234567891 * mult;
@@ -2210,8 +2222,11 @@ class AdvancedFunctionTests {
     });
   }
 
-  void expectMatrixVals(AMatrix m, List<List<num>> expected,
-      [final double epsilon = 0]) {
+  void expectMatrixVals(
+    AMatrix m,
+    List<List<num>> expected, [
+    final double epsilon = 0,
+  ]) {
     expect(m.rows, expected.length);
     for (int r = 0; r < expected.length; r++) {
       final row = expected[r];
@@ -2263,8 +2278,10 @@ String formatDouble(double v, int digits) {
 Future<void> valueExponentTest() async {
   for (int e = -99; e <= 99; e++) {
     final d = double.parse('5e$e');
-    expect(Value.fromDouble(d).asDouble.toStringAsExponential(10),
-        d.toStringAsExponential(10));
+    expect(
+      Value.fromDouble(d).asDouble.toStringAsExponential(10),
+      d.toStringAsExponential(10),
+    );
   }
   expect(Value.fromDouble(5e-100).asDouble, 0.0);
   expect(Value.fromDouble(-5e-100).asDouble, 0.0);
@@ -2281,26 +2298,46 @@ Future<void> valueExponentTest() async {
 }
 
 Future<void> valueFracOpTest() async {
-  expect(Value.fromDouble(0.0000000001234567891).fracOp(),
-      Value.fromDouble(0.0000000001234567891));
-  expect(Value.fromDouble(0.000000001234567891).fracOp(),
-      Value.fromDouble(0.000000001234567891));
-  expect(Value.fromDouble(0.00000001234567891).fracOp(),
-      Value.fromDouble(0.00000001234567891));
-  expect(Value.fromDouble(0.0000001234567891).fracOp(),
-      Value.fromDouble(0.0000001234567891));
-  expect(Value.fromDouble(0.000001234567891).fracOp(),
-      Value.fromDouble(0.000001234567891));
-  expect(Value.fromDouble(0.00001234567891).fracOp(),
-      Value.fromDouble(0.00001234567891));
-  expect(Value.fromDouble(0.0001234567891).fracOp(),
-      Value.fromDouble(0.0001234567891));
-  expect(Value.fromDouble(0.001234567891).fracOp(),
-      Value.fromDouble(0.001234567891));
-  expect(Value.fromDouble(0.01234567891).fracOp(),
-      Value.fromDouble(0.01234567891));
   expect(
-      Value.fromDouble(0.1234567891).fracOp(), Value.fromDouble(0.1234567891));
+    Value.fromDouble(0.0000000001234567891).fracOp(),
+    Value.fromDouble(0.0000000001234567891),
+  );
+  expect(
+    Value.fromDouble(0.000000001234567891).fracOp(),
+    Value.fromDouble(0.000000001234567891),
+  );
+  expect(
+    Value.fromDouble(0.00000001234567891).fracOp(),
+    Value.fromDouble(0.00000001234567891),
+  );
+  expect(
+    Value.fromDouble(0.0000001234567891).fracOp(),
+    Value.fromDouble(0.0000001234567891),
+  );
+  expect(
+    Value.fromDouble(0.000001234567891).fracOp(),
+    Value.fromDouble(0.000001234567891),
+  );
+  expect(
+    Value.fromDouble(0.00001234567891).fracOp(),
+    Value.fromDouble(0.00001234567891),
+  );
+  expect(
+    Value.fromDouble(0.0001234567891).fracOp(),
+    Value.fromDouble(0.0001234567891),
+  );
+  expect(
+    Value.fromDouble(0.001234567891).fracOp(),
+    Value.fromDouble(0.001234567891),
+  );
+  expect(
+    Value.fromDouble(0.01234567891).fracOp(),
+    Value.fromDouble(0.01234567891),
+  );
+  expect(
+    Value.fromDouble(0.1234567891).fracOp(),
+    Value.fromDouble(0.1234567891),
+  );
   expect(Value.fromDouble(1.234567891).fracOp(), Value.fromDouble(0.234567891));
   expect(Value.fromDouble(12.34567891).fracOp(), Value.fromDouble(0.34567891));
   expect(Value.fromDouble(123.4567891).fracOp(), Value.fromDouble(0.4567891));
@@ -2454,8 +2491,11 @@ Future<void> decimalAddSubtract() async {
       }
     }
     try {
-      expect(v1.decimalSubtract(v2), Value.fromDouble(n1 - n2),
-          reason: 'for $n1, $n2');
+      expect(
+        v1.decimalSubtract(v2),
+        Value.fromDouble(n1 - n2),
+        reason: 'for $n1, $n2',
+      );
     } on FloatOverflow {
       try {
         expect(v1.decimalSubtract(v2), false);
@@ -2489,14 +2529,22 @@ Future<void> decimalAddSubtract() async {
     }
 
     try {
-      check(() => Value.fromDouble(n1).decimalAdd(Value.fromDouble(n2)),
-          () => Value.fromDouble(expected));
-      check(() => Value.fromDouble(n1).decimalSubtract(Value.fromDouble(-n2)),
-          () => Value.fromDouble(expected));
-      check(() => Value.fromDouble(-n1).decimalAdd(Value.fromDouble(-n2)),
-          () => Value.fromDouble(-expected));
-      check(() => Value.fromDouble(-n1).decimalSubtract(Value.fromDouble(n2)),
-          () => Value.fromDouble(-expected));
+      check(
+        () => Value.fromDouble(n1).decimalAdd(Value.fromDouble(n2)),
+        () => Value.fromDouble(expected),
+      );
+      check(
+        () => Value.fromDouble(n1).decimalSubtract(Value.fromDouble(-n2)),
+        () => Value.fromDouble(expected),
+      );
+      check(
+        () => Value.fromDouble(-n1).decimalAdd(Value.fromDouble(-n2)),
+        () => Value.fromDouble(-expected),
+      );
+      check(
+        () => Value.fromDouble(-n1).decimalSubtract(Value.fromDouble(n2)),
+        () => Value.fromDouble(-expected),
+      );
     } catch (e) {
       print("Failed for $n1 $n2");
       rethrow;
@@ -2554,7 +2602,7 @@ Future<void> decimalAddSubtract() async {
       0.0,
       1.567891235e-41,
       1.567891234e-42,
-      9.123456789e-99
+      9.123456789e-99,
     };
     for (final n1 in numbers) {
       for (final n2 in numbers) {
@@ -2579,12 +2627,14 @@ Future<void> decimalAddSubtract() async {
         '567891234700000',
         '987654321900000',
         '891521596500000',
-        '281902729800000'
+        '281902729800000',
       };
       for (final d1 in patterns) {
         for (final d2 in patterns) {
-          testDoubles(double.parse(d1.substring(0, n1)),
-              double.parse(d2.substring(0, n2)));
+          testDoubles(
+            double.parse(d1.substring(0, n1)),
+            double.parse(d2.substring(0, n2)),
+          );
         }
       }
     }
@@ -2644,8 +2694,9 @@ Future<void> decimalAddSubtract() async {
     final Value minus;
     try {
       plus = Value.fromDouble(double.parse((d1 + d2).toStringAsExponential(9)));
-      minus =
-          Value.fromDouble(double.parse((d1 - d2).toStringAsExponential(9)));
+      minus = Value.fromDouble(
+        double.parse((d1 - d2).toStringAsExponential(9)),
+      );
     } on FloatOverflow {
       continue;
     }
@@ -2656,7 +2707,11 @@ Future<void> decimalAddSubtract() async {
 
 Future<void> decimalMultiplyAndDivide() async {
   void checkResult(
-      Value result, double expected, bool lenient, String Function() msg) {
+    Value result,
+    double expected,
+    bool lenient,
+    String Function() msg,
+  ) {
     final e = Value.fromDouble(expected);
 
     if (result != e &&
@@ -2671,8 +2726,12 @@ Future<void> decimalMultiplyAndDivide() async {
     Value v1 = Value.fromDouble(n1);
     Value v2 = Value.fromDouble(n2);
     try {
-      checkResult(v1.decimalMultiply(v2), v1.asDouble * v2.asDouble, lenient,
-          () => ' for $v1 * $v2');
+      checkResult(
+        v1.decimalMultiply(v2),
+        v1.asDouble * v2.asDouble,
+        lenient,
+        () => ' for $v1 * $v2',
+      );
     } on FloatOverflow {
       try {
         expect(v1.decimalMultiply(v2), false);
@@ -2686,7 +2745,8 @@ Future<void> decimalMultiplyAndDivide() async {
       }
     }
     if (v2 != Value.zero) {
-      lenient = lenient ||
+      lenient =
+          lenient ||
           (n1 == 5 &&
               (n2 == 9999999999e0 ||
                   n2 == 9999999999e1 ||
@@ -2696,8 +2756,12 @@ Future<void> decimalMultiplyAndDivide() async {
                   n2 == 9999999999e5));
       lenient = lenient || (n1 == 9876543 && n2 == 98765432);
       try {
-        checkResult(v1.decimalDivideBy(v2), v1.asDouble / v2.asDouble, lenient,
-            () => ' for $v1 / $v2');
+        checkResult(
+          v1.decimalDivideBy(v2),
+          v1.asDouble / v2.asDouble,
+          lenient,
+          () => ' for $v1 / $v2',
+        );
       } on FloatOverflow {
         try {
           expect(v1.decimalDivideBy(v2), false);
@@ -2714,9 +2778,11 @@ Future<void> decimalMultiplyAndDivide() async {
   }
 
   expect(
-      Value.fromDouble(-6.087e+14)
-          .decimalMultiply(Value.fromDouble(0.000013838095)),
-      Value.fromDouble(-8423248427.0));
+    Value.fromDouble(
+      -6.087e+14,
+    ).decimalMultiply(Value.fromDouble(0.000013838095)),
+    Value.fromDouble(-8423248427.0),
+  );
   // The actual answer is -8423248426.5, and IEEE FP rounds down, wheras
   // the 15C rounds up.
   try {
@@ -2758,12 +2824,14 @@ Future<void> decimalMultiplyAndDivide() async {
         '567891234700000',
         '987654321900000',
         '891521596500000',
-        '281902729800000'
+        '281902729800000',
       };
       for (final d1 in patterns) {
         for (final d2 in patterns) {
-          testDoubles(double.parse(d1.substring(0, n1)),
-              double.parse(d2.substring(0, n2)));
+          testDoubles(
+            double.parse(d1.substring(0, n1)),
+            double.parse(d2.substring(0, n2)),
+          );
         }
       }
     }
@@ -2792,9 +2860,12 @@ Future<void> decimalComplex() async {
       ComplexValue(Value.fromDouble(re), Value.fromDouble(im));
 
   expect(
-      c(9961222200, 4314481542)
-          .decimalMultiply(c(9157785135, 3984172017), (v) => v()),
-      c(7.403309596e19, 7.919831767e19));
+    c(
+      9961222200,
+      4314481542,
+    ).decimalMultiply(c(9157785135, 3984172017), (v) => v()),
+    c(7.403309596e19, 7.919831767e19),
+  );
 }
 
 Future<void> lastX15C() async {
@@ -2808,10 +2879,18 @@ Future<void> lastX15C() async {
     }
   }
 
-  play(
-      [Operations.n1, Operations.enter, Operations.n2, Operations15.sigmaPlus]);
-  play(
-      [Operations.n3, Operations.enter, Operations.n4, Operations15.sigmaPlus]);
+  play([
+    Operations.n1,
+    Operations.enter,
+    Operations.n2,
+    Operations15.sigmaPlus,
+  ]);
+  play([
+    Operations.n3,
+    Operations.enter,
+    Operations.n4,
+    Operations15.sigmaPlus,
+  ]);
 
   for (final complex in [false, true]) {
     c.model.isComplexMode = complex;
@@ -2849,15 +2928,18 @@ Future<void> lastX15C() async {
       Operations15.fracOp,
       Operations15.intOp,
       Operations15.xFactorial,
-      Operations15.yHatR
+      Operations15.yHatR,
     ]) {
       play([Operations.n9, Operations.enter, Operations15.plus]);
       play([Operations.dot, Operations.n1, Operations.enter]);
       play([Operations.dot, Operations.n2, Operations.enter]);
       play([Operations.dot, Operations.n3, Operations.enter]);
       play([Operations.dot, Operations.n4]);
-      expect(model.lastX, Value.fromDouble(9),
-          reason: 'lastX for $op $complex');
+      expect(
+        model.lastX,
+        Value.fromDouble(9),
+        reason: 'lastX for $op $complex',
+      );
       play([op]);
       if (op == Operations15.yHatR) {
         expect(model.t, Value.fromDouble(.2), reason: 't for $op $complex');
@@ -2869,8 +2951,11 @@ Future<void> lastX15C() async {
           expect(model.y, Value.fromDouble(.3), reason: 'y for $op $complex');
         }
       }
-      expect(model.lastX, Value.fromDouble(.4),
-          reason: 'lastX for $op $complex');
+      expect(
+        model.lastX,
+        Value.fromDouble(.4),
+        reason: 'lastX for $op $complex',
+      );
     }
 
     /// Two argument operations:
@@ -2881,7 +2966,7 @@ Future<void> lastX15C() async {
       Operations15.minus,
       Operations15.plus,
       Operations15.pYX,
-      Operations15.cYX
+      Operations15.cYX,
     ]) {
       play([Operations.n9, Operations.enter, Operations15.plus]);
       play([Operations.n4, Operations.enter]);
@@ -2893,15 +2978,18 @@ Future<void> lastX15C() async {
       expect(model.t, Value.fromDouble(4));
       expect(model.z, Value.fromDouble(4), reason: 'z for $op $complex');
       expect(model.y, Value.fromDouble(3));
-      expect(model.lastX, Value.fromDouble(1),
-          reason: 'lastX for $op $complex');
+      expect(
+        model.lastX,
+        Value.fromDouble(1),
+        reason: 'lastX for $op $complex',
+      );
     }
 
     // Stuff that doesn't touch LastX:
     for (final op in [
       Operations15.xBar,
       Operations15.stdDeviation,
-      Operations15.linearRegression
+      Operations15.linearRegression,
     ]) {
       play([Operations.n9, Operations.enter, Operations15.plus]);
       play([Operations.n4, Operations.enter]);
@@ -2912,8 +3000,11 @@ Future<void> lastX15C() async {
       play([op]);
       expect(model.t, Value.fromDouble(2));
       expect(model.z, Value.fromDouble(1), reason: 'z for $op $complex');
-      expect(model.lastX, Value.fromDouble(9),
-          reason: 'lastX for $op $complex');
+      expect(
+        model.lastX,
+        Value.fromDouble(9),
+        reason: 'lastX for $op $complex',
+      );
     }
 
     // CHS and the stack (not really lastX related)

@@ -35,8 +35,8 @@ class Complex {
   const Complex(this.real, this.imaginary);
 
   Complex.polar(double r, double theta)
-      : real = r * dart.cos(theta),
-        imaginary = r * dart.sin(theta);
+    : real = r * dart.cos(theta),
+      imaginary = r * dart.sin(theta);
 
   static const zero = Complex(0, 0);
 
@@ -63,19 +63,24 @@ class Complex {
   double get theta => atan2(imaginary, real);
 
   Complex operator *(Complex other) => Complex(
-      real * other.real - imaginary * other.imaginary,
-      real * other.imaginary + imaginary * other.real);
+    real * other.real - imaginary * other.imaginary,
+    real * other.imaginary + imaginary * other.real,
+  );
 
   Complex operator /(Complex other) {
     final mag = other.real * other.real + other.imaginary * other.imaginary;
-    return Complex((real * other.real + imaginary * other.imaginary) / mag,
-        (imaginary * other.real - real * other.imaginary) / mag);
+    return Complex(
+      (real * other.real + imaginary * other.imaginary) / mag,
+      (imaginary * other.real - real * other.imaginary) / mag,
+    );
   }
 
   Complex sqrt() {
     final rr = r;
-    return Complex(dart.sqrt((real + rr) / 2),
-        (imaginary < 0 ? -1 : 1) * dart.sqrt((-real + rr) / 2));
+    return Complex(
+      dart.sqrt((real + rr) / 2),
+      (imaginary < 0 ? -1 : 1) * dart.sqrt((-real + rr) / 2),
+    );
   }
 
   ///
@@ -105,8 +110,10 @@ class Complex {
       final lnY = Complex(dart.log(yR), y.theta);
       final xLnY = x * lnY;
       final resultR = dart.exp(xLnY.real);
-      return Complex(resultR * dart.cos(xLnY.imaginary),
-          resultR * dart.sin(xLnY.imaginary));
+      return Complex(
+        resultR * dart.cos(xLnY.imaginary),
+        resultR * dart.sin(xLnY.imaginary),
+      );
     }
   }
 

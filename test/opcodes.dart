@@ -100,7 +100,7 @@ const state16C = [
         },
         "I": "0"
     }
-}'''
+}''',
 ];
 
 const listing16C = [
@@ -308,7 +308,7 @@ const listing16C = [
     '   200 {    45  9 } RCL 9',
     '   201 {    45  A } RCL A',
     '   202 {    45  B } RCL B',
-    '   203 {    45  C } RCL C'
+    '   203 {    45  C } RCL C',
   ],
   [
     '   000 {          } ',
@@ -364,8 +364,8 @@ const listing16C = [
     '   050 {    43 49 } g x==y',
     '   051 {       40 } +',
     '   052 {    42 40 } f OR',
-    '   053 {    43 40 } g x==0'
-  ]
+    '   053 {    43 40 } g x==0',
+  ],
 ];
 
 Future<void> opcodeTest16C() async {

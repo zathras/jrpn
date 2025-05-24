@@ -32,7 +32,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
     Matrix('b'),
     Matrix('c'),
     Matrix('d'),
-    Matrix('e')
+    Matrix('e'),
   ];
 
   int _resultMatrix = 0; // Index into matrices
@@ -62,7 +62,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   bool get hasDeferToButtonUp => deferToButtonUp != null;
 
   Model15(this._getLogicalKeys, this._newProgramInstructionF)
-      : super(DisplayMode.fix(4, false), 56, 10);
+    : super(DisplayMode.fix(4, false), 56, 10);
 
   // It's a little hacky, but we need to defer initialization of
   // logicalKeys until after the controller initializes
@@ -156,7 +156,8 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
     }
     if (v != isComplexMode) {
       setupComplex(
-          v ? List<Value>.filled(4, Value.zero, growable: false) : null);
+        v ? List<Value>.filled(4, Value.zero, growable: false) : null,
+      );
     }
     super.setFlag(8, v);
   }
@@ -192,8 +193,11 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
     final r = super.toJson();
     r['numRegisters'] = memory.numRegisters;
     r['resultMatrix'] = resultMatrix;
-    r['matrices'] = List.generate(matrices.length, (i) => matrices[i].toJson(),
-        growable: false);
+    r['matrices'] = List.generate(
+      matrices.length,
+      (i) => matrices[i].toJson(),
+      growable: false,
+    );
     r['lastRandom'] = rand.lastValue;
     return r;
   }
@@ -219,23 +223,24 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
 
   @override
   LcdContents selfTestContents() => LcdContents(
-      hideComplement: false,
-      longNumbers: LongNumbersSetting.window,
-      mainText: '-8,8,8,8,8,8,8,8,8,8,',
-      cFlag: false,
-      complexFlag: true,
-      euroComma: false,
-      rightJustify: false,
-      bits: 64,
-      sign: SignMode.float,
-      wordSize: null,
-      gFlag: true,
-      prgmFlag: true,
-      shift: ShiftKey.g,
-      trigMode: TrigMode.grad,
-      userMode: true,
-      extraShift: ShiftKey.f,
-      lcdDigits: 11);
+    hideComplement: false,
+    longNumbers: LongNumbersSetting.window,
+    mainText: '-8,8,8,8,8,8,8,8,8,8,',
+    cFlag: false,
+    complexFlag: true,
+    euroComma: false,
+    rightJustify: false,
+    bits: 64,
+    sign: SignMode.float,
+    wordSize: null,
+    gFlag: true,
+    prgmFlag: true,
+    shift: ShiftKey.g,
+    trigMode: TrigMode.grad,
+    userMode: true,
+    extraShift: ShiftKey.f,
+    lcdDigits: 11,
+  );
 
   @override
   addStuffToSnapshot(StringBuffer buf) {
@@ -425,8 +430,12 @@ class ProgramMemory15<OT extends ProgramOperation> extends ProgramMemory<OT> {
   final List<int> _lblOpcodes;
 
   ProgramMemory15(
-      super.memory, super.layout, super.returnStackSize, OT lbl, OT super.rtn)
-      : _lblOpcodes = _makeLblOpcodes(lbl);
+    super.memory,
+    super.layout,
+    super.returnStackSize,
+    OT lbl,
+    OT super.rtn,
+  ) : _lblOpcodes = _makeLblOpcodes(lbl);
 
   static List<int> _makeLblOpcodes(ProgramOperation lbl) {
     /// Because LBL . n is two-byte, we have to chase down the opcodes

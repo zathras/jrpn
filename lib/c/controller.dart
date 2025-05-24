@@ -229,21 +229,23 @@ abstract class RealController extends Controller {
 
   late JrpnState mainApp;
 
-  RealController(
-      {required List<NumberEntry> numbers,
-      required Map<Operation, ArgDone> shortcuts,
-      required Operation lblOperation,
-      required Operation rtn})
-      : super() {
+  RealController({
+    required List<NumberEntry> numbers,
+    required Map<Operation, ArgDone> shortcuts,
+    required Operation lblOperation,
+    required Operation rtn,
+  }) : super() {
     model.memory.initializeSystem(
-        OperationMap<Operation>(
-            registerBase: model.registerNumberBase,
-            keys: model.logicalKeys,
-            numbers: numbers,
-            special: nonProgrammableOperations,
-            shortcuts: shortcuts),
-        lblOperation,
-        rtn);
+      OperationMap<Operation>(
+        registerBase: model.registerNumberBase,
+        keys: model.logicalKeys,
+        numbers: numbers,
+        special: nonProgrammableOperations,
+        shortcuts: shortcuts,
+      ),
+      lblOperation,
+      rtn,
+    );
     state = Resting(this);
     keyboard.controller = this;
   }
@@ -302,15 +304,22 @@ abstract class RealController extends Controller {
   }
 
   ButtonLayout getButtonLayout(
-      ButtonFactory factory, double totalHeight, double totalButtonHeight);
+    ButtonFactory factory,
+    double totalHeight,
+    double totalButtonHeight,
+  );
 
   Widget getBackPanel();
 
   LandscapeButtonFactory getLandscapeButtonFactory(
-      BuildContext context, ScreenPositioner screen);
+    BuildContext context,
+    ScreenPositioner screen,
+  );
 
   PortraitButtonFactory getPortraitButtonFactory(
-      BuildContext context, ScreenPositioner screen);
+    BuildContext context,
+    ScreenPositioner screen,
+  );
 
   ///
   /// Some menus change on the 15C (e.g. settings)
@@ -461,8 +470,10 @@ abstract class Operation extends ProgramOperation {
   void possiblyAlterStackLift(Controller c) => _stackLift._possiblyAlter(c);
 
   ControllerState makeInputState(
-          Arg arg, Controller c, LimitedState fromState) =>
-      ArgInputState(this, arg, c, fromState);
+    Arg arg,
+    Controller c,
+    LimitedState fromState,
+  ) => ArgInputState(this, arg, c, fromState);
 
   void beforeCalculate(Resting resting) {}
 
@@ -483,13 +494,14 @@ abstract class NoArgOperation extends Operation implements ArgDone {
   Arg get arg => this;
 
   @override
-  void init(int registerBase,
-          {required OpInitFunction f,
-          required ProgramOperation? shift,
-          required bool argDot,
-          required ProgramOperation? arg,
-          required bool userMode}) =>
-      f(this, shift: shift, argDot: argDot, arg: arg, userMode: userMode);
+  void init(
+    int registerBase, {
+    required OpInitFunction f,
+    required ProgramOperation? shift,
+    required bool argDot,
+    required ProgramOperation? arg,
+    required bool userMode,
+  }) => f(this, shift: shift, argDot: argDot, arg: arg, userMode: userMode);
 
   @override
   Arg? matches(ProgramOperation key, bool userMode) => null;
@@ -526,11 +538,11 @@ class LimitedOperation extends NoArgOperation implements NormalOperation {
   @override
   final void Function(LimitedState) _pressed;
 
-  LimitedOperation(
-      {required void Function(LimitedState) pressed,
-      required super.name,
-      this.endsDigitEntry = true})
-      : _pressed = pressed;
+  LimitedOperation({
+    required void Function(LimitedState) pressed,
+    required super.name,
+    this.endsDigitEntry = true,
+  }) : _pressed = pressed;
 
   @override
   void Function(Model m)? get floatCalc => null;
@@ -547,8 +559,9 @@ class LimitedOperation extends NoArgOperation implements NormalOperation {
 
   @override
   void Function(Model)? getCalculation<T extends ProgramOperation>(
-          Model m, DisplayModeSelector<void Function(Model)?, T> selector) =>
-      m.displayMode.select(selector, this); // See subclass(es)
+    Model m,
+    DisplayModeSelector<void Function(Model)?, T> selector,
+  ) => m.displayMode.select(selector, this); // See subclass(es)
 }
 
 ///
@@ -576,8 +589,9 @@ class NumberEntry extends NoArgOperation {
 
   @override
   void Function(Model)? getCalculation<T extends ProgramOperation>(
-          Model m, DisplayModeSelector<void Function(Model)?, T> selector) =>
-      null;
+    Model m,
+    DisplayModeSelector<void Function(Model)?, T> selector,
+  ) => null;
 }
 
 ///
@@ -627,56 +641,56 @@ class NormalOperation extends NoArgOperation implements ArgDone {
   @override
   final int maxOneByteOpcodes;
 
-  NormalOperation(
-      {void Function(ActiveState)? pressed,
-      StackLift? stackLift,
-      required void Function(Model m)? calc,
-      required super.name,
-      this.endsDigitEntry = true,
-      this.maxOneByteOpcodes = 9999})
-      : _pressed = pressed,
-        _stackLift = stackLift ?? StackLift.enable,
-        floatCalc = calc,
-        intCalc = calc,
-        complexCalc = calc;
+  NormalOperation({
+    void Function(ActiveState)? pressed,
+    StackLift? stackLift,
+    required void Function(Model m)? calc,
+    required super.name,
+    this.endsDigitEntry = true,
+    this.maxOneByteOpcodes = 9999,
+  }) : _pressed = pressed,
+       _stackLift = stackLift ?? StackLift.enable,
+       floatCalc = calc,
+       intCalc = calc,
+       complexCalc = calc;
 
-  NormalOperation.intOnly(
-      {void Function(ActiveState)? pressed,
-      StackLift? stackLift,
-      required void Function(Model) this.intCalc,
-      required super.name,
-      this.endsDigitEntry = true})
-      : _pressed = pressed,
-        _stackLift = stackLift ?? StackLift.enable,
-        floatCalc = null,
-        complexCalc = null,
-        maxOneByteOpcodes = 9999;
+  NormalOperation.intOnly({
+    void Function(ActiveState)? pressed,
+    StackLift? stackLift,
+    required void Function(Model) this.intCalc,
+    required super.name,
+    this.endsDigitEntry = true,
+  }) : _pressed = pressed,
+       _stackLift = stackLift ?? StackLift.enable,
+       floatCalc = null,
+       complexCalc = null,
+       maxOneByteOpcodes = 9999;
 
-  NormalOperation.floatOnly(
-      {void Function(ActiveState)? pressed,
-      StackLift? stackLift,
-      required void Function(Model) this.floatCalc,
-      void Function(Model)? complexCalc,
-      required super.name,
-      this.endsDigitEntry = true,
-      this.maxOneByteOpcodes = 9999})
-      : _pressed = pressed,
-        _stackLift = stackLift ?? StackLift.enable,
-        intCalc = null,
-        complexCalc = complexCalc ?? floatCalc;
+  NormalOperation.floatOnly({
+    void Function(ActiveState)? pressed,
+    StackLift? stackLift,
+    required void Function(Model) this.floatCalc,
+    void Function(Model)? complexCalc,
+    required super.name,
+    this.endsDigitEntry = true,
+    this.maxOneByteOpcodes = 9999,
+  }) : _pressed = pressed,
+       _stackLift = stackLift ?? StackLift.enable,
+       intCalc = null,
+       complexCalc = complexCalc ?? floatCalc;
 
-  NormalOperation.differentFloatAndInt(
-      {void Function(ActiveState)? pressed,
-      StackLift? stackLift,
-      required void Function(Model) this.intCalc,
-      required void Function(Model) this.floatCalc,
-      void Function(Model)? complexCalc,
-      required super.name,
-      this.endsDigitEntry = true,
-      this.maxOneByteOpcodes = 9999})
-      : _pressed = pressed,
-        _stackLift = stackLift ?? StackLift.enable,
-        complexCalc = complexCalc ?? floatCalc;
+  NormalOperation.differentFloatAndInt({
+    void Function(ActiveState)? pressed,
+    StackLift? stackLift,
+    required void Function(Model) this.intCalc,
+    required void Function(Model) this.floatCalc,
+    void Function(Model)? complexCalc,
+    required super.name,
+    this.endsDigitEntry = true,
+    this.maxOneByteOpcodes = 9999,
+  }) : _pressed = pressed,
+       _stackLift = stackLift ?? StackLift.enable,
+       complexCalc = complexCalc ?? floatCalc;
 
   @override
   bool liftStackIfEnabled(Model m) => false;
@@ -704,8 +718,9 @@ class NormalOperation extends NoArgOperation implements ArgDone {
 
   @override
   void Function(Model)? getCalculation<T extends ProgramOperation>(
-          Model m, DisplayModeSelector<void Function(Model)?, T> selector) =>
-      m.displayMode.select(selector, this);
+    Model m,
+    DisplayModeSelector<void Function(Model)?, T> selector,
+  ) => m.displayMode.select(selector, this);
 }
 
 ///
@@ -714,13 +729,13 @@ class NormalOperation extends NoArgOperation implements ArgDone {
 class StackLiftingNormalOperation extends NormalOperation {
   final bool Function(Model) needsStackLiftIfEnabled;
 
-  StackLiftingNormalOperation.floatOnly(
-      {required super.floatCalc,
-      super.complexCalc,
-      required this.needsStackLiftIfEnabled,
-      required super.name,
-      super.maxOneByteOpcodes})
-      : super.floatOnly();
+  StackLiftingNormalOperation.floatOnly({
+    required super.floatCalc,
+    super.complexCalc,
+    required this.needsStackLiftIfEnabled,
+    required super.name,
+    super.maxOneByteOpcodes,
+  }) : super.floatOnly();
 
   @override
   bool liftStackIfEnabled(Model m) => needsStackLiftIfEnabled(m);
@@ -738,26 +753,27 @@ class NormalOperationOrLetter extends NormalOperation {
   @override
   final String programListingArgName;
 
-  NormalOperationOrLetter.floatOnly(
-      {super.pressed,
-      super.stackLift,
-      required super.floatCalc,
-      super.complexCalc,
-      required super.name,
-      required LetterLabel letter})
-      : numericValue = letter.numericValue,
-        programListingArgName = letter.name,
-        super.floatOnly();
+  NormalOperationOrLetter.floatOnly({
+    super.pressed,
+    super.stackLift,
+    required super.floatCalc,
+    super.complexCalc,
+    required super.name,
+    required LetterLabel letter,
+  }) : numericValue = letter.numericValue,
+       programListingArgName = letter.name,
+       super.floatOnly();
 
   NormalOperationOrLetter(NormalOperation op, LetterLabel letter)
-      : numericValue = letter.numericValue,
-        programListingArgName = letter.name,
-        super.floatOnly(
-            pressed: op._pressed,
-            stackLift: op._stackLift,
-            floatCalc: op.floatCalc!,
-            complexCalc: op.complexCalc,
-            name: op.name);
+    : numericValue = letter.numericValue,
+      programListingArgName = letter.name,
+      super.floatOnly(
+        pressed: op._pressed,
+        stackLift: op._stackLift,
+        floatCalc: op.floatCalc!,
+        complexCalc: op.complexCalc,
+        name: op.name,
+      );
 }
 
 ///
@@ -771,15 +787,15 @@ class NormalOperationShiftedArg extends NormalOperation {
   @override
   final String programListingArgName;
 
-  NormalOperationShiftedArg.floatOnly(
-      {super.pressed,
-      super.stackLift,
-      required super.floatCalc,
-      super.complexCalc,
-      required super.name,
-      required this.argShift,
-      required this.programListingArgName})
-      : super.floatOnly();
+  NormalOperationShiftedArg.floatOnly({
+    super.pressed,
+    super.stackLift,
+    required super.floatCalc,
+    super.complexCalc,
+    required super.name,
+    required this.argShift,
+    required this.programListingArgName,
+  }) : super.floatOnly();
 }
 
 ///
@@ -796,12 +812,12 @@ class NormalArgOperation extends Operation {
   @override
   final StackLift _stackLift;
 
-  NormalArgOperation(
-      {StackLift? stackLift,
-      required this.arg,
-      required super.name,
-      this.maxOneByteOpcodes = 9999})
-      : _stackLift = stackLift ?? StackLift.enable;
+  NormalArgOperation({
+    StackLift? stackLift,
+    required this.arg,
+    required super.name,
+    this.maxOneByteOpcodes = 9999,
+  }) : _stackLift = stackLift ?? StackLift.enable;
 
   ///
   /// Do nothing -- we don't know our argument yet.
@@ -820,29 +836,32 @@ class RunProgramOperation extends NormalArgOperation {
   /// NOTE:  arg's function is only run when this operation is executed
   ///        as part of a program.  When it's entered from the keyboard,
   ///        the arg input state causes the operation to happen.
-  RunProgramOperation(
-      {required super.arg,
-      required this.runner,
-      required super.name,
-      super.maxOneByteOpcodes});
+  RunProgramOperation({
+    required super.arg,
+    required this.runner,
+    required super.name,
+    super.maxOneByteOpcodes,
+  });
 
   @override
   ControllerState makeInputState(
-          Arg arg, Controller c, LimitedState fromState) =>
-      RunProgramArgInputState(this, arg, c, fromState, runner);
+    Arg arg,
+    Controller c,
+    LimitedState fromState,
+  ) => RunProgramArgInputState(this, arg, c, fromState, runner);
 }
 
 class NormalArgOperationWithBeforeCalc extends NormalArgOperation {
   final StackLift Function(Resting state) _beforeCalculate;
 
-  NormalArgOperationWithBeforeCalc(
-      {StackLift? stackLift,
-      required super.arg,
-      required StackLift Function(Resting) beforeCalculate,
-      required super.name,
-      super.maxOneByteOpcodes})
-      : _beforeCalculate = beforeCalculate,
-        super(stackLift: stackLift ?? StackLift.enable);
+  NormalArgOperationWithBeforeCalc({
+    StackLift? stackLift,
+    required super.arg,
+    required StackLift Function(Resting) beforeCalculate,
+    required super.name,
+    super.maxOneByteOpcodes,
+  }) : _beforeCalculate = beforeCalculate,
+       super(stackLift: stackLift ?? StackLift.enable);
 
   @override
   void beforeCalculate(Resting resting) {
@@ -858,11 +877,12 @@ class NonProgrammableOperation extends LimitedOperation implements ArgDone {
   void Function(Model m)? get floatCalc => calc;
   @override
   void Function(Model m)? get complexCalc => calc;
-  NonProgrammableOperation(
-      {required super.name,
-      required super.pressed,
-      this.calc,
-      super.endsDigitEntry = false});
+  NonProgrammableOperation({
+    required super.name,
+    required super.pressed,
+    this.calc,
+    super.endsDigitEntry = false,
+  });
 }
 
 class ShiftOperation extends NonProgrammableOperation {
@@ -883,10 +903,12 @@ class StackLift {
 
   StackLift._p(this._possiblyAlter);
 
-  static StackLift enable =
-      StackLift._p((Controller c) => c._stackLiftEnabled = true);
-  static StackLift disable =
-      StackLift._p((Controller c) => c._stackLiftEnabled = false);
+  static StackLift enable = StackLift._p(
+    (Controller c) => c._stackLiftEnabled = true,
+  );
+  static StackLift disable = StackLift._p(
+    (Controller c) => c._stackLiftEnabled = false,
+  );
   static StackLift neutral = StackLift._p((_) {});
 }
 
@@ -910,15 +932,17 @@ class KeyboardController {
     PhysicalKeyboardKey.altLeft,
     PhysicalKeyboardKey.altRight,
     PhysicalKeyboardKey.metaLeft,
-    PhysicalKeyboardKey.metaRight
+    PhysicalKeyboardKey.metaRight,
   };
 
   KeyEventResult onKey(KeyEvent e) {
     final lk = e.logicalKey;
-    final isControl = lk == LogicalKeyboardKey.controlLeft ||
+    final isControl =
+        lk == LogicalKeyboardKey.controlLeft ||
         lk == LogicalKeyboardKey.controlRight ||
         lk == LogicalKeyboardKey.control;
-    final isMeta = lk == LogicalKeyboardKey.metaLeft ||
+    final isMeta =
+        lk == LogicalKeyboardKey.metaLeft ||
         lk == LogicalKeyboardKey.metaRight ||
         lk == LogicalKeyboardKey.meta;
     if (e is! KeyDownEvent) {

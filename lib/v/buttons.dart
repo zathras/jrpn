@@ -56,56 +56,88 @@ abstract class ButtonFactory {
   final double height = 136;
   final double padRight = 25;
   final TextStyle keyTextStyle = const TextStyle(
-      fontSize: 40,
-      fontFamily: 'KeyLabelFont',
-      fontWeight: FontWeight.normal,
-      color: Color(0xffffffff),
-      height: 0.97);
+    fontSize: 40,
+    fontFamily: 'KeyLabelFont',
+    fontWeight: FontWeight.normal,
+    color: Color(0xffffffff),
+    height: 0.97,
+  );
   final TextStyle shiftKeyTextStyle = const TextStyle(
-      fontSize: 38, fontFamily: 'KeyLabelFont', color: Color(0xff000000));
+    fontSize: 38,
+    fontFamily: 'KeyLabelFont',
+    color: Color(0xff000000),
+  );
   final Offset keyTextOffset = const Offset(0, 46);
   final Offset fKeyTextOffset = const Offset(0, 45);
   final Offset gKeyTextOffset = const Offset(0, 39);
   final Offset onKeyTextOffset = const Offset(0, 66);
   final Offset enterKeyTextOffset = const Offset(0, 53);
   late final TextStyle fTextStyle = TextStyle(
-      fontSize: 26,
-      fontFamily: 'KeyLabelFont',
-      fontWeight: FontWeight.bold,
-      color: Color(settings.fTextColor));
+    fontSize: 26,
+    fontFamily: 'KeyLabelFont',
+    fontWeight: FontWeight.bold,
+    color: Color(settings.fTextColor),
+  );
   late final TextStyle fTextSmallLabelStyle = TextStyle(
-      fontSize: 17,
-      fontFamily: 'KeyLabelFont',
-      fontWeight: FontWeight.bold,
-      color: Color(settings.fTextColor));
+    fontSize: 17,
+    fontFamily: 'KeyLabelFont',
+    fontWeight: FontWeight.bold,
+    color: Color(settings.fTextColor),
+  );
   Offset get fTextOffset => const Offset(0, -2);
   late final TextStyle gTextStyle = TextStyle(
-      fontSize: 26,
-      fontFamily: 'KeyLabelFont',
-      color: Color(settings.gTextColor));
+    fontSize: 26,
+    fontFamily: 'KeyLabelFont',
+    color: Color(settings.gTextColor),
+  );
   late final TextStyle gTextStyleForLJ = TextStyle(
-      fontFamily: 'LogoFont',
-      fontWeight: FontWeight.w500,
-      fontSize: 26,
-      color: Color(settings.gTextColor));
+    fontFamily: 'LogoFont',
+    fontWeight: FontWeight.w500,
+    fontSize: 26,
+    color: Color(settings.gTextColor),
+  );
   final Offset gTextOffset = const Offset(0, 92);
   final TextStyle specialButtonTextStyle = const TextStyle(
-      fontSize: 42,
-      fontFamily: 'KeyLabelFont',
-      color: Colors.yellow,
-      height: 0.97);
+    fontSize: 42,
+    fontFamily: 'KeyLabelFont',
+    color: Colors.yellow,
+    height: 0.97,
+  );
   final TextStyle acceleratorTextStyle = const TextStyle(
-      fontSize: 32, fontFamily: 'KeyLabelFont', color: Color(0xff5fe88d));
-  final RRect outerBorder =
-      RRect.fromLTRBR(0, 26, 122, 136, const Radius.circular(7));
-  final RRect innerBorder =
-      RRect.fromLTRBR(7, 26 + 7, 122 - 7, 136 - 7, const Radius.circular(7));
-  final RRect upperSurface = RRect.fromLTRBAndCorners(11, 26 + 11, 122 - 11, 88,
-      topLeft: const Radius.circular(7), topRight: const Radius.circular(7));
+    fontSize: 32,
+    fontFamily: 'KeyLabelFont',
+    color: Color(0xff5fe88d),
+  );
+  final RRect outerBorder = RRect.fromLTRBR(
+    0,
+    26,
+    122,
+    136,
+    const Radius.circular(7),
+  );
+  final RRect innerBorder = RRect.fromLTRBR(
+    7,
+    26 + 7,
+    122 - 7,
+    136 - 7,
+    const Radius.circular(7),
+  );
+  final RRect upperSurface = RRect.fromLTRBAndCorners(
+    11,
+    26 + 11,
+    122 - 11,
+    88,
+    topLeft: const Radius.circular(7),
+    topRight: const Radius.circular(7),
+  );
   final RRect lowerSurface = RRect.fromLTRBAndCorners(
-      11, 88, 122 - 11, 136 - 11,
-      bottomLeft: const Radius.circular(7),
-      bottomRight: const Radius.circular(7));
+    11,
+    88,
+    122 - 11,
+    136 - 11,
+    bottomLeft: const Radius.circular(7),
+    bottomRight: const Radius.circular(7),
+  );
   final Paint fill = Paint()..style = PaintingStyle.fill;
 
   @protected
@@ -117,16 +149,20 @@ abstract class ButtonFactory {
 
   double get shiftDownTweak => 0.0;
 
-  void addUpperGoldLabels(List<Widget> result, Rect pos,
-      {required double th,
-      required double tw,
-      required double bh,
-      required double bw});
+  void addUpperGoldLabels(
+    List<Widget> result,
+    Rect pos, {
+    required double th,
+    required double tw,
+    required double bh,
+    required double bw,
+  });
 
   List<Widget> buildButtons(LayoutConfiguration? config, Rect pos) {
     double y = pos.top;
     final result = List<Widget>.empty(growable: true);
-    final double bw = pos.width *
+    final double bw =
+        pos.width *
         (width / (numColumns * width + (numColumns - 1) * padRight));
     final double tw = bw * (width + padRight) / width;
     final double bh = bw * height / width;
@@ -141,11 +177,14 @@ abstract class ButtonFactory {
     } else {
       for (final UpperGoldLabel lbl in labels) {
         final TextStyle s = lbl.big ? fTextStyle : fTextSmallLabelStyle;
-        result.add(screen.box(
+        result.add(
+          screen.box(
             lbl.pos,
             CustomPaint(
-                painter:
-                    UpperLabel(lbl.text, s, height * (0.065 + 0.155) / bh))));
+              painter: UpperLabel(lbl.text, s, height * (0.065 + 0.155) / bh),
+            ),
+          ),
+        );
       }
     }
 
@@ -184,7 +223,9 @@ abstract class ButtonFactory {
   List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons);
 
   List<List<CalculatorButton?>> applyButtonConfig(
-      LayoutConfiguration? config, List<List<CalculatorButton?>> buttons) {
+    LayoutConfiguration? config,
+    List<List<CalculatorButton?>> buttons,
+  ) {
     if (config != null) {
       final fromAccelerator = <String, CalculatorButton>{};
       for (final row in buttons) {
@@ -195,8 +236,10 @@ abstract class ButtonFactory {
         }
       }
       final List<List<String?>> configLayout = config.buttonAccelerator;
-      buttons =
-          List.generate(configLayout.length, (_) => <CalculatorButton?>[]);
+      buttons = List.generate(
+        configLayout.length,
+        (_) => <CalculatorButton?>[],
+      );
       for (int i = 0; i < configLayout.length; i++) {
         final row = buttons[i];
         for (final String? accelerator in configLayout[i]) {
@@ -235,7 +278,9 @@ abstract class LandscapeButtonFactory extends ButtonFactory {
   @override
   List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons) =>
       applyButtonConfig(
-          controller.screenConfig.landscape, buttons.landscapeLayout);
+        controller.screenConfig.landscape,
+        buttons.landscapeLayout,
+      );
 }
 
 abstract class PortraitButtonFactory extends ButtonFactory {
@@ -255,7 +300,9 @@ abstract class PortraitButtonFactory extends ButtonFactory {
   @override
   List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons) =>
       applyButtonConfig(
-          controller.screenConfig.portrait, buttons.portraitLayout);
+        controller.screenConfig.portrait,
+        buttons.portraitLayout,
+      );
 }
 
 ///
@@ -313,9 +360,10 @@ class UpperLabel extends CustomPainter {
     canvas.scale(sf);
     TextSpan span = TextSpan(style: style, text: text);
     TextPainter tp = TextPainter(
-        text: span,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr);
+      text: span,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
     const double x = 2;
     final double w = (size.width / sf) - 2 * x;
     tp.layout();
@@ -328,14 +376,14 @@ class UpperLabel extends CustomPainter {
         ..addPolygon([
           Offset(x, h),
           Offset(x, y),
-          Offset(x + (w - tp.width) / 2 - 18, y)
+          Offset(x + (w - tp.width) / 2 - 18, y),
         ], false);
       canvas.drawPath(p, linePaint);
       p = Path()
         ..addPolygon([
           Offset(x + (w + tp.width) / 2 + 18, y),
           Offset(x + w, y),
-          Offset(x + w, h)
+          Offset(x + w, h),
         ], false);
       canvas.drawPath(p, linePaint);
     }
@@ -381,12 +429,21 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
   final String acceleratorKey;
   final String acceleratorLabel;
 
-  CalculatorButton(this.bFactory, this.uText, this.fText, this.gText, this.uKey,
-      this.fKey, this.gKey, this.acceleratorKey,
-      {String? acceleratorLabel, super.key})
-      : acceleratorLabel = bFactory.getConfigAcceleratorLabel(acceleratorKey) ??
-            acceleratorLabel ??
-            acceleratorKey;
+  CalculatorButton(
+    this.bFactory,
+    this.uText,
+    this.fText,
+    this.gText,
+    this.uKey,
+    this.fKey,
+    this.gKey,
+    this.acceleratorKey, {
+    String? acceleratorLabel,
+    super.key,
+  }) : acceleratorLabel =
+           bFactory.getConfigAcceleratorLabel(acceleratorKey) ??
+           acceleratorLabel ??
+           acceleratorKey;
 
   @override
   CalculatorButtonState createState() => CalculatorButtonState();
@@ -409,10 +466,13 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
   double get outerBorderPressedScale => 1.06;
   bool get isEnter => false;
 
-  void paintForPainter(final Canvas canvas, final Size size,
-      {required final bool pressed,
-      required final bool pressedFromKeyboard,
-      required final bool showAccelerators}) {
+  void paintForPainter(
+    final Canvas canvas,
+    final Size size, {
+    required final bool pressed,
+    required final bool pressedFromKeyboard,
+    required final bool showAccelerators,
+  }) {
     final double h = height;
     final double w = width;
     assert((size.height / h - size.width / w) / w < 0.0000001);
@@ -481,9 +541,10 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
     double y = 7 + s.fontSize!;
     for (String ch in Characters(acceleratorLabel)) {
       TextPainter p = TextPainter(
-          text: TextSpan(style: s, text: ch),
-          textAlign: TextAlign.right,
-          textDirection: TextDirection.ltr);
+        text: TextSpan(style: s, text: ch),
+        textAlign: TextAlign.right,
+        textDirection: TextDirection.ltr,
+      );
       p.layout(minWidth: 25);
       p.paint(canvas, Offset(x, y));
       y += s.fontSize!;
@@ -491,7 +552,12 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
   }
 
   void drawText(
-      Canvas canvas, TextStyle style, String text, double w, Offset offset) {
+    Canvas canvas,
+    TextStyle style,
+    String text,
+    double w,
+    Offset offset,
+  ) {
     final String normal;
     final String? superscript;
     final String? subscript;
@@ -513,9 +579,10 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
     }
     TextSpan span = TextSpan(style: style, text: normal);
     TextPainter tp = TextPainter(
-        text: span,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr);
+      text: span,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
     if (superscript == null && subscript == null) {
       tp.layout(minWidth: w);
       tp.paint(canvas, offset);
@@ -529,9 +596,10 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
         tpSup = null;
       } else {
         tpSup = TextPainter(
-            text: TextSpan(style: style, text: superscript),
-            textAlign: TextAlign.center,
-            textDirection: TextDirection.ltr);
+          text: TextSpan(style: style, text: superscript),
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr,
+        );
         tpSup.layout();
         width += tpSup.width * scale;
       }
@@ -539,9 +607,10 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
         tpSub = null;
       } else {
         tpSub = TextPainter(
-            text: TextSpan(style: style, text: subscript),
-            textAlign: TextAlign.center,
-            textDirection: TextDirection.ltr);
+          text: TextSpan(style: style, text: subscript),
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr,
+        );
         tpSub.layout();
         if (tpSup != null) {
           final extra = tpSub.width - tpSup.width;
@@ -588,17 +657,18 @@ class CalculatorOnSpecialButton extends CalculatorButton {
   final String specialText; // For the special function when on is pressed
 
   CalculatorOnSpecialButton(
-      super.factory,
-      super.uText,
-      super.fText,
-      super.gText,
-      super.uKey,
-      super.fKey,
-      super.gKey,
-      super.rawKeyboardKey,
-      this.specialText,
-      {super.acceleratorLabel,
-      super.key});
+    super.factory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
+    super.rawKeyboardKey,
+    this.specialText, {
+    super.acceleratorLabel,
+    super.key,
+  });
 
   @override
   CalculatorButtonState createState() => _CalculatorOnSpecialButtonState();
@@ -633,18 +703,18 @@ class CalculatorDotButton extends CalculatorOnSpecialButton {
   final Settings settings;
 
   CalculatorDotButton(
-      super.factory,
-      super.uText,
-      super.fText,
-      super.gText,
-      super.uKey,
-      super.fKey,
-      super.gKey,
-      super.rawKeyboardKey,
-      super.specialText,
-      this.settings,
-      {super.key})
-      : super(acceleratorLabel: '');
+    super.factory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
+    super.rawKeyboardKey,
+    super.specialText,
+    this.settings, {
+    super.key,
+  }) : super(acceleratorLabel: '');
 
   @override
   String get acceleratorLabel => settings.euroComma ? '\u2219\u201a' : '\u2219';
@@ -656,16 +726,17 @@ class CalculatorDotButton extends CalculatorOnSpecialButton {
 /// it's also a [CalculatorOnSpecialButton].
 class CalculatorOnButton extends CalculatorOnSpecialButton {
   CalculatorOnButton(
-      super.factory,
-      super.uText,
-      super.fText,
-      super.gText,
-      super.uKey,
-      super.fKey,
-      super.gKey,
-      super.rawKeyboardKey,
-      super.specialText,
-      {super.key});
+    super.factory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
+    super.rawKeyboardKey,
+    super.specialText, {
+    super.key,
+  });
 
   @override
   Color get lowerSurfaceColor => upperSurfaceColor;
@@ -713,22 +784,35 @@ class _CalculatorOnSpecialButtonState extends CalculatorButtonState {
 }
 
 abstract class CalculatorShiftButton extends CalculatorButton {
-  CalculatorShiftButton(super.factory, super.uText, super.fText, super.gText,
-      super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
-      {super.acceleratorLabel, super.key});
+  CalculatorShiftButton(
+    super.factory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
+    super.rawKeyboardKey, {
+    super.acceleratorLabel,
+    super.key,
+  });
 
   String get extraAcceleratorName;
 
   @override
-  late final Color upperSurfaceColorPressed =
-      _brighter(upperSurfaceColor, 0.04);
+  late final Color upperSurfaceColorPressed = _brighter(
+    upperSurfaceColor,
+    0.04,
+  );
   @override
   late final Color innerBorderColor = _brighter(upperSurfaceColor, 0.05);
   @override
   late final Color lowerSurfaceColor = _brighter(upperSurfaceColor, -0.19);
   @override
-  late final Color lowerSurfaceColorPressed =
-      _brighter(upperSurfaceColor, -0.12);
+  late final Color lowerSurfaceColorPressed = _brighter(
+    upperSurfaceColor,
+    -0.12,
+  );
 
   static Color _brighter(Color src, double factor) {
     final h = HSVColor.fromColor(src);
@@ -739,13 +823,17 @@ abstract class CalculatorShiftButton extends CalculatorButton {
   void drawKeyboardAccelerator(Canvas canvas) {
     super.drawKeyboardAccelerator(canvas);
     const s = TextStyle(
-        fontSize: 20, fontFamily: 'KeyLabelFont', color: Color(0xff5fe88d));
+      fontSize: 20,
+      fontFamily: 'KeyLabelFont',
+      color: Color(0xff5fe88d),
+    );
     const double x = -29;
     double y = 7 + s.fontSize! * 3.7;
     TextPainter p = TextPainter(
-        text: TextSpan(style: s, text: extraAcceleratorName),
-        textAlign: TextAlign.right,
-        textDirection: TextDirection.ltr);
+      text: TextSpan(style: s, text: extraAcceleratorName),
+      textAlign: TextAlign.right,
+      textDirection: TextDirection.ltr,
+    );
     p.layout(minWidth: 29);
     p.paint(canvas, Offset(x, y));
     y += s.fontSize!;
@@ -756,9 +844,19 @@ abstract class CalculatorShiftButton extends CalculatorButton {
 /// The f shift button, which is gold instead of black.
 ///
 class CalculatorFButton extends CalculatorShiftButton {
-  CalculatorFButton(super.factory, super.uText, super.fText, super.gText,
-      super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
-      {required this.extraAcceleratorName, super.acceleratorLabel, super.key});
+  CalculatorFButton(
+    super.factory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
+    super.rawKeyboardKey, {
+    required this.extraAcceleratorName,
+    super.acceleratorLabel,
+    super.key,
+  });
 
   @override
   late final upperSurfaceColor = Color(bFactory.settings.fKeyColor);
@@ -775,9 +873,19 @@ class CalculatorFButton extends CalculatorShiftButton {
 /// The g shift button, which is blue instead of black.
 ///
 class CalculatorGButton extends CalculatorShiftButton {
-  CalculatorGButton(super.factory, super.uText, super.fText, super.gText,
-      super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
-      {required this.extraAcceleratorName, super.acceleratorLabel, super.key});
+  CalculatorGButton(
+    super.factory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
+    super.rawKeyboardKey, {
+    required this.extraAcceleratorName,
+    super.acceleratorLabel,
+    super.key,
+  });
 
   @override
   late final Color upperSurfaceColor = Color(bFactory.settings.gKeyColor);
@@ -795,17 +903,26 @@ class CalculatorGButton extends CalculatorShiftButton {
 /// so we change the font.
 ///
 class CalculatorButtonWithLJ extends CalculatorButton {
-  CalculatorButtonWithLJ(super.factory, super.uText, super.fText, super.gText,
-      super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
-      {super.key});
+  CalculatorButtonWithLJ(
+    super.factory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
+    super.rawKeyboardKey, {
+    super.key,
+  });
 
   @override
   void drawBlueText(Canvas canvas, double w) {
     TextSpan span = TextSpan(style: bFactory.gTextStyleForLJ, text: gText);
     TextPainter tp = TextPainter(
-        text: span,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr);
+      text: span,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
     tp.layout(minWidth: w);
     tp.paint(canvas, gTextOffset);
   }
@@ -817,9 +934,17 @@ class CalculatorButtonWithLJ extends CalculatorButton {
 /// up depends on the specific font, which is bundled with the app.
 ///
 class CalculatorWhiteSqrtButton extends CalculatorButton {
-  CalculatorWhiteSqrtButton(super.factory, super.uText, super.fText,
-      super.gText, super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
-      {super.key});
+  CalculatorWhiteSqrtButton(
+    super.factory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
+    super.rawKeyboardKey, {
+    super.key,
+  });
 
   @override
   void drawWhiteText(Canvas canvas, TextStyle style, String text, double w) {
@@ -827,9 +952,10 @@ class CalculatorWhiteSqrtButton extends CalculatorButton {
     // Extend the line on the top of the square root symbol
     TextSpan span = TextSpan(style: style, text: '\u203E');
     TextPainter tp = TextPainter(
-        text: span,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr);
+      text: span,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
     tp.layout(minWidth: w);
     tp.paint(canvas, keyTextOffset.translate(8.4, -2.2));
     tp.paint(canvas, keyTextOffset.translate(16, -2.2));
@@ -843,15 +969,16 @@ class CalculatorWhiteSqrtButton extends CalculatorButton {
 ///
 class CalculatorBlueSqrtButton extends CalculatorButton {
   CalculatorBlueSqrtButton(
-      super.factory,
-      super.uText,
-      super.fText,
-      super.gText,
-      NormalOperation super.uKey,
-      NormalOperation super.fKey,
-      NormalOperation super.gKey,
-      super.rawKeyboardKey,
-      {super.key});
+    super.factory,
+    super.uText,
+    super.fText,
+    super.gText,
+    NormalOperation super.uKey,
+    NormalOperation super.fKey,
+    NormalOperation super.gKey,
+    super.rawKeyboardKey, {
+    super.key,
+  });
 
   @override
   void drawBlueText(Canvas canvas, double w) {
@@ -859,9 +986,10 @@ class CalculatorBlueSqrtButton extends CalculatorButton {
     // Extend the line on the top of the square root symbol
     TextSpan span = TextSpan(style: bFactory.gTextStyle, text: '\u203E');
     TextPainter tp = TextPainter(
-        text: span,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr);
+      text: span,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
     tp.layout(minWidth: w);
     tp.paint(canvas, gTextOffset.translate(5.4, -2.2));
     tp.paint(canvas, gTextOffset.translate(13, -2.2));
@@ -872,14 +1000,23 @@ class CalculatorBlueSqrtButton extends CalculatorButton {
 /// The enter button, which occupies two rows on the keyboard.
 ///
 class CalculatorEnterButton extends CalculatorButton {
-  CalculatorEnterButton(super.factory, super.uText, super.fText, super.gText,
-      super.uKey, super.fKey, super.gKey, super.rawKeyboardKey,
-      {required this.extraHeight, super.acceleratorLabel, super.key})
-      : _outerBorder = _calculateOuterBorder(factory, extraHeight),
-        _innerBorder = _calculateInnerBorder(factory, extraHeight),
-        _lowerSurface = _calculateLowerSurface(factory, extraHeight),
-        _upperSurface = _calculateUpperSurface(factory, extraHeight),
-        _gTextOffset = factory.gTextOffset.translate(0, extraHeight);
+  CalculatorEnterButton(
+    super.factory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
+    super.rawKeyboardKey, {
+    required this.extraHeight,
+    super.acceleratorLabel,
+    super.key,
+  }) : _outerBorder = _calculateOuterBorder(factory, extraHeight),
+       _innerBorder = _calculateInnerBorder(factory, extraHeight),
+       _lowerSurface = _calculateLowerSurface(factory, extraHeight),
+       _upperSurface = _calculateUpperSurface(factory, extraHeight),
+       _gTextOffset = factory.gTextOffset.translate(0, extraHeight);
 
   final double extraHeight;
   final RRect _outerBorder;
@@ -919,27 +1056,47 @@ class CalculatorEnterButton extends CalculatorButton {
   static RRect _calculateOuterBorder(ButtonFactory f, double extraHeight) {
     final RRect r = f.outerBorder;
     return RRect.fromLTRBR(
-        r.left, r.top, r.right, r.bottom + extraHeight, r.tlRadius);
+      r.left,
+      r.top,
+      r.right,
+      r.bottom + extraHeight,
+      r.tlRadius,
+    );
   }
 
   static RRect _calculateInnerBorder(ButtonFactory f, double extraHeight) {
     final RRect r = f.innerBorder;
     return RRect.fromLTRBR(
-        r.left, r.top, r.right, r.bottom + extraHeight, r.tlRadius);
+      r.left,
+      r.top,
+      r.right,
+      r.bottom + extraHeight,
+      r.tlRadius,
+    );
   }
 
   static RRect _calculateLowerSurface(ButtonFactory f, double extraHeight) {
     final RRect r = f.lowerSurface;
     return RRect.fromLTRBAndCorners(
-        r.left, r.top + extraHeight, r.right, r.bottom + extraHeight,
-        topLeft: r.tlRadius, topRight: r.trRadius);
+      r.left,
+      r.top + extraHeight,
+      r.right,
+      r.bottom + extraHeight,
+      topLeft: r.tlRadius,
+      topRight: r.trRadius,
+    );
   }
 
   static RRect _calculateUpperSurface(ButtonFactory f, double extraHeight) {
     final RRect r = f.upperSurface;
     return RRect.fromLTRBAndCorners(
-        r.left, r.top, r.right, r.bottom + extraHeight,
-        bottomLeft: r.blRadius, bottomRight: r.brRadius);
+      r.left,
+      r.top,
+      r.right,
+      r.bottom + extraHeight,
+      bottomLeft: r.blRadius,
+      bottomRight: r.brRadius,
+    );
   }
 }
 
@@ -987,63 +1144,66 @@ class CalculatorButtonState extends State<CalculatorButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () {},
-        onTapCancel: () {
-          setState(() {
-            _pressed = false;
-          });
-          // We don't distinguish cancel and up, because calculator buttons
-          // have most of their effect when pressed.  Releasing the button
-          // is only meaningful for thingsk like show-hex or clear-prefix,
-          // where the transitory display is held as long as the button is.
-          factory.controller.buttonUp();
-        },
-        onTapDown: (TapDownDetails details) {
-          switch (widget.bFactory.settings.keyFeedback) {
-            case KeyFeedbackSetting.platform:
-              unawaited(Feedback.forTap(context));
-              break;
-            case KeyFeedbackSetting.click:
-              unawaited(SystemSound.play(SystemSoundType.click));
-              break;
-            case KeyFeedbackSetting.haptic:
-              unawaited(HapticFeedback.selectionClick());
-              break;
-            case KeyFeedbackSetting.hapticHeavy:
-              unawaited(HapticFeedback.heavyImpact());
-              break;
-            case KeyFeedbackSetting.both:
-              unawaited(SystemSound.play(SystemSoundType.click));
-              unawaited(HapticFeedback.selectionClick());
-              break;
-            case KeyFeedbackSetting.bothHeavy:
-              unawaited(SystemSound.play(SystemSoundType.click));
-              unawaited(HapticFeedback.heavyImpact());
-              break;
-            case KeyFeedbackSetting.none:
-              break;
-          }
-          setState(() {
-            _pressed = true;
-          });
-          // In case they're holding down a keyboard key while they press
-          // a button with the mouse:
-          factory.controller.keyboard.releasePressedButton();
+      onTap: () {},
+      onTapCancel: () {
+        setState(() {
+          _pressed = false;
+        });
+        // We don't distinguish cancel and up, because calculator buttons
+        // have most of their effect when pressed.  Releasing the button
+        // is only meaningful for thingsk like show-hex or clear-prefix,
+        // where the transitory display is held as long as the button is.
+        factory.controller.buttonUp();
+      },
+      onTapDown: (TapDownDetails details) {
+        switch (widget.bFactory.settings.keyFeedback) {
+          case KeyFeedbackSetting.platform:
+            unawaited(Feedback.forTap(context));
+            break;
+          case KeyFeedbackSetting.click:
+            unawaited(SystemSound.play(SystemSoundType.click));
+            break;
+          case KeyFeedbackSetting.haptic:
+            unawaited(HapticFeedback.selectionClick());
+            break;
+          case KeyFeedbackSetting.hapticHeavy:
+            unawaited(HapticFeedback.heavyImpact());
+            break;
+          case KeyFeedbackSetting.both:
+            unawaited(SystemSound.play(SystemSoundType.click));
+            unawaited(HapticFeedback.selectionClick());
+            break;
+          case KeyFeedbackSetting.bothHeavy:
+            unawaited(SystemSound.play(SystemSoundType.click));
+            unawaited(HapticFeedback.heavyImpact());
+            break;
+          case KeyFeedbackSetting.none:
+            break;
+        }
+        setState(() {
+          _pressed = true;
+        });
+        // In case they're holding down a keyboard key while they press
+        // a button with the mouse:
+        factory.controller.keyboard.releasePressedButton();
 
-          factory.controller.buttonWidgetDown(widget);
-        },
-        onTapUp: (TapUpDetails details) {
-          setState(() {
-            _pressed = false;
-          });
-          factory.controller.buttonUp();
-        },
-        child: CustomPaint(
-            painter: _ButtonPainter(widget,
-                pressed: _pressed,
-                pressedFromKeyboard: _pressedFromKeyboard,
-                showAccelerators:
-                    factory.controller.model.settings.showAccelerators)));
+        factory.controller.buttonWidgetDown(widget);
+      },
+      onTapUp: (TapUpDetails details) {
+        setState(() {
+          _pressed = false;
+        });
+        factory.controller.buttonUp();
+      },
+      child: CustomPaint(
+        painter: _ButtonPainter(
+          widget,
+          pressed: _pressed,
+          pressedFromKeyboard: _pressedFromKeyboard,
+          showAccelerators: factory.controller.model.settings.showAccelerators,
+        ),
+      ),
+    );
   }
 
   /// When the button is "pressed" with an accelerator key
@@ -1071,19 +1231,24 @@ class _ButtonPainter extends CustomPainter {
   final bool pressedFromKeyboard;
   final bool showAccelerators;
 
-  _ButtonPainter(this._button,
-      {required this.pressed,
-      required this.pressedFromKeyboard,
-      required this.showAccelerators});
+  _ButtonPainter(
+    this._button, {
+    required this.pressed,
+    required this.pressedFromKeyboard,
+    required this.showAccelerators,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     // Redirect to the button, so that button subtypes can
     // paint differently.
-    _button.paintForPainter(canvas, size,
-        pressed: pressed,
-        pressedFromKeyboard: pressedFromKeyboard,
-        showAccelerators: showAccelerators);
+    _button.paintForPainter(
+      canvas,
+      size,
+      pressed: pressed,
+      pressedFromKeyboard: pressedFromKeyboard,
+      showAccelerators: showAccelerators,
+    );
   }
 
   @override

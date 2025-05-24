@@ -17,8 +17,11 @@ class TrigInputTests {
 
   // Test trig functions with an argument of 12
   void _testTrigFunction(
-      CalculatorButton units, CalculatorButton f, double expected,
-      [double? inverse]) {
+    CalculatorButton units,
+    CalculatorButton f,
+    double expected, [
+    double? inverse,
+  ]) {
     controller.buttonWidgetDown(layout.gShift);
     controller.buttonWidgetDown(units);
     controller.buttonWidgetDown(layout.n1);
@@ -31,8 +34,11 @@ class TrigInputTests {
   }
 
   // Test hyperbolic trig functions with an argument of 1.2
-  void _testHyperbolicFunction(CalculatorButton f, double expected,
-      [double? inverse]) {
+  void _testHyperbolicFunction(
+    CalculatorButton f,
+    double expected, [
+    double? inverse,
+  ]) {
     for (final units in [layout.n7, layout.n8, layout.n9]) {
       // Answer shouldn't change based on DEG, RAD or GRD mode
       for (final complex in [false, true]) {
@@ -48,14 +54,20 @@ class TrigInputTests {
         controller.buttonWidgetDown(f);
         expect(controller.model.x, Value.fromDouble(expected));
         if (complex) {
-          expect(controller.model.xImaginary, Value.zero,
-              reason: '${units.gText} $complex');
+          expect(
+            controller.model.xImaginary,
+            Value.zero,
+            reason: '${units.gText} $complex',
+          );
         }
         controller.buttonWidgetDown(layout.gShift);
         controller.buttonWidgetDown(layout.gto); // HYP-1
         controller.buttonWidgetDown(f);
-        expect(controller.model.x, Value.fromDouble(inverse ?? 1.2),
-            reason: '${units.gText} $complex');
+        expect(
+          controller.model.x,
+          Value.fromDouble(inverse ?? 1.2),
+          reason: '${units.gText} $complex',
+        );
         if (complex) {
           expect(controller.model.xImaginary, Value.zero);
         }
@@ -77,15 +89,27 @@ class TrigInputTests {
     _setComplexMode(false);
     _testTrigFunction(layout.n7, layout.sin, 0.2079116908); // n7 is DEG
     _testTrigFunction(
-        layout.n8, layout.sin, -0.5365729180, -0.5663706144); // RAD
+      layout.n8,
+      layout.sin,
+      -0.5365729180,
+      -0.5663706144,
+    ); // RAD
     _testTrigFunction(layout.n9, layout.sin, 0.1873813146); // GRD
     _testTrigFunction(
-        layout.n7, layout.cos, 0.9781476007, 12.00000001); // n7 is DEG
+      layout.n7,
+      layout.cos,
+      0.9781476007,
+      12.00000001,
+    ); // n7 is DEG
     _testTrigFunction(layout.n8, layout.cos, 0.8438539587, 0.5663706144); // RAD
     _testTrigFunction(layout.n9, layout.cos, 0.9822872507, 12.00000001); // GRD
     _testTrigFunction(layout.n7, layout.tan, 0.2125565617); // n7 is DEG
     _testTrigFunction(
-        layout.n8, layout.tan, -0.6358599287, -0.5663706144); // RAD
+      layout.n8,
+      layout.tan,
+      -0.6358599287,
+      -0.5663706144,
+    ); // RAD
     _testTrigFunction(layout.n9, layout.tan, 0.1907602022); // GRD
 
     // Now go into complex mode, and make sure it stays in radians
@@ -112,8 +136,11 @@ class TrigInputTests {
 
   /// Test a trig function on 1.2+3.4i
   void _testComplexFunction(
-      bool hyperbolic, CalculatorButton f, Complex expected,
-      [Complex? inverse]) {
+    bool hyperbolic,
+    CalculatorButton f,
+    Complex expected, [
+    Complex? inverse,
+  ]) {
     for (final units in [layout.n7, layout.n8, layout.n9]) {
       // Answer shouldn't change based on DEG, RAD or GRD mode
       controller.buttonWidgetDown(layout.gShift);
@@ -142,19 +169,28 @@ class TrigInputTests {
     }
   }
 
-  void _testInverse(CalculatorButton b, Complex arg, Complex norm, Complex hyp,
-      {int digits = 8}) {
+  void _testInverse(
+    CalculatorButton b,
+    Complex arg,
+    Complex norm,
+    Complex hyp, {
+    int digits = 8,
+  }) {
     final model = controller.model;
     model.xC = arg;
     controller.buttonDown(b.uKey);
     controller.buttonDown(b.gKey);
     Complex r = model.xC;
-    expect(r.real.toStringAsExponential(digits),
-        norm.real.toStringAsExponential(digits),
-        reason: '${b.uKey} $norm expected, got $r');
-    expect(r.imaginary.toStringAsExponential(digits),
-        norm.imaginary.toStringAsExponential(digits),
-        reason: '${b.uKey} $norm expected, got $r');
+    expect(
+      r.real.toStringAsExponential(digits),
+      norm.real.toStringAsExponential(digits),
+      reason: '${b.uKey} $norm expected, got $r',
+    );
+    expect(
+      r.imaginary.toStringAsExponential(digits),
+      norm.imaginary.toStringAsExponential(digits),
+      reason: '${b.uKey} $norm expected, got $r',
+    );
     model.xC = arg;
     controller.buttonWidgetDown(layout.fShift);
     controller.buttonWidgetDown(layout.gto);
@@ -163,12 +199,16 @@ class TrigInputTests {
     controller.buttonWidgetDown(layout.gto);
     controller.buttonWidgetDown(b);
     r = model.xC;
-    expect(r.real.toStringAsExponential(digits),
-        hyp.real.toStringAsExponential(digits),
-        reason: '${b.uKey} $hyp expected, got $r');
-    expect(r.imaginary.toStringAsExponential(digits),
-        hyp.imaginary.toStringAsExponential(digits),
-        reason: 'hyp ${b.uKey}($arg) inv $hyp expected, got $r');
+    expect(
+      r.real.toStringAsExponential(digits),
+      hyp.real.toStringAsExponential(digits),
+      reason: '${b.uKey} $hyp expected, got $r',
+    );
+    expect(
+      r.imaginary.toStringAsExponential(digits),
+      hyp.imaginary.toStringAsExponential(digits),
+      reason: 'hyp ${b.uKey}($arg) inv $hyp expected, got $r',
+    );
   }
 
   /// Check that a function followed by its inverse gives the correct
@@ -190,63 +230,121 @@ class TrigInputTests {
       }
     }
 
-    _testInverse(layout.sin, const Complex(2.8, 2.7),
-        const Complex(0.341592654, -2.7), const Complex(-2.8, 0.4415926535));
-    _testInverse(layout.sin, const Complex(2.8, -2.7),
-        const Complex(0.341592654, 2.7), const Complex(-2.8, -0.4415926535));
-    _testInverse(layout.sin, const Complex(-2.8, 2.7),
-        const Complex(-0.341592654, -2.7), const Complex(2.8, 0.4415926535));
-    _testInverse(layout.sin, const Complex(-2.8, -2.7),
-        const Complex(-0.341592654, 2.7), const Complex(2.8, -0.4415926535));
+    _testInverse(
+      layout.sin,
+      const Complex(2.8, 2.7),
+      const Complex(0.341592654, -2.7),
+      const Complex(-2.8, 0.4415926535),
+    );
+    _testInverse(
+      layout.sin,
+      const Complex(2.8, -2.7),
+      const Complex(0.341592654, 2.7),
+      const Complex(-2.8, -0.4415926535),
+    );
+    _testInverse(
+      layout.sin,
+      const Complex(-2.8, 2.7),
+      const Complex(-0.341592654, -2.7),
+      const Complex(2.8, 0.4415926535),
+    );
+    _testInverse(
+      layout.sin,
+      const Complex(-2.8, -2.7),
+      const Complex(-0.341592654, 2.7),
+      const Complex(2.8, -0.4415926535),
+    );
 
-    _testInverse(layout.cos, const Complex(2.8, 2.7), const Complex(2.8, 2.7),
-        const Complex(2.8, 2.7));
-    _testInverse(layout.cos, const Complex(2.8, -2.7), const Complex(2.8, -2.7),
-        const Complex(2.8, -2.7));
-    _testInverse(layout.cos, const Complex(-2.8, 2.7), const Complex(2.8, -2.7),
-        const Complex(2.8, -2.7));
-    _testInverse(layout.cos, const Complex(-2.8, -2.7), const Complex(2.8, 2.7),
-        const Complex(2.8, 2.7));
+    _testInverse(
+      layout.cos,
+      const Complex(2.8, 2.7),
+      const Complex(2.8, 2.7),
+      const Complex(2.8, 2.7),
+    );
+    _testInverse(
+      layout.cos,
+      const Complex(2.8, -2.7),
+      const Complex(2.8, -2.7),
+      const Complex(2.8, -2.7),
+    );
+    _testInverse(
+      layout.cos,
+      const Complex(-2.8, 2.7),
+      const Complex(2.8, -2.7),
+      const Complex(2.8, -2.7),
+    );
+    _testInverse(
+      layout.cos,
+      const Complex(-2.8, -2.7),
+      const Complex(2.8, 2.7),
+      const Complex(2.8, 2.7),
+    );
 
-    _testInverse(layout.tan, const Complex(2.8, 2.7),
-        const Complex(-0.341592654, 2.7), const Complex(2.8, -0.441592654),
-        digits: 6);
-    _testInverse(layout.tan, const Complex(2.8, -2.7),
-        const Complex(-0.341592654, -2.7), const Complex(2.8, 0.441592654),
-        digits: 6);
-    _testInverse(layout.tan, const Complex(-2.8, 2.7),
-        const Complex(0.341592654, 2.7), const Complex(-2.8, -0.441592654),
-        digits: 6);
-    _testInverse(layout.tan, const Complex(-2.8, -2.7),
-        const Complex(0.341592654, -2.7), const Complex(-2.8, 0.441592654),
-        digits: 6);
+    _testInverse(
+      layout.tan,
+      const Complex(2.8, 2.7),
+      const Complex(-0.341592654, 2.7),
+      const Complex(2.8, -0.441592654),
+      digits: 6,
+    );
+    _testInverse(
+      layout.tan,
+      const Complex(2.8, -2.7),
+      const Complex(-0.341592654, -2.7),
+      const Complex(2.8, 0.441592654),
+      digits: 6,
+    );
+    _testInverse(
+      layout.tan,
+      const Complex(-2.8, 2.7),
+      const Complex(0.341592654, 2.7),
+      const Complex(-2.8, -0.441592654),
+      digits: 6,
+    );
+    _testInverse(
+      layout.tan,
+      const Complex(-2.8, -2.7),
+      const Complex(0.341592654, -2.7),
+      const Complex(-2.8, 0.441592654),
+      digits: 6,
+    );
   }
 
   void _testComplexFunctions() {
     _testComplexFunction(
-        false, layout.sin, const Complex(13.97940881, 5.422815472));
+      false,
+      layout.sin,
+      const Complex(13.97940881, 5.422815472),
+    );
     _testComplexFunction(
-        true,
-        layout.sin,
-        const Complex(-1.459344510, -0.4626969191),
-        const Complex(-1.2, -0.2584073465));
+      true,
+      layout.sin,
+      const Complex(-1.459344510, -0.4626969191),
+      const Complex(-1.2, -0.2584073465),
+    );
     _testComplexFunction(
-        false, layout.cos, const Complex(5.434908536, -13.94830361));
+      false,
+      layout.cos,
+      const Complex(5.434908536, -13.94830361),
+    );
     _testComplexFunction(
-        true,
-        layout.cos,
-        const Complex(-1.750538530, -0.3857294182),
-        const Complex(1.2, -2.883185307));
+      true,
+      layout.cos,
+      const Complex(-1.750538530, -0.3857294182),
+      const Complex(1.2, -2.883185307),
+    );
     _testComplexFunction(
-        false,
-        layout.tan,
-        const Complex(0.001507101876, 1.001642797),
-        const Complex(1.200000002, 3.399999998));
+      false,
+      layout.tan,
+      const Complex(0.001507101876, 1.001642797),
+      const Complex(1.200000002, 3.399999998),
+    );
     _testComplexFunction(
-        true,
-        layout.tan,
-        const Complex(0.8505969575, 0.07688871007),
-        const Complex(1.2, 0.2584073464));
+      true,
+      layout.tan,
+      const Complex(0.8505969575, 0.07688871007),
+      const Complex(1.2, 0.2584073464),
+    );
 
     // An extra hyperbolic tangent function, for historical reasons.
     controller.model.xC = const Complex(0.22, 0.73);

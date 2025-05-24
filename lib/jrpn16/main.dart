@@ -52,7 +52,7 @@ void runStaticInitialization16() {
   Arg.gShift = Operations.gShift;
   Arg.gsbLabelSynonyms = Arg.registerISynonyms = {
     Operations.sst: Operations16.I,
-    Operations.rs: Operations16.parenI
+    Operations.rs: Operations16.parenI,
   };
   assert(Arg.assertStaticInitialized());
 }
@@ -118,7 +118,7 @@ class Model16 extends Model<Operation> {
       MKey(Operations.dot, Operations.status, Operations.xNE0),
       MKey(Operations.chs, Operations.eex, Operations.xEQy),
       MKey(Operations16.plus, Operations16.or, Operations.xEQ0),
-    ]
+    ],
   ];
 
   @override
@@ -140,8 +140,9 @@ class Model16 extends Model<Operation> {
 
   @override
   ProgramInstruction<Operation> newProgramInstruction(
-          Operation operation, ArgDone arg) =>
-      ProgramInstruction16(operation, arg);
+    Operation operation,
+    ArgDone arg,
+  ) => ProgramInstruction16(operation, arg);
 
   @override
   void reset() {
@@ -166,23 +167,24 @@ class Model16 extends Model<Operation> {
   int get registerNumberBase => 16;
   @override
   LcdContents selfTestContents() => LcdContents(
-      hideComplement: false,
-      longNumbers: LongNumbersSetting.window,
-      mainText: '-8,8,8,8,8,8,8,8,8,8,',
-      cFlag: true,
-      complexFlag: false,
-      euroComma: false,
-      rightJustify: false,
-      bits: 64,
-      sign: SignMode.unsigned,
-      wordSize: 64,
-      gFlag: true,
-      prgmFlag: true,
-      shift: ShiftKey.g,
-      trigMode: TrigMode.deg,
-      userMode: false,
-      extraShift: ShiftKey.f,
-      lcdDigits: 11);
+    hideComplement: false,
+    longNumbers: LongNumbersSetting.window,
+    mainText: '-8,8,8,8,8,8,8,8,8,8,',
+    cFlag: true,
+    complexFlag: false,
+    euroComma: false,
+    rightJustify: false,
+    bits: 64,
+    sign: SignMode.unsigned,
+    wordSize: 64,
+    gFlag: true,
+    prgmFlag: true,
+    shift: ShiftKey.g,
+    trigMode: TrigMode.deg,
+    userMode: false,
+    extraShift: ShiftKey.f,
+    lcdDigits: 11,
+  );
 
   @override
   set isComplexMode(bool v) {}
@@ -234,7 +236,10 @@ class Memory16 extends Memory<Operation> {
 
   @override
   void initializeSystem(
-      OperationMap<Operation> layout, Operation lbl, Operation rtn) {
+    OperationMap<Operation> layout,
+    Operation lbl,
+    Operation rtn,
+  ) {
     final int opcode =
         (lbl.arg.matches(Operations.n0, false) as ArgDone).opcode;
     program = ProgramMemory16(this, layout, model.returnStackSize, opcode, rtn);
@@ -252,9 +257,13 @@ class Memory16 extends Memory<Operation> {
 class ProgramMemory16 extends ProgramMemory<Operation> {
   final int _lblOpcode;
 
-  ProgramMemory16(Memory16 memory, OperationMap<Operation> layout,
-      int returnStackSize, this._lblOpcode, Operation rtn)
-      : super(memory, layout, returnStackSize, rtn);
+  ProgramMemory16(
+    Memory16 memory,
+    OperationMap<Operation> layout,
+    int returnStackSize,
+    this._lblOpcode,
+    Operation rtn,
+  ) : super(memory, layout, returnStackSize, rtn);
 
   @override
   void goto(int label) {
@@ -276,290 +285,336 @@ class Operations16 extends Operations {
   static final letterF = NumberEntry('F', 15);
 
   static final NormalOperation hex = NormalOperation(
-      calc: (Model m) => m.displayMode = DisplayMode.hex,
-      stackLift: StackLift.neutral,
-      name: 'HEX');
+    calc: (Model m) => m.displayMode = DisplayMode.hex,
+    stackLift: StackLift.neutral,
+    name: 'HEX',
+  );
 
   static final NormalOperation dec = NormalOperation(
-      calc: (Model m) => m.displayMode = DisplayMode.decimal,
-      stackLift: StackLift.neutral,
-      name: 'DEC');
+    calc: (Model m) => m.displayMode = DisplayMode.decimal,
+    stackLift: StackLift.neutral,
+    name: 'DEC',
+  );
 
   static final NormalOperation oct = NormalOperation(
-      calc: (Model m) => m.displayMode = DisplayMode.oct,
-      stackLift: StackLift.neutral,
-      name: 'OCT');
+    calc: (Model m) => m.displayMode = DisplayMode.oct,
+    stackLift: StackLift.neutral,
+    name: 'OCT',
+  );
 
   static final NormalOperation bin = NormalOperation(
-      calc: (Model m) => m.displayMode = DisplayMode.bin,
-      stackLift: StackLift.neutral,
-      name: 'BIN');
+    calc: (Model m) => m.displayMode = DisplayMode.bin,
+    stackLift: StackLift.neutral,
+    name: 'BIN',
+  );
 
   static final NormalArgOperation sto = NormalArgOperation(
-      arg: RegisterWriteArg(maxDigit: 31, f: (m) => m.x), name: 'STO');
+    arg: RegisterWriteArg(maxDigit: 31, f: (m) => m.x),
+    name: 'STO',
+  );
 
   static final NormalArgOperation rcl = NormalArgOperationWithBeforeCalc(
-      beforeCalculate: (Resting s) {
-        s.liftStackIfEnabled();
-        return StackLift.neutral;
+    beforeCalculate: (Resting s) {
+      s.liftStackIfEnabled();
+      return StackLift.neutral;
+    },
+    arg: RegisterReadArg(
+      maxDigit: 31,
+      f: (m, v) {
+        if (m.isFloatMode) {
+          v.asDouble; // Throw exception if not
+        }
+        m.x = v;
       },
-      arg: RegisterReadArg(
-          maxDigit: 31,
-          f: (m, v) {
-            if (m.isFloatMode) {
-              v.asDouble; // Throw exception if not
-            }
-            m.x = v;
-          }),
-      name: 'RCL');
+    ),
+    name: 'RCL',
+  );
 
   static final NormalOperation sl = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        m.cFlag = m.x.internal & m.signMask != BigInt.zero;
-        m.resultX = Value.fromInternal((m.x.internal << 1) & m.wordMask);
-      },
-      name: 'SL');
+    intCalc: (Model m) {
+      m.cFlag = m.x.internal & m.signMask != BigInt.zero;
+      m.resultX = Value.fromInternal((m.x.internal << 1) & m.wordMask);
+    },
+    name: 'SL',
+  );
 
   static final NormalOperation sr = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        m.cFlag = m.x.internal & BigInt.one != BigInt.zero;
-        m.resultX = Value.fromInternal(m.x.internal >> 1);
-      },
-      name: 'SR');
+    intCalc: (Model m) {
+      m.cFlag = m.x.internal & BigInt.one != BigInt.zero;
+      m.resultX = Value.fromInternal(m.x.internal >> 1);
+    },
+    name: 'SR',
+  );
 
   static final NormalOperation rl = NormalOperation.intOnly(
-      intCalc: (Model m) => m.resultX = _rotateLeft(BigInt.one, m.x, m),
-      name: 'RL');
+    intCalc: (Model m) => m.resultX = _rotateLeft(BigInt.one, m.x, m),
+    name: 'RL',
+  );
 
   static final NormalOperation rr = NormalOperation.intOnly(
-      intCalc: (Model m) => m.resultX = _rotateRight(BigInt.one, m.x, m),
-      name: 'RR');
+    intCalc: (Model m) => m.resultX = _rotateRight(BigInt.one, m.x, m),
+    name: 'RR',
+  );
 
   static final NormalOperation rln = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = _rotateLeft(m.xI.abs(), m.y, m),
-      name: 'RLn');
+    intCalc: (Model m) => m.popSetResultX = _rotateLeft(m.xI.abs(), m.y, m),
+    name: 'RLn',
+  );
 
   static final NormalOperation rrn = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = _rotateRight(m.xI.abs(), m.y, m),
-      name: 'RRn');
+    intCalc: (Model m) => m.popSetResultX = _rotateRight(m.xI.abs(), m.y, m),
+    name: 'RRn',
+  );
 
   static final NormalOperation maskl = NormalOperation.intOnly(
-      intCalc: (Model m) => m.resultX = Value.fromInternal(
-          m.wordMask ^ _maskr(m.wordSize - _numberOfBits(m.xI.abs(), m))),
-      name: 'MASKL');
+    intCalc: (Model m) => m.resultX = Value.fromInternal(
+      m.wordMask ^ _maskr(m.wordSize - _numberOfBits(m.xI.abs(), m)),
+    ),
+    name: 'MASKL',
+  );
 
   static final NormalOperation maskr = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.resultX = Value.fromInternal(_maskr(_numberOfBits(m.xI.abs(), m))),
-      name: 'MASKR');
+    intCalc: (Model m) =>
+        m.resultX = Value.fromInternal(_maskr(_numberOfBits(m.xI.abs(), m))),
+    name: 'MASKR',
+  );
 
   static final NormalOperation rmd = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        try {
-          BigInt xi = m.xI;
-          BigInt yi = m.yI;
-          m.popSetResultXI = yi.remainder(xi);
-          // ignore: avoid_catches_without_on_clauses
-        } catch (e) {
-          throw CalculatorError(0);
-        }
-      },
-      name: 'RMD');
+    intCalc: (Model m) {
+      try {
+        BigInt xi = m.xI;
+        BigInt yi = m.yI;
+        m.popSetResultXI = yi.remainder(xi);
+        // ignore: avoid_catches_without_on_clauses
+      } catch (e) {
+        throw CalculatorError(0);
+      }
+    },
+    name: 'RMD',
+  );
 
   static final NormalOperation xor = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.popSetResultX = Value.fromInternal(m.x.internal ^ m.y.internal),
-      name: 'XOR');
+    intCalc: (Model m) =>
+        m.popSetResultX = Value.fromInternal(m.x.internal ^ m.y.internal),
+    name: 'XOR',
+  );
 
   static final NormalOperation showHex = NormalOperation(
-      calc: null,
-      pressed: (ActiveState cs) => cs.handleShow(DisplayMode.hex),
-      stackLift: StackLift.neutral,
-      endsDigitEntry: false, // Not in float moad
-      name: 'SHOW HEX');
+    calc: null,
+    pressed: (ActiveState cs) => cs.handleShow(DisplayMode.hex),
+    stackLift: StackLift.neutral,
+    endsDigitEntry: false, // Not in float moad
+    name: 'SHOW HEX',
+  );
 
   static final NormalOperation showDec = NormalOperation(
-      calc: null,
-      pressed: (ActiveState cs) => cs.handleShow(DisplayMode.decimal),
-      stackLift: StackLift.neutral,
-      endsDigitEntry: false, // Not in float mode
-      name: 'SHOW DEC');
+    calc: null,
+    pressed: (ActiveState cs) => cs.handleShow(DisplayMode.decimal),
+    stackLift: StackLift.neutral,
+    endsDigitEntry: false, // Not in float mode
+    name: 'SHOW DEC',
+  );
 
   static final NormalOperation showOct = NormalOperation(
-      calc: null,
-      pressed: (ActiveState cs) => cs.handleShow(DisplayMode.oct),
-      stackLift: StackLift.neutral,
-      endsDigitEntry: false, // Not in float mode
-      name: 'SHOW OCT');
+    calc: null,
+    pressed: (ActiveState cs) => cs.handleShow(DisplayMode.oct),
+    stackLift: StackLift.neutral,
+    endsDigitEntry: false, // Not in float mode
+    name: 'SHOW OCT',
+  );
 
   static final NormalOperation showBin = NormalOperation(
-      calc: null,
-      pressed: (ActiveState cs) => cs.handleShow(DisplayMode.bin),
-      stackLift: StackLift.neutral,
-      endsDigitEntry: false, // Not in float mode
-      name: 'SHOW BIN');
+    calc: null,
+    pressed: (ActiveState cs) => cs.handleShow(DisplayMode.bin),
+    stackLift: StackLift.neutral,
+    endsDigitEntry: false, // Not in float mode
+    name: 'SHOW BIN',
+  );
 
   static final NormalOperation sb = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = Value.fromInternal(
-          m.y.internal | (BigInt.one << _bitNumber(m.xI.abs(), m))),
-      name: 'SB');
+    intCalc: (Model m) => m.popSetResultX = Value.fromInternal(
+      m.y.internal | (BigInt.one << _bitNumber(m.xI.abs(), m)),
+    ),
+    name: 'SB',
+  );
 
   static final NormalOperation cb = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = Value.fromInternal(m.y.internal &
-          ((BigInt.one << _bitNumber(m.xI.abs(), m)) ^ m.wordMask)),
-      name: 'CB');
+    intCalc: (Model m) => m.popSetResultX = Value.fromInternal(
+      m.y.internal & ((BigInt.one << _bitNumber(m.xI.abs(), m)) ^ m.wordMask),
+    ),
+    name: 'CB',
+  );
 
   static final NormalOperation bQuestion = NormalOperation(
-      name: 'B?',
-      calc: (Model m) {
-        m.lastX = m.x;
-        bool r = (m.y.internal & (BigInt.one << _bitNumber(m.xI.abs(), m))) !=
-            BigInt.zero;
-        if (m.displayDisabled) {
-          m.program.doNextIf(r);
-        }
-        m.popStack(); // Even when not running a program
-      });
+    name: 'B?',
+    calc: (Model m) {
+      m.lastX = m.x;
+      bool r =
+          (m.y.internal & (BigInt.one << _bitNumber(m.xI.abs(), m))) !=
+          BigInt.zero;
+      if (m.displayDisabled) {
+        m.program.doNextIf(r);
+      }
+      m.popStack(); // Even when not running a program
+    },
+  );
 
   static final NormalOperation reciprocal = NormalOperation.floatOnly(
-      floatCalc: (Model m) {
-        if (m.x == Value.zero) {
-          throw CalculatorError(0); // Before resetting floatOverflow
-        }
-        m.floatOverflow = false;
-        m.resultX = m.checkOverflow(
-            () => (DecimalFP12.tenTo(0) / DecimalFP12(m.x)).toValue());
-      },
-      name: '1/x');
+    floatCalc: (Model m) {
+      if (m.x == Value.zero) {
+        throw CalculatorError(0); // Before resetting floatOverflow
+      }
+      m.floatOverflow = false;
+      m.resultX = m.checkOverflow(
+        () => (DecimalFP12.tenTo(0) / DecimalFP12(m.x)).toValue(),
+      );
+    },
+    name: '1/x',
+  );
 
   static final NormalOperation plus = NormalOperation.differentFloatAndInt(
-      floatCalc: (Model m) {
-        m.floatOverflow = false;
-        m.popSetResultX = m.checkOverflow(() => m.y.decimalAdd(m.x));
-      },
-      intCalc: (Model m) => m.integerSignMode.intAdd(m),
-      name: '+');
+    floatCalc: (Model m) {
+      m.floatOverflow = false;
+      m.popSetResultX = m.checkOverflow(() => m.y.decimalAdd(m.x));
+    },
+    intCalc: (Model m) => m.integerSignMode.intAdd(m),
+    name: '+',
+  );
 
   static final NormalOperation minus = NormalOperation.differentFloatAndInt(
-      floatCalc: (Model m) {
-        m.floatOverflow = false;
-        m.popSetResultX = m.checkOverflow(() => m.y.decimalSubtract(m.x));
-      },
-      intCalc: (Model m) => m.integerSignMode.intSubtract(m),
-      name: '-');
+    floatCalc: (Model m) {
+      m.floatOverflow = false;
+      m.popSetResultX = m.checkOverflow(() => m.y.decimalSubtract(m.x));
+    },
+    intCalc: (Model m) => m.integerSignMode.intSubtract(m),
+    name: '-',
+  );
 
   static final NormalOperation mult = NormalOperation.differentFloatAndInt(
-      floatCalc: (Model m) {
-        m.floatOverflow = false;
-        m.popSetResultX = m.checkOverflow(() => m.y.decimalMultiply(m.x));
-      },
-      intCalc: (Model m) => _storeMultDiv(m.yI * m.xI, m),
-      name: '*');
+    floatCalc: (Model m) {
+      m.floatOverflow = false;
+      m.popSetResultX = m.checkOverflow(() => m.y.decimalMultiply(m.x));
+    },
+    intCalc: (Model m) => _storeMultDiv(m.yI * m.xI, m),
+    name: '*',
+  );
 
   static final NormalOperation div = NormalOperation.differentFloatAndInt(
-      floatCalc: (Model m) {
-        if (m.x == Value.zero) {
-          throw CalculatorError(0); // Before resetting floatOverflow
-        }
-        m.floatOverflow = false;
-        m.popSetResultX = m.checkOverflow(() => m.y.decimalDivideBy(m.x));
-      },
-      intCalc: (Model m) {
-        try {
-          final BigInt yi = m.yI;
-          final BigInt xi = m.xI;
-          _storeMultDiv(yi ~/ xi, m);
-          // On one emulator I tried, -32768 / -1 resulted in Error 0
-          // in 2-16 mode.  But 0 with overflow set is the right answer,
-          // and that's what this gives, so I kept it.
-          m.cFlag = yi.remainder(xi) != BigInt.zero;
-          // ignore: avoid_catches_without_on_clauses
-        } catch (e) {
-          throw CalculatorError(0);
-        }
-      },
-      name: '/');
+    floatCalc: (Model m) {
+      if (m.x == Value.zero) {
+        throw CalculatorError(0); // Before resetting floatOverflow
+      }
+      m.floatOverflow = false;
+      m.popSetResultX = m.checkOverflow(() => m.y.decimalDivideBy(m.x));
+    },
+    intCalc: (Model m) {
+      try {
+        final BigInt yi = m.yI;
+        final BigInt xi = m.xI;
+        _storeMultDiv(yi ~/ xi, m);
+        // On one emulator I tried, -32768 / -1 resulted in Error 0
+        // in 2-16 mode.  But 0 with overflow set is the right answer,
+        // and that's what this gives, so I kept it.
+        m.cFlag = yi.remainder(xi) != BigInt.zero;
+        // ignore: avoid_catches_without_on_clauses
+      } catch (e) {
+        throw CalculatorError(0);
+      }
+    },
+    name: '/',
+  );
 
   static final NormalOperation and = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.popSetResultX = Value.fromInternal(m.x.internal & m.y.internal),
-      name: 'AND');
+    intCalc: (Model m) =>
+        m.popSetResultX = Value.fromInternal(m.x.internal & m.y.internal),
+    name: 'AND',
+  );
 
   ///
   /// The HP 16's (i) operation, related to the index register
   ///
   static final NormalOperation parenI = NormalOperation(
-      pressed: (ActiveState s) => s.liftStackIfEnabled(),
-      calc: (Model m) {
-        m.x = m.memory.registers.indirectIndex;
-        m.display.displayX();
-      },
-      name: '(i)');
+    pressed: (ActiveState s) => s.liftStackIfEnabled(),
+    calc: (Model m) {
+      m.x = m.memory.registers.indirectIndex;
+      m.display.displayX();
+    },
+    name: '(i)',
+  );
 
   ///
   /// The HP 16's I operation, related to the index register
   ///
   static final NormalOperation I = NormalOperation(
-      pressed: (ActiveState s) => s.liftStackIfEnabled(),
-      calc: (Model m) {
-        final v = m.memory.registers.index;
-        if (m.isFloatMode) {
-          v.asDouble; // Throw CalculatorError if not
-        }
-        m.x = v;
-        m.display.displayX();
-      },
-      name: 'I');
+    pressed: (ActiveState s) => s.liftStackIfEnabled(),
+    calc: (Model m) {
+      final v = m.memory.registers.index;
+      if (m.isFloatMode) {
+        v.asDouble; // Throw CalculatorError if not
+      }
+      m.x = v;
+      m.display.displayX();
+    },
+    name: 'I',
+  );
 
   static final NormalOperation xSwapI = NormalOperation(
-      calc: (Model m) {
-        Value tmp = m.memory.registers.index;
-        if (m.isFloatMode) {
-          tmp.asDouble; // Throw CalculatorError if not
-        }
-        m.memory.registers.index = m.x;
-        m.resultX = tmp;
-      },
-      name: 'x<=>I');
+    calc: (Model m) {
+      Value tmp = m.memory.registers.index;
+      if (m.isFloatMode) {
+        tmp.asDouble; // Throw CalculatorError if not
+      }
+      m.memory.registers.index = m.x;
+      m.resultX = tmp;
+    },
+    name: 'x<=>I',
+  );
 
   static final NormalArgOperation window = NormalArgOperation(
-      arg: DigitArg(
-          max: 7,
-          calc: (m, i) {
-            if (!m.isFloatMode) {
-              m.display.window = i * 8;
-            }
-          }),
-      stackLift: StackLift.neutral,
-      name: 'WINDOW');
+    arg: DigitArg(
+      max: 7,
+      calc: (m, i) {
+        if (!m.isFloatMode) {
+          m.display.window = i * 8;
+        }
+      },
+    ),
+    stackLift: StackLift.neutral,
+    name: 'WINDOW',
+  );
 
   static final NormalOperation onesCompl = NormalOperation(
-      calc: (Model m) => m.integerSignMode = SignMode.onesComplement,
-      stackLift: StackLift.neutral,
-      name: "1's");
+    calc: (Model m) => m.integerSignMode = SignMode.onesComplement,
+    stackLift: StackLift.neutral,
+    name: "1's",
+  );
 
   static final NormalOperation twosCompl = NormalOperation(
-      calc: (Model m) => m.integerSignMode = SignMode.twosComplement,
-      stackLift: StackLift.neutral,
-      name: "2's");
+    calc: (Model m) => m.integerSignMode = SignMode.twosComplement,
+    stackLift: StackLift.neutral,
+    name: "2's",
+  );
 
   static final NormalOperation unsign = NormalOperation(
-      calc: (Model m) => m.integerSignMode = SignMode.unsigned,
-      stackLift: StackLift.neutral,
-      name: 'UNSGN');
+    calc: (Model m) => m.integerSignMode = SignMode.unsigned,
+    stackLift: StackLift.neutral,
+    name: 'UNSGN',
+  );
 
   static final NormalOperation not = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.resultX = Value.fromInternal(m.x.internal ^ m.wordMask),
-      name: 'NOT');
+    intCalc: (Model m) =>
+        m.resultX = Value.fromInternal(m.x.internal ^ m.wordMask),
+    name: 'NOT',
+  );
 
   static final NormalOperation wSize = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        m.lastX = m.x;
-        m.wordSize = m.xI.toInt().abs();
-        m.popStack();
-      },
-      name: 'WSIZE');
+    intCalc: (Model m) {
+      m.lastX = m.x;
+      m.wordSize = m.xI.toInt().abs();
+      m.popStack();
+    },
+    name: 'WSIZE',
+  );
 
   /// The 16C's float key
   static void _setFloat(Model m, int digits) {
@@ -568,184 +623,215 @@ class Operations16 extends Operations {
   }
 
   static final NormalArgOperation floatKey = NormalArgOperationWithBeforeCalc(
-      stackLift: StackLift.neutral, // But see also FloatKeyArg.onArgComplete()
-      beforeCalculate: (state) {
-        if (!state.model.isFloatMode) {
-          return StackLift.enable;
-          // See page 100:  Stack lift is enabled when we go from int mode to
-          // float mode, but not when we stay in float mode.  So: CLX,
-          // FLOAT 2, 7 will not lift stack.
-        } else {
-          return StackLift.neutral;
-        }
-      },
-      arg: ArgAlternates(children: [
+    stackLift: StackLift.neutral, // But see also FloatKeyArg.onArgComplete()
+    beforeCalculate: (state) {
+      if (!state.model.isFloatMode) {
+        return StackLift.enable;
+        // See page 100:  Stack lift is enabled when we go from int mode to
+        // float mode, but not when we stay in float mode.  So: CLX,
+        // FLOAT 2, 7 will not lift stack.
+      } else {
+        return StackLift.neutral;
+      }
+    },
+    arg: ArgAlternates(
+      children: [
         DigitArg(max: 9, calc: (m, i) => _setFloat(m, i)),
         KeyArg(key: Operations.dot, child: ArgDone((m) => _setFloat(m, 10))),
-      ]),
-      name: 'FLOAT');
+      ],
+    ),
+    name: 'FLOAT',
+  );
 
   static final NormalArgOperation sf = NormalArgOperation(
-      arg: DigitArg(max: 5, calc: (model, arg) => model.setFlag(arg, true)),
-      name: 'SF');
+    arg: DigitArg(max: 5, calc: (model, arg) => model.setFlag(arg, true)),
+    name: 'SF',
+  );
 
   static final NormalArgOperation cf = NormalArgOperation(
-      arg: DigitArg(max: 5, calc: (model, arg) => model.setFlag(arg, false)),
-      name: 'CF');
+    arg: DigitArg(max: 5, calc: (model, arg) => model.setFlag(arg, false)),
+    name: 'CF',
+  );
 
   static final NormalArgOperation gsb = RunProgramOperation(
-      runner: () => GosubProgramRunner(),
-      arg: LabelArg(
-          maxDigit: 15,
-          indirect: true,
-          f: (m, final int? label) {
-            // indirect: set true, because GSB (i) was implemented in the first
-            // released versions of JRPN.  I'm pretty sure this isn't implemented
-            // in the real 16C.  For stricter simulation, we could disallow it
-            // and make the corresponding opcode illegal.
-            if (label == null) {
-              // Like, I is a float outside int range
-              throw CalculatorError(4);
-            }
-            m.memory.program.gosub(label);
-          }),
-      name: 'GSB');
+    runner: () => GosubProgramRunner(),
+    arg: LabelArg(
+      maxDigit: 15,
+      indirect: true,
+      f: (m, final int? label) {
+        // indirect: set true, because GSB (i) was implemented in the first
+        // released versions of JRPN.  I'm pretty sure this isn't implemented
+        // in the real 16C.  For stricter simulation, we could disallow it
+        // and make the corresponding opcode illegal.
+        if (label == null) {
+          // Like, I is a float outside int range
+          throw CalculatorError(4);
+        }
+        m.memory.program.gosub(label);
+      },
+    ),
+    name: 'GSB',
+  );
 
   static final NormalArgOperation gto = NormalArgOperation(
-      arg: LabelArg(
-          maxDigit: 15,
-          indirect: true,
-          f: (m, final int? label) {
-            // indirect: set true, because GTO (i) was implemented in the first
-            // released versions of JRPN.  I'm pretty sure this isn't implemented
-            // in the real 16C.  For stricter simulation, we could disallow it
-            // and make the corresponding opcode illegal.
-            if (label == null) {
-              throw CalculatorError(4);
-            }
-            m.memory.program.goto(label);
-          }),
-      name: 'GTO');
+    arg: LabelArg(
+      maxDigit: 15,
+      indirect: true,
+      f: (m, final int? label) {
+        // indirect: set true, because GTO (i) was implemented in the first
+        // released versions of JRPN.  I'm pretty sure this isn't implemented
+        // in the real 16C.  For stricter simulation, we could disallow it
+        // and make the corresponding opcode illegal.
+        if (label == null) {
+          throw CalculatorError(4);
+        }
+        m.memory.program.goto(label);
+      },
+    ),
+    name: 'GTO',
+  );
 
   static final fQuestion = NormalArgOperation(
-      arg: DigitArg(
-          max: 5,
-          calc: (model, arg) => model.program.doNextIf(model.getFlag(arg))),
-      name: 'F?');
+    arg: DigitArg(
+      max: 5,
+      calc: (model, arg) => model.program.doNextIf(model.getFlag(arg)),
+    ),
+    name: 'F?',
+  );
 
   static final NormalOperation or = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.popSetResultX = Value.fromInternal(m.x.internal | m.y.internal),
-      name: 'OR');
+    intCalc: (Model m) =>
+        m.popSetResultX = Value.fromInternal(m.x.internal | m.y.internal),
+    name: 'OR',
+  );
 
   static final NormalOperation lj = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        int shifts = 0;
-        m.lastX = m.x;
-        BigInt val = m.x.internal;
-        if (val != BigInt.zero) {
-          while (val & m.signMask == BigInt.zero) {
-            shifts++;
-            val <<= 1;
-          }
+    intCalc: (Model m) {
+      int shifts = 0;
+      m.lastX = m.x;
+      BigInt val = m.x.internal;
+      if (val != BigInt.zero) {
+        while (val & m.signMask == BigInt.zero) {
+          shifts++;
+          val <<= 1;
         }
-        m.pushStack();
-        m.y = Value.fromInternal(val);
-        m.xI = BigInt.from(shifts);
-      },
-      name: 'LJ');
+      }
+      m.pushStack();
+      m.y = Value.fromInternal(val);
+      m.xI = BigInt.from(shifts);
+    },
+    name: 'LJ',
+  );
 
   static final NormalOperation asr = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        m.lastX = m.x;
-        BigInt x = m.x.internal;
-        BigInt newSignBit;
-        if (m.integerSignMode == SignMode.unsigned) {
-          newSignBit = BigInt.zero;
-        } else {
-          newSignBit = x & m.signMask;
-        }
-        m.cFlag = x & BigInt.one != BigInt.zero;
-        m.resultX = Value.fromInternal((x >> 1) | newSignBit);
-      },
-      name: 'ASR');
+    intCalc: (Model m) {
+      m.lastX = m.x;
+      BigInt x = m.x.internal;
+      BigInt newSignBit;
+      if (m.integerSignMode == SignMode.unsigned) {
+        newSignBit = BigInt.zero;
+      } else {
+        newSignBit = x & m.signMask;
+      }
+      m.cFlag = x & BigInt.one != BigInt.zero;
+      m.resultX = Value.fromInternal((x >> 1) | newSignBit);
+    },
+    name: 'ASR',
+  );
 
   static final NormalOperation rlc = NormalOperation.intOnly(
-      intCalc: (Model m) => m.resultX = _rotateLeftCarry(BigInt.one, m.x, m),
-      name: 'RLC');
+    intCalc: (Model m) => m.resultX = _rotateLeftCarry(BigInt.one, m.x, m),
+    name: 'RLC',
+  );
 
   static final NormalOperation rrc = NormalOperation.intOnly(
-      intCalc: (Model m) =>
-          m.resultX = _rotateLeftCarry(BigInt.from(m.wordSize), m.x, m),
-      name: 'RRC');
+    intCalc: (Model m) =>
+        m.resultX = _rotateLeftCarry(BigInt.from(m.wordSize), m.x, m),
+    name: 'RRC',
+  );
 
   static final NormalOperation rlcn = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = _rotateLeftCarry(m.xI, m.y, m),
-      name: 'RLCn');
+    intCalc: (Model m) => m.popSetResultX = _rotateLeftCarry(m.xI, m.y, m),
+    name: 'RLCn',
+  );
 
   static final NormalOperation rrcn = NormalOperation.intOnly(
-      intCalc: (Model m) => m.popSetResultX = _rotateRightCarry(m.xI, m.y, m),
-      name: 'RRCn');
+    intCalc: (Model m) => m.popSetResultX = _rotateRightCarry(m.xI, m.y, m),
+    name: 'RRCn',
+  );
 
   static final NormalOperation poundB = NormalOperation.intOnly(
-      intCalc: (Model m) {
-        int count = 0;
-        BigInt v = m.x.internal;
-        while (v > BigInt.zero) {
-          if ((v & BigInt.one) != BigInt.zero) {
-            count++;
-          }
-          v = v >> 1;
+    intCalc: (Model m) {
+      int count = 0;
+      BigInt v = m.x.internal;
+      while (v > BigInt.zero) {
+        if ((v & BigInt.one) != BigInt.zero) {
+          count++;
         }
-        m.resultX = Value.fromInternal(BigInt.from(count));
-      },
-      name: '#B');
+        v = v >> 1;
+      }
+      m.resultX = Value.fromInternal(BigInt.from(count));
+    },
+    name: '#B',
+  );
 
-  static final NormalOperation dblr =
-      NormalOperation.intOnly(intCalc: _doubleIntRemainder, name: 'DBLR');
+  static final NormalOperation dblr = NormalOperation.intOnly(
+    intCalc: _doubleIntRemainder,
+    name: 'DBLR',
+  );
 
-  static final NormalOperation dblDiv =
-      NormalOperation.intOnly(intCalc: _doubleIntDivide, name: 'DBL/');
+  static final NormalOperation dblDiv = NormalOperation.intOnly(
+    intCalc: _doubleIntDivide,
+    name: 'DBL/',
+  );
 
-  static final NormalArgOperation lbl =
-      NormalArgOperation(arg: DigitArg(max: 15, calc: (_, __) {}), name: 'LBL');
+  static final NormalArgOperation lbl = NormalArgOperation(
+    arg: DigitArg(max: 15, calc: (_, __) {}),
+    name: 'LBL',
+  );
 
   static final dsz = NormalOperation(
-      name: 'DSZ',
-      calc: (Model m) {
-        Value v = m.memory.registers.incrementI(-1);
-        m.program.doNextIf(!m.isZero(v));
-      });
+    name: 'DSZ',
+    calc: (Model m) {
+      Value v = m.memory.registers.incrementI(-1);
+      m.program.doNextIf(!m.isZero(v));
+    },
+  );
 
   static final isz = NormalOperation(
-      name: 'ISZ',
-      calc: (Model m) {
-        Value v = m.memory.registers.incrementI(1);
-        m.program.doNextIf(!m.isZero(v));
-      });
+    name: 'ISZ',
+    calc: (Model m) {
+      Value v = m.memory.registers.incrementI(1);
+      m.program.doNextIf(!m.isZero(v));
+    },
+  );
 
-  static final NormalOperation dblx =
-      NormalOperation.intOnly(intCalc: _doubleIntMultiply, name: 'DBLx');
+  static final NormalOperation dblx = NormalOperation.intOnly(
+    intCalc: _doubleIntMultiply,
+    name: 'DBLx',
+  );
 
   /// Shown as blue "<" on the keyboard - it shifts the number left,
   /// which means the window shifts right.
   static final NormalOperation windowRight = NormalOperation.intOnly(
-      stackLift: StackLift.neutral,
-      intCalc: (Model m) {
-        if (m.display.window > 0) {
-          m.display.window = m.display.window - 1;
-        }
-      },
-      name: '<');
+    stackLift: StackLift.neutral,
+    intCalc: (Model m) {
+      if (m.display.window > 0) {
+        m.display.window = m.display.window - 1;
+      }
+    },
+    name: '<',
+  );
 
   static final NormalOperation windowLeft = NormalOperation.intOnly(
-      stackLift: StackLift.neutral,
-      intCalc: (Model m) {
-        try {
-          m.display.window = m.display.window + 1;
-        } on CalculatorError catch (_) {}
-      },
-      name: '>');
+    stackLift: StackLift.neutral,
+    intCalc: (Model m) {
+      try {
+        m.display.window = m.display.window + 1;
+      } on CalculatorError catch (_) {}
+    },
+    name: '>',
+  );
 }
 
 class ProgramInstruction16 extends ProgramInstruction<Operation> {
@@ -763,166 +849,432 @@ class ButtonLayout16 extends ButtonLayout {
 
   ButtonLayout16(this.factory, this._totalButtonHeight, this._buttonHeight);
 
-  CalculatorButton get a => CalculatorButtonWithLJ(factory, 'A', 'SL',
-      'L\u200AJ', Operations16.letterA, Operations16.sl, Operations16.lj, 'A');
-  CalculatorButton get b => CalculatorButton(factory, 'B', 'SR', 'ASR',
-      Operations16.letterB, Operations16.sr, Operations16.asr, 'B');
-  CalculatorButton get c => CalculatorButton(factory, 'C', 'RL', 'RLC',
-      Operations16.letterC, Operations16.rl, Operations16.rlc, 'C');
-  CalculatorButton get d => CalculatorButton(factory, 'D', 'RR', 'RRC',
-      Operations16.letterD, Operations16.rr, Operations16.rrc, 'D');
-  CalculatorButton get e => CalculatorButton(factory, 'E', 'RLn', 'RLCn',
-      Operations16.letterE, Operations16.rln, Operations16.rlcn, 'E');
-  CalculatorButton get f => CalculatorButton(factory, 'F', 'RRn', 'RRCn',
-      Operations16.letterF, Operations16.rrn, Operations16.rrcn, 'F');
-  CalculatorButton get n7 => CalculatorButton(factory, '7', 'MASKL', '#B',
-      Operations.n7, Operations16.maskl, Operations16.poundB, '7');
-  CalculatorButton get n8 => CalculatorButton(factory, '8', 'MASKR', 'ABS',
-      Operations.n8, Operations16.maskr, Operations.abs, '8');
-  CalculatorButton get n9 => CalculatorButton(factory, '9', 'RMD', 'DBLR',
-      Operations.n9, Operations16.rmd, Operations16.dblr, '9');
+  CalculatorButton get a => CalculatorButtonWithLJ(
+    factory,
+    'A',
+    'SL',
+    'L\u200AJ',
+    Operations16.letterA,
+    Operations16.sl,
+    Operations16.lj,
+    'A',
+  );
+  CalculatorButton get b => CalculatorButton(
+    factory,
+    'B',
+    'SR',
+    'ASR',
+    Operations16.letterB,
+    Operations16.sr,
+    Operations16.asr,
+    'B',
+  );
+  CalculatorButton get c => CalculatorButton(
+    factory,
+    'C',
+    'RL',
+    'RLC',
+    Operations16.letterC,
+    Operations16.rl,
+    Operations16.rlc,
+    'C',
+  );
+  CalculatorButton get d => CalculatorButton(
+    factory,
+    'D',
+    'RR',
+    'RRC',
+    Operations16.letterD,
+    Operations16.rr,
+    Operations16.rrc,
+    'D',
+  );
+  CalculatorButton get e => CalculatorButton(
+    factory,
+    'E',
+    'RLn',
+    'RLCn',
+    Operations16.letterE,
+    Operations16.rln,
+    Operations16.rlcn,
+    'E',
+  );
+  CalculatorButton get f => CalculatorButton(
+    factory,
+    'F',
+    'RRn',
+    'RRCn',
+    Operations16.letterF,
+    Operations16.rrn,
+    Operations16.rrcn,
+    'F',
+  );
+  CalculatorButton get n7 => CalculatorButton(
+    factory,
+    '7',
+    'MASKL',
+    '#B',
+    Operations.n7,
+    Operations16.maskl,
+    Operations16.poundB,
+    '7',
+  );
+  CalculatorButton get n8 => CalculatorButton(
+    factory,
+    '8',
+    'MASKR',
+    'ABS',
+    Operations.n8,
+    Operations16.maskr,
+    Operations.abs,
+    '8',
+  );
+  CalculatorButton get n9 => CalculatorButton(
+    factory,
+    '9',
+    'RMD',
+    'DBLR',
+    Operations.n9,
+    Operations16.rmd,
+    Operations16.dblr,
+    '9',
+  );
   CalculatorButton get div => CalculatorButton(
-      factory,
-      '\u00F7',
-      'XOR',
-      'DBL\u00F7',
-      Operations16.div,
-      Operations16.xor,
-      Operations16.dblDiv,
-      '/');
+    factory,
+    '\u00F7',
+    'XOR',
+    'DBL\u00F7',
+    Operations16.div,
+    Operations16.xor,
+    Operations16.dblDiv,
+    '/',
+  );
 
-  CalculatorButton get gsb => CalculatorButton(factory, 'GSB', 'x\u2B0C(i)',
-      'RTN', Operations16.gsb, Operations.xSwapParenI, Operations.rtn, 'U');
-  CalculatorButton get gto => CalculatorButton(factory, 'GTO', 'x\u2B0CI',
-      'LBL', Operations16.gto, Operations16.xSwapI, Operations16.lbl, 'T');
-  CalculatorButton get hex => CalculatorButton(factory, 'HEX', '', 'DSZ',
-      Operations16.hex, Operations16.showHex, Operations16.dsz, 'I');
-  CalculatorButton get dec => CalculatorButton(factory, 'DEC', '', 'ISZ',
-      Operations16.dec, Operations16.showDec, Operations16.isz, 'Z');
+  CalculatorButton get gsb => CalculatorButton(
+    factory,
+    'GSB',
+    'x\u2B0C(i)',
+    'RTN',
+    Operations16.gsb,
+    Operations.xSwapParenI,
+    Operations.rtn,
+    'U',
+  );
+  CalculatorButton get gto => CalculatorButton(
+    factory,
+    'GTO',
+    'x\u2B0CI',
+    'LBL',
+    Operations16.gto,
+    Operations16.xSwapI,
+    Operations16.lbl,
+    'T',
+  );
+  CalculatorButton get hex => CalculatorButton(
+    factory,
+    'HEX',
+    '',
+    'DSZ',
+    Operations16.hex,
+    Operations16.showHex,
+    Operations16.dsz,
+    'I',
+  );
+  CalculatorButton get dec => CalculatorButton(
+    factory,
+    'DEC',
+    '',
+    'ISZ',
+    Operations16.dec,
+    Operations16.showDec,
+    Operations16.isz,
+    'Z',
+  );
   CalculatorButton get oct => CalculatorBlueSqrtButton(
-      factory,
-      'OCT',
-      '',
-      '\u221Ax',
-      Operations16.oct,
-      Operations16.showOct,
-      Operations.sqrtOp,
-      'K');
-  CalculatorButton get bin => CalculatorButton(factory, 'BIN', '', '1/x',
-      Operations16.bin, Operations16.showBin, Operations16.reciprocal, 'L');
-  CalculatorButton get n4 => CalculatorButton(factory, '4', 'SB', 'SF',
-      Operations.n4, Operations16.sb, Operations16.sf, '4');
-  CalculatorButton get n5 => CalculatorButton(factory, '5', 'CB', 'CF',
-      Operations.n5, Operations16.cb, Operations16.cf, '5');
-  CalculatorButton get n6 => CalculatorButton(factory, '6', 'B?', 'F?',
-      Operations.n6, Operations16.bQuestion, Operations16.fQuestion, '6');
+    factory,
+    'OCT',
+    '',
+    '\u221Ax',
+    Operations16.oct,
+    Operations16.showOct,
+    Operations.sqrtOp,
+    'K',
+  );
+  CalculatorButton get bin => CalculatorButton(
+    factory,
+    'BIN',
+    '',
+    '1/x',
+    Operations16.bin,
+    Operations16.showBin,
+    Operations16.reciprocal,
+    'L',
+  );
+  CalculatorButton get n4 => CalculatorButton(
+    factory,
+    '4',
+    'SB',
+    'SF',
+    Operations.n4,
+    Operations16.sb,
+    Operations16.sf,
+    '4',
+  );
+  CalculatorButton get n5 => CalculatorButton(
+    factory,
+    '5',
+    'CB',
+    'CF',
+    Operations.n5,
+    Operations16.cb,
+    Operations16.cf,
+    '5',
+  );
+  CalculatorButton get n6 => CalculatorButton(
+    factory,
+    '6',
+    'B?',
+    'F?',
+    Operations.n6,
+    Operations16.bQuestion,
+    Operations16.fQuestion,
+    '6',
+  );
   CalculatorButton get mult => CalculatorOnSpecialButton(
-      factory,
-      '\u00D7',
-      'AND',
-      'DBLx',
-      Operations16.mult,
-      Operations16.and,
-      Operations16.dblx,
-      'X*',
-      'TST',
-      acceleratorLabel: '*\u00d7');
-  CalculatorButton get rs => CalculatorButton(factory, 'R/S', '(i)', 'P/R',
-      Operations.rs, Operations16.parenI, Operations.pr, '[');
-  CalculatorButton get sst => CalculatorButton(factory, 'SST', 'I', 'BST',
-      Operations.sst, Operations16.I, Operations.bst, ']');
-  CalculatorButton get rdown => CalculatorButton(factory, 'R\u2193', 'PRGM',
-      'R\u2191', Operations.rDown, Operations.clearPrgm, Operations.rUp, 'V');
-  CalculatorButton get xy => CalculatorButton(factory, 'x\u2B0Cy', 'REG', 'PSE',
-      Operations.xy, Operations.clearReg, Operations.pse, 'Y');
+    factory,
+    '\u00D7',
+    'AND',
+    'DBLx',
+    Operations16.mult,
+    Operations16.and,
+    Operations16.dblx,
+    'X*',
+    'TST',
+    acceleratorLabel: '*\u00d7',
+  );
+  CalculatorButton get rs => CalculatorButton(
+    factory,
+    'R/S',
+    '(i)',
+    'P/R',
+    Operations.rs,
+    Operations16.parenI,
+    Operations.pr,
+    '[',
+  );
+  CalculatorButton get sst => CalculatorButton(
+    factory,
+    'SST',
+    'I',
+    'BST',
+    Operations.sst,
+    Operations16.I,
+    Operations.bst,
+    ']',
+  );
+  CalculatorButton get rdown => CalculatorButton(
+    factory,
+    'R\u2193',
+    'PRGM',
+    'R\u2191',
+    Operations.rDown,
+    Operations.clearPrgm,
+    Operations.rUp,
+    'V',
+  );
+  CalculatorButton get xy => CalculatorButton(
+    factory,
+    'x\u2B0Cy',
+    'REG',
+    'PSE',
+    Operations.xy,
+    Operations.clearReg,
+    Operations.pse,
+    'Y',
+  );
   CalculatorButton get bsp => CalculatorButton(
-      factory,
-      'BSP',
-      'PREFIX',
-      'CLx',
-      Operations.bsp,
-      Operations.clearPrefix,
-      Operations.clx,
-      '\u0008\u007f\uf728',
-      acceleratorLabel: '\u2190');
+    factory,
+    'BSP',
+    'PREFIX',
+    'CLx',
+    Operations.bsp,
+    Operations.clearPrefix,
+    Operations.clx,
+    '\u0008\u007f\uf728',
+    acceleratorLabel: '\u2190',
+  );
   @override
   CalculatorButton get enter => CalculatorEnterButton(
-      factory,
-      'E\nN\nT\nE\nR',
-      'WINDOW',
-      'LSTx',
-      Operations.enter,
-      Operations16.window,
-      Operations.lstx,
-      '\n\r',
-      extraHeight: factory.height * _totalButtonHeight / _buttonHeight,
-      acceleratorLabel: ' \u23ce');
-  CalculatorButton get n1 => CalculatorButton(factory, '1', '1\'s', 'x\u2264y',
-      Operations.n1, Operations16.onesCompl, Operations.xLEy, '1');
-  CalculatorButton get n2 => CalculatorButton(factory, '2', '2\'s', 'x<0',
-      Operations.n2, Operations16.twosCompl, Operations.xLT0, '2');
-  CalculatorButton get n3 => CalculatorButton(factory, '3', 'UNSGN', 'x>y',
-      Operations.n3, Operations16.unsign, Operations.xGTy, '3');
+    factory,
+    'E\nN\nT\nE\nR',
+    'WINDOW',
+    'LSTx',
+    Operations.enter,
+    Operations16.window,
+    Operations.lstx,
+    '\n\r',
+    extraHeight: factory.height * _totalButtonHeight / _buttonHeight,
+    acceleratorLabel: ' \u23ce',
+  );
+  CalculatorButton get n1 => CalculatorButton(
+    factory,
+    '1',
+    '1\'s',
+    'x\u2264y',
+    Operations.n1,
+    Operations16.onesCompl,
+    Operations.xLEy,
+    '1',
+  );
+  CalculatorButton get n2 => CalculatorButton(
+    factory,
+    '2',
+    '2\'s',
+    'x<0',
+    Operations.n2,
+    Operations16.twosCompl,
+    Operations.xLT0,
+    '2',
+  );
+  CalculatorButton get n3 => CalculatorButton(
+    factory,
+    '3',
+    'UNSGN',
+    'x>y',
+    Operations.n3,
+    Operations16.unsign,
+    Operations.xGTy,
+    '3',
+  );
   CalculatorButton get minus => CalculatorOnSpecialButton(
-      factory,
-      '\u2212',
-      'NOT',
-      'x>0',
-      Operations16.minus,
-      Operations16.not,
-      Operations.xGT0,
-      '-',
-      'CLR',
-      acceleratorLabel: '\u2212');
+    factory,
+    '\u2212',
+    'NOT',
+    'x>0',
+    Operations16.minus,
+    Operations16.not,
+    Operations.xGT0,
+    '-',
+    'CLR',
+    acceleratorLabel: '\u2212',
+  );
 
-  CalculatorButton get onOff => CalculatorOnButton(factory, 'ON', '', '',
-      Operations.onOff, Operations.onOff, Operations.onOff, 'O', 'OFF');
-  CalculatorButton get fShift => CalculatorFButton(factory, 'f', '', '',
-      Operations.fShift, Operations.fShift, Operations.fShift, 'M\u0006',
-      extraAcceleratorName: '^F', acceleratorLabel: 'M');
-  CalculatorButton get gShift => CalculatorGButton(factory, 'g', '', '',
-      Operations.gShift, Operations.gShift, Operations.gShift, 'G\u0007',
-      extraAcceleratorName: '^G', acceleratorLabel: 'G');
-  CalculatorButton get sto => CalculatorButton(factory, 'STO', 'WSIZE', '<',
-      Operations16.sto, Operations16.wSize, Operations16.windowRight, 'S<');
-  CalculatorButton get rcl => CalculatorButton(factory, 'RCL', 'FLOAT', '>',
-      Operations16.rcl, Operations16.floatKey, Operations16.windowLeft, 'R>');
-  CalculatorButton get n0 => CalculatorButton(factory, '0', 'MEM', 'x\u2260y',
-      Operations.n0, Operations.mem, Operations.xNEy, '0');
+  CalculatorButton get onOff => CalculatorOnButton(
+    factory,
+    'ON',
+    '',
+    '',
+    Operations.onOff,
+    Operations.onOff,
+    Operations.onOff,
+    'O',
+    'OFF',
+  );
+  CalculatorButton get fShift => CalculatorFButton(
+    factory,
+    'f',
+    '',
+    '',
+    Operations.fShift,
+    Operations.fShift,
+    Operations.fShift,
+    'M\u0006',
+    extraAcceleratorName: '^F',
+    acceleratorLabel: 'M',
+  );
+  CalculatorButton get gShift => CalculatorGButton(
+    factory,
+    'g',
+    '',
+    '',
+    Operations.gShift,
+    Operations.gShift,
+    Operations.gShift,
+    'G\u0007',
+    extraAcceleratorName: '^G',
+    acceleratorLabel: 'G',
+  );
+  CalculatorButton get sto => CalculatorButton(
+    factory,
+    'STO',
+    'WSIZE',
+    '<',
+    Operations16.sto,
+    Operations16.wSize,
+    Operations16.windowRight,
+    'S<',
+  );
+  CalculatorButton get rcl => CalculatorButton(
+    factory,
+    'RCL',
+    'FLOAT',
+    '>',
+    Operations16.rcl,
+    Operations16.floatKey,
+    Operations16.windowLeft,
+    'R>',
+  );
+  CalculatorButton get n0 => CalculatorButton(
+    factory,
+    '0',
+    'MEM',
+    'x\u2260y',
+    Operations.n0,
+    Operations.mem,
+    Operations.xNEy,
+    '0',
+  );
   CalculatorButton get dot => CalculatorDotButton(
-      factory,
-      '\u2219',
-      'STATUS',
-      'x\u22600',
-      Operations.dot,
-      Operations.status,
-      Operations.xNE0,
-      '.',
-      '\u2219/\u201a',
-      factory.settings);
-  CalculatorButton get chs => CalculatorButton(factory, 'CHS', 'EEX', 'x=y',
-      Operations.chs, Operations.eex, Operations.xEQy, 'H');
-  CalculatorButton get plus => CalculatorButton(factory, '+', 'OR', 'x=0',
-      Operations16.plus, Operations16.or, Operations.xEQ0, '+=');
+    factory,
+    '\u2219',
+    'STATUS',
+    'x\u22600',
+    Operations.dot,
+    Operations.status,
+    Operations.xNE0,
+    '.',
+    '\u2219/\u201a',
+    factory.settings,
+  );
+  CalculatorButton get chs => CalculatorButton(
+    factory,
+    'CHS',
+    'EEX',
+    'x=y',
+    Operations.chs,
+    Operations.eex,
+    Operations.xEQy,
+    'H',
+  );
+  CalculatorButton get plus => CalculatorButton(
+    factory,
+    '+',
+    'OR',
+    'x=0',
+    Operations16.plus,
+    Operations16.or,
+    Operations.xEQ0,
+    '+=',
+  );
 
   @override
   List<List<CalculatorButton?>> get landscapeLayout => [
-        [a, b, c, d, e, f, n7, n8, n9, div],
-        [gsb, gto, hex, dec, oct, bin, n4, n5, n6, mult],
-        [rs, sst, rdown, xy, bsp, enter, n1, n2, n3, minus],
-        [onOff, fShift, gShift, sto, rcl, null, n0, dot, chs, plus]
-      ];
+    [a, b, c, d, e, f, n7, n8, n9, div],
+    [gsb, gto, hex, dec, oct, bin, n4, n5, n6, mult],
+    [rs, sst, rdown, xy, bsp, enter, n1, n2, n3, minus],
+    [onOff, fShift, gShift, sto, rcl, null, n0, dot, chs, plus],
+  ];
 
   @override
   List<List<CalculatorButton?>> get portraitLayout => [
-        [onOff, rdown, xy, bsp, fShift, gShift],
-        [gsb, gto, hex, dec, oct, bin],
-        [a, b, c, d, e, f],
-        [rs, sst, n7, n8, n9, div],
-        [sto, rcl, n4, n5, n6, mult],
-        [null, enter, n1, n2, n3, minus],
-        [null, null, n0, dot, chs, plus],
-      ];
+    [onOff, rdown, xy, bsp, fShift, gShift],
+    [gsb, gto, hex, dec, oct, bin],
+    [a, b, c, d, e, f],
+    [rs, sst, n7, n8, n9, div],
+    [sto, rcl, n4, n5, n6, mult],
+    [null, enter, n1, n2, n3, minus],
+    [null, null, n0, dot, chs, plus],
+  ];
 }
 
 class LandscapeButtonFactory16 extends LandscapeButtonFactory {
@@ -932,30 +1284,62 @@ class LandscapeButtonFactory16 extends LandscapeButtonFactory {
   double get shiftDownTweak => 0;
 
   @override
-  void addUpperGoldLabels(List<Widget> result, Rect pos,
-      {required double th,
-      required double tw,
-      required double bh,
-      required double bw}) {
+  void addUpperGoldLabels(
+    List<Widget> result,
+    Rect pos, {
+    required double th,
+    required double tw,
+    required double bh,
+    required double bw,
+  }) {
     double y = pos.top;
-    result.add(screen.box(
-        Rect.fromLTRB(pos.left + 2 * tw - 0.05, y + th - 0.14,
-            pos.left + 5 * tw + bw + 0.05, y + th + 0.11),
+    result.add(
+      screen.box(
+        Rect.fromLTRB(
+          pos.left + 2 * tw - 0.05,
+          y + th - 0.14,
+          pos.left + 5 * tw + bw + 0.05,
+          y + th + 0.11,
+        ),
         CustomPaint(
-            painter:
-                UpperLabel('SHOW', fTextStyle, height * (0.14 + 0.11) / bh))));
-    result.add(screen.box(
-        Rect.fromLTRB(pos.left + 2 * tw - 0.05, y + 2 * th - 0.155,
-            pos.left + 4 * tw + bw + 0.05, y + 2 * th + 0.065),
+          painter: UpperLabel('SHOW', fTextStyle, height * (0.14 + 0.11) / bh),
+        ),
+      ),
+    );
+    result.add(
+      screen.box(
+        Rect.fromLTRB(
+          pos.left + 2 * tw - 0.05,
+          y + 2 * th - 0.155,
+          pos.left + 4 * tw + bw + 0.05,
+          y + 2 * th + 0.065,
+        ),
         CustomPaint(
-            painter: UpperLabel('CLEAR', fTextSmallLabelStyle,
-                height * (0.065 + 0.155) / bh))));
-    result.add(screen.box(
-        Rect.fromLTRB(pos.left + 6 * tw - 0.05, y + 2 * th - 0.155,
-            pos.left + 8 * tw + bw + 0.05, y + 2 * th + 0.065),
+          painter: UpperLabel(
+            'CLEAR',
+            fTextSmallLabelStyle,
+            height * (0.065 + 0.155) / bh,
+          ),
+        ),
+      ),
+    );
+    result.add(
+      screen.box(
+        Rect.fromLTRB(
+          pos.left + 6 * tw - 0.05,
+          y + 2 * th - 0.155,
+          pos.left + 8 * tw + bw + 0.05,
+          y + 2 * th + 0.065,
+        ),
         CustomPaint(
-            painter: UpperLabel('SET COMPL', fTextSmallLabelStyle,
-                height * (0.065 + 0.155) / bh))));
+          painter: UpperLabel(
+            'SET COMPL',
+            fTextSmallLabelStyle,
+            height * (0.065 + 0.155) / bh,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -966,29 +1350,57 @@ class PortraitButtonFactory16 extends PortraitButtonFactory {
   double get shiftDownTweak => 0.28;
 
   @override
-  void addUpperGoldLabels(List<Widget> result, Rect pos,
-      {required double th,
-      required double tw,
-      required double bh,
-      required double bw}) {
+  void addUpperGoldLabels(
+    List<Widget> result,
+    Rect pos, {
+    required double th,
+    required double tw,
+    required double bh,
+    required double bw,
+  }) {
     double y = pos.top;
-    result.add(screen.box(
+    result.add(
+      screen.box(
         Rect.fromLTWH(pos.left + tw - 0.05, y + 0.07, 2 * tw + bw + 0.10, 0.22),
         CustomPaint(
-            painter: UpperLabel('CLEAR', fTextSmallLabelStyle,
-                height * (0.065 + 0.155) / bh))));
-    result.add(screen.box(
+          painter: UpperLabel(
+            'CLEAR',
+            fTextSmallLabelStyle,
+            height * (0.065 + 0.155) / bh,
+          ),
+        ),
+      ),
+    );
+    result.add(
+      screen.box(
         Rect.fromLTWH(
-            pos.left + 2 * tw - 0.05, y + th + 0.18, 3 * tw + bw + 0.10, 0.25),
+          pos.left + 2 * tw - 0.05,
+          y + th + 0.18,
+          3 * tw + bw + 0.10,
+          0.25,
+        ),
         CustomPaint(
-            painter:
-                UpperLabel('SHOW', fTextStyle, height * (0.14 + 0.11) / bh))));
-    result.add(screen.box(
-        Rect.fromLTWH(pos.left + 2 * tw - 0.05, y + 5 * th + 0.08,
-            2 * tw + bw + 0.1, 0.22),
+          painter: UpperLabel('SHOW', fTextStyle, height * (0.14 + 0.11) / bh),
+        ),
+      ),
+    );
+    result.add(
+      screen.box(
+        Rect.fromLTWH(
+          pos.left + 2 * tw - 0.05,
+          y + 5 * th + 0.08,
+          2 * tw + bw + 0.1,
+          0.22,
+        ),
         CustomPaint(
-            painter: UpperLabel('SET COMPL', fTextSmallLabelStyle,
-                height * (0.065 + 0.155) / bh))));
+          painter: UpperLabel(
+            'SET COMPL',
+            fTextSmallLabelStyle,
+            height * (0.065 + 0.155) / bh,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -997,19 +1409,22 @@ class Controller16 extends RealController {
   final Model16 model;
 
   Controller16(this.model)
-      : super(
-            numbers: numbers,
-            shortcuts: _shortcuts,
-            lblOperation: Operations16.lbl,
-            rtn: Operations.rtn);
+    : super(
+        numbers: numbers,
+        shortcuts: _shortcuts,
+        lblOperation: Operations16.lbl,
+        rtn: Operations.rtn,
+      );
 
   /// Map from operation that is a shortcut to what it's a shortcut for, with
   /// the key as an argument.  We want the identical instance of ArgDone, so
   /// we climb down the tree.  It's admittedly a bit of a hack.
   static final Map<Operation, ArgDone> _shortcuts = {
     Operations16.I: _makeShortcut(Operations16.rcl.arg, Operations16.I)!,
-    Operations16.parenI:
-        _makeShortcut(Operations16.rcl.arg, Operations16.parenI)!,
+    Operations16.parenI: _makeShortcut(
+      Operations16.rcl.arg,
+      Operations16.parenI,
+    )!,
   };
 
   static ArgDone? _makeShortcut(Arg arg, Operation wanted) {
@@ -1045,7 +1460,7 @@ class Controller16 extends RealController {
     Operations16.letterC,
     Operations16.letterD,
     Operations16.letterE,
-    Operations16.letterF
+    Operations16.letterF,
   ];
 
   @override
@@ -1056,22 +1471,26 @@ class Controller16 extends RealController {
       SelfTests16(inCalculator: inCalculator);
 
   @override
-  ButtonLayout getButtonLayout(ButtonFactory factory, double totalHeight,
-          double totalButtonHeight) =>
-      ButtonLayout16(factory, totalHeight, totalButtonHeight);
+  ButtonLayout getButtonLayout(
+    ButtonFactory factory,
+    double totalHeight,
+    double totalButtonHeight,
+  ) => ButtonLayout16(factory, totalHeight, totalButtonHeight);
 
   @override
   BackPanel16 getBackPanel() => BackPanel16();
 
   @override
   LandscapeButtonFactory getLandscapeButtonFactory(
-          BuildContext context, ScreenPositioner screen) =>
-      LandscapeButtonFactory16(context, screen, this);
+    BuildContext context,
+    ScreenPositioner screen,
+  ) => LandscapeButtonFactory16(context, screen, this);
 
   @override
   PortraitButtonFactory getPortraitButtonFactory(
-          BuildContext context, ScreenPositioner screen) =>
-      PortraitButtonFactory16(context, screen, this);
+    BuildContext context,
+    ScreenPositioner screen,
+  ) => PortraitButtonFactory16(context, screen, this);
 
   @override
   int get argBase => 16;
@@ -1105,8 +1524,10 @@ void _doubleIntMultiply(Model m) {
 void _doubleIntDivide(Model m) {
   final Value last = m.x;
   final BigInt big = (m.y.internal << m.wordSize) | m.z.internal;
-  final BigInt dividend =
-      m.integerSignMode.toBigInt(Value.fromInternal(big), m.doubleWordStatus);
+  final BigInt dividend = m.integerSignMode.toBigInt(
+    Value.fromInternal(big),
+    m.doubleWordStatus,
+  );
   final BigInt divisor = m.xI;
   final BigInt result = dividend ~/ divisor;
   if (result < m.minInt || result > m.maxInt) {
@@ -1124,8 +1545,10 @@ final BigInt _maxU64 = (BigInt.one << 64) - BigInt.one;
 void _doubleIntRemainder(Model m) {
   final Value last = m.x;
   final BigInt big = (m.y.internal << m.wordSize) | m.z.internal;
-  final BigInt dividend =
-      m.integerSignMode.toBigInt(Value.fromInternal(big), m.doubleWordStatus);
+  final BigInt dividend = m.integerSignMode.toBigInt(
+    Value.fromInternal(big),
+    m.doubleWordStatus,
+  );
   final BigInt divisor = m.xI;
   final BigInt quotient = dividend ~/ divisor;
   if (quotient.abs() > _maxU64) {

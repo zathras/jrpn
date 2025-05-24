@@ -65,8 +65,14 @@ class LcdDisplay extends StatefulWidget {
   static const double heightTweak = 0.90;
   final State jrpnState; // To repaint entire UI when LCD size changes
 
-  LcdDisplay(this.model, this.showMenu, this.digitsH, this.jrpnState,
-      {this.extraTall = false, super.key}) {
+  LcdDisplay(
+    this.model,
+    this.showMenu,
+    this.digitsH,
+    this.jrpnState, {
+    this.extraTall = false,
+    super.key,
+  }) {
     assert(digitsH >= 11 && digitsH <= 18);
     // 34 = 16 bit binary number with " b".  Above 16 bits, we scale the
     // digits.
@@ -109,18 +115,25 @@ class _LcdDisplayState extends State<LcdDisplay> {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-        message: 'Copy or Paste Number',
-        child: GestureDetector(
-            onSecondaryTapDown: (TapDownDetails details) => // Right mouse
+      message: 'Copy or Paste Number',
+      child: GestureDetector(
+        onSecondaryTapDown:
+            (TapDownDetails details) => // Right mouse
                 _tapOffset = details.globalPosition,
-            onSecondaryTap: () =>
-                unawaited(widget.showMenu(context, _tapOffset)),
-            onTapDown: (TapDownDetails details) =>
-                _tapOffset = details.globalPosition,
-            onTap: () => unawaited(widget.showMenu(context, _tapOffset)),
-            child: CustomPaint(
-                painter: _DisplayPainter(_contents, widget.model.settings,
-                    widget.digitsH, widget.extraTall))));
+        onSecondaryTap: () => unawaited(widget.showMenu(context, _tapOffset)),
+        onTapDown: (TapDownDetails details) =>
+            _tapOffset = details.globalPosition,
+        onTap: () => unawaited(widget.showMenu(context, _tapOffset)),
+        child: CustomPaint(
+          painter: _DisplayPainter(
+            _contents,
+            widget.model.settings,
+            widget.digitsH,
+            widget.extraTall,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -159,16 +172,24 @@ class _DisplayPainter extends CustomPainter {
     final outlineH = size.height / 20;
     final outlineR = Radius.circular(size.height / 15);
     canvas.drawRRect(
-        RRect.fromLTRBR(0, 0, size.width, size.height, outlineR), outline);
+      RRect.fromLTRBR(0, 0, size.width, size.height, outlineR),
+      outline,
+    );
     final t = size.height / 250;
     canvas.drawRRect(
-        RRect.fromLTRBR(
-            t, t, size.width - 2 * t, size.height - 2 * t, outlineR),
-        lcdFrame);
+      RRect.fromLTRBR(t, t, size.width - 2 * t, size.height - 2 * t, outlineR),
+      lcdFrame,
+    );
     canvas.drawRRect(
-        RRect.fromLTRBR(outlineW, outlineH, size.width - outlineW,
-            size.height - outlineH, outlineR),
-        lcdBase);
+      RRect.fromLTRBR(
+        outlineW,
+        outlineH,
+        size.width - outlineW,
+        size.height - outlineH,
+        outlineR,
+      ),
+      lcdBase,
+    );
 
     if (contents.blank) {
       return;
@@ -177,9 +198,10 @@ class _DisplayPainter extends CustomPainter {
     // Annunciators:
 
     final TextStyle aStyle = TextStyle(
-        fontSize: (extraTall ? 0.458 : 1.0) * size.height / heightTweak / 7,
-        fontFamily: 'KeyLabelFont',
-        color: lcdForeground);
+      fontSize: (extraTall ? 0.458 : 1.0) * size.height / heightTweak / 7,
+      fontFamily: 'KeyLabelFont',
+      color: lcdForeground,
+    );
 
     double annY = (extraTall ? 0.94 : 0.82) * heightTweak;
 
@@ -187,9 +209,10 @@ class _DisplayPainter extends CustomPainter {
       final String text = contents.sign.annunciatorText;
       final TextSpan span = TextSpan(style: aStyle, text: text);
       final TextPainter tp = TextPainter(
-          text: span,
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr);
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.09, size.height * annY));
     }
@@ -197,9 +220,10 @@ class _DisplayPainter extends CustomPainter {
       final String text = contents.wordSize.toString();
       final TextSpan span = TextSpan(style: aStyle, text: text);
       final TextPainter tp = TextPainter(
-          text: span,
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr);
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.16, size.height * annY));
     }
@@ -207,52 +231,65 @@ class _DisplayPainter extends CustomPainter {
       const String text = 'USER';
       final TextSpan span = TextSpan(style: aStyle, text: text);
       final TextPainter tp = TextPainter(
-          text: span,
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr);
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.18, size.height * annY));
     }
     if (contents.shift.name != '') {
       final TextSpan span = TextSpan(style: aStyle, text: contents.shift.name);
       final TextPainter tp = TextPainter(
-          text: span,
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr);
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
       tp.layout();
       tp.paint(
-          canvas,
-          Offset(size.width * (contents.shift.offset ? 0.36 : 0.315),
-              size.height * annY));
+        canvas,
+        Offset(
+          size.width * (contents.shift.offset ? 0.36 : 0.315),
+          size.height * annY,
+        ),
+      );
     }
     if (contents.extraShift != null) {
-      final TextSpan span =
-          TextSpan(style: aStyle, text: contents.extraShift!.name);
+      final TextSpan span = TextSpan(
+        style: aStyle,
+        text: contents.extraShift!.name,
+      );
       final TextPainter tp = TextPainter(
-          text: span,
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr);
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
       tp.layout();
       tp.paint(
-          canvas,
-          Offset(size.width * (contents.extraShift!.offset ? 0.36 : 0.315),
-              size.height * annY));
+        canvas,
+        Offset(
+          size.width * (contents.extraShift!.offset ? 0.36 : 0.315),
+          size.height * annY,
+        ),
+      );
     }
     if (contents.cFlag) {
       final TextSpan span = TextSpan(style: aStyle, text: 'C');
       final TextPainter tp = TextPainter(
-          text: span,
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr);
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.6, size.height * annY));
     }
     if (contents.gFlag) {
       final TextSpan span = TextSpan(style: aStyle, text: 'G');
       final TextPainter tp = TextPainter(
-          text: span,
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr);
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.65, size.height * annY));
     }
@@ -261,38 +298,42 @@ class _DisplayPainter extends CustomPainter {
       if (_gradWidth == -1) {
         final TextSpan span = TextSpan(style: aStyle, text: 'GRAD');
         final TextPainter tp = TextPainter(
-            text: span,
-            textAlign: TextAlign.center,
-            textDirection: TextDirection.ltr);
+          text: span,
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr,
+        );
         tp.layout();
         _gradWidth = tp.width;
       }
       final TextSpan span = TextSpan(style: aStyle, text: trig.label);
       final TextPainter tp = TextPainter(
-          text: span,
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr);
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
       tp.layout();
       tp.paint(
-          canvas,
-          Offset(
-              _gradWidth - tp.width + size.width * 0.52, size.height * annY));
+        canvas,
+        Offset(_gradWidth - tp.width + size.width * 0.52, size.height * annY),
+      );
     }
     if (contents.complexFlag) {
       final TextSpan span = TextSpan(style: aStyle, text: 'C');
       final TextPainter tp = TextPainter(
-          text: span,
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr);
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.78, size.height * annY));
     }
     if (contents.prgmFlag) {
       final TextSpan span = TextSpan(style: aStyle, text: 'PRGM');
       final TextPainter tp = TextPainter(
-          text: span,
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr);
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.82, size.height * annY));
     }
@@ -310,10 +351,15 @@ class _DisplayPainter extends CustomPainter {
     // After 18, we start shrinking the font
     canvas.scale(width / (Segments.instance.width * digitSpace));
     final digits = (contents.euroComma) ? Digit.euroDigits : Digit.digits;
-    Digit.paint(canvas, contents.mainText, digits, lcdForeground,
-        rightJustify: contents.rightJustify,
-        digitsH: digitsH,
-        onlyShrink: settings.longNumbers == LongNumbersSetting.shrinkDigits);
+    Digit.paint(
+      canvas,
+      contents.mainText,
+      digits,
+      lcdForeground,
+      rightJustify: contents.rightJustify,
+      digitsH: digitsH,
+      onlyShrink: settings.longNumbers == LongNumbersSetting.shrinkDigits,
+    );
     canvas.restore();
   }
 
@@ -335,29 +381,66 @@ class Digit {
   static final Segments _s = Segments.instance;
 
   static final Map<int, Digit> digits = {
-    '0'.codeUnitAt(0): Digit._p(
-        [_s.top, _s.upL, _s.upR, _s.lowL, _s.lowR, _s.bot]), //         0
+    '0'.codeUnitAt(0): Digit._p([
+      _s.top,
+      _s.upL,
+      _s.upR,
+      _s.lowL,
+      _s.lowR,
+      _s.bot,
+    ]), //         0
     '1'.codeUnitAt(0): Digit._p([_s.upR, _s.lowR]),
     '2'.codeUnitAt(0): Digit._p([_s.top, _s.upR, _s.mid, _s.lowL, _s.bot]),
     '3'.codeUnitAt(0): Digit._p([_s.top, _s.upR, _s.mid, _s.lowR, _s.bot]),
     '4'.codeUnitAt(0): Digit._p([_s.upL, _s.upR, _s.mid, _s.lowR]),
     '5'.codeUnitAt(0): Digit._p([_s.top, _s.upL, _s.mid, _s.lowR, _s.bot]),
-    '6'.codeUnitAt(0):
-        Digit._p([_s.top, _s.upL, _s.mid, _s.lowL, _s.lowR, _s.bot]),
+    '6'.codeUnitAt(0): Digit._p([
+      _s.top,
+      _s.upL,
+      _s.mid,
+      _s.lowL,
+      _s.lowR,
+      _s.bot,
+    ]),
     '7'.codeUnitAt(0): Digit._p([_s.top, _s.upR, _s.lowR]),
-    '8'.codeUnitAt(0):
-        Digit._p([_s.top, _s.upL, _s.upR, _s.mid, _s.lowL, _s.lowR, _s.bot]),
-    '9'.codeUnitAt(0):
-        Digit._p([_s.top, _s.upL, _s.upR, _s.mid, _s.lowR, _s.bot]),
-    'a'.codeUnitAt(0):
-        Digit._p([_s.top, _s.upL, _s.upR, _s.mid, _s.lowL, _s.lowR]),
+    '8'.codeUnitAt(0): Digit._p([
+      _s.top,
+      _s.upL,
+      _s.upR,
+      _s.mid,
+      _s.lowL,
+      _s.lowR,
+      _s.bot,
+    ]),
+    '9'.codeUnitAt(0): Digit._p([
+      _s.top,
+      _s.upL,
+      _s.upR,
+      _s.mid,
+      _s.lowR,
+      _s.bot,
+    ]),
+    'a'.codeUnitAt(0): Digit._p([
+      _s.top,
+      _s.upL,
+      _s.upR,
+      _s.mid,
+      _s.lowL,
+      _s.lowR,
+    ]),
     'b'.codeUnitAt(0): Digit._p([_s.upL, _s.mid, _s.lowL, _s.lowR, _s.bot]),
     'c'.codeUnitAt(0): Digit._p([_s.top, _s.lowL, _s.upL, _s.bot]),
     'd'.codeUnitAt(0): Digit._p([_s.upR, _s.mid, _s.lowL, _s.lowR, _s.bot]),
     'e'.codeUnitAt(0): Digit._p([_s.top, _s.upL, _s.mid, _s.lowL, _s.bot]),
     'f'.codeUnitAt(0): Digit._p([_s.top, _s.upL, _s.mid, _s.lowL]),
-    'G'.codeUnitAt(0):
-        Digit._p([_s.top, _s.upL, _s.upR, _s.mid, _s.lowR, _s.bot]),
+    'G'.codeUnitAt(0): Digit._p([
+      _s.top,
+      _s.upL,
+      _s.upR,
+      _s.mid,
+      _s.lowR,
+      _s.bot,
+    ]),
     'h'.codeUnitAt(0): Digit._p([_s.upL, _s.mid, _s.lowL, _s.lowR]),
     'I'.codeUnitAt(0): Digit._p([_s.upR]),
     'i'.codeUnitAt(0): Digit._p([_s.lowR]),
@@ -388,19 +471,27 @@ class Digit {
     ..style = PaintingStyle.fill;
 
   static void paint(
-      Canvas c, String message, Map<int, Digit> digits, Color lcdForeground,
-      {required bool rightJustify,
-      required int digitsH,
-      required bool onlyShrink}) {
+    Canvas c,
+    String message,
+    Map<int, Digit> digits,
+    Color lcdForeground, {
+    required bool rightJustify,
+    required int digitsH,
+    required bool onlyShrink,
+  }) {
     _paint.color = lcdForeground;
     final Iterable<Digit> values = message.codeUnits.map(((ch) {
       final d = digits[ch];
-      assert(d != null,
-          'No LCD character for ${String.fromCharCode(ch)} in $message');
+      assert(
+        d != null,
+        'No LCD character for ${String.fromCharCode(ch)} in $message',
+      );
       return d!;
     }));
-    int width =
-        values.fold(0, (int count, Digit d) => d.noWidth ? count : count + 1);
+    int width = values.fold(
+      0,
+      (int count, Digit d) => d.noWidth ? count : count + 1,
+    );
     final int numLines;
     final int horizPositions;
     int xPos = -999; // Only useful when numLines > 1
@@ -646,8 +737,15 @@ class Segments {
   ///
   /// <img src="dartdoc/view.lcd_display/add_corner.jpg" style="width: 100%"/>
   ///
-  static void _addCorner(final Path path, final double xa, double ya, double xb,
-      double yb, double xc, double yc) {
+  static void _addCorner(
+    final Path path,
+    final double xa,
+    double ya,
+    double xb,
+    double yb,
+    double xc,
+    double yc,
+  ) {
     const deg90 = pi / 2;
     const deg180 = pi;
     const double r = 2.0;
@@ -657,7 +755,11 @@ class Segments {
     double len = (r + s) / sin(theta / 2);
     double xe = xb + len * cos(phi + theta / 2);
     double ye = yb + len * sin(phi + theta / 2);
-    path.arcTo(Rect.fromLTRB(xe - r, ye - r, xe + r, ye + r),
-        deg90 + phi + theta, deg180 - theta, false);
+    path.arcTo(
+      Rect.fromLTRB(xe - r, ye - r, xe + r, ye + r),
+      deg90 + phi + theta,
+      deg180 - theta,
+      false,
+    );
   }
 }

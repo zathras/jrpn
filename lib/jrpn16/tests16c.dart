@@ -529,60 +529,74 @@ class SelfTests16 extends SelfTests {
     await test('int DisplayMode mode convert from float', () async {
       await _testConvertFromFloat(0, BigInt.zero, 0);
       await _testConvertFromFloat(
-          512, BigInt.one << 31, -22); // 512 = 2<<31 * 2^-22
+        512,
+        BigInt.one << 31,
+        -22,
+      ); // 512 = 2<<31 * 2^-22
       await _testConvertFromFloat(
-          513, BigInt.one << 31 | BigInt.one << 22, -22); // 512 = 2<<31 * 2^-22
+        513,
+        BigInt.one << 31 | BigInt.one << 22,
+        -22,
+      ); // 512 = 2<<31 * 2^-22
 
       await _testConvertFromFloat(5e-62, BigInt.parse('2760698539'), -235);
       await _testConvertFromFloat(5e-52, BigInt.parse('3213876089'), -202);
       await _testConvertFromFloat(1.284e-17, BigInt.parse('3973787526'), -88);
     });
     await test(
-        'DisplayMode from float to int and back at power of two boundaries',
-        () async {
-      /// go from a little over 1e-99 to a little under 9.999999999e99,
-      /// concentrating on the areas around powers of two.  This is meant to
-      /// tease out any rounding errors, especially around the log()
-      /// calculations in _IntegerMode.convertValuesFromFloat
-      Model model = newModel();
-      model.displayMode = DisplayMode.float(9);
-      await _testFloatConvertAndBack(model, 0.0);
-      await _testFloatConvertAndBack(model, 1);
-      await _testFloatConvertAndBack(model, 123);
-      await _testFloatConvertAndBack(model, 5.678e99);
-      await _testFloatConvertAndBack(model, 5.678e-99);
-      for (int exp = -328; exp <= 332; exp++) {
-        final double base = pow(2.0, exp).toDouble();
-        for (double delta = -pow(10.0, -8.0).toDouble();
+      'DisplayMode from float to int and back at power of two boundaries',
+      () async {
+        /// go from a little over 1e-99 to a little under 9.999999999e99,
+        /// concentrating on the areas around powers of two.  This is meant to
+        /// tease out any rounding errors, especially around the log()
+        /// calculations in _IntegerMode.convertValuesFromFloat
+        Model model = newModel();
+        model.displayMode = DisplayMode.float(9);
+        await _testFloatConvertAndBack(model, 0.0);
+        await _testFloatConvertAndBack(model, 1);
+        await _testFloatConvertAndBack(model, 123);
+        await _testFloatConvertAndBack(model, 5.678e99);
+        await _testFloatConvertAndBack(model, 5.678e-99);
+        for (int exp = -328; exp <= 332; exp++) {
+          final double base = pow(2.0, exp).toDouble();
+          for (
+            double delta = -pow(10.0, -8.0).toDouble();
             delta <= pow(10.0, -8);
-            delta += pow(10.0, -10) * 3) {
-          await _testFloatConvertAndBack(model, base + delta * base);
+            delta += pow(10.0, -10) * 3
+          ) {
+            await _testFloatConvertAndBack(model, base + delta * base);
+          }
         }
-      }
-    });
+      },
+    );
 
-    await test('DisplayMode from float to int and back with random values',
-        () async {
-      Model model = newModel();
-      model.displayMode = DisplayMode.float(9);
-      await _testFloatConvertAndBack(model, 1.0625892214194362e+58);
-      final Random r = Random();
-      const limit = kIsWeb ? 100 : 2000;
-      for (int i = 0; i < limit; i++) {
-        if (i > 0 && i % 2000 == 0) {
-          final percent = (i * 100 / limit).toStringAsFixed(0);
-          debugPrint('Random float count $i of limit - $percent%');
+    await test(
+      'DisplayMode from float to int and back with random values',
+      () async {
+        Model model = newModel();
+        model.displayMode = DisplayMode.float(9);
+        await _testFloatConvertAndBack(model, 1.0625892214194362e+58);
+        final Random r = Random();
+        const limit = kIsWeb ? 100 : 2000;
+        for (int i = 0; i < limit; i++) {
+          if (i > 0 && i % 2000 == 0) {
+            final percent = (i * 100 / limit).toStringAsFixed(0);
+            debugPrint('Random float count $i of limit - $percent%');
+          }
+          final double m = 22 * r.nextDouble() - 11;
+          final int e = r.nextInt(250) - 125; // Generate some out of range
+          final double dv = m * pow(10.0, e);
+          await _testFloatConvertAndBack(model, dv);
         }
-        final double m = 22 * r.nextDouble() - 11;
-        final int e = r.nextInt(250) - 125; // Generate some out of range
-        final double dv = m * pow(10.0, e);
-        await _testFloatConvertAndBack(model, dv);
-      }
-    });
+      },
+    );
   }
 
   Future<void> _testConvertFromFloat(
-      double num, BigInt mantissa, int exponent) async {
+    double num,
+    BigInt mantissa,
+    int exponent,
+  ) async {
     final Model model = newModel();
     model.displayMode = DisplayMode.float(5);
     model.x = Value.fromDouble(num);
@@ -646,11 +660,17 @@ class SelfTests16 extends SelfTests {
     if (dv == 0.0) {
       await expect(r, dv);
     } else if (m.x == Value.zero) {
-      await expect(dv > -1e-98 && dv < 1e-98, true,
-          reason: '$dv gives underflow');
+      await expect(
+        dv > -1e-98 && dv < 1e-98,
+        true,
+        reason: '$dv gives underflow',
+      );
     } else {
-      await expect(((r - dv) / dv).abs() < 0.000000001, true,
-          reason: '$dv gives $r');
+      await expect(
+        ((r - dv) / dv).abs() < 0.000000001,
+        true,
+        reason: '$dv gives $r',
+      );
       // The 32 bits of the mantissa give us a smidge over 9 digits of accuracy
     }
     if (dv > 0) {

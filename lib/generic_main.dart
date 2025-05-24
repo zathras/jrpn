@@ -757,8 +757,10 @@ Public License instead of this License.  But first, please read
 const applicationVersion = '2.1.17';
 final Uri applicationWebAddress = Uri.https('jrpn.jovial.com', '');
 final Uri applicationHelpAddress = Uri.https('jrpn.jovial.com', 'help.html');
-final Uri applicationIssueAddress =
-    Uri.https('github.com', 'zathras/jrpn/issues');
+final Uri applicationIssueAddress = Uri.https(
+  'github.com',
+  'zathras/jrpn/issues',
+);
 
 void genericMain(Jrpn calculator) async {
   // Get there first!
@@ -769,8 +771,10 @@ void genericMain(Jrpn calculator) async {
     // anything -- maybe to be functional it has to be configured
     // somehow?
     WidgetsFlutterBinding.ensureInitialized();
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top]);
+    await SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: [SystemUiOverlay.top],
+    );
   }
   runApp(calculator);
 }
@@ -799,21 +803,22 @@ class Jrpn extends StatefulWidget {
   Future<void> sendUrlToClipboard() {
     final bytes = const ZLibEncoder().encode(_getJson().codeUnits);
     final j = base64UrlEncode(bytes);
-    final s = 'https://jrpn.jovial.com/run${model.is15C ? '15' : ''}'
+    final s =
+        'https://jrpn.jovial.com/run${model.is15C ? '15' : ''}'
         '/index.html?state=$j';
     return Clipboard.setData(ClipboardData(text: s));
   }
 
-  Future<void> sendJsonToExternalApp() =>
-      SharePlus.instance.share(
-          ShareParams(text: _getJson(), subject: 'JRPN Calculator State'));
+  Future<void> sendJsonToExternalApp() => SharePlus.instance.share(
+    ShareParams(text: _getJson(), subject: 'JRPN Calculator State'),
+  );
 
   Future<void> sendJsonToClipboard() =>
       Clipboard.setData(ClipboardData(text: _getJson()));
 
-  Future<void> sendProgramToExternalApp() =>
-      SharePlus.instance.share(
-          ShareParams(text: _getJson(), subject: 'JRPN Calculator State'));
+  Future<void> sendProgramToExternalApp() => SharePlus.instance.share(
+    ShareParams(text: _getJson(), subject: 'JRPN Calculator State'),
+  );
 
   Future<void> sendProgramToClipboard() =>
       Clipboard.setData(ClipboardData(text: getProgram(null)));
@@ -829,7 +834,8 @@ class Jrpn extends StatefulWidget {
       out.writeln('#  Character encoding:  $encoding');
     }
     final d = DateTime.now().toLocal();
-    final now = '${d.year}-${d.month}-${d.day} '
+    final now =
+        '${d.year}-${d.month}-${d.day} '
         '${d.hour.toString().padLeft(2, '0')}:'
         '${d.minute.toString().padLeft(2, '0')} ${d.timeZoneName}';
     out.writeln('#  Generated $now.');
@@ -872,8 +878,9 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   late void Function(void) _uiChangeObserver;
 
   JrpnState() {
-    _appLifecycleListener =
-        AppLifecycleListener(onExitRequested: exitRequested);
+    _appLifecycleListener = AppLifecycleListener(
+      onExitRequested: exitRequested,
+    );
   }
 
   RealController get controller => widget.controller;
@@ -927,15 +934,16 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'JRPN ${controller.model.modelName}',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+      title: 'JRPN ${controller.model.modelName}',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: Material(
+        type: MaterialType.transparency,
+        child: Builder(
+          builder: (BuildContext context) => _buildScreen(context),
         ),
-        home: Material(
-            type: MaterialType.transparency,
-            child: Builder(
-                builder: (BuildContext context) => _buildScreen(context))));
+      ),
+    );
     // The Material widget is needed for text widgets to work:
     // https://stackoverflow.com/questions/47114639/yellow-lines-under-text-widgets-in-flutter
   }
@@ -953,10 +961,11 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       return _showIncomingLink(link, context);
     }
     return Focus(
-        focusNode: keyboard,
-        autofocus: true,
-        onKeyEvent: (_, KeyEvent e) => controller.keyboard.onKey(e),
-        child: SafeArea(top: false, child: MainScreen(this, icon)));
+      focusNode: keyboard,
+      autofocus: true,
+      onKeyEvent: (_, KeyEvent e) => controller.keyboard.onKey(e),
+      child: SafeArea(top: false, child: MainScreen(this, icon)),
+    );
   }
 
   Widget _showIncomingLink(String link, BuildContext context) {
@@ -964,42 +973,54 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
       aspectRatio: 2 / 3,
       child: Container(
         color: Colors.white,
-        child: Column(children: [
-          const Text(' ',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-          const Text('Incoming Link',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 30),
-          const Text('Import the contents of the incoming link?',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 30),
-          Row(children: [
-            const Spacer(flex: 2),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _incomingLink = null;
-                  _importLink(link);
-                });
-              },
-              child: const Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Text('Import', style: TextStyle(fontSize: 20))),
+        child: Column(
+          children: [
+            const Text(
+              ' ',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _incomingLink = null;
-                });
-              },
-              child: const Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Text('Discard Link', style: TextStyle(fontSize: 20))),
+            const Text(
+              'Incoming Link',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
-            const Spacer(flex: 2),
-          ])
-        ]),
+            const SizedBox(height: 30),
+            const Text(
+              'Import the contents of the incoming link?',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 30),
+            Row(
+              children: [
+                const Spacer(flex: 2),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _incomingLink = null;
+                      _importLink(link);
+                    });
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(5),
+                    child: Text('Import', style: TextStyle(fontSize: 20)),
+                  ),
+                ),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _incomingLink = null;
+                    });
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(5),
+                    child: Text('Discard Link', style: TextStyle(fontSize: 20)),
+                  ),
+                ),
+                const Spacer(flex: 2),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1013,26 +1034,35 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     }
     return Container(
       color: Colors.white,
-      child: Column(children: [
-        const Text(' ',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-        const Text('Error',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 30),
-        Text(exs,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 30),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _pendingError = null;
-            });
-          },
-          child: const Padding(
+      child: Column(
+        children: [
+          const Text(
+            ' ',
+            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            'Error',
+            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 30),
+          Text(
+            exs,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _pendingError = null;
+              });
+            },
+            child: const Padding(
               padding: EdgeInsets.all(5),
-              child: Text('CONTINUE', style: TextStyle(fontSize: 20))),
-        ),
-      ]),
+              child: Text('CONTINUE', style: TextStyle(fontSize: 20)),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1056,10 +1086,14 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     final appLinks = AppLinks();
     try {
       icon = await ScalableImage.fromSIAsset(
-          rootBundle, 'packages/jrpn/assets/jupiter.si');
+        rootBundle,
+        'packages/jrpn/assets/jupiter.si',
+      );
       Jrpn._tryzub ??= await ScalableImage.fromSIAsset(
-          rootBundle, 'packages/jrpn/assets/Тризуб.si',
-          currentColor: MainScreen.keyFrameSilver);
+        rootBundle,
+        'packages/jrpn/assets/Тризуб.si',
+        currentColor: MainScreen.keyFrameSilver,
+      );
       String? link;
       bool done = false;
       try {
@@ -1084,7 +1118,8 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
         }
       }
       controller.screenConfig = await ScreenConfiguration.fromPersistentStorage(
-          'jrpn${widget.model.modelName}.config');
+        'jrpn${widget.model.modelName}.config',
+      );
     } finally {
       setState(() {
         _initDone = true;
@@ -1104,13 +1139,16 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     }
     if (!_disposed && (!kIsWeb && (Platform.isAndroid || Platform.isIOS))) {
       try {
-        _linksSubscription = appLinks.stringLinkStream.listen((String? link) {
-          setState(() {
-            _incomingLink = link;
-          });
-        }, onError: (Object err) {
-          debugPrint('Error from linkStream:  $err');
-        });
+        _linksSubscription = appLinks.stringLinkStream.listen(
+          (String? link) {
+            setState(() {
+              _incomingLink = link;
+            });
+          },
+          onError: (Object err) {
+            debugPrint('Error from linkStream:  $err');
+          },
+        );
       } catch (e) {
         debugPrint('uni_links ignoring stream subscription error');
       }
@@ -1121,12 +1159,15 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
     if (Jrpn.lastContext.mounted) {
       if (canLaunchWindow) {
         unawaited(
-            InternalStateWindow.launch(Jrpn.lastContext, controller.model));
+          InternalStateWindow.launch(Jrpn.lastContext, controller.model),
+        );
       } else {
         Navigator.push(
-            Jrpn.lastContext,
-            MaterialPageRoute<void>(
-                builder: (context) => InternalStatePanel(controller.model)));
+          Jrpn.lastContext,
+          MaterialPageRoute<void>(
+            builder: (context) => InternalStatePanel(controller.model),
+          ),
+        );
       }
     }
   }
@@ -1134,9 +1175,11 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   void showBackPanel() {
     if (Jrpn.lastContext.mounted) {
       Navigator.push(
-          Jrpn.lastContext,
-          MaterialPageRoute<void>(
-              builder: (context) => controller.getBackPanel()));
+        Jrpn.lastContext,
+        MaterialPageRoute<void>(
+          builder: (context) => controller.getBackPanel(),
+        ),
+      );
     }
   }
 }
@@ -1163,11 +1206,18 @@ class ScreenConfiguration {
   final Map<String, String>? acceleratorTranslation;
   final Map<String, String>? acceleratorLabels;
 
-  ScreenConfiguration._p(this._storage, this._configKey, this.portrait,
-      this.landscape, this.acceleratorTranslation, this.acceleratorLabels);
+  ScreenConfiguration._p(
+    this._storage,
+    this._configKey,
+    this.portrait,
+    this.landscape,
+    this.acceleratorTranslation,
+    this.acceleratorLabels,
+  );
 
   static Future<ScreenConfiguration> fromPersistentStorage(
-      String configKey) async {
+    String configKey,
+  ) async {
     final storage = await SharedPreferences.getInstance();
     try {
       String json = storage.getString(configKey) ?? '{}';
@@ -1186,7 +1236,10 @@ class ScreenConfiguration {
       _fromString(_storage, _configKey, json);
 
   static ScreenConfiguration _fromString(
-      SharedPreferences storage, String configKey, String jsonString) {
+    SharedPreferences storage,
+    String configKey,
+    String jsonString,
+  ) {
     LayoutConfiguration? parseButtons(Map<String, dynamic>? json) {
       if (json == null) {
         return null;
@@ -1197,7 +1250,9 @@ class ScreenConfiguration {
         size = null;
       } else {
         size = ScreenPositioner(
-            (sizeL[0] as num).toDouble(), (sizeL[1] as num).toDouble());
+          (sizeL[0] as num).toDouble(),
+          (sizeL[1] as num).toDouble(),
+        );
       }
       final List<List<String?>> buttons = [];
       for (final row in json['buttons'] as List<dynamic>) {
@@ -1234,13 +1289,22 @@ class ScreenConfiguration {
           l as List<dynamic>;
           double d(int i) => (l[i] as num).toDouble();
           bool big = l.length > 5 && l[5] == 'big';
-          r.add(UpperGoldLabel(
-              l[0] as String, Rect.fromLTWH(d(1), d(2), d(3), d(4)), big));
+          r.add(
+            UpperGoldLabel(
+              l[0] as String,
+              Rect.fromLTWH(d(1), d(2), d(3), d(4)),
+              big,
+            ),
+          );
         }
         labelsResult = List<UpperGoldLabel>.unmodifiable(r);
       }
-      return LayoutConfiguration(size,
-          List<List<String?>>.unmodifiable(buttons), logoPos, labelsResult);
+      return LayoutConfiguration(
+        size,
+        List<List<String?>>.unmodifiable(buttons),
+        logoPos,
+        labelsResult,
+      );
     }
 
     Map<String, String>? parseAccelerators(Map<String, dynamic>? json) {
@@ -1253,13 +1317,15 @@ class ScreenConfiguration {
     Map<String, dynamic>? jsonMap =
         json.decode(jsonString) as Map<String, dynamic>?;
     return ScreenConfiguration._p(
-        storage,
-        configKey,
-        parseButtons(jsonMap?['portrait'] as Map<String, dynamic>?),
-        parseButtons(jsonMap?['landscape'] as Map<String, dynamic>?),
-        parseAccelerators(jsonMap?['accelerators'] as Map<String, dynamic>?),
-        parseAccelerators(
-            jsonMap?['accelerator_labels'] as Map<String, dynamic>?));
+      storage,
+      configKey,
+      parseButtons(jsonMap?['portrait'] as Map<String, dynamic>?),
+      parseButtons(jsonMap?['landscape'] as Map<String, dynamic>?),
+      parseAccelerators(jsonMap?['accelerators'] as Map<String, dynamic>?),
+      parseAccelerators(
+        jsonMap?['accelerator_labels'] as Map<String, dynamic>?,
+      ),
+    );
   }
 
   Map<String, Object> toJson() {
@@ -1294,7 +1360,11 @@ class LayoutConfiguration {
   final ScreenPositioner? screenSize;
 
   LayoutConfiguration(
-      this.screenSize, this.buttonAccelerator, this.logoPos, this.labels);
+    this.screenSize,
+    this.buttonAccelerator,
+    this.logoPos,
+    this.labels,
+  );
 
   int get buttonRows => buttonAccelerator.length;
   int get buttonCols => buttonAccelerator[0].length;
@@ -1314,7 +1384,8 @@ class LayoutConfiguration {
     if (ll != null) {
       result['top_labels'] = ll
           .map(
-              (l) => [l.text, l.pos.left, l.pos.top, l.pos.width, l.pos.height])
+            (l) => [l.text, l.pos.left, l.pos.top, l.pos.width, l.pos.height],
+          )
           .toList(growable: false);
     }
     return result;

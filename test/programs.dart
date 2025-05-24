@@ -62,8 +62,9 @@ class TestCalculator implements ProgramListener {
   Completer<void>? _resume;
 
   TestCalculator({bool for15C = false})
-      : controller =
-            for15C ? Controller15(createModel15()) : Controller16(Model16()) {
+    : controller = for15C
+          ? Controller15(createModel15())
+          : Controller16(Model16()) {
     model.settings.msPerInstruction = 0;
     model.program.programListener = this;
   }
@@ -78,8 +79,10 @@ class TestCalculator implements ProgramListener {
   }
 
   void loadStateFromString(final String state) {
-    model.decodeJson(json.decoder.convert(state) as Map<String, dynamic>,
-        needsSave: false);
+    model.decodeJson(
+      json.decoder.convert(state) as Map<String, dynamic>,
+      needsSave: false,
+    );
     model.settings.msPerInstruction = 0;
   }
 
@@ -153,7 +156,7 @@ void appendixA() {
     '3f800001',
     '7f800000',
     '1',
-    '40490fdb'
+    '40490fdb',
   ];
   final Map<int, String> canonicalIeee = {0: '0'};
   final List<double> floatFormat = [
@@ -164,7 +167,7 @@ void appendixA() {
     1.000000119,
     8e72,
     1.401298464e-45,
-    3.141592654
+    3.141592654,
   ];
   assert(ieeeFormat.length == floatFormat.length);
   for (int i = 0; i < ieeeFormat.length; i++) {

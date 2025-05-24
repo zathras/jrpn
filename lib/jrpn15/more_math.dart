@@ -40,7 +40,7 @@ double laGamma(double x) {
     12.507343278686905,
     -0.13857109526572012,
     9.9843695780195716e-6,
-    1.5056327351493116e-7
+    1.5056327351493116e-7,
   ];
   int g = 7;
   if (x < 0.5) {
@@ -126,8 +126,11 @@ Value binomialCoefficient(Value nv, Value kv) {
       // Enough to overflow the 15C
       throw FloatOverflow(Value.fMaxValue);
     }
-    return permutations(n.toValue(), k.toValue(),
-        initial: one / factorialOfInt(k));
+    return permutations(
+      n.toValue(),
+      k.toValue(),
+      initial: one / factorialOfInt(k),
+    );
   }
   final int ki = k.asInt;
   final int ni = n.asInt;
@@ -150,8 +153,9 @@ void convertHMStoH(Model m) {
   final hrFP = DecimalFP12(hr.intOp());
   final minFP = DecimalFP12(min.intOp());
   final secFP = DecimalFP12(sec);
-  m.resultX =
-      m.checkOverflow(() => (hrFP + (minFP + secFP / n60) / n60).toValue());
+  m.resultX = m.checkOverflow(
+    () => (hrFP + (minFP + secFP / n60) / n60).toValue(),
+  );
 }
 
 void convertHtoHMS(Model m) {
@@ -205,8 +209,9 @@ void convertHtoHMS(Model m) {
   Value sec = (DecimalFP12(minV.fracOp()) * sixty).toValue();
   final n100 = DecimalFP12(Value.fromDouble(100));
   if (digitsLeft == 1) {
-    final tensSec =
-        DecimalFP12(round(sec.timesTenTo(-1), 0)); // tens of seconds
+    final tensSec = DecimalFP12(
+      round(sec.timesTenTo(-1), 0),
+    ); // tens of seconds
     if (tensSec.abs() >= DecimalFP12(Value.fromDouble(6))) {
       // I believe this branch is impossible, too.
       final n005 = DecimalFP12(Value.fromDouble(0.005));
@@ -248,7 +253,13 @@ class LinearRegression {
   final DecimalFP22 sumX;
 
   LinearRegression._internal(
-      this.num, this.m, this.n, this.p, this.sumY, this.sumX);
+    this.num,
+    this.m,
+    this.n,
+    this.p,
+    this.sumY,
+    this.sumX,
+  );
 
   factory LinearRegression(Registers regs) {
     regs[7]; // Throw exception if invalid

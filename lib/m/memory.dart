@@ -62,8 +62,8 @@ abstract class Memory<OT extends ProgramOperation> {
   MemoryPolicy get policy;
 
   Memory({required int memoryNybbles})
-      : _storage = ByteData(memoryNybbles),
-        minimumMemoryNybbles = memoryNybbles;
+    : _storage = ByteData(memoryNybbles),
+      minimumMemoryNybbles = memoryNybbles;
 
   ///
   /// Total number of nybbles of storage, not including rI.  The index
@@ -95,7 +95,9 @@ abstract class Memory<OT extends ProgramOperation> {
   ///
   String? changeMemorySize(int newSize) {
     newSize = min(
-        max(minimumMemoryNybbles, newSize), minimumMemoryNybbles + 1024 * 1024);
+      max(minimumMemoryNybbles, newSize),
+      minimumMemoryNybbles + 1024 * 1024,
+    );
     // Max of 1 mega-nybble extra memory.  This is big enough to be effectively
     // infinite, and small enough to be trivially small on modern hardware.
 
@@ -141,7 +143,7 @@ abstract class Memory<OT extends ProgramOperation> {
     final r = <String, Object>{
       'storage': st.toString(),
       'program': program.toJson(),
-      'I': registers._indexValue.toJson()
+      'I': registers._indexValue.toJson(),
     };
     return r;
   }
@@ -154,8 +156,10 @@ abstract class Memory<OT extends ProgramOperation> {
     }
     // Must come after storage.  cf. ProgramMemory.decodeJson().
     program.decodeJson(json['program'] as Map<String, dynamic>);
-    registers._indexValue =
-        Value.fromJson(json['I'] as String, maxInternal: Registers._maxI);
+    registers._indexValue = Value.fromJson(
+      json['I'] as String,
+      maxInternal: Registers._maxI,
+    );
   }
 }
 
@@ -379,11 +383,14 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   ProgramListener programListener = ProgramListener();
 
   ProgramMemory(
-      this.memory, OperationMap<OT> layout, int returnStackSize, this._rtn)
-      : _returnStack = List.filled(returnStackSize, 0),
-        _operationTable = layout._operationTable,
-        _argValues = layout._argValues,
-        _extendedOpcode = layout._extendedOpcode;
+    this.memory,
+    OperationMap<OT> layout,
+    int returnStackSize,
+    this._rtn,
+  ) : _returnStack = List.filled(returnStackSize, 0),
+      _operationTable = layout._operationTable,
+      _argValues = layout._argValues,
+      _extendedOpcode = layout._extendedOpcode;
 
   /// 7-byte chunks occupied
   int get _chunksOccupied => (_lines + _extendedLines + 6) ~/ 7;
@@ -550,11 +557,11 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   }
 
   Map<String, dynamic> toJson() => <String, Object>{
-        'lines': _lines,
-        'currentLine': _currentLine,
-        'returnStack': _returnStack,
-        'returnStackPos': _returnStackPos
-      };
+    'lines': _lines,
+    'currentLine': _currentLine,
+    'returnStack': _returnStack,
+    'returnStackPos': _returnStackPos,
+  };
 
   /// Must be called after the register storage has been read in, so any
   /// stray data will be properly zeroed out.
@@ -604,8 +611,10 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       String line = i.toString().padLeft(3, '0');
       final ProgramInstruction<OT> pi = this[i];
       final String pd = this[i].programDisplay;
-      String semiHuman =
-          pd.substring(1).replaceAll(',', ' ').replaceAll('  .', ' .');
+      String semiHuman = pd
+          .substring(1)
+          .replaceAll(',', ' ')
+          .replaceAll('  .', ' .');
       if (pd.startsWith('u')) {
         semiHuman = '$semiHuman u';
       }
@@ -784,7 +793,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     {
       final allInstructions = getAllInstructions();
       pdToInstruction = <String, ProgramInstruction<OT>>{
-        for (final v in allInstructions) _canonicalizePD(v.programDisplay): v
+        for (final v in allInstructions) _canonicalizePD(v.programDisplay): v,
       };
       assert(allInstructions.length == pdToInstruction.length);
     }
@@ -807,35 +816,43 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
       }
       rest = rest.substring(pos).trim();
       if (rest.substring(0, 1) != '{') {
-        throw Exception('Error at line $lineNumber: '
-            'Line doesn\'t have " {" after number: $line');
+        throw Exception(
+          'Error at line $lineNumber: '
+          'Line doesn\'t have " {" after number: $line',
+        );
       }
       rest = rest.substring(1);
       pos = rest.indexOf('}');
       if (pos == -1) {
         throw Exception(
-            'Syntax error at line $lineNumber: "}" not found: $line');
+          'Syntax error at line $lineNumber: "}" not found: $line',
+        );
       }
       rest = _canonicalizePD(rest.substring(0, pos));
       if (rest.isEmpty) {
         if (program.isNotEmpty || instructionNumber != 0) {
           throw Exception(
-              'Unexpected empty instruction at line $lineNumber: $line');
+            'Unexpected empty instruction at line $lineNumber: $line',
+          );
         }
       } else if (instructionNumber != program.length + 1) {
         throw Exception(
-            'Unexpected instruction number at line $lineNumber: $line');
+          'Unexpected instruction number at line $lineNumber: $line',
+        );
       } else {
         final instr = pdToInstruction[rest];
         if (instr == null) {
           throw Exception(
-              'Instruction "$rest" not found at line $lineNumber: $line');
+            'Instruction "$rest" not found at line $lineNumber: $line',
+          );
         }
         program.add(instr);
       }
     }
-    final int len =
-        program.fold(0, (n, instr) => n + (instr.isExtended ? 2 : 1));
+    final int len = program.fold(
+      0,
+      (n, instr) => n + (instr.isExtended ? 2 : 1),
+    );
     if (len > memory.policy.maxProgramBytes) {
       throw Exception('Insufficient space for $len byte program');
     }
@@ -920,8 +937,12 @@ class MKey<OT extends ProgramOperation> {
 
   final List<MKeyExtensionOp<OT>> extensionOps;
 
-  const MKey(this.unshifted, this.fShifted, this.gShifted,
-      {this.extensionOps = const []});
+  const MKey(
+    this.unshifted,
+    this.fShifted,
+    this.gShifted, {
+    this.extensionOps = const [],
+  });
 }
 
 @immutable
@@ -994,20 +1015,31 @@ class OperationMap<OT extends ProgramOperation> {
   // Opcodes >= _extendedOpcode are extended.
 
   OperationMap._internal(
-      this.registerBase, this.keys, this.numbers, this.special, this.shortcuts);
+    this.registerBase,
+    this.keys,
+    this.numbers,
+    this.special,
+    this.shortcuts,
+  );
 
   static OperationMap? _instance;
 
-  factory OperationMap(
-      {required int registerBase,
-      required List<List<MKey<OT>?>> keys,
-      required List<OT> numbers,
-      required List<OT> special,
-      required Map<OT, ArgDone> shortcuts}) {
+  factory OperationMap({
+    required int registerBase,
+    required List<List<MKey<OT>?>> keys,
+    required List<OT> numbers,
+    required List<OT> special,
+    required Map<OT, ArgDone> shortcuts,
+  }) {
     final instance = _instance;
     if (instance == null) {
       final i = _instance = OperationMap<OT>._internal(
-          registerBase, keys, numbers, special, shortcuts);
+        registerBase,
+        keys,
+        numbers,
+        special,
+        shortcuts,
+      );
       i._initialize();
       return i;
     } else {
@@ -1063,16 +1095,25 @@ class OperationMap<OT extends ProgramOperation> {
       final ok = visited.add(o);
       assert(ok);
       o.debugLogId = nextInvalidOpcode;
-      o.arg.init(registerBase,
-          shift: null, arg: null, argDot: false, userMode: false, f: (ArgDone r,
-              {required ProgramOperation? arg,
+      o.arg.init(
+        registerBase,
+        shift: null,
+        arg: null,
+        argDot: false,
+        userMode: false,
+        f:
+            (
+              ArgDone r, {
+              required ProgramOperation? arg,
               required ProgramOperation? shift,
               required bool argDot,
-              required bool userMode}) {
-        r.opcode = nextInvalidOpcode--;
-        r.programDisplay = 'unreachable';
-        r.programListing = 'unreachable';
-      });
+              required bool userMode,
+            }) {
+              r.opcode = nextInvalidOpcode--;
+              r.programDisplay = 'unreachable';
+              r.programListing = 'unreachable';
+            },
+      );
     }
     for (int row = 0; row < keys.length; row++) {
       final keyRow = keys[row];
@@ -1109,8 +1150,10 @@ class OperationMap<OT extends ProgramOperation> {
     // The HP 15C has 452 extended op codes.  Wow!
     final int pages = (_nextExtendedOpcode + 0xff) >> 8;
     _extendedOpcode = 0x100 - pages;
-    assert(_extendedOpcode >= 0 && _nextOpcode <= _extendedOpcode,
-        'one byte opcodes:  $_nextOpcode, extended opcode: $_extendedOpcode');
+    assert(
+      _extendedOpcode >= 0 && _nextOpcode <= _extendedOpcode,
+      'one byte opcodes:  $_nextOpcode, extended opcode: $_extendedOpcode',
+    );
     final len = (_nextExtendedOpcode == 0)
         ? _nextOpcode
         : (_nextExtendedOpcode + 0x100);
@@ -1118,85 +1161,94 @@ class OperationMap<OT extends ProgramOperation> {
     _argValues = List.unmodifiable(_argValues.getRange(0, len));
   }
 
-  void _initializeOperation(OT op, ProgramOperation? shiftIn,
-      [ProgramOperation? secondShift]) {
+  void _initializeOperation(
+    OT op,
+    ProgramOperation? shiftIn, [
+    ProgramOperation? secondShift,
+  ]) {
     int remaining = op.maxOneByteOpcodes;
     op.debugLogId = remaining == 0 ? _nextExtendedOpcode : _nextOpcode;
-    op.arg.init(registerBase,
-        shift: shiftIn,
-        arg: null,
-        argDot: false,
-        userMode: false, f: (ArgDone r,
-            {required bool argDot,
+    op.arg.init(
+      registerBase,
+      shift: shiftIn,
+      arg: null,
+      argDot: false,
+      userMode: false,
+      f:
+          (
+            ArgDone r, {
+            required bool argDot,
             required ProgramOperation? shift,
             required ProgramOperation? arg,
-            required bool userMode}) {
-      if (remaining-- > 0) {
-        r.opcode = _nextOpcode++;
-      } else {
-        r.opcode = 0x100 + _nextExtendedOpcode++;
-      }
-      _operationTable[r.opcode] = op;
-      _argValues[r.opcode] = r;
-      final String dash = userMode ? 'u' : '-';
-      final String pd, pl;
-      if (secondShift != null) {
-        assert(shift != null);
-        assert(arg == null);
-        pd = '${shift!.rcName},${secondShift.rcName},${op.rcName}';
-        pl = op.name;
-      } else if (shift == null && arg == null) {
-        assert(!argDot);
-        pd = '    ${op.rcName}';
-        pl = op.name;
-      } else if (arg == null) {
-        assert(!argDot);
-        pd = ' ${shift!.rcName} ${op.rcName}';
-        pl = op.name;
-      } else {
-        // arg != null
-        final String as, las;
-        if (argDot) {
-          as = ' .${arg.rcName.trim()}';
-          assert(as.length == 3);
-          las = ' 1${arg.rcName.trim()}';
-        } else {
-          as = arg.rcName;
-          assert(as.length == 2, '$op:  $arg $as');
-          if (arg == Arg.kI || arg == Arg.kParenI) {
-            las = ' ${arg.name}';
-          } else if (arg == Arg.kDot) {
-            las = ' .'; // "FLOAT  ." is nicer than "FLOAT 48".
-          } else {
-            las = ' ${(arg.programListingArgName ?? as.trim())}';
-          }
-        }
-        if (shift == null) {
-          final argShift = arg.argShift;
-          if (argShift == null) {
-            pd = ' ${op.rcName} $as';
-          } else {
-            pd = '${op.rcName},${argShift.rcName},$as';
-          }
-          pl = '${op.name}$las';
-        } else if (shift.isShift) {
-          pd = '${shift.rcName},${op.rcName},$as';
-          pl = '${op.name}$las';
-        } else {
-          // Shift is an operation, like + in like "STO + 0"
-          pd = '${op.rcName},${shift.rcName},$as';
-          pl = '${op.name} ${shift.name}$las';
-        }
-      }
-      r.programDisplay = '$dash$pd';
-      final userName = userMode ? 'u ' : '';
-      if (shiftIn == null) {
-        r.programListing = '$userName$pl';
-      } else {
-        r.programListing = '$userName${shiftIn.name} $pl';
-      }
-      assert(r.programDisplay.length < 20, '$op');
-    });
+            required bool userMode,
+          }) {
+            if (remaining-- > 0) {
+              r.opcode = _nextOpcode++;
+            } else {
+              r.opcode = 0x100 + _nextExtendedOpcode++;
+            }
+            _operationTable[r.opcode] = op;
+            _argValues[r.opcode] = r;
+            final String dash = userMode ? 'u' : '-';
+            final String pd, pl;
+            if (secondShift != null) {
+              assert(shift != null);
+              assert(arg == null);
+              pd = '${shift!.rcName},${secondShift.rcName},${op.rcName}';
+              pl = op.name;
+            } else if (shift == null && arg == null) {
+              assert(!argDot);
+              pd = '    ${op.rcName}';
+              pl = op.name;
+            } else if (arg == null) {
+              assert(!argDot);
+              pd = ' ${shift!.rcName} ${op.rcName}';
+              pl = op.name;
+            } else {
+              // arg != null
+              final String as, las;
+              if (argDot) {
+                as = ' .${arg.rcName.trim()}';
+                assert(as.length == 3);
+                las = ' 1${arg.rcName.trim()}';
+              } else {
+                as = arg.rcName;
+                assert(as.length == 2, '$op:  $arg $as');
+                if (arg == Arg.kI || arg == Arg.kParenI) {
+                  las = ' ${arg.name}';
+                } else if (arg == Arg.kDot) {
+                  las = ' .'; // "FLOAT  ." is nicer than "FLOAT 48".
+                } else {
+                  las = ' ${(arg.programListingArgName ?? as.trim())}';
+                }
+              }
+              if (shift == null) {
+                final argShift = arg.argShift;
+                if (argShift == null) {
+                  pd = ' ${op.rcName} $as';
+                } else {
+                  pd = '${op.rcName},${argShift.rcName},$as';
+                }
+                pl = '${op.name}$las';
+              } else if (shift.isShift) {
+                pd = '${shift.rcName},${op.rcName},$as';
+                pl = '${op.name}$las';
+              } else {
+                // Shift is an operation, like + in like "STO + 0"
+                pd = '${op.rcName},${shift.rcName},$as';
+                pl = '${op.name} ${shift.name}$las';
+              }
+            }
+            r.programDisplay = '$dash$pd';
+            final userName = userMode ? 'u ' : '';
+            if (shiftIn == null) {
+              r.programListing = '$userName$pl';
+            } else {
+              r.programListing = '$userName${shiftIn.name} $pl';
+            }
+            assert(r.programDisplay.length < 20, '$op');
+          },
+    );
   }
 }
 

@@ -350,8 +350,14 @@ class IntegrateProgramRunner extends NontrivialProgramRunner {
   /// change was to give a result that's closer to what's in the Advanced
   /// Functions Handbook.  The test in question is "...Pages 051-055.15c".
   ///
-  Future<bool> qromo(double span, double a, double b, double signResult,
-      Value originalX, Value originalY) async {
+  Future<bool> qromo(
+    double span,
+    double a,
+    double b,
+    double signResult,
+    Value originalX,
+    Value originalY,
+  ) async {
     final DisplayMode precision = model.displayMode;
     // The number of digits being displayed determines how precisely we
     // estimate the integral.

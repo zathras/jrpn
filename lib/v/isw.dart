@@ -66,7 +66,10 @@ class InternalStateWindow extends StatelessWidget {
           }
 
           await DesktopMultiWindow.invokeMethod(
-              window.windowId, 'frob', model.makeSnapshotText());
+            window.windowId,
+            'frob',
+            model.makeSnapshotText(),
+          );
           hasLaunched = true;
         } catch (ex) {
           if (hasLaunched) {
@@ -114,9 +117,10 @@ class InternalStateWindow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'JRPN Internal State',
-        theme: ThemeData(),
-        home: _TextViewer(state));
+      title: 'JRPN Internal State',
+      theme: ThemeData(),
+      home: _TextViewer(state),
+    );
   }
 }
 
@@ -132,17 +136,24 @@ class InternalStatePanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () => Navigator.pop(context),
-        child: Stack(children: [
+      onTap: () => Navigator.pop(context),
+      child: Stack(
+        children: [
           Container(
-              color: Colors.black,
-              child: _TextViewer(model.internalSnapshot.listeners,
-                  directModel: model)),
+            color: Colors.black,
+            child: _TextViewer(
+              model.internalSnapshot.listeners,
+              directModel: model,
+            ),
+          ),
           const Positioned(
-              top: 16,
-              right: 16,
-              child: Icon(Icons.arrow_back, color: Colors.white))
-        ]));
+            top: 16,
+            right: 16,
+            child: Icon(Icons.arrow_back, color: Colors.white),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -178,31 +189,34 @@ class _TextViewerState extends State<_TextViewer> {
 
   @override
   Widget build(BuildContext context) {
-    String text = widget.directModel?.makeSnapshotText() ??
+    String text =
+        widget.directModel?.makeSnapshotText() ??
         (widget.snapshot.value as String);
     // If we're on desktop, directModel is null, and snapshot is an
     // Observable<String>.  If we're not, directModel is null and
     // snapshot is Observable<void>.
     return Container(
-        padding: const EdgeInsets.fromLTRB(10, 25, 10, 10),
-        color: Colors.black,
-        child: InteractiveViewer(
-            constrained: false,
-            minScale: 0.25,
-            maxScale: 10,
-            boundaryMargin: const EdgeInsets.all(double.infinity),
-            child: Text(
-              _linuxBug ? _linuxBugText + text : text,
-              softWrap: false,
-              overflow: TextOverflow.visible,
-              style: const TextStyle(
-                fontSize: 16.0,
-                fontFamily: 'Courier',
-                fontFamilyFallback: ['LiberationMono'],
-                color: Colors.amberAccent,
-                backgroundColor: Colors.black,
-                decoration: TextDecoration.none,
-              ),
-            )));
+      padding: const EdgeInsets.fromLTRB(10, 25, 10, 10),
+      color: Colors.black,
+      child: InteractiveViewer(
+        constrained: false,
+        minScale: 0.25,
+        maxScale: 10,
+        boundaryMargin: const EdgeInsets.all(double.infinity),
+        child: Text(
+          _linuxBug ? _linuxBugText + text : text,
+          softWrap: false,
+          overflow: TextOverflow.visible,
+          style: const TextStyle(
+            fontSize: 16.0,
+            fontFamily: 'Courier',
+            fontFamilyFallback: ['LiberationMono'],
+            color: Colors.amberAccent,
+            backgroundColor: Colors.black,
+            decoration: TextDecoration.none,
+          ),
+        ),
+      ),
+    );
   }
 }

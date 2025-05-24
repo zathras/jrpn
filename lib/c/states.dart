@@ -392,8 +392,9 @@ class Resting extends ActiveState {
     if (spr == null) {
       changeState(Running(rc, GosubProgramRunner()));
     } else {
-      final running =
-          spr.restart(RunningController(controller as RealController));
+      final running = spr.restart(
+        RunningController(controller as RealController),
+      );
       changeState(Resumed(running, rc));
     }
   }
@@ -430,7 +431,12 @@ class Resting extends ActiveState {
     }
     program.displayCurrent();
     final s = RunProgramArgInputState(
-        gsb, gsb.arg, controller, this, () => GosubProgramRunner());
+      gsb,
+      gsb.arg,
+      controller,
+      this,
+      () => GosubProgramRunner(),
+    );
     s.isDone = true;
     // Since we're telling the state it's done, it won't try to do the gosub.
     // It will just wait for button up, then switch to gosubDoneState, which
@@ -484,7 +490,11 @@ class DigitEntry extends ActiveState {
     final int? e = _exponent;
     if (e == null) {
       _tryNewValue(
-          _entered + num.toRadixString(16), _sign, e, _negativeExponent);
+        _entered + num.toRadixString(16),
+        _sign,
+        e,
+        _negativeExponent,
+      );
     } else if (num < 10) {
       if (_negativeExponent) {
         _tryNewValue(_entered, _sign, -(((-e) * 10 + num) % 100), true);
@@ -529,8 +539,10 @@ class DigitEntry extends ActiveState {
           // bit flow into the sign bit, so this is definitely overflow
           return false;
         }
-        Value? big = model.displayMode
-            .tryParse(sign + ent, model.memory.registers.helper68);
+        Value? big = model.displayMode.tryParse(
+          sign + ent,
+          model.memory.registers.helper68,
+        );
         if (big == null || (big.internal != (big.internal & model.wordMask))) {
           // Overflow.  See https://github.com/zathras/jrpn/issues/53.
           return false;
@@ -586,9 +598,12 @@ class DigitEntry extends ActiveState {
       if (model.displayLeadingZeros && dm != DisplayMode.decimal) {
         d = d.padLeft(intDigits, '0');
       }
-      model.display.current = sign +
+      model.display.current =
+          sign +
           dm.addCommas(
-              d.replaceAll(',', ''), model.settings.integerModeCommas) +
+            d.replaceAll(',', ''),
+            model.settings.integerModeCommas,
+          ) +
           dm.displayName;
     } else {
       assert(model.displayMode.isFloatMode);
@@ -627,7 +642,8 @@ class DigitEntry extends ActiveState {
       }
       // Note that LcdDisplay dictates that 'e' is
       // part of a hex number, whereas E is for an exponent.
-      model.display.current = sign +
+      model.display.current =
+          sign +
           model.displayMode.addCommas(show, model.settings.integerModeCommas) +
           pad +
           exs;
@@ -669,8 +685,12 @@ class DigitEntry extends ActiveState {
       if (_sign == '-') {
         _tryNewValue(_entered, '', ex, _negativeExponent);
       } else {
-        _tryNewValue(_entered.substring(0, _entered.length - 1), _sign, ex,
-            _negativeExponent);
+        _tryNewValue(
+          _entered.substring(0, _entered.length - 1),
+          _sign,
+          ex,
+          _negativeExponent,
+        );
       }
     } else {
       changeState(Resting(controller)).handleBackspace();
@@ -816,7 +836,7 @@ class ArgInputState extends ControllerState {
   final LimitedState lastState;
 
   ArgInputState(this.op, this._arg, Controller con, this.lastState)
-      : super(con);
+    : super(con);
 
   // GTO and GSB take index registers, but not .
 
@@ -852,7 +872,12 @@ class ArgInputState extends ControllerState {
 class RunProgramArgInputState extends ArgInputState {
   final ProgramRunner Function() runner;
   RunProgramArgInputState(
-      super.op, super.arg, super.con, super.lastState, this.runner);
+    super.op,
+    super.arg,
+    super.con,
+    super.lastState,
+    this.runner,
+  );
 
   bool isDone = false;
 
@@ -1084,9 +1109,14 @@ class WaitingForGotoDot extends ControllerState {
     if (key == controller.gotoLineNumberKey) {
       changeState(WaitingForGotoDotLines(controller, last));
     } else {
-      changeState(ArgInputState(controller.gtoOperation,
-              controller.gtoOperation.arg, controller, last))
-          .buttonDown(key);
+      changeState(
+        ArgInputState(
+          controller.gtoOperation,
+          controller.gtoOperation.arg,
+          controller,
+          last,
+        ),
+      ).buttonDown(key);
       // Not controller.runWithArg().  We need to invoke buttonDown, which can't
       // be done with a RunningController.  In the RunningController case, we
       // never go into the WaitingForGotoDot state -- see assert in
@@ -1133,12 +1163,13 @@ class ShowState extends ControllerState {
   final bool fromProgramEntry;
   final int? window;
 
-  ShowState(this._last,
-      {this.disableWindow = false,
-      this.delayed = true,
-      this.fromProgramEntry = false,
-      this.window})
-      : super(_last.controller);
+  ShowState(
+    this._last, {
+    this.disableWindow = false,
+    this.delayed = true,
+    this.fromProgramEntry = false,
+    this.window,
+  }) : super(_last.controller);
 
   @override
   void buttonUp(Operation key) {
@@ -1146,7 +1177,10 @@ class ShowState extends ControllerState {
       model.memory.program.displayCurrent(delayed: delayed);
     } else {
       model.display.displayX(
-          delayed: delayed, disableWindow: disableWindow, setWindow: window);
+        delayed: delayed,
+        disableWindow: disableWindow,
+        setWindow: window,
+      );
     }
     changeState(_last);
   }
@@ -1195,8 +1229,9 @@ class OnOffKeyPressed extends DoNothing {
             // whatever.)  On web, it does a back, which is a NOP if we're
             // the first page.  So, on platforms were we can't go away, we blank
             // the LCD display and wait for the ON button to be pressed.
-            model.display
-                .show(LcdContents.blank(lcdDigits: model.display.lcdDigits));
+            model.display.show(
+              LcdContents.blank(lcdDigits: model.display.lcdDigits),
+            );
             changeState(CalculatorOff(controller));
             await SystemNavigator.pop();
           }
@@ -1266,9 +1301,9 @@ class Running extends ControllerState {
   DateTime _lastDelay = DateTime.now();
 
   Running(RealController c, this._runner)
-      : _fake = RunningController(c),
-        _stopNext = false,
-        super(c) {
+    : _fake = RunningController(c),
+      _stopNext = false,
+      super(c) {
     final p = c.model.program;
     assert(p.returnStackPos <= 0);
     p.suspendedProgram?.abort();
@@ -1276,8 +1311,8 @@ class Running extends ControllerState {
   }
 
   Running.singleStep(this._fake, this._runner, this._singleStepOnDone)
-      : _stopNext = true,
-        super(_fake.real) {
+    : _stopNext = true,
+      super(_fake.real) {
     assert(_fake.real.suspendedProgramRunner == null);
     _stopNext = true;
   }
@@ -1305,12 +1340,12 @@ class Running extends ControllerState {
   /// we don't get a very short flash of "running" when msPerInstruction
   /// is set to 0.
   Timer _showRunning() => Timer(const Duration(milliseconds: 20), () {
-        assert(model.displayDisabled);
-        model.displayDisabled = false;
-        model.display.current = '  RuNNING';
-        model.display.update(blink: BlinkMode.justDigits);
-        model.displayDisabled = true;
-      });
+    assert(model.displayDisabled);
+    model.displayDisabled = false;
+    model.display.current = '  RuNNING';
+    model.display.update(blink: BlinkMode.justDigits);
+    model.displayDisabled = true;
+  });
 
   Future<void> _run() async {
     final program = model.memory.program;
@@ -1419,9 +1454,10 @@ class Running extends ControllerState {
         }
       }
       if (model.hasInternalSnapshot) {
-        model.internalSnapshot.program
-            .add('   ${line.toString().padLeft(3, '0')} '
-                '${instr.programListing.padRight(14)}');
+        model.internalSnapshot.program.add(
+          '   ${line.toString().padLeft(3, '0')} '
+          '${instr.programListing.padRight(14)}',
+        );
       }
       if (settings.traceProgramToStdout) {
         final out = StringBuffer();
@@ -1486,8 +1522,10 @@ class Running extends ControllerState {
       }
       if (program.returnStackPos < _runner.returnStackStartPos) {
         // If we've popped off our return value
-        assert(program.returnStackPos == -1 ||
-            program.currentLine == MProgramRunner.pseudoReturnAddress);
+        assert(
+          program.returnStackPos == -1 ||
+              program.currentLine == MProgramRunner.pseudoReturnAddress,
+        );
         assert(_pushedRunner == null);
         break;
       } else if (err != null) {
@@ -1612,8 +1650,10 @@ abstract class ProgramRunner extends MProgramRunner {
     s.complete();
   }
 
-  Running restart(RunningController newFake,
-      {void Function(CalculatorError?)? singleStepOnDone}) {
+  Running restart(
+    RunningController newFake, {
+    void Function(CalculatorError?)? singleStepOnDone,
+  }) {
     _caller._fake = newFake;
     _caller.restarting(singleStepOnDone);
     resume();
@@ -1756,8 +1796,9 @@ class CalculatorOff extends ControllerState {
 
 void _handleShowStatusImpl(Model model) {
   final String sm = model.integerSignMode.statusText;
-  final String w =
-      (model.wordSize < 10) ? '0${model.wordSize}' : '${model.wordSize}';
+  final String w = (model.wordSize < 10)
+      ? '0${model.wordSize}'
+      : '${model.wordSize}';
   final f = StringBuffer();
   for (int i = 3; i >= 0; i--) {
     f.write(model.getFlag(i) ? '1' : '0');

@@ -159,9 +159,9 @@ void invert(final Matrix m) {
   // that the 15C may be using a more clever algorithm, but brute force works,
   // too!
   final dm = List<List<DecimalFP22>>.generate(
-      m.rows,
-      (row) =>
-          List<DecimalFP22>.generate(m.columns, (col) => m.getF(row, col)));
+    m.rows,
+    (row) => List<DecimalFP22>.generate(m.columns, (col) => m.getF(row, col)),
+  );
 
   try {
     /// Now use A^-1 = U^-1 * l^-1 * P, as per HP 15C Advanced Functions p. 83
@@ -217,7 +217,7 @@ void invert(final Matrix m) {
       }
     }
   } finally {
-// Now copy back into m...
+    // Now copy back into m...
     m.visit((r, c) => m.setF(r, c, dm[r][c]));
     m.dotByP();
     m.isLU = false;

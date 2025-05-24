@@ -43,10 +43,8 @@ import 'lcd_display.dart';
 
 // See the library comments, above!  (Android Studio  hides them by default.)
 
-final _filesWork = kIsWeb ||
-    Platform.isWindows ||
-    Platform.isLinux ||
-    Platform.isMacOS;
+final _filesWork =
+    kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
 const _topSilverColor = Color(0xffcdcdcd);
 
@@ -63,14 +61,17 @@ class ScreenPositioner {
   /// x, y, w and h are in cm
   Widget box(final Rect pos, final Widget child) {
     final double dx = (pos.width >= width) ? 0 : pos.left / (width - pos.width);
-    final double dy =
-        (pos.height >= height) ? 0 : pos.top / (height - pos.height);
+    final double dy = (pos.height >= height)
+        ? 0
+        : pos.top / (height - pos.height);
     return Align(
-        alignment: FractionalOffset(dx, dy),
-        child: FractionallySizedBox(
-            widthFactor: pos.width / width,
-            heightFactor: pos.height / height,
-            child: child));
+      alignment: FractionalOffset(dx, dy),
+      child: FractionallySizedBox(
+        widthFactor: pos.width / width,
+        heightFactor: pos.height / height,
+        child: child,
+      ),
+    );
   }
 }
 
@@ -92,13 +93,17 @@ abstract class OrientedScreen extends StatelessWidget {
     // Maybe it's intentional (and in that case a bit silly), or maybe it's
     // some kind of oversight?
     // https://github.com/flutter/flutter/issues/82112
-    return LayoutBuilder(builder: (BuildContext c2, BoxConstraints o) {
-      if (o.hasBoundedHeight && o.hasBoundedWidth && o.maxHeight > o.maxWidth) {
-        return buildPortrait(c2, portrait);
-      } else {
-        return buildLandscape(c2, landscape);
-      }
-    });
+    return LayoutBuilder(
+      builder: (BuildContext c2, BoxConstraints o) {
+        if (o.hasBoundedHeight &&
+            o.hasBoundedWidth &&
+            o.maxHeight > o.maxWidth) {
+          return buildPortrait(c2, portrait);
+        } else {
+          return buildLandscape(c2, landscape);
+        }
+      },
+    );
   }
 }
 
@@ -112,7 +117,7 @@ class MainScreen extends OrientedScreen {
   final ScalableImage icon;
 
   MainScreen(this.jrpnState, this.icon, {super.key})
-      : topWidget = jrpnState.widget;
+    : topWidget = jrpnState.widget;
 
   RealController get controller => topWidget.controller;
   Model get model => topWidget.model;
@@ -153,37 +158,58 @@ class MainScreen extends OrientedScreen {
       // rare thing, so I'm OK with the buttons and stuff moving around a
       // little.
     }
-    final Rect lp = controller.screenConfig.portrait?.logoPos ??
+    final Rect lp =
+        controller.screenConfig.portrait?.logoPos ??
         Rect.fromLTWH(0.60, screen.height - 1.5, 0.94, 0.94);
     final lcdScale = min(6.7, screen.width - 1.3) / 6.7;
     final lcdHeight = lcdScale * (1.5 * LcdDisplay.heightTweak + extraV);
     final Rect lcdPos = Rect.fromLTWH(
-        0.63, 0.6 + lcdHeight * (1 - lcdScale) / 2, 6.7 * lcdScale, lcdHeight);
+      0.63,
+      0.6 + lcdHeight * (1 - lcdScale) / 2,
+      6.7 * lcdScale,
+      lcdHeight,
+    );
     return Container(
-        alignment: Alignment.center,
-        color: deadZoneColor,
-        child: AspectRatio(
-            aspectRatio: screen.width / screen.height,
-            child: Stack(fit: StackFit.expand, children: [
-              screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
-                  CustomPaint(painter: DrawnBackground(screen, extraV))),
-              ...((lp.width == 0 || lp.height == 0)
-                  ? []
-                  : [
-                      screen.box(lp, _jrpnLogo()),
-                    ]),
-              screen.box(
-                  lcdPos,
-                  LcdDisplay(controller.model, _showMenu, 11, jrpnState,
-                      extraTall: extraV > 0)),
-              ...controller
-                  .getPortraitButtonFactory(context, screen)
-                  .buildButtons(
-                      controller.screenConfig.portrait,
-                      Rect.fromLTRB(0.7, 2.75 + extraV, screen.width - 0.7,
-                          screen.height - 0.47)),
-              MainMenu(this, screen)
-            ])));
+      alignment: Alignment.center,
+      color: deadZoneColor,
+      child: AspectRatio(
+        aspectRatio: screen.width / screen.height,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            screen.box(
+              Rect.fromLTWH(0, 0, screen.width, screen.height),
+              CustomPaint(painter: DrawnBackground(screen, extraV)),
+            ),
+            ...((lp.width == 0 || lp.height == 0)
+                ? []
+                : [screen.box(lp, _jrpnLogo())]),
+            screen.box(
+              lcdPos,
+              LcdDisplay(
+                controller.model,
+                _showMenu,
+                11,
+                jrpnState,
+                extraTall: extraV > 0,
+              ),
+            ),
+            ...controller
+                .getPortraitButtonFactory(context, screen)
+                .buildButtons(
+                  controller.screenConfig.portrait,
+                  Rect.fromLTRB(
+                    0.7,
+                    2.75 + extraV,
+                    screen.width - 0.7,
+                    screen.height - 0.47,
+                  ),
+                ),
+            MainMenu(this, screen),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -195,12 +221,15 @@ class MainScreen extends OrientedScreen {
     assert(digitsH >= 11 && digitsH <= 18);
     final maxLcdWidth = screen.width - 2.17; // 10.53 at default width of 12.7
     final maxExpander = (maxLcdWidth - 6.7) / 3.83; // 1.0 at default width
-    final expander =
-        min(maxExpander, (digitsH - 11) / 7); // In the range [0, 1]
+    final expander = min(
+      maxExpander,
+      (digitsH - 11) / 7,
+    ); // In the range [0, 1]
     final lcdLeft = 2.0 - 1.47 * (expander / maxExpander);
     final lcdWidth = 6.7 + 3.83 * expander;
     final iconL = screen.width - 1.82 + 0.392 * (expander / maxExpander);
-    final Rect lp = controller.screenConfig.landscape?.logoPos ??
+    final Rect lp =
+        controller.screenConfig.landscape?.logoPos ??
         Rect.fromLTWH(iconL, 0.65, 0.94, 0.94);
     return Container(
       // Midnight blue for slop when aspect ratio not matched
@@ -211,24 +240,34 @@ class MainScreen extends OrientedScreen {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
-                CustomPaint(painter: DrawnBackground(screen, 0))),
+            screen.box(
+              Rect.fromLTWH(0, 0, screen.width, screen.height),
+              CustomPaint(painter: DrawnBackground(screen, 0)),
+            ),
             ...((lp.width == 0 || lp.height == 0)
                 ? []
-                : [
-                    screen.box(lp, _jrpnLogo()),
-                  ]),
+                : [screen.box(lp, _jrpnLogo())]),
             screen.box(
-                Rect.fromLTWH(
-                    lcdLeft, 0.6, lcdWidth, 1.5 * LcdDisplay.heightTweak),
-                LcdDisplay(controller.model, _showMenu, digitsH, jrpnState)),
+              Rect.fromLTWH(
+                lcdLeft,
+                0.6,
+                lcdWidth,
+                1.5 * LcdDisplay.heightTweak,
+              ),
+              LcdDisplay(controller.model, _showMenu, digitsH, jrpnState),
+            ),
             ...controller
                 .getLandscapeButtonFactory(context, screen)
                 .buildButtons(
-                    controller.screenConfig.landscape,
-                    Rect.fromLTRB(
-                        0.7, 2.75, screen.width - 0.7, screen.height - 0.47)),
-            MainMenu(this, screen)
+                  controller.screenConfig.landscape,
+                  Rect.fromLTRB(
+                    0.7,
+                    2.75,
+                    screen.width - 0.7,
+                    screen.height - 0.47,
+                  ),
+                ),
+            MainMenu(this, screen),
           ],
         ),
       ),
@@ -237,23 +276,28 @@ class MainScreen extends OrientedScreen {
 
   Future<void> _showMenu(BuildContext context, Offset tapOffset) async {
     void Function(BuildContext)? f = await showMenu(
-        position: RelativeRect.fromLTRB(
-            tapOffset.dx, tapOffset.dy, tapOffset.dx + 1, tapOffset.dy + 1),
-        context: context,
-        items: [
-          PopupMenuItem(
-              value: _copyDisplayToClipboard,
-              child: const Row(children: [
-                Icon(Icons.content_copy),
-                Text('Copy to Clipboard')
-              ])),
-          PopupMenuItem(
-              value: _pasteNumberToModel,
-              child: const Row(children: [
-                Icon(Icons.content_copy),
-                Text('Paste from Clipboard')
-              ])),
-        ]);
+      position: RelativeRect.fromLTRB(
+        tapOffset.dx,
+        tapOffset.dy,
+        tapOffset.dx + 1,
+        tapOffset.dy + 1,
+      ),
+      context: context,
+      items: [
+        PopupMenuItem(
+          value: _copyDisplayToClipboard,
+          child: const Row(
+            children: [Icon(Icons.content_copy), Text('Copy to Clipboard')],
+          ),
+        ),
+        PopupMenuItem(
+          value: _pasteNumberToModel,
+          child: const Row(
+            children: [Icon(Icons.content_copy), Text('Paste from Clipboard')],
+          ),
+        ),
+      ],
+    );
     if (f != null && context.mounted) {
       f(context);
     }
@@ -287,7 +331,10 @@ class MainScreen extends OrientedScreen {
       } else if (model.displayDisabled) {
         if (context.mounted) {
           return showErrorDialog(
-              context, 'Program is running / display disabled', null);
+            context,
+            'Program is running / display disabled',
+            null,
+          );
         }
       } else if (!controller.pasteToX(cd) && context.mounted) {
         return showErrorDialog(context, 'Number format error', null);
@@ -334,11 +381,18 @@ class DrawnBackground extends CustomPainter {
     canvas.drawRect(Rect.fromLTRB(0, 0, x, 0.2 * cm), p);
     canvas.drawRect(Rect.fromLTRB(size.width - x, 0, size.width, 0.2 * cm), p);
     canvas.drawRect(
-        Rect.fromLTRB(0, size.height - 0.15 * cm, x, size.height), p);
+      Rect.fromLTRB(0, size.height - 0.15 * cm, x, size.height),
+      p,
+    );
     canvas.drawRect(
-        Rect.fromLTRB(
-            size.width - x, size.height - 0.15 * cm, size.width, size.height),
-        p);
+      Rect.fromLTRB(
+        size.width - x,
+        size.height - 0.15 * cm,
+        size.width,
+        size.height,
+      ),
+      p,
+    );
 
     // Outer keyboard base
     p.color = MainScreen.keyboardBaseColor;
@@ -351,36 +405,44 @@ class DrawnBackground extends CustomPainter {
     bottom -= 0.05 * cm;
     p.color = MainScreen.keyFrameSilver;
     canvas.drawRRect(
-        RRect.fromLTRBR(
-            x, y, size.width - x, bottom, Radius.circular(0.1 * cm)),
-        p);
+      RRect.fromLTRBR(x, y, size.width - x, bottom, Radius.circular(0.1 * cm)),
+      p,
+    );
     x += 0.07 * cm;
     y += 0.07 * cm;
     bottom -= 0.2 * cm;
     p.color = MainScreen.keyboardBaseColor;
     canvas.drawRRect(
-        RRect.fromLTRBR(
-            x, y, size.width - x, bottom, Radius.circular(0.05 * cm)),
-        p);
+      RRect.fromLTRBR(x, y, size.width - x, bottom, Radius.circular(0.05 * cm)),
+      p,
+    );
 
     // The JRPN URL on the bottom
     final span = TextSpan(
-        style: TextStyle(
-            color: MainScreen.keyFrameSilver,
-            fontFamily: 'LogoFont',
-            fontWeight: FontWeight.w400,
-            fontSize: 0.26 * cm),
-        text: 'J R P N . J O V I A L . C O M');
+      style: TextStyle(
+        color: MainScreen.keyFrameSilver,
+        fontFamily: 'LogoFont',
+        fontWeight: FontWeight.w400,
+        fontSize: 0.26 * cm,
+      ),
+      text: 'J R P N . J O V I A L . C O M',
+    );
     TextPainter tp = TextPainter(
-        text: span,
-        textAlign: TextAlign.left,
-        textDirection: TextDirection.ltr);
+      text: span,
+      textAlign: TextAlign.left,
+      textDirection: TextDirection.ltr,
+    );
     tp.layout();
     // Background for the text, in keyboardBase
     canvas.drawRect(
-        Rect.fromLTRB(x + 0.3 * cm, bottom - 1, x + 0.7 * cm + tp.width,
-            bottom + 0.2 * cm + 1),
-        p);
+      Rect.fromLTRB(
+        x + 0.3 * cm,
+        bottom - 1,
+        x + 0.7 * cm + tp.width,
+        bottom + 0.2 * cm + 1,
+      ),
+      p,
+    );
     tp.paint(canvas, Offset(x + 0.5 * cm, bottom - 0.06 * cm));
   }
 
@@ -419,14 +481,22 @@ class JrpnLogoPainter extends CustomPainter {
     final cornerRadius = Radius.circular(0.05 * rectSize.width * 0.9);
     if (!adaptive) {
       canvas.drawRRect(
-          RRect.fromLTRBR(
-              x, y, x + rectSize.width, y + rectSize.height, cornerRadius),
-          foreground);
+        RRect.fromLTRBR(
+          x,
+          y,
+          x + rectSize.width,
+          y + rectSize.height,
+          cornerRadius,
+        ),
+        foreground,
+      );
     }
     canvas.save();
     canvas.translate(x + (rectSize.width - rectSize.height) / 2, y);
     canvas.scale(
-        rectSize.height / jupiter.height!, rectSize.height / jupiter.width!);
+      rectSize.height / jupiter.height!,
+      rectSize.height / jupiter.width!,
+    );
     jupiter.paint(canvas);
     canvas.restore();
 
@@ -443,28 +513,38 @@ class JrpnLogoPainter extends CustomPainter {
     rectSize = Size(size.width, size.height * 0.34);
     if (!adaptive) {
       canvas.drawRRect(
-          RRect.fromLTRBR(
-              x, y, x + rectSize.width, y + rectSize.height, cornerRadius),
-          foreground);
+        RRect.fromLTRBR(
+          x,
+          y,
+          x + rectSize.width,
+          y + rectSize.height,
+          cornerRadius,
+        ),
+        foreground,
+      );
     }
 
     const embiggen = 1.25;
     const style = TextStyle(
-        fontSize: 0.3, // in cm
-        fontFamily: 'LogoFont',
-        fontWeight: FontWeight.w500,
-        color: Colors.black);
+      fontSize: 0.3, // in cm
+      fontFamily: 'LogoFont',
+      fontWeight: FontWeight.w500,
+      color: Colors.black,
+    );
     final span = TextSpan(style: style, text: modelName);
     final double cm = rectSize.width / 0.9;
     TextPainter tp = TextPainter(
-        text: span,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr);
+      text: span,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
     tp.layout();
     canvas.save();
     canvas.translate(x, y);
-    canvas.translate((rectSize.width - tp.width * cm * embiggen) / 2,
-        rectSize.height * 0.85);
+    canvas.translate(
+      (rectSize.width - tp.width * cm * embiggen) / 2,
+      rectSize.height * 0.85,
+    );
     canvas.scale(cm * embiggen, cm);
     tp.paint(canvas, Offset.zero);
     canvas.restore();
@@ -528,22 +608,26 @@ class _MainMenuState extends State<MainMenu> {
   }
 
   Widget _buildMenu(BuildContext context) => PopupMenuButton(
-        icon: const Icon(null),
-        onSelected: (void Function() action) => setState(() => action()),
-        itemBuilder: (BuildContext context) {
-          return <PopupMenuEntry<void Function()>>[
-            PopupMenuItem(
-                value: () {}, child: _FileMenu('File', widget.main.topWidget)),
-            PopupMenuItem(
-                value: () {},
-                child: _SettingsMenu('Settings', widget.main.topWidget)),
-            // PopupMenuDivider(),
-            PopupMenuItem(
-                value: () {},
-                child: _HelpMenu('Help', widget.main.icon, controller))
-          ];
-        },
-      );
+    icon: const Icon(null),
+    onSelected: (void Function() action) => setState(() => action()),
+    itemBuilder: (BuildContext context) {
+      return <PopupMenuEntry<void Function()>>[
+        PopupMenuItem(
+          value: () {},
+          child: _FileMenu('File', widget.main.topWidget),
+        ),
+        PopupMenuItem(
+          value: () {},
+          child: _SettingsMenu('Settings', widget.main.topWidget),
+        ),
+        // PopupMenuDivider(),
+        PopupMenuItem(
+          value: () {},
+          child: _HelpMenu('Help', widget.main.icon, controller),
+        ),
+      ];
+    },
+  );
 }
 
 class _HelpMenu extends StatelessWidget {
@@ -563,64 +647,84 @@ class _HelpMenu extends StatelessWidget {
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<void Function()>>[
         PopupMenuItem(
-            value: () {
-              Navigator.pop<void>(context);
-              unawaited(launchUrl(applicationHelpAddress,
-                  mode: LaunchMode.externalApplication));
-            },
-            child: const Text('User Guide')),
+          value: () {
+            Navigator.pop<void>(context);
+            unawaited(
+              launchUrl(
+                applicationHelpAddress,
+                mode: LaunchMode.externalApplication,
+              ),
+            );
+          },
+          child: const Text('User Guide'),
+        ),
         PopupMenuItem(
-            value: () {
-              Navigator.pop<void>(context);
-              unawaited(
-                  showDialog(context: context, builder: _showNonWarranty));
-            },
-            child: const Text('Non-warranty')),
+          value: () {
+            Navigator.pop<void>(context);
+            unawaited(showDialog(context: context, builder: _showNonWarranty));
+          },
+          child: const Text('Non-warranty'),
+        ),
         PopupMenuItem(
-            value: () {
-              Navigator.pop<void>(context);
-              controller.mainApp.showInternalsWindow();
-            },
-            child: const Text('See Calculator Internals')),
+          value: () {
+            Navigator.pop<void>(context);
+            controller.mainApp.showInternalsWindow();
+          },
+          child: const Text('See Calculator Internals'),
+        ),
         PopupMenuItem(
-            value: () {
-              Navigator.pop<void>(context);
-              unawaited(launchUrl(applicationIssueAddress,
-                  mode: LaunchMode.externalApplication));
-            },
-            child: const Text('Submit Issue (Web)')),
+          value: () {
+            Navigator.pop<void>(context);
+            unawaited(
+              launchUrl(
+                applicationIssueAddress,
+                mode: LaunchMode.externalApplication,
+              ),
+            );
+          },
+          child: const Text('Submit Issue (Web)'),
+        ),
         PopupMenuItem(
-            value: () {
-              Navigator.pop<void>(context);
-              controller.mainApp.showBackPanel();
-            },
-            child: const Text('Back Panel')),
+          value: () {
+            Navigator.pop<void>(context);
+            controller.mainApp.showBackPanel();
+          },
+          child: const Text('Back Panel'),
+        ),
         PopupMenuItem(
-            value: () {
-              Navigator.pop<void>(context);
-              showAboutDialog(
-                  context: context,
-                  applicationIcon: ScalableImageWidget(si: icon, scale: 0.15),
-                  applicationName: 'JRPN ${controller.model.modelName}',
-                  applicationVersion: 'Version $applicationVersion',
-                  applicationLegalese: '© 2021-2024 Bill Foote',
-                  children: [
-                    const SizedBox(height: 40),
-                    InkWell(
-                        onTap: () => unawaited(launchUrl(applicationWebAddress,
-                            mode: LaunchMode.externalApplication)),
-                        child: RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary),
-                                text: applicationWebAddress.toString())))
-                  ]);
-            },
-            child: const Text('About')),
+          value: () {
+            Navigator.pop<void>(context);
+            showAboutDialog(
+              context: context,
+              applicationIcon: ScalableImageWidget(si: icon, scale: 0.15),
+              applicationName: 'JRPN ${controller.model.modelName}',
+              applicationVersion: 'Version $applicationVersion',
+              applicationLegalese: '© 2021-2024 Bill Foote',
+              children: [
+                const SizedBox(height: 40),
+                InkWell(
+                  onTap: () => unawaited(
+                    launchUrl(
+                      applicationWebAddress,
+                      mode: LaunchMode.externalApplication,
+                    ),
+                  ),
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                      text: applicationWebAddress.toString(),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+          child: const Text('About'),
+        ),
       ],
       child: Row(
         children: [
@@ -634,15 +738,17 @@ class _HelpMenu extends StatelessWidget {
 }
 
 Widget _showNonWarranty(BuildContext context) => AlertDialog(
-        title: const Text('Non-Warranty'),
-        content: Text(nonWarranty.replaceAll('\n', ' ')),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'))
-        ]);
+  title: const Text('Non-Warranty'),
+  content: Text(nonWarranty.replaceAll('\n', ' ')),
+  actions: [
+    TextButton(
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+      child: const Text('OK'),
+    ),
+  ],
+);
 
 class _SettingsMenu extends StatefulWidget {
   final String title;
@@ -673,147 +779,184 @@ class __SettingsMenuState extends State<_SettingsMenu> {
       onCanceled: () => Navigator.pop(context),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<void Function()>>[
         CheckedPopupMenuItem(
-            checked: settings.menuEnabled,
-            value: () {
-              settings.menuEnabled = !settings.menuEnabled;
-              unawaited(widget.app.model.writeToPersistentStorage());
-            },
-            child: const Text('Show Menu Icon')),
+          checked: settings.menuEnabled,
+          value: () {
+            settings.menuEnabled = !settings.menuEnabled;
+            unawaited(widget.app.model.writeToPersistentStorage());
+          },
+          child: const Text('Show Menu Icon'),
+        ),
         ...(settings.isMobilePlatform
             ? [
                 CheckedPopupMenuItem(
-                    checked: settings.systemOverlaysDisabled,
-                    value: () {
-                      settings.systemOverlaysDisabled =
-                          !settings.systemOverlaysDisabled;
-                      unawaited(widget.app.model.writeToPersistentStorage());
-                    },
-                    child: const Text('Disable System UI Overlays')),
+                  checked: settings.systemOverlaysDisabled,
+                  value: () {
+                    settings.systemOverlaysDisabled =
+                        !settings.systemOverlaysDisabled;
+                    unawaited(widget.app.model.writeToPersistentStorage());
+                  },
+                  child: const Text('Disable System UI Overlays'),
+                ),
                 PopupMenuItem(
-                    child: Row(children: [
-                  DropdownButton(
-                      value: settings.orientation,
-                      onChanged: (OrientationSetting? v) {
-                        if (v != null) {
-                          settings.orientation = v;
-                          unawaited(
-                              widget.app.model.writeToPersistentStorage());
-                          Navigator.pop(context, () {});
-                        }
-                      },
-                      items: const [
-                        DropdownMenuItem(
+                  child: Row(
+                    children: [
+                      DropdownButton(
+                        value: settings.orientation,
+                        onChanged: (OrientationSetting? v) {
+                          if (v != null) {
+                            settings.orientation = v;
+                            unawaited(
+                              widget.app.model.writeToPersistentStorage(),
+                            );
+                            Navigator.pop(context, () {});
+                          }
+                        },
+                        items: const [
+                          DropdownMenuItem(
                             value: OrientationSetting.auto,
-                            child: Text('Automatic')),
-                        DropdownMenuItem(
+                            child: Text('Automatic'),
+                          ),
+                          DropdownMenuItem(
                             value: OrientationSetting.portrait,
-                            child: Text('Portrait')),
-                        DropdownMenuItem(
+                            child: Text('Portrait'),
+                          ),
+                          DropdownMenuItem(
                             value: OrientationSetting.landscape,
-                            child: Text('Landscape'))
-                      ]),
-                  const Text('    Orientation')
-                ])),
+                            child: Text('Landscape'),
+                          ),
+                        ],
+                      ),
+                      const Text('    Orientation'),
+                    ],
+                  ),
+                ),
                 PopupMenuItem(
-                    child: Row(children: [
-                  DropdownButton(
-                      value: settings.keyFeedback,
-                      onChanged: (KeyFeedbackSetting? v) {
-                        if (v != null) {
-                          settings.keyFeedback = v;
-                          unawaited(
-                              widget.app.model.writeToPersistentStorage());
-                          Navigator.pop(context, () {});
-                        }
-                      },
-                      items: const [
-                        DropdownMenuItem(
+                  child: Row(
+                    children: [
+                      DropdownButton(
+                        value: settings.keyFeedback,
+                        onChanged: (KeyFeedbackSetting? v) {
+                          if (v != null) {
+                            settings.keyFeedback = v;
+                            unawaited(
+                              widget.app.model.writeToPersistentStorage(),
+                            );
+                            Navigator.pop(context, () {});
+                          }
+                        },
+                        items: const [
+                          DropdownMenuItem(
                             value: KeyFeedbackSetting.platform,
-                            child: Text('Platform Default')),
-                        DropdownMenuItem(
+                            child: Text('Platform Default'),
+                          ),
+                          DropdownMenuItem(
                             value: KeyFeedbackSetting.click,
-                            child: Text('Click')),
-                        DropdownMenuItem(
+                            child: Text('Click'),
+                          ),
+                          DropdownMenuItem(
                             value: KeyFeedbackSetting.haptic,
-                            child: Text('Haptic')),
-                        DropdownMenuItem(
+                            child: Text('Haptic'),
+                          ),
+                          DropdownMenuItem(
                             value: KeyFeedbackSetting.both,
-                            child: Text('Both')),
-                        DropdownMenuItem(
+                            child: Text('Both'),
+                          ),
+                          DropdownMenuItem(
                             value: KeyFeedbackSetting.hapticHeavy,
-                            child: Text('Haptic - Heavy')),
-                        DropdownMenuItem(
+                            child: Text('Haptic - Heavy'),
+                          ),
+                          DropdownMenuItem(
                             value: KeyFeedbackSetting.bothHeavy,
-                            child: Text('Both - Heavy')),
-                        DropdownMenuItem(
-                            value: KeyFeedbackSetting.none, child: Text('None'))
-                      ]),
-                  const Text('    Key Feedback')
-                ])),
+                            child: Text('Both - Heavy'),
+                          ),
+                          DropdownMenuItem(
+                            value: KeyFeedbackSetting.none,
+                            child: Text('None'),
+                          ),
+                        ],
+                      ),
+                      const Text('    Key Feedback'),
+                    ],
+                  ),
+                ),
               ]
             : []),
         PopupMenuItem(
-            child: Row(children: [
-          DropdownButton(
-              value: settings.longNumbers,
-              onChanged: (LongNumbersSetting? v) {
-                if (v != null) {
-                  settings.longNumbers = v;
-                  unawaited(widget.app.model.writeToPersistentStorage());
-                  display.update();
-                  Navigator.pop(context, () {});
-                }
-              },
-              items: [
-                DropdownMenuItem(
+          child: Row(
+            children: [
+              DropdownButton(
+                value: settings.longNumbers,
+                onChanged: (LongNumbersSetting? v) {
+                  if (v != null) {
+                    settings.longNumbers = v;
+                    unawaited(widget.app.model.writeToPersistentStorage());
+                    display.update();
+                    Navigator.pop(context, () {});
+                  }
+                },
+                items: [
+                  DropdownMenuItem(
                     value: LongNumbersSetting.window,
                     child: Text(
-                        widget.controller.menus15C ? 'Disable' : 'Window')),
-                const DropdownMenuItem(
-                    value: LongNumbersSetting.growLCD, child: Text('Grow LCD')),
-                const DropdownMenuItem(
+                      widget.controller.menus15C ? 'Disable' : 'Window',
+                    ),
+                  ),
+                  const DropdownMenuItem(
+                    value: LongNumbersSetting.growLCD,
+                    child: Text('Grow LCD'),
+                  ),
+                  const DropdownMenuItem(
                     value: LongNumbersSetting.shrinkDigits,
-                    child: Text('Shrink Digits')),
-              ]),
-          const Text('    Long\n    Numbers')
-        ])),
+                    child: Text('Shrink Digits'),
+                  ),
+                ],
+              ),
+              const Text('    Long\n    Numbers'),
+            ],
+          ),
+        ),
         ...(widget.controller.menus15C
             ? []
             : [
                 CheckedPopupMenuItem(
-                    checked: settings.hideComplement,
-                    value: () {
-                      settings.hideComplement = !settings.hideComplement;
-                      unawaited(widget.app.model.writeToPersistentStorage());
-                      display.update();
-                    },
-                    child: const Text('Hide Complement Status')),
+                  checked: settings.hideComplement,
+                  value: () {
+                    settings.hideComplement = !settings.hideComplement;
+                    unawaited(widget.app.model.writeToPersistentStorage());
+                    display.update();
+                  },
+                  child: const Text('Hide Complement Status'),
+                ),
                 CheckedPopupMenuItem(
-                    checked: settings.showWordSize,
-                    value: () {
-                      settings.showWordSize = !settings.showWordSize;
-                      unawaited(widget.app.model.writeToPersistentStorage());
-                      display.update();
-                    },
-                    child: const Text('Show Word Size')),
+                  checked: settings.showWordSize,
+                  value: () {
+                    settings.showWordSize = !settings.showWordSize;
+                    unawaited(widget.app.model.writeToPersistentStorage());
+                    display.update();
+                  },
+                  child: const Text('Show Word Size'),
+                ),
                 CheckedPopupMenuItem(
-                    checked: settings.integerModeCommas,
-                    value: () {
-                      settings.integerModeCommas = !settings.integerModeCommas;
-                      unawaited(widget.app.model.writeToPersistentStorage());
-                      display.update();
-                    },
-                    child: const Text('Integer Mode Commas')),
+                  checked: settings.integerModeCommas,
+                  value: () {
+                    settings.integerModeCommas = !settings.integerModeCommas;
+                    unawaited(widget.app.model.writeToPersistentStorage());
+                    display.update();
+                  },
+                  child: const Text('Integer Mode Commas'),
+                ),
               ]),
         CheckedPopupMenuItem(
-            checked: settings.showAccelerators,
-            value: () {
-              settings.showAccelerators = !settings.showAccelerators;
-              unawaited(widget.app.model.writeToPersistentStorage());
-            },
-            child: const Text('Show Accelerators (toggle with "?")')),
+          checked: settings.showAccelerators,
+          value: () {
+            settings.showAccelerators = !settings.showAccelerators;
+            unawaited(widget.app.model.writeToPersistentStorage());
+          },
+          child: const Text('Show Accelerators (toggle with "?")'),
+        ),
         PopupMenuItem(
-            child: _SystemSettingsMenu('System Settings', widget.app)),
+          child: _SystemSettingsMenu('System Settings', widget.app),
+        ),
       ],
       child: Row(
         children: [
@@ -831,9 +974,11 @@ class _TextEntry extends StatefulWidget {
   final String initial;
   final bool text;
 
-  const _TextEntry(
-      {required this.initial, required this.onDone, required this.text})
-      : super();
+  const _TextEntry({
+    required this.initial,
+    required this.onDone,
+    required this.text,
+  }) : super();
 
   @override
   _TextEntryState createState() => _TextEntryState();
@@ -858,16 +1003,18 @@ class _TextEntryState extends State<_TextEntry> {
 
   @override
   Widget build(BuildContext context) => TextField(
-        textAlign: TextAlign.right,
-        controller: controller,
-        onTap: () => controller.selection = TextSelection(
-            baseOffset: 0, extentOffset: controller.value.text.length),
-        keyboardType: widget.text ? TextInputType.text : TextInputType.number,
-        // We could do an onSubmitted: here, if the
-        // virtual keyboard is covering the entered value, the user never
-        // gets to see the entry.  On desktop (April 2021, before desktop
-        // support was finalized), we never saw onSubmitted.
-      );
+    textAlign: TextAlign.right,
+    controller: controller,
+    onTap: () => controller.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: controller.value.text.length,
+    ),
+    keyboardType: widget.text ? TextInputType.text : TextInputType.number,
+    // We could do an onSubmitted: here, if the
+    // virtual keyboard is covering the entered value, the user never
+    // gets to see the entry.  On desktop (April 2021, before desktop
+    // support was finalized), we never saw onSubmitted.
+  );
 }
 
 class _FileMenu extends StatefulWidget {
@@ -896,22 +1043,29 @@ class _FileMenuState extends State<_FileMenu> {
       onCanceled: () => Navigator.pop(context),
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(
-            value: () async {}, child: _FileReadMenu('Read', widget.app)),
+          value: () async {},
+          child: _FileReadMenu('Read', widget.app),
+        ),
         PopupMenuItem(
-            value: () async {}, child: _FileSaveMenu('Save', widget.app)),
+          value: () async {},
+          child: _FileSaveMenu('Save', widget.app),
+        ),
         PopupMenuItem(
-            value: () async {},
-            child: _ImportProgramMenu('Import Program', widget.app)),
+          value: () async {},
+          child: _ImportProgramMenu('Import Program', widget.app),
+        ),
         PopupMenuItem(
-            value: () async {},
-            child: _ExportProgramMenu('Export Program', widget.app)),
+          value: () async {},
+          child: _ExportProgramMenu('Export Program', widget.app),
+        ),
         PopupMenuItem(
-            value: () async {
-              widget.app.controller.resetAll();
-              widget.app.model.reset();
-              await widget.app.model.writeToPersistentStorage();
-            },
-            child: const Text('Reset All'))
+          value: () async {
+            widget.app.controller.resetAll();
+            widget.app.model.reset();
+            await widget.app.model.writeToPersistentStorage();
+          },
+          child: const Text('Reset All'),
+        ),
       ],
       child: Row(
         children: [
@@ -988,14 +1142,18 @@ class __FileSaveMenuState extends State<_FileSaveMenu> {
     final model = widget.app.model;
     final ext = 'j${model.modelName.toLowerCase()}';
     final suggested = 'calculator.$ext';
-    final String? path =
-        (await getSaveLocation(suggestedName: suggested))?.path;
+    final String? path = (await getSaveLocation(
+      suggestedName: suggested,
+    ))?.path;
     if (path == null) {
       return;
     }
     final String data = json.encoder.convert(model.toJson());
-    final f = XFile.fromData(utf8.encoder.convert(data),
-        mimeType: 'application/json', name: suggested);
+    final f = XFile.fromData(
+      utf8.encoder.convert(data),
+      mimeType: 'application/json',
+      name: suggested,
+    );
     try {
       await f.saveTo(path);
     } catch (e, s) {
@@ -1085,7 +1243,9 @@ class __ImportProgramMenuState extends State<_ImportProgramMenu> {
     final model = widget.app.model;
     final ext = model.modelName.toLowerCase();
     final typeGroup = XTypeGroup(
-        label: 'JRPN Program (.$ext)', extensions: [ext, ext.toUpperCase()]);
+      label: 'JRPN Program (.$ext)',
+      extensions: [ext, ext.toUpperCase()],
+    );
     const any = XTypeGroup(label: 'JRPN Program (any extension)');
     final file = await openFile(acceptedTypeGroups: [typeGroup, any]);
     if (file == null) {
@@ -1164,16 +1324,20 @@ class __ExportProgramMenuState extends State<_ExportProgramMenu> {
     final model = widget.app.model;
     final ext = model.modelName.toLowerCase();
     final suggested = 'program.$ext';
-    final String? path =
-        (await getSaveLocation(suggestedName: suggested))?.path;
+    final String? path = (await getSaveLocation(
+      suggestedName: suggested,
+    ))?.path;
     if (path == null) {
       return;
     }
     final XFile f;
     if (inUtf8) {
       final String data = widget.app.getProgram('UTF-8');
-      f = XFile.fromData(utf8.encoder.convert(data),
-          mimeType: 'text/plain;charset=UTF-8', name: suggested);
+      f = XFile.fromData(
+        utf8.encoder.convert(data),
+        mimeType: 'text/plain;charset=UTF-8',
+        name: suggested,
+      );
     } else {
       final String s = widget.app.getProgram('UTF-16LE');
       final data = Uint8List(s.length * 2 + 2);
@@ -1184,8 +1348,11 @@ class __ExportProgramMenuState extends State<_ExportProgramMenu> {
         data[pos++] = c & 0xff;
         data[pos++] = (c >> 8) & 0xff;
       }
-      f = XFile.fromData(data,
-          mimeType: 'text/plain;charset=UTF-16LE', name: suggested);
+      f = XFile.fromData(
+        data,
+        mimeType: 'text/plain;charset=UTF-16LE',
+        name: suggested,
+      );
     }
     try {
       await f.saveTo(path);
@@ -1283,8 +1450,9 @@ class __FileReadMenuState extends State<_FileReadMenu> {
     final model = widget.app.model;
     final ext = 'j${model.modelName.toLowerCase()}';
     final typeGroup = XTypeGroup(
-        label: 'Calculator State (.$ext)',
-        extensions: [ext, ext.toUpperCase()]);
+      label: 'Calculator State (.$ext)',
+      extensions: [ext, ext.toUpperCase()],
+    );
     const any = XTypeGroup(label: 'Calculator State (any extension)');
     final file = await openFile(acceptedTypeGroups: [typeGroup, any]);
     if (file == null) {
@@ -1334,89 +1502,110 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
       onCanceled: () => Navigator.pop(outerContext),
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(
-            child: ListTile(
-                leading: SizedBox(
-                    width: 70,
-                    child: _TextEntry(
-                        text: false,
-                        initial: settings.msPerInstruction
-                            .toString()
-                            .replaceFirst(RegExp('.0\$'), ''),
-                        onDone: (v) {
-                          settings.msPerInstruction = double.tryParse(v);
-                          unawaited(
-                              widget.app.model.writeToPersistentStorage());
-                        })),
-                title: const Text('ms/Program Instruction'))),
+          child: ListTile(
+            leading: SizedBox(
+              width: 70,
+              child: _TextEntry(
+                text: false,
+                initial: settings.msPerInstruction.toString().replaceFirst(
+                  RegExp('.0\$'),
+                  '',
+                ),
+                onDone: (v) {
+                  settings.msPerInstruction = double.tryParse(v);
+                  unawaited(widget.app.model.writeToPersistentStorage());
+                },
+              ),
+            ),
+            title: const Text('ms/Program Instruction'),
+          ),
+        ),
         PopupMenuItem(
-            child: ListTile(
-                leading: SizedBox(
-                    width: 70,
-                    child: _TextEntry(
-                        text: false,
-                        initial: (mem.totalNybbles - mem.minimumMemoryNybbles)
-                            .toString(),
-                        onDone: (v) {
-                          final dv = double.tryParse(v);
-                          if (dv != null) {
-                            final mm = mem.minimumMemoryNybbles;
-                            final err = mem.changeMemorySize(mm + dv.round());
-                            if (err == null) {
-                              unawaited(
-                                  widget.app.model.writeToPersistentStorage());
-                            } else {
-                              Future.delayed(const Duration(milliseconds: 30),
-                                  () {
-                                final ctx = Jrpn.lastContext;
-                                if (ctx.mounted) {
-                                  showErrorDialog(ctx, err, null);
-                                }
-                              });
-                            }
-                          }
-                        })),
-                title: const Text('Extra memory (nybbles)'))),
+          child: ListTile(
+            leading: SizedBox(
+              width: 70,
+              child: _TextEntry(
+                text: false,
+                initial: (mem.totalNybbles - mem.minimumMemoryNybbles)
+                    .toString(),
+                onDone: (v) {
+                  final dv = double.tryParse(v);
+                  if (dv != null) {
+                    final mm = mem.minimumMemoryNybbles;
+                    final err = mem.changeMemorySize(mm + dv.round());
+                    if (err == null) {
+                      unawaited(widget.app.model.writeToPersistentStorage());
+                    } else {
+                      Future.delayed(const Duration(milliseconds: 30), () {
+                        final ctx = Jrpn.lastContext;
+                        if (ctx.mounted) {
+                          showErrorDialog(ctx, err, null);
+                        }
+                      });
+                    }
+                  }
+                },
+              ),
+            ),
+            title: const Text('Extra memory (nybbles)'),
+          ),
+        ),
         PopupMenuItem(child: _ColorSettingsMenu('Color Settings', widget.app)),
         ...(_filesWork
             ? [
                 PopupMenuItem(
-                    value: () => _importConfigurationFromFile(context),
-                    child: const Row(children: [
+                  value: () => _importConfigurationFromFile(context),
+                  child: const Row(
+                    children: [
                       SizedBox(width: 65),
                       Text('Read layout from File...'),
-                    ])),
+                    ],
+                  ),
+                ),
                 PopupMenuItem(
-                    value: () => _exportConfigurationToFile(context),
-                    child: const Row(children: [
+                  value: () => _exportConfigurationToFile(context),
+                  child: const Row(
+                    children: [
                       SizedBox(width: 65),
                       Text('Write layout to File...'),
-                    ])),
+                    ],
+                  ),
+                ),
               ]
             : [
                 PopupMenuItem(
-                    value: () => _importConfigurationFromClipboard(context),
-                    child: const Row(children: [
+                  value: () => _importConfigurationFromClipboard(context),
+                  child: const Row(
+                    children: [
                       SizedBox(width: 65),
                       Text('Import layout from Clipboard'),
-                    ])),
+                    ],
+                  ),
+                ),
                 PopupMenuItem(
-                    value: () => _exportConfigurationToClipboard(context),
-                    child: const Row(children: [
+                  value: () => _exportConfigurationToClipboard(context),
+                  child: const Row(
+                    children: [
                       SizedBox(width: 65),
                       Text('Export layout to Clipboard'),
-                    ])),
+                    ],
+                  ),
+                ),
               ]),
         CheckedPopupMenuItem(
-            padding: EdgeInsets.only(
-                // Space for the virtual keyboard on Android:
-                bottom: model.settings.isMobilePlatform ? 150 : 0),
-            checked: model.captureDebugLog,
-            value: () async {
-              model.captureDebugLog = !model.captureDebugLog;
-              model.display.update();
-            },
-            child: const Row(
-                children: [SizedBox(width: 30), Text('Capture Debug\nLog')])),
+          padding: EdgeInsets.only(
+            // Space for the virtual keyboard on Android:
+            bottom: model.settings.isMobilePlatform ? 150 : 0,
+          ),
+          checked: model.captureDebugLog,
+          value: () async {
+            model.captureDebugLog = !model.captureDebugLog;
+            model.display.update();
+          },
+          child: const Row(
+            children: [SizedBox(width: 30), Text('Capture Debug\nLog')],
+          ),
+        ),
       ],
       child: Row(
         children: [
@@ -1442,17 +1631,22 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
     const ext = 'config';
     final suggested = 'jrpn${model.modelName.toLowerCase()}.$ext';
     final typeGroup = XTypeGroup(
-        label: 'JRPN Configuration (.$ext)',
-        extensions: [ext, ext.toUpperCase()]);
+      label: 'JRPN Configuration (.$ext)',
+      extensions: [ext, ext.toUpperCase()],
+    );
     const any = XTypeGroup(label: 'JRPN Configuration (any extension)');
     final String? path = (await getSaveLocation(
-            suggestedName: suggested, acceptedTypeGroups: [typeGroup, any]))
-        ?.path;
+      suggestedName: suggested,
+      acceptedTypeGroups: [typeGroup, any],
+    ))?.path;
     if (path == null) {
       return;
     }
-    final f = XFile.fromData(utf8.encoder.convert(jsonStr),
-        mimeType: 'application/json', name: suggested);
+    final f = XFile.fromData(
+      utf8.encoder.convert(jsonStr),
+      mimeType: 'application/json',
+      name: suggested,
+    );
     try {
       await f.saveTo(path);
     } catch (e, s) {
@@ -1489,7 +1683,8 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
     } else {
       try {
         _setScreenConfiguration(
-            widget.app.controller.screenConfig.newFromJson(cd));
+          widget.app.controller.screenConfig.newFromJson(cd),
+        );
       } catch (e, s) {
         _setScreenConfiguration(null);
         debugPrint('\n\n$e\n\n$s');
@@ -1504,8 +1699,9 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
   Future<void> _importConfigurationFromFile(BuildContext context) async {
     const ext = 'config';
     final typeGroup = XTypeGroup(
-        label: 'JRPN Configuration (.$ext)',
-        extensions: [ext, ext.toUpperCase()]);
+      label: 'JRPN Configuration (.$ext)',
+      extensions: [ext, ext.toUpperCase()],
+    );
     const any = XTypeGroup(label: 'JRPN Configuration (any extension)');
     final file = await openFile(acceptedTypeGroups: [typeGroup, any]);
     if (file == null) {
@@ -1514,7 +1710,8 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
     try {
       final data = await file.readAsString();
       _setScreenConfiguration(
-          widget.app.controller.screenConfig.newFromJson(data));
+        widget.app.controller.screenConfig.newFromJson(data),
+      );
     } catch (e, s) {
       _setScreenConfiguration(null);
       debugPrint('\n\n$e\n\n$s');
@@ -1555,89 +1752,107 @@ class _ColorSettingsMenuState extends State<_ColorSettingsMenu> {
       onCanceled: () => Navigator.pop(outerContext),
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(
-            child: ListTile(
-                leading: SizedBox(
-                    width: 70,
-                    child: _TextEntry(
-                        text: true,
-                        initial: _formatColor(settings.fKeyColor),
-                        onDone: (v) {
-                          settings.fKeyColor = _toColor(v);
-                          widget.app.setChanged();
-                          unawaited(
-                              widget.app.model.writeToPersistentStorage());
-                        })),
-                title: const Text('f Key Color'))),
+          child: ListTile(
+            leading: SizedBox(
+              width: 70,
+              child: _TextEntry(
+                text: true,
+                initial: _formatColor(settings.fKeyColor),
+                onDone: (v) {
+                  settings.fKeyColor = _toColor(v);
+                  widget.app.setChanged();
+                  unawaited(widget.app.model.writeToPersistentStorage());
+                },
+              ),
+            ),
+            title: const Text('f Key Color'),
+          ),
+        ),
         PopupMenuItem(
-            child: ListTile(
-                leading: SizedBox(
-                    width: 70,
-                    child: _TextEntry(
-                        text: true,
-                        initial: _formatColor(settings.fTextColor),
-                        onDone: (v) {
-                          settings.fTextColor = _toColor(v);
-                          widget.app.setChanged();
-                          unawaited(
-                              widget.app.model.writeToPersistentStorage());
-                        })),
-                title: const Text('f Text Color'))),
+          child: ListTile(
+            leading: SizedBox(
+              width: 70,
+              child: _TextEntry(
+                text: true,
+                initial: _formatColor(settings.fTextColor),
+                onDone: (v) {
+                  settings.fTextColor = _toColor(v);
+                  widget.app.setChanged();
+                  unawaited(widget.app.model.writeToPersistentStorage());
+                },
+              ),
+            ),
+            title: const Text('f Text Color'),
+          ),
+        ),
         PopupMenuItem(
-            child: ListTile(
-                leading: SizedBox(
-                    width: 70,
-                    child: _TextEntry(
-                        text: true,
-                        initial: _formatColor(settings.gKeyColor),
-                        onDone: (v) {
-                          settings.gKeyColor = _toColor(v);
-                          widget.app.setChanged();
-                          unawaited(
-                              widget.app.model.writeToPersistentStorage());
-                        })),
-                title: const Text('g Key Color'))),
+          child: ListTile(
+            leading: SizedBox(
+              width: 70,
+              child: _TextEntry(
+                text: true,
+                initial: _formatColor(settings.gKeyColor),
+                onDone: (v) {
+                  settings.gKeyColor = _toColor(v);
+                  widget.app.setChanged();
+                  unawaited(widget.app.model.writeToPersistentStorage());
+                },
+              ),
+            ),
+            title: const Text('g Key Color'),
+          ),
+        ),
         PopupMenuItem(
-            child: ListTile(
-                leading: SizedBox(
-                    width: 70,
-                    child: _TextEntry(
-                        text: true,
-                        initial: _formatColor(settings.gTextColor),
-                        onDone: (v) {
-                          settings.gTextColor = _toColor(v);
-                          widget.app.setChanged();
-                          unawaited(
-                              widget.app.model.writeToPersistentStorage());
-                        })),
-                title: const Text('g Text Color'))),
+          child: ListTile(
+            leading: SizedBox(
+              width: 70,
+              child: _TextEntry(
+                text: true,
+                initial: _formatColor(settings.gTextColor),
+                onDone: (v) {
+                  settings.gTextColor = _toColor(v);
+                  widget.app.setChanged();
+                  unawaited(widget.app.model.writeToPersistentStorage());
+                },
+              ),
+            ),
+            title: const Text('g Text Color'),
+          ),
+        ),
         PopupMenuItem(
-            child: ListTile(
-                leading: SizedBox(
-                    width: 70,
-                    child: _TextEntry(
-                        text: true,
-                        initial: _formatColor(settings.lcdBackgroundColor),
-                        onDone: (v) {
-                          settings.lcdBackgroundColor = _toColor(v);
-                          widget.app.setChanged();
-                          unawaited(
-                              widget.app.model.writeToPersistentStorage());
-                        })),
-                title: const Text('LCD Background Color'))),
+          child: ListTile(
+            leading: SizedBox(
+              width: 70,
+              child: _TextEntry(
+                text: true,
+                initial: _formatColor(settings.lcdBackgroundColor),
+                onDone: (v) {
+                  settings.lcdBackgroundColor = _toColor(v);
+                  widget.app.setChanged();
+                  unawaited(widget.app.model.writeToPersistentStorage());
+                },
+              ),
+            ),
+            title: const Text('LCD Background Color'),
+          ),
+        ),
         PopupMenuItem(
-            child: ListTile(
-                leading: SizedBox(
-                    width: 70,
-                    child: _TextEntry(
-                        text: true,
-                        initial: _formatColor(settings.lcdForegroundColor),
-                        onDone: (v) {
-                          settings.lcdForegroundColor = _toColor(v);
-                          widget.app.setChanged();
-                          unawaited(
-                              widget.app.model.writeToPersistentStorage());
-                        })),
-                title: const Text('LCD Foreground Color'))),
+          child: ListTile(
+            leading: SizedBox(
+              width: 70,
+              child: _TextEntry(
+                text: true,
+                initial: _formatColor(settings.lcdForegroundColor),
+                onDone: (v) {
+                  settings.lcdForegroundColor = _toColor(v);
+                  widget.app.setChanged();
+                  unawaited(widget.app.model.writeToPersistentStorage());
+                },
+              ),
+            ),
+            title: const Text('LCD Foreground Color'),
+          ),
+        ),
       ],
       child: Row(
         children: [
@@ -1663,10 +1878,13 @@ class _ColorSettingsMenuState extends State<_ColorSettingsMenu> {
 }
 
 Future<void> showErrorDialog(
-        BuildContext context, String message, Object? exception) =>
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => ErrorDialog(message, exception));
+  BuildContext context,
+  String message,
+  Object? exception,
+) => showDialog(
+  context: context,
+  builder: (BuildContext context) => ErrorDialog(message, exception),
+);
 
 class ErrorDialog extends StatelessWidget {
   final String message;
@@ -1691,10 +1909,7 @@ class ErrorDialog extends StatelessWidget {
       content: (exception == null)
           ? const Text('')
           : SingleChildScrollView(
-              child: Column(children: [
-                const SizedBox(height: 20),
-                Text(exs),
-              ]),
+              child: Column(children: [const SizedBox(height: 20), Text(exs)]),
             ),
       actions: <Widget>[
         // usually buttons at the bottom of the dialog
@@ -1703,7 +1918,7 @@ class ErrorDialog extends StatelessWidget {
             Navigator.of(context).pop();
           },
           child: const Text('OK'),
-        )
+        ),
       ],
     );
   }

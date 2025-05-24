@@ -84,64 +84,64 @@ class LcdContents {
 
   Timer? _myTimer;
 
-  LcdContents(
-      {required this.mainText,
-      required this.shift,
-      required this.sign,
-      required this.bits,
-      required this.cFlag,
-      required this.complexFlag,
-      required this.gFlag,
-      required this.prgmFlag,
-      required this.rightJustify,
-      required this.longNumbers,
-      required this.euroComma,
-      required this.hideComplement,
-      required this.wordSize,
-      required this.trigMode,
-      required this.userMode,
-      required this.lcdDigits,
-      this.extraShift})
-      : blank = false;
+  LcdContents({
+    required this.mainText,
+    required this.shift,
+    required this.sign,
+    required this.bits,
+    required this.cFlag,
+    required this.complexFlag,
+    required this.gFlag,
+    required this.prgmFlag,
+    required this.rightJustify,
+    required this.longNumbers,
+    required this.euroComma,
+    required this.hideComplement,
+    required this.wordSize,
+    required this.trigMode,
+    required this.userMode,
+    required this.lcdDigits,
+    this.extraShift,
+  }) : blank = false;
 
   LcdContents.blank({Timer? timer, required this.lcdDigits})
-      : blank = true,
-        mainText = '',
-        shift = ShiftKey.none,
-        sign = SignMode.twosComplement,
-        bits = 0,
-        cFlag = false,
-        complexFlag = false,
-        gFlag = false,
-        prgmFlag = false,
-        rightJustify = false,
-        longNumbers = LongNumbersSetting.window,
-        euroComma = false,
-        hideComplement = false,
-        wordSize = null,
-        trigMode = TrigMode.deg,
-        userMode = false,
-        _myTimer = timer,
-        extraShift = null;
+    : blank = true,
+      mainText = '',
+      shift = ShiftKey.none,
+      sign = SignMode.twosComplement,
+      bits = 0,
+      cFlag = false,
+      complexFlag = false,
+      gFlag = false,
+      prgmFlag = false,
+      rightJustify = false,
+      longNumbers = LongNumbersSetting.window,
+      euroComma = false,
+      hideComplement = false,
+      wordSize = null,
+      trigMode = TrigMode.deg,
+      userMode = false,
+      _myTimer = timer,
+      extraShift = null;
 
   LcdContents.powerOn(String text, this.rightJustify, this.lcdDigits)
-      : mainText = rightJustify ? text : ' $text',
-        blank = false,
-        shift = ShiftKey.none,
-        sign = SignMode.twosComplement,
-        bits = 0,
-        cFlag = false,
-        complexFlag = false,
-        gFlag = false,
-        prgmFlag = false,
-        longNumbers = LongNumbersSetting.window,
-        euroComma = false,
-        hideComplement = false,
-        wordSize = null,
-        trigMode = TrigMode.deg,
-        userMode = false,
-        _myTimer = null,
-        extraShift = null;
+    : mainText = rightJustify ? text : ' $text',
+      blank = false,
+      shift = ShiftKey.none,
+      sign = SignMode.twosComplement,
+      bits = 0,
+      cFlag = false,
+      complexFlag = false,
+      gFlag = false,
+      prgmFlag = false,
+      longNumbers = LongNumbersSetting.window,
+      euroComma = false,
+      hideComplement = false,
+      wordSize = null,
+      trigMode = TrigMode.deg,
+      userMode = false,
+      _myTimer = null,
+      extraShift = null;
 
   bool equivalent(LcdContents other) =>
       blank == other.blank &&
@@ -177,9 +177,7 @@ class CalculatorError {
   final int num16;
   final int num15;
 
-  CalculatorError(int num, {int? num15})
-      : num16 = num,
-        num15 = num15 ?? num;
+  CalculatorError(int num, {int? num15}) : num16 = num, num15 = num15 ?? num;
 
   @override
   String toString() => 'CalculatorError($num16, $num15)';
@@ -194,7 +192,7 @@ enum KeyFeedbackSetting {
   both,
   none,
   hapticHeavy,
-  bothHeavy
+  bothHeavy,
 }
 
 enum LongNumbersSetting { window, growLCD, shrinkDigits }
@@ -407,8 +405,12 @@ class Settings {
       unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive));
     } else if (!kIsWeb && Platform.isIOS) {
       // Get rid of ugly black bar along bottom.
-      unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-          overlays: [SystemUiOverlay.top]));
+      unawaited(
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.manual,
+          overlays: [SystemUiOverlay.top],
+        ),
+      );
     } else {
       unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
     }
@@ -434,13 +436,13 @@ class Settings {
       case OrientationSetting.portrait:
         orientations = [
           DeviceOrientation.portraitUp,
-          DeviceOrientation.portraitDown
+          DeviceOrientation.portraitDown,
         ];
         break;
       case OrientationSetting.landscape:
         orientations = [
           DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight
+          DeviceOrientation.landscapeRight,
         ];
         break;
     }
@@ -474,12 +476,18 @@ class Settings {
       _fTextColor = _ifChanged(_fTextColor, v, _fTextColorDefault);
 
   int get lcdBackgroundColor => _lcdBackgroundColor;
-  set lcdBackgroundColor(int? v) => _lcdBackgroundColor =
-      _ifChanged(_lcdBackgroundColor, v, _lcdBackgroundColorDefault);
+  set lcdBackgroundColor(int? v) => _lcdBackgroundColor = _ifChanged(
+    _lcdBackgroundColor,
+    v,
+    _lcdBackgroundColorDefault,
+  );
 
   int get lcdForegroundColor => _lcdForegroundColor;
-  set lcdForegroundColor(int? v) => _lcdForegroundColor =
-      _ifChanged(_lcdForegroundColor, v, _lcdForegroundColorDefault);
+  set lcdForegroundColor(int? v) => _lcdForegroundColor = _ifChanged(
+    _lcdForegroundColor,
+    v,
+    _lcdForegroundColorDefault,
+  );
 
   int _ifChanged(int old, int? v, int defaultV) {
     v = v ?? defaultV;
@@ -495,14 +503,15 @@ class Settings {
   Map<String, dynamic> toJson() {
     final r = <String, dynamic>{
       'menuEnabled': menuEnabled,
-      'windowEnabled': _longNumbers ==
+      'windowEnabled':
+          _longNumbers ==
           LongNumbersSetting.window, // For backwards compatibility
       'longNumbers': _longNumbers.index,
       'euroComma': _euroComma,
       'showAccelerators': showAccelerators,
       'systemOverlaysDisabled': systemOverlaysDisabled,
       'orientation': orientation.index,
-      'keyFeedback': keyFeedback.index
+      'keyFeedback': keyFeedback.index,
     };
     if (_model.modelName != '15C') {
       r['showWordSize'] = _showWordSize;
@@ -625,9 +634,9 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   IntegerSignMode _integerSignMode = SignMode.twosComplement;
   bool displayDisabled = false;
   Model(this._displayMode, this._wordSize, int numFlags)
-      : _flags = List<bool>.filled(numFlags, false, growable: false),
-        _wordMask = (BigInt.one << _wordSize) - BigInt.one,
-        _signMask = BigInt.one << (_wordSize - 1) {
+    : _flags = List<bool>.filled(numFlags, false, growable: false),
+      _wordMask = (BigInt.one << _wordSize) - BigInt.one,
+      _signMask = BigInt.one << (_wordSize - 1) {
     display = DisplayModel(this);
   }
 
@@ -1175,46 +1184,48 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     // disableWindow is used for the clear-prefix extension to the 16C,
     // which temporarily disables windowing, if enabled.
     return LcdContents(
-        mainText:
-            disableWindow ? display.currentWithoutWindow : display.current,
-        shift: shift,
-        sign: signMode,
-        bits: wordSize,
-        cFlag: cFlag,
-        complexFlag: isComplexMode,
-        trigMode: trigMode,
-        userMode: userMode,
-        gFlag: gFlag,
-        prgmFlag: prgmFlag,
-        rightJustify: displayMode.rightJustify,
-        longNumbers:
-            disableWindow ? LongNumbersSetting.growLCD : settings.longNumbers,
-        euroComma: settings.euroComma,
-        wordSize: settings.showWordSize ? wordSize : null,
-        hideComplement: settings.hideComplement,
-        lcdDigits: display.lcdDigits);
+      mainText: disableWindow ? display.currentWithoutWindow : display.current,
+      shift: shift,
+      sign: signMode,
+      bits: wordSize,
+      cFlag: cFlag,
+      complexFlag: isComplexMode,
+      trigMode: trigMode,
+      userMode: userMode,
+      gFlag: gFlag,
+      prgmFlag: prgmFlag,
+      rightJustify: displayMode.rightJustify,
+      longNumbers: disableWindow
+          ? LongNumbersSetting.growLCD
+          : settings.longNumbers,
+      euroComma: settings.euroComma,
+      wordSize: settings.showWordSize ? wordSize : null,
+      hideComplement: settings.hideComplement,
+      lcdDigits: display.lcdDigits,
+    );
   }
 
   // Used for short messages
   LcdContents _newLcdContentsJustDigits() {
     return LcdContents(
-        mainText: display.current,
-        shift: ShiftKey.none,
-        sign: SignMode.twosComplement,
-        bits: 0,
-        cFlag: false,
-        complexFlag: false,
-        gFlag: false,
-        prgmFlag: false,
-        rightJustify: false,
-        longNumbers: LongNumbersSetting.window,
-        euroComma: false,
-        hideComplement: false,
-        wordSize: null,
-        trigMode: TrigMode.deg,
-        userMode: false,
-        extraShift: null,
-        lcdDigits: 11);
+      mainText: display.current,
+      shift: ShiftKey.none,
+      sign: SignMode.twosComplement,
+      bits: 0,
+      cFlag: false,
+      complexFlag: false,
+      gFlag: false,
+      prgmFlag: false,
+      rightJustify: false,
+      longNumbers: LongNumbersSetting.window,
+      euroComma: false,
+      hideComplement: false,
+      wordSize: null,
+      trigMode: TrigMode.deg,
+      userMode: false,
+      extraShift: null,
+      lcdDigits: 11,
+    );
   }
 
   ///
@@ -1305,13 +1316,15 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     // 16C came first, and older 16C versions don't save the model name.
     if (modelName != jModelName) {
       throw ArgumentError(
-          'Wrong calculator model.  This is a $modelName, not a $jModelName.');
+        'Wrong calculator model.  This is a $modelName, not a $jModelName.',
+      );
     }
 
     settings.decodeJson(json['settings'] as Map<String, dynamic>);
     trigMode = TrigMode.fromJson(json['trigMode']);
-    integerSignMode =
-        IntegerSignMode.fromJson(json['integerSignMode'] as String);
+    integerSignMode = IntegerSignMode.fromJson(
+      json['integerSignMode'] as String,
+    );
     final List<dynamic>? ims = json['imaginaryStack'] as List<dynamic>?;
     displayMode = DisplayMode.fromJson(json['displayMode']!, ims != null);
     // displayMode must be set before stack, since setting
@@ -1404,7 +1417,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         throw ArgumentError('No state query parameter in $linkOrJson');
       }
       js = String.fromCharCodes(
-          const ZLibDecoder().decodeBytes(base64Url.decoder.convert(qs)));
+        const ZLibDecoder().decodeBytes(base64Url.decoder.convert(qs)),
+      );
     } else {
       js = linkOrJson;
     }
@@ -1449,7 +1463,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     buf.writeln('     I:  ${memory.registers.index}');
     buf.writeln();
     int maxRegister = -1;
-    for (int i = 0;; i++) {
+    for (int i = 0; ; i++) {
       try {
         if (memory.registers[i] != Value.zero) {
           maxRegister = i;
@@ -1460,7 +1474,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     }
     for (int i = 0; i <= maxRegister; i++) {
       buf.writeln(
-          'r[${i.toString().padLeft(2, '0')}] = ${memory.registers[i]}');
+        'r[${i.toString().padLeft(2, '0')}] = ${memory.registers[i]}',
+      );
     }
     addStuffToSnapshot(buf);
     buf.write(memory.program.runner?.snapshotText() ?? '');
@@ -1524,12 +1539,12 @@ class DoubleWordStatus implements NumStatus {
   IntegerSignMode get integerSignMode => _model.integerSignMode;
 
   DoubleWordStatus(final Model model)
-      : _model = model,
-        cFlag = false,
-        gFlag = false,
-        wordSize = model.wordSize * 2,
-        wordMask = (BigInt.one << (model.wordSize * 2)) - BigInt.one,
-        signMask = BigInt.one << (model.wordSize * 2 - 1);
+    : _model = model,
+      cFlag = false,
+      gFlag = false,
+      wordSize = model.wordSize * 2,
+      wordMask = (BigInt.one << (model.wordSize * 2)) - BigInt.one,
+      signMask = BigInt.one << (model.wordSize * 2 - 1);
 
   @override
   BigInt get maxInt => _model._integerSignMode.maxValue(this);
@@ -1557,12 +1572,19 @@ mixin ShiftKeySelected<T> {
 /// The state of which shift key was last pressed, if any.
 ///
 class ShiftKey {
-  static final ShiftKey none =
-      ShiftKey._p('', <T>(ShiftKeySelected<T> v) => v.uKey);
-  static final ShiftKey f =
-      ShiftKey._p('f', <T>(ShiftKeySelected<T> v) => v.fKey);
-  static final ShiftKey g =
-      ShiftKey._p('g', <T>(ShiftKeySelected<T> v) => v.gKey, offset: true);
+  static final ShiftKey none = ShiftKey._p(
+    '',
+    <T>(ShiftKeySelected<T> v) => v.uKey,
+  );
+  static final ShiftKey f = ShiftKey._p(
+    'f',
+    <T>(ShiftKeySelected<T> v) => v.fKey,
+  );
+  static final ShiftKey g = ShiftKey._p(
+    'g',
+    <T>(ShiftKeySelected<T> v) => v.gKey,
+    offset: true,
+  );
 
   final String name;
 
@@ -1629,11 +1651,12 @@ class DisplayModel {
   bool get ignoreUpdates => model.displayDisabled;
 
   DisplayModel(Model model)
-      : this._p(model, model.displayMode.format(model.x, model));
+    : this._p(model, model.displayMode.format(model.x, model));
 
   DisplayModel._p(this.model, String initial) : _current = initial {
-    _lastShown =
-        Observable(LcdContents.powerOn(initial, !model.isFloatMode, lcdDigits));
+    _lastShown = Observable(
+      LcdContents.powerOn(initial, !model.isFloatMode, lcdDigits),
+    );
   }
 
   ///
@@ -1645,8 +1668,10 @@ class DisplayModel {
     if (model.settings.longNumbers != LongNumbersSetting.growLCD) {
       return 11;
     } else {
-      final d = model.displayMode
-          .maxDisplayDigits(model.wordSize, model._integerSignMode);
+      final d = model.displayMode.maxDisplayDigits(
+        model.wordSize,
+        model._integerSignMode,
+      );
       return max(11, d);
       // This value is used during display, and to trigger a screen repaint.
       // maxLcdDigits is set during a redisplay, and it only changes when
@@ -1685,8 +1710,10 @@ class DisplayModel {
       if (!_showingX) {
         return _current;
       }
-      String r =
-          _current.substring(0, max(0, _current.length - 2)); // Remove radix
+      String r = _current.substring(
+        0,
+        max(0, _current.length - 2),
+      ); // Remove radix
       final int window = (_showingX) ? _window : 0;
       String radix = _current.substring(_current.length - 1);
 
@@ -1696,12 +1723,13 @@ class DisplayModel {
       }
       // The index in r of the digits can move around, due to commas
       // (and maybe other stuff?), so we build an array of the indices.
-      final List<int> digitPos = _allDigits
-          .allMatches(r)
-          .fold(List<int>.empty(growable: true), (List<int> l, RegExpMatch m) {
-        l.add(m.start);
-        return l;
-      });
+      final List<int> digitPos = _allDigits.allMatches(r).fold(
+        List<int>.empty(growable: true),
+        (List<int> l, RegExpMatch m) {
+          l.add(m.start);
+          return l;
+        },
+      );
       assert(digitPos[0] == 0);
       final int start;
       if (digitPos.length > window) {
@@ -1767,11 +1795,12 @@ class DisplayModel {
     _lastShown.value = newContents;
   }
 
-  void update(
-      {bool flash = false,
-      BlinkMode blink = BlinkMode.none,
-      bool disableWindow = false,
-      bool neverReformat = false}) {
+  void update({
+    bool flash = false,
+    BlinkMode blink = BlinkMode.none,
+    bool disableWindow = false,
+    bool neverReformat = false,
+  }) {
     if (ignoreUpdates) {
       return;
     }
@@ -1814,11 +1843,12 @@ class DisplayModel {
   /// Display the value of X.
   /// disableWindow applies to the first display of X.  If there's a delayed
   /// value, it reverts to disableWindow being false.
-  void displayX(
-      {bool flash = true,
-      bool delayed = false,
-      bool disableWindow = false,
-      int? setWindow}) {
+  void displayX({
+    bool flash = true,
+    bool delayed = false,
+    bool disableWindow = false,
+    int? setWindow,
+  }) {
     final String newNumber = model.formatValue(model.x);
     if (delayed) {
       final initial = model._newLcdContents(disableWindow: disableWindow);
@@ -1835,13 +1865,19 @@ class DisplayModel {
       show(initial);
       if (model.errorBlink) {
         update(
-            flash: flash, disableWindow: disableWindow, blink: BlinkMode.all);
+          flash: flash,
+          disableWindow: disableWindow,
+          blink: BlinkMode.all,
+        );
       }
     } else {
       currentShowingX = newNumber;
       if (model.errorBlink) {
         update(
-            flash: flash, disableWindow: disableWindow, blink: BlinkMode.all);
+          flash: flash,
+          disableWindow: disableWindow,
+          blink: BlinkMode.all,
+        );
       } else {
         update(flash: flash, disableWindow: disableWindow);
       }
@@ -1906,10 +1942,7 @@ class DebugLog {
   }
 
   Map<String, Object> toJson() {
-    return <String, Object>{
-      'initialState': _initialState,
-      'keys': _keys,
-    };
+    return <String, Object>{'initialState': _initialState, 'keys': _keys};
   }
 
   void initModelState() {

@@ -95,7 +95,7 @@ abstract class IntegerSignMode extends SignMode {
   static final List<IntegerSignMode> _values = [
     SignMode.onesComplement,
     SignMode.twosComplement,
-    SignMode.unsigned
+    SignMode.unsigned,
   ];
   String toJson() => _jsonName;
 
@@ -196,7 +196,8 @@ class _OnesComplement extends IntegerSignMode {
           m.gFlag = true;
         }
         return Value.fromInternal(
-            (v + m.wordMask + (BigInt.one << (v.bitLength + 1))) & m.wordMask);
+          (v + m.wordMask + (BigInt.one << (v.bitLength + 1))) & m.wordMask,
+        );
       }
     }
   }
@@ -217,7 +218,8 @@ class _OnesComplement extends IntegerSignMode {
     } else {
       m.popSetResultX = Value.fromInternal(r);
     }
-    m.gFlag = (xi & m.signMask == yi & m.signMask) &&
+    m.gFlag =
+        (xi & m.signMask == yi & m.signMask) &&
         (xi & m.signMask != r & m.signMask);
   }
 
@@ -299,8 +301,9 @@ class _TwosComplement extends IntegerSignMode {
           m.gFlag = true;
         }
         return Value.fromInternal(
-            (v + m.wordMask + BigInt.one + (BigInt.one << (v.bitLength + 1))) &
-                m.wordMask);
+          (v + m.wordMask + BigInt.one + (BigInt.one << (v.bitLength + 1))) &
+              m.wordMask,
+        );
       }
     }
   }
@@ -315,7 +318,8 @@ class _TwosComplement extends IntegerSignMode {
       m.cFlag = true;
       m.popSetResultX = Value.fromInternal(r & m.wordMask);
     }
-    m.gFlag = (xi & m.signMask == yi & m.signMask) &&
+    m.gFlag =
+        (xi & m.signMask == yi & m.signMask) &&
         (xi & m.signMask != r & m.signMask);
   }
 
