@@ -62,8 +62,12 @@ Value factorial(Value x) {
   final zero = DecimalFP22(Value.zero);
   if (xf >= DecimalFP22(Value.fromDouble(70))) {
     throw FloatOverflow(Value.fMaxValue);
-  } else if (xf >= zero && x.fracOp() == Value.zero) {
-    return factorialOfInt(xf).toValue();
+  } else if (x.fracOp() == Value.zero) {
+    if (xf >= zero) {
+      return factorialOfInt(xf).toValue();
+    } else {
+      throw FloatOverflow(Value.fMinValue);
+    }
   } else {
     return Value.fromDouble(laGamma(x.asDouble + 1));
   }
