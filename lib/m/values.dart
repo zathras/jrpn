@@ -247,8 +247,8 @@ class Value {
       fracPart *= 10;
       fracPart += getDigit(d);
     }
-    // ignore: prefer_interpolation_to_compose_strings
     final sr =
+        // ignore: prefer_interpolation_to_compose_strings
         '$intPart.' +
         '$fracPart'.padLeft(fracDigits, '0') +
         'e${e + fracDigits - 9}';
