@@ -30,6 +30,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
+import 'package:jrpn/v/buttons.dart';
 import 'package:jrpn/v/isw.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:app_links/app_links.dart';
@@ -1205,6 +1206,7 @@ class ScreenConfiguration {
   final LayoutConfiguration? landscape;
   final Map<String, String>? acceleratorTranslation;
   final Map<String, String>? acceleratorLabels;
+  final ButtonLookConfiguration buttonLook;
 
   ScreenConfiguration._p(
     this._storage,
@@ -1213,6 +1215,7 @@ class ScreenConfiguration {
     this.landscape,
     this.acceleratorTranslation,
     this.acceleratorLabels,
+    this.buttonLook,
   );
 
   static Future<ScreenConfiguration> fromPersistentStorage(
@@ -1224,7 +1227,15 @@ class ScreenConfiguration {
       return _fromString(storage, configKey, json);
     } catch (e) {
       debugPrint('Error reading configuration from persistent store:  $e');
-      return ScreenConfiguration._p(storage, configKey, null, null, null, null);
+      return ScreenConfiguration._p(
+        storage,
+        configKey,
+        null,
+        null,
+        null,
+        null,
+        ButtonLookConfiguration.fromJson(null),
+      );
     }
   }
 
@@ -1325,6 +1336,9 @@ class ScreenConfiguration {
       parseAccelerators(
         jsonMap?['accelerator_labels'] as Map<String, dynamic>?,
       ),
+      ButtonLookConfiguration.fromJson(
+        jsonMap?['button_look'] as Map<String, dynamic>?,
+      ),
     );
   }
 
@@ -1340,6 +1354,7 @@ class ScreenConfiguration {
     set('landscape', landscape?.toJson());
     set('accelerators', acceleratorTranslation);
     set('accelerator_labels', acceleratorLabels);
+    set('button_look', buttonLook.toJson());
     return result;
   }
 

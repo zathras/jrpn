@@ -49,6 +49,7 @@ abstract class ButtonFactory {
   final ScreenPositioner screen;
   final RealController controller;
   Settings get settings => controller.model.settings;
+  final ButtonLookConfiguration look;
 
   // All sizes are based on a hypothetical 122x136 button.  This is
   // scaled to screen pixels in the painter.
@@ -141,7 +142,8 @@ abstract class ButtonFactory {
   final Paint fill = Paint()..style = PaintingStyle.fill;
 
   @protected
-  ButtonFactory(this.context, this.screen, this.controller);
+  ButtonFactory(this.context, this.screen, this.controller)
+    : look = controller.screenConfig.buttonLook;
 
   int get numRows;
   int get numColumns;
@@ -340,6 +342,73 @@ abstract class ButtonLayout {
   CalculatorButton get enter;
 }
 
+///
+/// Configurable aspects of a button's appearance
+///
+class ButtonLookConfiguration {
+  final double? _outerBorderPressedScale;
+  double get outerBorderPressedScale => _outerBorderPressedScale ?? 1.06;
+
+  final double? _upperSurfacePressedScale;
+  double get upperSurfacePressedScale =>
+      _upperSurfacePressedScale ?? (1.0 / 1.11);
+
+  final Color? _lowerSurfaceColor;
+  Color get lowerSurfaceColor => _lowerSurfaceColor ?? const Color(0xff373437);
+
+  final Color? _lowerSurfaceColorPressed;
+  Color get lowerSurfaceColorPressed =>
+      _lowerSurfaceColorPressed ?? const Color(0xff403e40);
+
+  final Color? _upperSurfaceColor;
+  Color get upperSurfaceColor => _upperSurfaceColor ?? const Color(0xff4b4b4e);
+
+  final Color? _upperSurfaceColorPressed;
+  Color get upperSurfaceColorPressed =>
+      _upperSurfaceColorPressed ?? const Color(0xff4e4e4f);
+
+  ButtonLookConfiguration.fromJson(Map<String, dynamic>? json)
+    : _outerBorderPressedScale = json?['outer_border_pressed_scale'] as double?,
+      _upperSurfacePressedScale =
+          json?['upper_surface_pressed_scale'] as double?,
+      _lowerSurfaceColor = _parseColor(json?['lower_surface_color'] as String?),
+      _lowerSurfaceColorPressed = _parseColor(
+        json?['lower_surface_color_pressed'] as String?,
+      ),
+      _upperSurfaceColor = _parseColor(json?['upper_surface_color'] as String?),
+      _upperSurfaceColorPressed = _parseColor(
+        json?['upper_surface_color_pressed'] as String?,
+      );
+
+  static Color? _parseColor(String? s) {
+    if (s == null) {
+      return null;
+    }
+    final val = int.parse(s, radix: 16);
+    // Throwing an exception here is OK.  Config file parsing is unforgiving;
+    // an error rejects the entire config file.
+    return Color(0xff000000 | val);
+  }
+
+  Map<String, Object?> toJson() {
+    return {
+      'outer_border_pressed_scale': _outerBorderPressedScale,
+      'upper_surface_pressed_scale': _upperSurfacePressedScale,
+      'lower_surface_color': _encode(_lowerSurfaceColor),
+      'lower_surface_color_pressed': _encode(_lowerSurfaceColorPressed),
+      'upper_surface_color': _encode(_upperSurfaceColor),
+      'upper_surface_color_pressed': _encode(_upperSurfaceColorPressed),
+    };
+  }
+
+  String? _encode(Color? c) {
+    if (c == null) {
+      return null;
+    }
+    return (c.toARGB32() & 0xffffff).toRadixString(16);
+  }
+}
+
 /// The gold label above some groups of keys
 class UpperLabel extends CustomPainter {
   final String text;
@@ -448,6 +517,7 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
   @override
   CalculatorButtonState createState() => CalculatorButtonState();
 
+  ButtonLookConfiguration get look => bFactory.look;
   double get width => bFactory.width;
   double get height => bFactory.height;
 
@@ -455,15 +525,15 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
   Color get innerBorderColor => const Color(0xff646467);
   RRect get innerBorder => bFactory.innerBorder;
   RRect get lowerSurface => bFactory.lowerSurface;
-  Color get lowerSurfaceColor => const Color(0xff373437);
-  Color get lowerSurfaceColorPressed => const Color(0xff403e40);
+  Color get lowerSurfaceColor => look.lowerSurfaceColor;
+  Color get lowerSurfaceColorPressed => look.lowerSurfaceColorPressed;
   RRect get upperSurface => bFactory.upperSurface;
-  Color get upperSurfaceColor => const Color(0xff4b4b4e);
-  Color get upperSurfaceColorPressed => const Color(0xff4e4e4f);
+  Color get upperSurfaceColor => look.upperSurfaceColor;
+  Color get upperSurfaceColorPressed => look.upperSurfaceColorPressed;
   TextStyle get keyTextStyle => bFactory.keyTextStyle;
   Offset get keyTextOffset => bFactory.keyTextOffset;
   Offset get gTextOffset => bFactory.gTextOffset;
-  double get outerBorderPressedScale => 1.06;
+  double get outerBorderPressedScale => look.outerBorderPressedScale;
   bool get isEnter => false;
 
   void paintForPainter(
@@ -511,7 +581,7 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
     // draw upper surface
     if (pressed) {
       canvas.translate(0, upperSurface.bottom);
-      canvas.scale(1.0, 1.0 / 1.11);
+      canvas.scale(1.0, look.upperSurfacePressedScale);
       canvas.translate(0, -upperSurface.bottom);
       p.color = upperSurfaceColorPressed;
     } else {
