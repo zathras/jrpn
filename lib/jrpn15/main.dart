@@ -104,7 +104,7 @@ class Operations15 extends Operations {
         KeyArg(key: letterLabelC, child: ArgDone((m) {})),
         KeyArg(key: letterLabelD, child: ArgDone((m) {})),
         KeyArg(key: letterLabelE, child: ArgDone((m) {})),
-        DigitArg(max: 19, calc: (_, __) {}),
+        DigitArg(max: 19, calc: (_, _) {}),
       ],
     ),
     name: 'LBL',

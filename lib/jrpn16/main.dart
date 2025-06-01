@@ -786,7 +786,7 @@ class Operations16 extends Operations {
   );
 
   static final NormalArgOperation lbl = NormalArgOperation(
-    arg: DigitArg(max: 15, calc: (_, __) {}),
+    arg: DigitArg(max: 15, calc: (_, _) {}),
     name: 'LBL',
   );
 
