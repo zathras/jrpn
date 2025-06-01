@@ -1558,7 +1558,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                   child: const Row(
                     children: [
                       SizedBox(width: 65),
-                      Text('Read layout from File...'),
+                      Text('Read config from File...'),
                     ],
                   ),
                 ),
@@ -1567,7 +1567,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                   child: const Row(
                     children: [
                       SizedBox(width: 65),
-                      Text('Write layout to File...'),
+                      Text('Write config to File...'),
                     ],
                   ),
                 ),
@@ -1578,7 +1578,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                   child: const Row(
                     children: [
                       SizedBox(width: 65),
-                      Text('Import layout from Clipboard'),
+                      Text('Import config from Clipboard'),
                     ],
                   ),
                 ),
@@ -1587,7 +1587,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                   child: const Row(
                     children: [
                       SizedBox(width: 65),
-                      Text('Export layout to Clipboard'),
+                      Text('Export config to Clipboard'),
                     ],
                   ),
                 ),
