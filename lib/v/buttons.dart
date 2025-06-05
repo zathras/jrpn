@@ -350,8 +350,7 @@ class ButtonLookConfiguration {
   double get outerBorderPressedScale => _outerBorderPressedScale ?? 1.06;
 
   final double? _upperSurfacePressedScale;
-  double get upperSurfacePressedScale =>
-      _upperSurfacePressedScale ?? (1.0 / 1.11);
+  double get upperSurfacePressedScale => _upperSurfacePressedScale ?? 1.0;
 
   final Color? _lowerSurfaceColor;
   Color get lowerSurfaceColor => _lowerSurfaceColor ?? const Color(0xff373437);
@@ -534,6 +533,7 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
   Offset get keyTextOffset => bFactory.keyTextOffset;
   Offset get gTextOffset => bFactory.gTextOffset;
   double get outerBorderPressedScale => look.outerBorderPressedScale;
+  double get upperSurfacePressedScale => look.upperSurfacePressedScale;
   bool get isEnter => false;
 
   void paintForPainter(
@@ -553,7 +553,6 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
     final Paint p = bFactory.fill;
 
     // Draw borders
-    // That's 1 for all but the enter key
     p.color = Colors.black;
     canvas.drawRRect(outerBorder, p);
     if (pressed) {
@@ -581,7 +580,7 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
     // draw upper surface
     if (pressed) {
       canvas.translate(0, upperSurface.bottom);
-      canvas.scale(1.0, look.upperSurfacePressedScale);
+      canvas.scale(1.0, upperSurfacePressedScale / 1.11);
       canvas.translate(0, -upperSurface.bottom);
       p.color = upperSurfaceColorPressed;
     } else {
@@ -1096,8 +1095,14 @@ class CalculatorEnterButton extends CalculatorButton {
   final Offset _gTextOffset;
   @override
   double get outerBorderPressedScale =>
+      1 + (super.outerBorderPressedScale - 1) * super.height / height;
+
+  @override
+  double get upperSurfacePressedScale =>
       1 +
-      (super.outerBorderPressedScale * super.height - super.height) / height;
+      (super.upperSurfacePressedScale - 1) *
+          super.upperSurface.height /
+          upperSurface.height;
 
   @override
   double get height => super.height + extraHeight;
