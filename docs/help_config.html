@@ -70,14 +70,6 @@ that rearranges the keyboard, and configures other configurable items:
                  [ "CLEAR", 2.914178, 5.557651, 3.303734, 0.22 ],
                  [ "CLEAR", 0.7, 6.926476, 1.039557, 0.22 ]
               ]
-           },
-           "button_look" : {
-               "outer_border_pressed_scale" : 1.06,
-               "upper_surface_pressed_scale" : 0.9009,
-               "lower_surface_color" : "373437",
-               "lower_surface_color_pressed" : "403e40",
-               "upper_surface_color" : "4b4b4e",
-               "upper_surface_color_pressed" : "4e4e4f"
            }
         }
 </pre>
@@ -170,15 +162,6 @@ An object called "landscape" contains a screen layout for portrait
 mode.  If not present, the default layout will be used.  The elements
 of the landscape object are the same as portrait.
 <p>
-<b><code>button_look</code></b>
-<p>
-An object called "button_look" controls various parameters used to draw buttons.
-The values given above are the default values, used if a <code>button_look</code>
-object is not present.  As of this writing, the fields of <code>button_look</code>
-are just the ones that controll the look of a button when it is pressed.  Colors
-are given as six-digit hex strings giving a 24 bit RGB color value.  What each
-field of <code>button_look</code> is best figured out by looking at the code of
-<code>lib/v/buttons.dart</code>.  Look for "<code>if (pressed)</code>".
 <h2>Existing Configurations</h2>
 <p>
 The portrait layout given above probably isn't all that good.  Personally, I
