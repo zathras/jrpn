@@ -1558,7 +1558,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                   child: const Row(
                     children: [
                       SizedBox(width: 65),
-                      Text('Read config from File...'),
+                      Text('Read Config from File...'),
                     ],
                   ),
                 ),
@@ -1567,7 +1567,7 @@ class _SystemSettingsMenuState extends State<_SystemSettingsMenu> {
                   child: const Row(
                     children: [
                       SizedBox(width: 65),
-                      Text('Write config to File...'),
+                      Text('Write Config to File...'),
                     ],
                   ),
                 ),
