@@ -1,8 +1,8 @@
 Version 2.1.18 - June 2025
-  * Work around bug in haptic feedback on some Android devices:  Issue 102
-  * Fix Gamma function (!) with negative integers:  Issue 136
-  * Fix mantissa rounding when more than 6 digits:  Issue 137
+  * Work around haptic feedback platform bug on some Android devices:  Issue 102
   * Allow configuration of button press look:  Issue 138
+  * Fix mantissa rounding when more than 6 digits:  Issue 137
+  * 15C:  Fix Gamma function (!) with negative integers:  Issue 136
 
 Version 2.1.17 - January 2025
   * 15C; Improvements to trig function at big angles in deg, grad (Issue 124).

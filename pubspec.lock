@@ -22,7 +22,7 @@ packages:
     description:
       path: "dart/android_haptics"
       ref: master
-      resolved-ref: cc30059a61634c3451d8b908881dccb910b13500
+      resolved-ref: "6913ab2f988d0a5cb4f42ebdb8e3d73e4ff672a8"
       url: "https://github.com/zathras/misc.git"
     source: git
     version: "0.0.1"
