@@ -1,3 +1,9 @@
+Version 2.1.18 - June 2025
+  * Work around bug in haptic feedback on some Android devices:  Issue 102
+  * Fix Gamma function (!) with negative integers:  Issue 136
+  * Fix mantissa rounding when more than 6 digits:  Issue 137
+  * Allow configuration of button press look:  Issue 138
+
 Version 2.1.17 - January 2025
   * 15C; Improvements to trig function at big angles in deg, grad (Issue 124).
   * 15C: Add integrate, solve intermediate results to calculator internals (issue 127)

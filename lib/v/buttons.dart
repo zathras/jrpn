@@ -28,12 +28,14 @@ this program; if not, see https://www.gnu.org/licenses/ .
 library;
 
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jrpn/generic_main.dart'
     show LayoutConfiguration, UpperGoldLabel;
+import 'package:android_haptics/android_haptics.dart';
 
 import '../c/controller.dart';
 import '../m/model.dart';
@@ -1242,7 +1244,7 @@ class CalculatorButtonState extends State<CalculatorButton> {
             unawaited(HapticFeedback.selectionClick());
             break;
           case KeyFeedbackSetting.hapticHeavy:
-            unawaited(HapticFeedback.heavyImpact());
+            unawaited(_heavyImpactHaptics());
             break;
           case KeyFeedbackSetting.both:
             unawaited(SystemSound.play(SystemSoundType.click));
@@ -1250,7 +1252,7 @@ class CalculatorButtonState extends State<CalculatorButton> {
             break;
           case KeyFeedbackSetting.bothHeavy:
             unawaited(SystemSound.play(SystemSoundType.click));
-            unawaited(HapticFeedback.heavyImpact());
+            unawaited(_heavyImpactHaptics());
             break;
           case KeyFeedbackSetting.none:
             break;
@@ -1279,6 +1281,15 @@ class CalculatorButtonState extends State<CalculatorButton> {
         ),
       ),
     );
+  }
+
+  Future<void> _heavyImpactHaptics() {
+    if (Platform.isAndroid) {
+      // Workaround for https://github.com/zathras/jrpn/issues/102
+      return AndroidHaptics.heavyImpact();
+    } else {
+      return HapticFeedback.heavyImpact();
+    }
   }
 
   /// When the button is "pressed" with an accelerator key

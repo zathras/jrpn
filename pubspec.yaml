@@ -3,7 +3,7 @@ description: Jovial RPN, a calculator simulator inspired by the HP-16C "Computer
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.1.17+31    # See also lib/generic_main.dart
+version: 2.1.18+32    # See also lib/generic_main.dart
 
 environment:
   sdk: '>=3.8.0 <4.0.0'
@@ -11,6 +11,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  android_haptics:
+    git:
+      url: https://github.com/zathras/misc.git
+      path: dart/android_haptics
+      ref: master
   shared_preferences: ^2.3.4
   meta: ^1.15.0
   share_plus: ^11.0.0
@@ -23,7 +28,6 @@ dependencies:
       url: https://github.com/zathras/tmp_desktop_multi_window.git
       path: packages/desktop_multi_window
       ref: main
-  vector_math: ^2.1.0
   jovial_svg: ^1.0.24
   jovial_misc: ^0.9.0
 
@@ -33,6 +37,7 @@ dev_dependencies:
     sdk: flutter
   test: ^1.16.5
   decimal: ^3.0.0
+  vector_math: ^2.1.0
 
 flutter:
   uses-material-design: true

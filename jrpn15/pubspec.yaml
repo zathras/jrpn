@@ -3,7 +3,7 @@ description: Jovial RPN 15C, a calculator simulator inspired by the HP-15C "Comp
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.1.17+31    # See also lib/generic_main.dart
+version: 2.1.18+32    # See also lib/generic_main.dart
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
@@ -16,7 +16,7 @@ dependencies:
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.0
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
   test: ^1.16.5
