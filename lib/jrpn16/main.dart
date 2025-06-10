@@ -637,7 +637,7 @@ class Operations16 extends Operations {
     arg: ArgAlternates(
       children: [
         DigitArg(max: 9, calc: (m, i) => _setFloat(m, i)),
-        KeyArg(key: Operations.dot, child: ArgDone((m) => _setFloat(m, 10))),
+        KeyArg(key: Operations.dot, child: ArgDone((m) => _setFloat(m, 6))),
       ],
     ),
     name: 'FLOAT',

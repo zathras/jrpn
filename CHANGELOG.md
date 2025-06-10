@@ -1,7 +1,7 @@
 Version 2.1.18 - June 2025
   * Work around haptic feedback platform bug on some Android devices:  Issue 102
   * Allow configuration of button press look:  Issue 138
-  * Fix mantissa rounding when more than 6 digits:  Issue 137
+  * Fix mantissa rounding when more than 6 digits and exponent:  Issue 137
   * 15C:  Fix Gamma function (!) with negative integers:  Issue 136
 
 Version 2.1.17 - January 2025

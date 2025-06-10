@@ -755,15 +755,6 @@ class _Fix16FloatFormatter extends FixFloatFormatter {
 
   @override
   String get _jsonName => 'f$fractionDigits';
-
-  @override
-  String format(Value v, windowEnabled) =>
-      formatFixed(v, fractionDigits) ??
-      formatScientific(
-        v,
-        windowEnabled ? 7 : max(7, fractionDigits + 1),
-        windowEnabled,
-      );
 }
 
 ///
