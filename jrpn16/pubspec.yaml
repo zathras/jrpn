@@ -3,7 +3,7 @@ description: Jovial RPN 16C, a calculator simulator inspired by the HP-16C "Comp
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.1.18+33    # See also lib/generic_main.dart
+version: 2.1.18+34    # See also lib/generic_main.dart
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
