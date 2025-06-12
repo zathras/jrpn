@@ -73,10 +73,14 @@ Note that some settings are only available on mobile platforms
         "Touch sounds" and/or "Touch vibration" enabled in your device 
         settings.</b>
         See also
-        <a href="https://github.com/zathras/jrpn/issues/63">Issue 63</a>
-        and <a>Issue 102</a>.
-        "Heavy" haptic feedback might be different, depending on your 
-        phone model.
+        <a href="https://github.com/zathras/jrpn/issues/63">Issue 63</a> and 
+        <a href="https://github.com/zathras/jrpn/issues/102">Issue 102</a>.
+        This area has been an area of significant churn in the Android
+        platform.  Normal haptic feedback uses the Android haptic API, and
+        heavy haptic feedback uses the vibration API (well, one of three
+        APIs, depending on OS level.)  It seems that it is not uncommon
+        for one to work and the other not to, depending on Android device.
+        <code><font size="+0">¯\_(ツ)_/¯</font></code>
     </li>
     <li><b>Long Numbers</b> - Controls how long numbers are displayed,
         like "123456789ABCDEF0 h" or "-1.234567891 27".  The default
