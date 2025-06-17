@@ -1,3 +1,6 @@
+Version 2.1.19 - June 2025
+  * Android:  Allow choice between Android haptic or vibrate API:  Issue 102
+
 Version 2.1.18 - June 2025
   * Work around haptic feedback platform bug on some Android devices:  Issue 102
   * Allow configuration of button press look:  Issue 138

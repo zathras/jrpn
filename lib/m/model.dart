@@ -235,6 +235,7 @@ class Settings {
   // results.
   OrientationSetting _orientation = OrientationSetting.auto;
   KeyFeedbackSetting _keyFeedback = KeyFeedbackSetting.platform;
+  bool _useAndroidVibrateAPI = false;
   bool _systemOverlaysDisabled = false;
 
   static const _gKeyColorDefault = 0xff00afef;
@@ -269,6 +270,7 @@ class Settings {
     _traceProgramToStdout = false;
     _orientation = OrientationSetting.auto;
     _keyFeedback = KeyFeedbackSetting.platform;
+    _useAndroidVibrateAPI = false;
     _setPlatformOrientation();
     _systemOverlaysDisabled = false;
     setPlatformOverlays();
@@ -451,10 +453,47 @@ class Settings {
 
   KeyFeedbackSetting get keyFeedback =>
       isMobilePlatform ? _keyFeedback : KeyFeedbackSetting.platform;
-
   set keyFeedback(KeyFeedbackSetting v) {
     if (_keyFeedback != v) {
       _keyFeedback = v;
+      switch (_keyFeedback) {
+        case KeyFeedbackSetting.platform:
+        case KeyFeedbackSetting.click:
+        case KeyFeedbackSetting.none:
+          _useAndroidVibrateAPI = false;
+          break;
+        case KeyFeedbackSetting.haptic:
+        case KeyFeedbackSetting.both:
+        case KeyFeedbackSetting.hapticHeavy:
+        case KeyFeedbackSetting.bothHeavy:
+          // Do nothing
+          break;
+      }
+      _model.needsSave = true;
+    }
+  }
+
+  bool get useAndroidVibrateAPI => _useAndroidVibrateAPI;
+  set useAndroidVibrateAPI(bool v) {
+    if (_useAndroidVibrateAPI != v) {
+      _useAndroidVibrateAPI = v;
+      if (_useAndroidVibrateAPI) {
+        switch (_keyFeedback) {
+          case KeyFeedbackSetting.click:
+            _keyFeedback = KeyFeedbackSetting.both;
+            break;
+          case KeyFeedbackSetting.platform:
+          case KeyFeedbackSetting.none:
+            _keyFeedback = KeyFeedbackSetting.haptic;
+            break;
+          case KeyFeedbackSetting.haptic:
+          case KeyFeedbackSetting.both:
+          case KeyFeedbackSetting.hapticHeavy:
+          case KeyFeedbackSetting.bothHeavy:
+            // Do nothing
+            break;
+        }
+      }
       _model.needsSave = true;
     }
   }
@@ -509,10 +548,13 @@ class Settings {
       'longNumbers': _longNumbers.index,
       'euroComma': _euroComma,
       'showAccelerators': showAccelerators,
-      'systemOverlaysDisabled': systemOverlaysDisabled,
-      'orientation': orientation.index,
-      'keyFeedback': keyFeedback.index,
+      'systemOverlaysDisabled': _systemOverlaysDisabled,
+      'orientation': _orientation.index,
+      'keyFeedback': _keyFeedback.index,
     };
+    if (_useAndroidVibrateAPI) {
+      r['useAndroidVibrateAPI'] = true;
+    }
     if (_model.modelName != '15C') {
       r['showWordSize'] = _showWordSize;
       r['hideComplement'] = _hideComplement;
@@ -524,23 +566,23 @@ class Settings {
     if (_traceProgramToStdout) {
       r['traceProgramToStdout'] = _traceProgramToStdout;
     }
-    if (fTextColor != _fTextColorDefault) {
-      r['fTextColor'] = fTextColor;
+    if (_fTextColor != _fTextColorDefault) {
+      r['fTextColor'] = _fTextColor;
     }
-    if (fKeyColor != _fKeyColorDefault) {
-      r['fKeyColor'] = fKeyColor;
+    if (_fKeyColor != _fKeyColorDefault) {
+      r['fKeyColor'] = _fKeyColor;
     }
-    if (gTextColor != _gTextColorDefault) {
-      r['gTextColor'] = gTextColor;
+    if (_gTextColor != _gTextColorDefault) {
+      r['gTextColor'] = _gTextColor;
     }
-    if (gKeyColor != _gKeyColorDefault) {
-      r['gKeyColor'] = gKeyColor;
+    if (_gKeyColor != _gKeyColorDefault) {
+      r['gKeyColor'] = _gKeyColor;
     }
-    if (lcdBackgroundColor != _lcdBackgroundColorDefault) {
-      r['lcdBackgroundColor'] = lcdBackgroundColor;
+    if (_lcdBackgroundColor != _lcdBackgroundColorDefault) {
+      r['lcdBackgroundColor'] = _lcdBackgroundColor;
     }
-    if (lcdForegroundColor != _lcdForegroundColorDefault) {
-      r['lcdForegroundColor'] = lcdForegroundColor;
+    if (_lcdForegroundColor != _lcdForegroundColorDefault) {
+      r['lcdForegroundColor'] = _lcdForegroundColor;
     }
     return r;
   }
@@ -584,6 +626,7 @@ class Settings {
     } else {
       _keyFeedback = KeyFeedbackSetting.values[kv];
     }
+    _useAndroidVibrateAPI = (json['useAndroidVibrateAPI'] as bool?) ?? false;
     _setPlatformOrientation();
     _traceProgramToStdout = (json['traceProgramToStdout'] as bool?) ?? false;
     fKeyColor = json['fKeyColor'] as int?;

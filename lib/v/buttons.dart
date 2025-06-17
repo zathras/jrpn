@@ -1241,18 +1241,18 @@ class CalculatorButtonState extends State<CalculatorButton> {
             unawaited(SystemSound.play(SystemSoundType.click));
             break;
           case KeyFeedbackSetting.haptic:
-            unawaited(HapticFeedback.selectionClick());
+            unawaited(_doHaptic(false));
             break;
           case KeyFeedbackSetting.hapticHeavy:
-            unawaited(_heavyImpactHaptics());
+            unawaited(_doHaptic(true));
             break;
           case KeyFeedbackSetting.both:
             unawaited(SystemSound.play(SystemSoundType.click));
-            unawaited(HapticFeedback.selectionClick());
+            unawaited(_doHaptic(false));
             break;
           case KeyFeedbackSetting.bothHeavy:
             unawaited(SystemSound.play(SystemSoundType.click));
-            unawaited(_heavyImpactHaptics());
+            unawaited(_doHaptic(true));
             break;
           case KeyFeedbackSetting.none:
             break;
@@ -1283,12 +1283,20 @@ class CalculatorButtonState extends State<CalculatorButton> {
     );
   }
 
-  Future<void> _heavyImpactHaptics() {
-    if (Platform.isAndroid) {
+  Future<void> _doHaptic(bool heavy) {
+    if (Platform.isAndroid && widget.bFactory.settings.useAndroidVibrateAPI) {
       // Workaround for https://github.com/zathras/jrpn/issues/102
-      return AndroidHaptics.heavyImpact();
+      if (heavy) {
+        return AndroidHaptics.heavyImpact();
+      } else {
+        return AndroidHaptics.selectionClick();
+      }
     } else {
-      return HapticFeedback.heavyImpact();
+      if (heavy) {
+        return HapticFeedback.heavyImpact();
+      } else {
+        return HapticFeedback.selectionClick();
+      }
     }
   }
 

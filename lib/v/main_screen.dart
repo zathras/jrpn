@@ -847,7 +847,7 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                         items: const [
                           DropdownMenuItem(
                             value: KeyFeedbackSetting.platform,
-                            child: Text('Platform Default'),
+                            child: Text('Default'),
                           ),
                           DropdownMenuItem(
                             value: KeyFeedbackSetting.click,
@@ -878,6 +878,20 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                       const Text('    Key Feedback'),
                     ],
                   ),
+                ),
+              ]
+            : []),
+        ...(Platform.isAndroid
+            ? [
+                CheckedPopupMenuItem(
+                  checked: settings.useAndroidVibrateAPI,
+                  value: () {
+                    settings.useAndroidVibrateAPI =
+                        !settings.useAndroidVibrateAPI;
+                    unawaited(widget.app.model.writeToPersistentStorage());
+                    display.update();
+                  },
+                  child: const Text('Use Android Vibrate API'),
                 ),
               ]
             : []),
