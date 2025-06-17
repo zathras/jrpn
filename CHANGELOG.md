@@ -1,5 +1,6 @@
 Version 2.1.19 - June 2025
   * Android:  Allow choice between Android haptic or vibrate API:  Issue 102
+  * Android:  Build with Flutter 3.23.3:  Issue 139
 
 Version 2.1.18 - June 2025
   * Work around haptic feedback platform bug on some Android devices:  Issue 102
