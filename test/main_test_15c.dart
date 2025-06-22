@@ -50,6 +50,7 @@ import 'package:jrpn/jrpn15/linear_algebra.dart' as linalg;
 
 Future<void> main() async {
   runStaticInitialization15();
+  test('Number entry', numberEntry);
   test('Decimal complex', decimalComplex);
   test('Decimal multiplication', decimalMultiplyAndDivide);
   test('Decimal addition/subtraction', decimalAddSubtract);
@@ -2852,6 +2853,278 @@ Future<void> decimalMultiplyAndDivide() async {
     if (i % 100000 == 0 && i > 0) {
       print('$i');
     }
+  }
+}
+
+class NumberEntryTest {
+  final TestCalculator calculator;
+  final Operation modeN;
+  final List<Operation> digits;
+  final double result;
+
+  NumberEntryTest(this.calculator, this.modeN, int num, this.result)
+    : digits = _toDigits(num);
+  static final numbers = [
+    Operations.n0,
+    Operations.n1,
+    Operations.n2,
+    Operations.n3,
+    Operations.n4,
+    Operations.n5,
+    Operations.n6,
+    Operations.n7,
+    Operations.n8,
+    Operations.n9,
+  ];
+  static List<Operation> _toDigits(int num) {
+    final res = List<Operation>.empty(growable: true);
+    for (final ch in '$num'.codeUnits) {
+      res.add(numbers[ch - '0'.codeUnitAt(0)]);
+    }
+    return List.unmodifiable(res);
+  }
+
+  void play(List<Operation> script) {
+    for (final b in script) {
+      calculator.controller.buttonDown(b);
+      calculator.controller.buttonUp();
+    }
+  }
+
+  void run(Operation mode, int negate) {
+    play([mode]);
+    play([modeN]);
+    play(digits);
+    if (negate == -1) {
+      play([Operations.chs]);
+    }
+    play([Operations.eex, numbers[5]]);
+    expect(calculator.model.x, Value.fromDouble(negate * result));
+  }
+}
+
+Future<void> numberEntry() async {
+  final n = NumberEntryTest.numbers;
+  final c = TestCalculator(for15C: true);
+  final controller = c.controller;
+  final model = c.model;
+  void play(List<Operation> script) {
+    for (final b in script) {
+      controller.buttonDown(b);
+      controller.buttonUp();
+    }
+  }
+
+  for (final lcd in [
+    LongNumbersSetting.growLCD,
+    LongNumbersSetting.shrinkDigits,
+    LongNumbersSetting.window,
+  ]) {
+    model.settings.longNumbers = lcd;
+    for (final mode in [Operations15.fix, Operations15.sci, Operations15.eng]) {
+      for (final negate in [-1, 1]) {
+        for (final modeN in n) {
+          play([mode, modeN]);
+          play([
+            n[1],
+            Operations.dot,
+            n[1],
+            n[2],
+            n[3],
+            n[4],
+            n[5],
+            n[6],
+            n[7],
+            n[8],
+            n[9],
+            n[7],
+          ]);
+          if (negate == -1) {
+            play([Operations.chs]);
+          }
+          play([Operations.eex, n[2], n[5]]); // 7 should be ignored
+          expect(model.x, Value.fromDouble(negate * 1.123456789e25));
+        }
+        model.settings.longNumbers = LongNumbersSetting.growLCD;
+        {
+          final tests = [
+            NumberEntryTest(c, Operations.n6, 1234567, 1234567e5),
+            NumberEntryTest(c, Operations.n6, 12345678, 123456785),
+            NumberEntryTest(c, Operations.n7, 12345678, 12345678e5),
+            NumberEntryTest(c, Operations.n9, 1, 1e5),
+          ];
+          for (final t in tests) {
+            t.run(mode, negate);
+          }
+        }
+        model.settings.longNumbers = LongNumbersSetting.shrinkDigits;
+        {
+          final tests = [
+            NumberEntryTest(c, Operations.n6, 1234567, 1234567e5),
+            NumberEntryTest(c, Operations.n6, 12345678, 12345678e5),
+            NumberEntryTest(c, Operations.n7, 12345678, 12345678e5),
+            NumberEntryTest(c, Operations.n9, 1, 1e5),
+          ];
+          for (final t in tests) {
+            t.run(mode, negate);
+          }
+        }
+        model.settings.longNumbers = LongNumbersSetting.window;
+        {
+          final tests = [
+            NumberEntryTest(c, Operations.n6, 1234567, 1234567e5),
+            NumberEntryTest(c, Operations.n6, 12345678, 123456785),
+            NumberEntryTest(c, Operations.n7, 12345678, 123456785),
+            NumberEntryTest(c, Operations.n9, 1, 1e5),
+          ];
+          for (final t in tests) {
+            t.run(mode, negate);
+          }
+        }
+      }
+    }
+  }
+
+  play([
+    Operations.n1,
+    Operations.enter,
+    Operations.n2,
+    Operations15.sigmaPlus,
+  ]);
+  play([
+    Operations.n3,
+    Operations.enter,
+    Operations.n4,
+    Operations15.sigmaPlus,
+  ]);
+
+  for (final complex in [false, true]) {
+    c.model.isComplexMode = complex;
+
+    /// Single argument operations:
+    for (final op in [
+      Operations15.sqrtOp15,
+      Operations15.xSquared,
+      Operations15.eX15,
+      Operations15.lnOp,
+      Operations15.tenX15,
+      Operations15.logOp,
+      Operations15.percent,
+      Operations15.reciprocal15,
+      Operations15.deltaPercent,
+      Operations.abs,
+      Operations15.sin,
+      Operations15.sinh,
+      Operations15.sinInverse,
+      Operations15.sinhInverse,
+      Operations15.cos,
+      Operations15.cosh,
+      Operations15.cosInverse,
+      Operations15.coshInverse,
+      Operations15.tan,
+      Operations15.tanh,
+      Operations15.tanInverse,
+      Operations15.tanhInverse,
+      Operations15.toR,
+      Operations15.toP,
+      Operations15.toHMS,
+      Operations15.toH,
+      Operations15.toRad,
+      Operations15.toDeg,
+      Operations15.fracOp,
+      Operations15.intOp,
+      Operations15.xFactorial,
+      Operations15.yHatR,
+    ]) {
+      play([Operations.n9, Operations.enter, Operations15.plus]);
+      play([Operations.dot, Operations.n1, Operations.enter]);
+      play([Operations.dot, Operations.n2, Operations.enter]);
+      play([Operations.dot, Operations.n3, Operations.enter]);
+      play([Operations.dot, Operations.n4]);
+      expect(
+        model.lastX,
+        Value.fromDouble(9),
+        reason: 'lastX for $op $complex',
+      );
+      play([op]);
+      if (op == Operations15.yHatR) {
+        expect(model.t, Value.fromDouble(.2), reason: 't for $op $complex');
+        expect(model.z, Value.fromDouble(.3), reason: 'z for $op $complex');
+      } else {
+        expect(model.t, Value.fromDouble(.1), reason: 't for $op $complex');
+        expect(model.z, Value.fromDouble(.2), reason: 'z for $op $complex');
+        if (!{Operations15.toR, Operations15.toP}.contains(op)) {
+          expect(model.y, Value.fromDouble(.3), reason: 'y for $op $complex');
+        }
+      }
+      expect(
+        model.lastX,
+        Value.fromDouble(.4),
+        reason: 'lastX for $op $complex',
+      );
+    }
+
+    /// Two argument operations:
+    for (final op in [
+      Operations15.yX15,
+      Operations15.div,
+      Operations15.mult,
+      Operations15.minus,
+      Operations15.plus,
+      Operations15.pYX,
+      Operations15.cYX,
+    ]) {
+      play([Operations.n9, Operations.enter, Operations15.plus]);
+      play([Operations.n4, Operations.enter]);
+      play([Operations.n3, Operations.enter]);
+      play([Operations.n2, Operations.enter]);
+      play([Operations.n1]);
+      expect(model.lastX, Value.fromDouble(9));
+      play([op]);
+      expect(model.t, Value.fromDouble(4));
+      expect(model.z, Value.fromDouble(4), reason: 'z for $op $complex');
+      expect(model.y, Value.fromDouble(3));
+      expect(
+        model.lastX,
+        Value.fromDouble(1),
+        reason: 'lastX for $op $complex',
+      );
+    }
+
+    // Stuff that doesn't touch LastX:
+    for (final op in [
+      Operations15.xBar,
+      Operations15.stdDeviation,
+      Operations15.linearRegression,
+    ]) {
+      play([Operations.n9, Operations.enter, Operations15.plus]);
+      play([Operations.n4, Operations.enter]);
+      play([Operations.n3, Operations.enter]);
+      play([Operations.n2, Operations.enter]);
+      play([Operations.n1]);
+      expect(model.lastX, Value.fromDouble(9));
+      play([op]);
+      expect(model.t, Value.fromDouble(2));
+      expect(model.z, Value.fromDouble(1), reason: 'z for $op $complex');
+      expect(
+        model.lastX,
+        Value.fromDouble(9),
+        reason: 'lastX for $op $complex',
+      );
+    }
+
+    // CHS and the stack (not really lastX related)
+    play([Operations.n1, Operations.enter, Operations.n2, Operations.xy]);
+    play([Operations.enter, Operations.chs]);
+    expect(model.xF, -1);
+    expect(model.yF, 1);
+    expect(model.z.asDouble, 2);
+    play([Operations.n4]);
+    expect(model.xF, 4);
+    expect(model.yF, -1);
+    expect(model.z.asDouble, 1);
+    expect(model.t.asDouble, 2);
+    play([Operations.clx]);
   }
 }
 
