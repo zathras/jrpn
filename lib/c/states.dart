@@ -630,7 +630,8 @@ class DigitEntry extends ActiveState {
         }
         pad = '';
       } else {
-        pad = '       '.substring(0, extra);
+        assert(extra <= 10);
+        pad = '          '.substring(0, extra);
       }
       final String exs;
       if (ex >= 10) {
