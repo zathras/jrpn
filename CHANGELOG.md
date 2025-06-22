@@ -1,3 +1,6 @@
+Version 2.1.20 - Upcoming
+  * Floating point entry fidelity improvements in Grow LCD mode:  Issue 141
+
 Version 2.1.19 - June 2025
   * Android:  Allow choice between Android haptic or vibrate API:  Issue 102
   * Android:  Build with Flutter 3.23.3:  Issue 139
