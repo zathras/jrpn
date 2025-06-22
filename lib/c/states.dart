@@ -608,14 +608,20 @@ class DigitEntry extends ActiveState {
     } else {
       assert(model.displayMode.isFloatMode);
       assert(negEx || ex >= 0);
-      final int noWidth = ent.contains('.') ? 1 : 0;
-      int extra = 7 - (ent.length - noWidth);
+      int numDps = ent.contains('.') ? 1 : 0;
+      final ignored = SignMode.twosComplement;
+      final int avail = model.displayMode.maxDisplayDigits(56, ignored);
+      int extra = avail - 4 - (ent.length - numDps); // See issue 141
       String show = ent;
       String pad;
       if (extra < 0) {
-        if (model.settings.windowLongNumbers) {
+        if (model.settings.longNumbers != LongNumbersSetting.shrinkDigits) {
+          if (numDps == 0) {
+            return false; // Doesn't fit
+          }
           while (extra < 0) {
             if (!show.substring(show.length - 1).contains(_decimalDigits)) {
+              // e.g. we're removing a decimal point that's not at the end
               return false; // Doesn't fit
             }
             show = show.substring(0, show.length - 1);

@@ -547,10 +547,12 @@ abstract class FloatFormatter {
 
   static final int _ascii0 = '0'.codeUnitAt(0);
 
-  int get maxDisplayDigits => max(11, fractionDigits + 4);
-  // It's always OK to claim 11, as that's the minumum number of LCD digits.
+  int get maxDisplayDigits => max(11, fractionDigits + 5);
+  // It's always OK to claim 11, as that's the minimum number of LCD digits.
   // Worst case is sci/eng format... -1.234567891-11 takes 14 LCD digits.
   // Fixed formatting becomes scientific for big enough numbers.
+  //
+  // See issue 141 - this was off-by-one at "fractionDigits+4" initially
 
   ///
   /// Format the unsigned part of the mantissa to the given number of digits.
