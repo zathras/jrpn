@@ -36,7 +36,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   test: ^1.16.5
-  decimal: 3.2.2    # https://github.com/a14n/dart-decimal/issues/117
+  decimal: ^3.2.4    # https://github.com/a14n/dart-decimal/issues/117 in 3.2.3
   vector_math: ^2.1.0
 
 flutter:
