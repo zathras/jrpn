@@ -39,8 +39,10 @@ original.  However, for many calculations, the value is converted into
 a standard 64 bit double, then the calculation is performed and the result
 is converted back.  Other operations, like the 15C's integrate and solve
 functions, almost certainly use a different algorithm than the
-original.  With this said,
-results are believed to be generally compatible, and in some cases slightly
+original.  Addition, subtraction, multiplication and division are performed
+internally in decimal.  The trip operations are special-cased at multiples
+of 90 degrees/100 gradians, to avoid surprising results.  Generally speaking,
+Results are believed to be compatible, and in some cases slightly
 more accurate.
 
 <h2>The ON Button</h2>
