@@ -31,7 +31,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 /// <br>
 ///
 /// The state pattern is used to help manage the complexity of the calculator's
-/// behavior in the various state.  Correctly managing stack lift is an
+/// behavior in the various states.  Correctly managing stack lift is an
 /// interesting challenge.  The three main states use functions attached to
 /// [Operation]s to do their work.  The API presented to the [ProgramEntry]
 /// state is a reduced one, presented by [LimitedState].  Note that this
