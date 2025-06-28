@@ -48,9 +48,12 @@ more accurate.
 To illustrate this, consider <i>9^7.1</i>.  With a 12 digit mantissa,
 that comes to <i>5958292.46652</i>.  The real HP 15C gives
 <i>5958292.466</i>, whereas JRPN gives the slightly more accurate
-result of <i>5958292.467</i>.  Neither is "wrong" - the real calculator
-is behaving as advertised, whereas JRPN is brute-forcing its way to a
-slightly more accurate solution, by using 64 bit IEEE floats internally.
+result of <i>5958292.467</i>.  Neither is wrong - the real calculator
+is behaving as advertised, applying the even-odd rule to an 11 digit
+internal mantissa, rouding the 5 to an even number in the next digit over.
+JRPN's value is a 64 bit IEEE float, which has a more precise 53 bit
+binary mantissa that's used when rounding to a 10 digit decimal mantissa.
+A 53 bit binary mantissa is equivalent to between 15 and 16 decimal digits.
 
 <h2>The ON Button</h2>
 <p>
