@@ -44,6 +44,13 @@ internally in decimal.  The trip operations are special-cased at multiples
 of 90 degrees/100 gradians, to avoid surprising results.  Generally speaking,
 Results are believed to be compatible, and in some cases slightly
 more accurate.
+<p>
+To illustrate this, consider <i>9^7.1</i>.  With a 12 digit mantissa,
+that comes to <i>5958292.46652</i>.  The real HP 15C gives
+<i>5958292.466</i>, whereas JRPN gives the slightly more accurate
+result of <i>5958292.467</i>.  Neither is "wrong" - the real calculator
+is behaving as advertised, whereas JRPN is brute-forcing its way to a
+slightly more accurate solution, by using 64 bit IEEE floats internally.
 
 <h2>The ON Button</h2>
 <p>
