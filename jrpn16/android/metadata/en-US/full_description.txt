@@ -1,0 +1,1 @@
+<p><i>JRPN</i> is a programmer’s calculator that simulates an HP 16C. It simulates the appearance and behavior of the original, including the seven-segment display, and the little blink you get when entering numbers. The 16C’s windowing functions are implemented, but can be disabled to allow the display of longer numbers at one time.</p>

@@ -1,0 +1,1 @@
+<p><i>JRPN 15C</i> is a scientific calculator that simulates an HP-15C. It simulates the appearance and behavior of the original, including the seven-segment display, and the little blink you get when entering numbers. Includes complex math, matrices, numerical integration, solving for the root of an equation and statistics. Very state of the art for 1982!</p>
