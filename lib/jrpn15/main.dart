@@ -2516,7 +2516,7 @@ class ButtonLayout15 extends ButtonLayout {
     Operations.dot,
     Operations15.yHatR,
     Operations15.stdDeviation,
-    '.',
+    '.,',
     '\u2219/\u201a',
     factory.settings,
   );

@@ -1232,7 +1232,7 @@ class ButtonLayout16 extends ButtonLayout {
     Operations.dot,
     Operations.status,
     Operations.xNE0,
-    '.',
+    '.,',
     '\u2219/\u201a',
     factory.settings,
   );

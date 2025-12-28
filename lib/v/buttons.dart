@@ -768,7 +768,11 @@ class CalculatorOnSpecialButton extends CalculatorButton {
 
 ///
 /// The button with the decimal point on it is really, really special in that
-/// its keyboard accelerator allows ',' when in Euro comma mode
+/// its keyboard accelerator always allowed ',' when in Euro comma mode.
+/// This was special-cased originally, before keyboard accelerators could be
+/// configured.  With issue 147, both are allowed in US mode, but we still
+/// do special-casing, to try to preserve absolute backwards compatibility for
+/// anyone who redefined this.
 ///
 class CalculatorDotButton extends CalculatorOnSpecialButton {
   final Settings settings;
@@ -788,7 +792,14 @@ class CalculatorDotButton extends CalculatorOnSpecialButton {
   }) : super(acceleratorLabel: '');
 
   @override
-  String get acceleratorLabel => settings.euroComma ? '\u2219\u201a' : '\u2219';
+  String get acceleratorLabel {
+    final sl = super.acceleratorLabel;
+    if (sl != '') {
+      return sl;
+    } else {
+      return '\u2219\u201a';
+    }
+  }
 }
 
 /// The on/off button, which is flat on the 16C.
