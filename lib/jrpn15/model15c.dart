@@ -46,7 +46,13 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
   final List<List<MKey<OT>?>> Function() _getLogicalKeys;
 
   @override
-  bool userMode = false;
+  bool get userMode => _userMode;
+  void set userMode(bool v) {
+    _userMode = v;
+    needsSave = true;
+  }
+
+  bool _userMode = false;
 
   //
   // A bit hacky:  Some operations, like matrix operations, don't run until
@@ -199,6 +205,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
       growable: false,
     );
     r['lastRandom'] = rand.lastValue;
+    r['userMode'] = userMode;
     return r;
   }
 
@@ -215,6 +222,10 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
     final Object? lastRandom = json['lastRandom'];
     if (lastRandom is double) {
       rand.setNoReseed(lastRandom);
+    }
+    final Object? um = json['userMode'];
+    if (um is bool) {
+      _userMode = um;
     }
   }
 
