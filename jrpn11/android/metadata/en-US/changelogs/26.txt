@@ -1,0 +1,1 @@
+the signing key was changed. To update from a previous version, you'll have to uninstall the app and then install it freshly.

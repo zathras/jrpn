@@ -1,0 +1,1 @@
+<p><i>JRPN 11C</i> ist ein wissenschaftlicher Taschenrechner, der einen HP-11C simuliert. Es simuliert das Aussehen und Verhalten des Originals, einschließlich der Sieben-Segment-Anzeige und des kleinen Blinkens bei der Zahleneingabe. Beinhaltet wissenschaftliche und statistische Funktionen. Sehr modern für 1981!</p>

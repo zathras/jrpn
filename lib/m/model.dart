@@ -555,7 +555,7 @@ class Settings {
     if (_useAndroidVibrateAPI) {
       r['useAndroidVibrateAPI'] = true;
     }
-    if (_model.modelName != '15C') {
+    if (!_model.is15C) {
       r['showWordSize'] = _showWordSize;
       r['hideComplement'] = _hideComplement;
       r['integerModeCommas'] = _integerModeCommas;
