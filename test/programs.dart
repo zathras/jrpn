@@ -27,6 +27,7 @@ import 'package:jrpn/c/operations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/m/model.dart';
+import 'package:jrpn/jrpn11/main.dart';
 import 'package:jrpn/jrpn15/main.dart';
 import 'package:jrpn/jrpn16/main.dart';
 
@@ -61,9 +62,12 @@ class TestCalculator implements ProgramListener {
   final output = StreamController<ProgramEvent>();
   Completer<void>? _resume;
 
-  TestCalculator({bool for15C = false})
-    : controller = for15C
+  TestCalculator({bool for15C = false, bool for11C = false})
+    : assert(!(for15C && for11C)),
+      controller = for15C
           ? Controller15(createModel15())
+          : for11C
+          ? Controller11(createModel11())
           : Controller16(Model16()) {
     model.settings.msPerInstruction = 0;
     model.program.programListener = this;
