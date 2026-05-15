@@ -127,10 +127,7 @@ class Model11<OT extends ProgramOperation> extends Model<OT> {
   }
 
   @override
-  String get modelName => '11C';
-
-  @override
-  bool get is15C => true;
+  CalculatorModelKind get kind => CalculatorModelKind.jrpn11;
 
   @override
   int get returnStackSize => 7;

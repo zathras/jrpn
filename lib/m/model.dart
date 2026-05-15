@@ -555,7 +555,7 @@ class Settings {
     if (_useAndroidVibrateAPI) {
       r['useAndroidVibrateAPI'] = true;
     }
-    if (!_model.is15C) {
+    if (_model.hasIntegerModeSettings) {
       r['showWordSize'] = _showWordSize;
       r['hideComplement'] = _hideComplement;
       r['integerModeCommas'] = _integerModeCommas;
@@ -656,10 +656,30 @@ abstract class NumStatus {
   IntegerSignMode get integerSignMode;
 }
 
+enum CalculatorModelKind {
+  jrpn11,
+  jrpn15,
+  jrpn16;
+
+  /// User-visible model name. Also persisted in JSON state files.
+  String get displayName => switch (this) {
+    jrpn11 => '11C',
+    jrpn15 => '15C',
+    jrpn16 => '16C',
+  };
+
+  /// SharedPreferences key under which this model persists its state.
+  String get persistentStorageKey => switch (this) {
+    jrpn16 => 'init',
+    jrpn15 => 'init15C',
+    jrpn11 => 'init11C',
+  };
+}
+
 ///
 /// Our model, the main entry point to this module.  See the library-level
 /// documentation for a description, and an explanation of the model's
-/// structure.  Extended by Model15 and Model16.
+/// structure.  Extended by Model11, Model15 and Model16.
 ///
 abstract class Model<OT extends ProgramOperation> implements NumStatus {
   late final DisplayModel display;
@@ -694,12 +714,17 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// calculator's state obsolete.
   List<List<MKey<OT>?>> get logicalKeys;
 
-  ///
-  /// The name of this model of the calculator (16C or 15C).
-  ///
-  String get modelName;
+  /// Identity discriminator. Single source of truth for "which calculator
+  /// model is this?"
+  CalculatorModelKind get kind;
 
-  bool get is15C;
+  /// User-visible model name. Derived from [kind] so the model can't lie.
+  /// Also persisted in JSON state files as a backwards-compat sanity check.
+  String get modelName => kind.displayName;
+
+  /// Whether this model serializes the integer-mode display settings
+  /// (word size, complement display, integer commas). Only the 16C does.
+  bool get hasIntegerModeSettings => kind == CalculatorModelKind.jrpn16;
 
   // See Model15.deferToButtonUp
   bool get hasDeferToButtonUp => false;
@@ -1403,8 +1428,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     this.needsSave = needsSave;
   }
 
-  String get _persistentStorageKey =>
-      modelName == '16C' ? 'init' : 'init$modelName';
+  String get _persistentStorageKey => kind.persistentStorageKey;
   Future<void> readFromPersistentStorage() async {
     final storage = await SharedPreferences.getInstance();
     String? js = storage.getString(_persistentStorageKey);

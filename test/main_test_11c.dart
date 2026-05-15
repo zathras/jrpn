@@ -31,6 +31,51 @@ Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   runStaticInitialization11();
 
+  test('11C identity', () {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    expect(m.kind, CalculatorModelKind.jrpn11);
+    expect(m.modelName, '11C');
+    expect(m.hasIntegerModeSettings, false);
+  });
+
+  test('Persistent storage keys are stable across all model kinds', () {
+    // These specific strings are a back-compat contract: changing them
+    // would silently drop saved state on upgrade.
+    expect(CalculatorModelKind.jrpn16.persistentStorageKey, 'init');
+    expect(CalculatorModelKind.jrpn15.persistentStorageKey, 'init15C');
+    expect(CalculatorModelKind.jrpn11.persistentStorageKey, 'init11C');
+  });
+
+  test('Model display names are stable across all model kinds', () {
+    // Persisted in JSON state files; values are a back-compat contract.
+    expect(CalculatorModelKind.jrpn16.displayName, '16C');
+    expect(CalculatorModelKind.jrpn15.displayName, '15C');
+    expect(CalculatorModelKind.jrpn11.displayName, '11C');
+  });
+
+  test('11C JSON omits 16C-only integer-mode settings', () {
+    final tc = TestCalculator(for11C: true);
+    final json = tc.model.toJson();
+    final settings = json['settings'] as Map;
+    expect(settings.containsKey('showWordSize'), false);
+    expect(settings.containsKey('hideComplement'), false);
+    expect(settings.containsKey('integerModeCommas'), false);
+  });
+
+  test('decodeJson rejects a foreign-model state file', () {
+    final tc = TestCalculator(for11C: true);
+    final json = tc.model.toJson();
+    json['modelName'] = '15C';
+    expect(
+      () => tc.model.decodeJson(
+        Map<String, dynamic>.from(json),
+        needsSave: false,
+      ),
+      throwsArgumentError,
+    );
+  });
+
   test('11C boots and does basic stack arithmetic', () {
     final tc = TestCalculator(for11C: true);
     final m = tc.model;
