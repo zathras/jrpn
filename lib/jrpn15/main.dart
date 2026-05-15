@@ -992,7 +992,7 @@ class Operations15 extends Operations {
   );
   static final NormalOperation clearSigma = NormalOperation.floatOnly(
     floatCalc: (Model m) {
-      for (int i = 7; i >= 2; i--) {
+      for (final i in m.statsRegisters.all) {
         m.memory.registers[i] = Value.zero;
       }
       m.setXYZT(Value.zero);
@@ -1187,18 +1187,19 @@ class Operations15 extends Operations {
   );
   static final NormalOperation xBar = StackLiftingNormalOperation.floatOnly(
     floatCalc: (Model m) {
-      final denom = m.memory.registers[2];
-      m.x = m.checkOverflow(() => m.memory.registers[5].decimalDivideBy(denom));
+      final s = m.statsRegisters;
+      final denom = m.memory.registers[s.n];
+      m.x = m.checkOverflow(() => m.memory.registers[s.sumY].decimalDivideBy(denom));
       // Don't set LastX - checked on 15C
       m.pushStack();
-      m.x = m.checkOverflow(() => m.memory.registers[3].decimalDivideBy(denom));
+      m.x = m.checkOverflow(() => m.memory.registers[s.sumX].decimalDivideBy(denom));
     },
     needsStackLiftIfEnabled: _statsLift,
     name: 'xBar',
   );
   static final NormalOperation yHatR = NormalOperation.floatOnly(
     floatCalc: (Model m) {
-      final lr = LinearRegression(m.memory.registers);
+      final lr = LinearRegression(m.memory.registers, m.statsRegisters);
       final x = m.x;
       m.resultX = m.checkOverflow(() => lr.r.toValue());
       // Do set LastX - checked on 15C.
@@ -1213,19 +1214,23 @@ class Operations15 extends Operations {
   static final NormalOperation stdDeviation =
       StackLiftingNormalOperation.floatOnly(
         floatCalc: (Model m) {
-          final n = m.memory.registers[2];
-          m.x = m.checkOverflow(() => _stdDev(m.memory.registers, 5, 6, n));
+          final s = m.statsRegisters;
+          final n = m.memory.registers[s.n];
+          m.x = m.checkOverflow(
+              () => _stdDev(m.memory.registers, s.sumY, s.sumYSq, n));
           // Don't set LastX - checked on 15C
           m.pushStack();
-          m.x = m.checkOverflow(() => _stdDev(m.memory.registers, 3, 4, n));
+          m.x = m.checkOverflow(
+              () => _stdDev(m.memory.registers, s.sumX, s.sumXSq, n));
         },
         needsStackLiftIfEnabled: (m) =>
-            _statsLift(m) && m.memory.registers[2] != Value.oneF,
+            _statsLift(m) && m.memory.registers[m.statsRegisters.n] != Value.oneF,
         name: 's',
       );
   static bool _statsLift(Model m) {
-    m.memory.registers[7]; // Throw exception if not valid
-    if (m.memory.registers[2] == Value.zero) {
+    final s = m.statsRegisters;
+    m.memory.registers[s.sumXY]; // Throw exception if not valid
+    if (m.memory.registers[s.n] == Value.zero) {
       throw CalculatorError(0);
     }
     return true;
@@ -1244,14 +1249,14 @@ class Operations15 extends Operations {
   static final NormalOperation linearRegression =
       StackLiftingNormalOperation.floatOnly(
         floatCalc: (Model m) {
-          final lr = LinearRegression(m.memory.registers);
+          final lr = LinearRegression(m.memory.registers, m.statsRegisters);
           m.x = m.checkOverflow(() => lr.slope.toValue());
           // Don't set LastX - checked on 15C
           m.pushStack();
           m.x = m.checkOverflow(() => lr.yIntercept.toValue());
         },
         needsStackLiftIfEnabled: (m) {
-          LinearRegression(m.memory.registers); // Throw exception if error
+          LinearRegression(m.memory.registers, m.statsRegisters); // Throws if error
           return true;
         },
         name: 'L.R.',
@@ -1260,16 +1265,17 @@ class Operations15 extends Operations {
   static final NormalOperation sigmaPlus = NormalOperation.floatOnly(
     stackLift: StackLift.disable,
     floatCalc: (Model m) {
+      final s = m.statsRegisters;
       final reg = m.memory.registers;
       final x = DecimalFP22(m.x);
       final y = DecimalFP22(m.y);
-      reg[7] = m.checkOverflow(() => (DecimalFP22(reg[7]) + x * y).toValue());
-      reg[6] = m.checkOverflow(() => (DecimalFP22(reg[6]) + y * y).toValue());
-      reg[5] = m.checkOverflow(() => (DecimalFP22(reg[5]) + y).toValue());
-      reg[4] = m.checkOverflow(() => (DecimalFP22(reg[4]) + x * x).toValue());
-      reg[3] = m.checkOverflow(() => (DecimalFP22(reg[3]) + x).toValue());
-      final newReg = m.checkOverflow(() => reg[2].decimalAdd(Value.oneF));
-      reg[2] = newReg;
+      reg[s.sumXY] = m.checkOverflow(() => (DecimalFP22(reg[s.sumXY]) + x * y).toValue());
+      reg[s.sumYSq] = m.checkOverflow(() => (DecimalFP22(reg[s.sumYSq]) + y * y).toValue());
+      reg[s.sumY] = m.checkOverflow(() => (DecimalFP22(reg[s.sumY]) + y).toValue());
+      reg[s.sumXSq] = m.checkOverflow(() => (DecimalFP22(reg[s.sumXSq]) + x * x).toValue());
+      reg[s.sumX] = m.checkOverflow(() => (DecimalFP22(reg[s.sumX]) + x).toValue());
+      final newReg = m.checkOverflow(() => reg[s.n].decimalAdd(Value.oneF));
+      reg[s.n] = newReg;
       if (m.isComplexMode) {
         m.lastXCV = m.xCV;
         m.xCV = ComplexValue(newReg, m.xCV.imaginary);
@@ -1283,22 +1289,23 @@ class Operations15 extends Operations {
   static final NormalOperation sigmaMinus = NormalOperation.floatOnly(
     stackLift: StackLift.disable,
     floatCalc: (Model m) {
+      final s = m.statsRegisters;
       final reg = m.memory.registers;
       final x = DecimalFP22(m.x);
       final y = DecimalFP22(m.y);
-      reg[7] = m.checkOverflow(() => (DecimalFP22(reg[7]) - x * y).toValue());
-      reg[6] = m.checkOverflow(() => (DecimalFP22(reg[6]) - y * y).toValue());
-      reg[5] = m.checkOverflow(() => (DecimalFP22(reg[5]) - y).toValue());
-      reg[4] = m.checkOverflow(() => (DecimalFP22(reg[4]) - x * x).toValue());
-      reg[3] = m.checkOverflow(() => (DecimalFP22(reg[3]) - x).toValue());
-      final newReg = m.checkOverflow(() => reg[2].decimalSubtract(Value.oneF));
-      reg[2] = newReg;
+      reg[s.sumXY] = m.checkOverflow(() => (DecimalFP22(reg[s.sumXY]) - x * y).toValue());
+      reg[s.sumYSq] = m.checkOverflow(() => (DecimalFP22(reg[s.sumYSq]) - y * y).toValue());
+      reg[s.sumY] = m.checkOverflow(() => (DecimalFP22(reg[s.sumY]) - y).toValue());
+      reg[s.sumXSq] = m.checkOverflow(() => (DecimalFP22(reg[s.sumXSq]) - x * x).toValue());
+      reg[s.sumX] = m.checkOverflow(() => (DecimalFP22(reg[s.sumX]) - x).toValue());
+      final newReg = m.checkOverflow(() => reg[s.n].decimalSubtract(Value.oneF));
+      reg[s.n] = newReg;
       if (m.isComplexMode) {
         m.lastXCV = m.xCV;
         m.xCV = ComplexValue(newReg, m.xCV.imaginary);
       } else {
         m.lastX = m.x;
-        m.x = reg[2];
+        m.x = reg[s.n];
       }
     },
     name: 'E-',
@@ -1626,9 +1633,10 @@ class Operations15 extends Operations {
           key: Operations15.sigmaPlus,
           child: StackLiftingArgDone(
             (m) {
-              m.x = m.memory.registers[5]; // Don't set lastX
+              final s = m.statsRegisters;
+              m.x = m.memory.registers[s.sumY]; // Don't set lastX
               m.pushStack();
-              m.x = m.memory.registers[3];
+              m.x = m.memory.registers[s.sumX];
             },
             needsStackLiftIfEnabled: (m) =>
                 (m as Model15).memory.numRegisters >= 6,

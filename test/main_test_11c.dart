@@ -137,6 +137,56 @@ Future<void> main() async {
     expect(m.x, Value.fromDouble(42));
   });
 
+  test('11C statistics accumulate into R0..R5 (handbook p. 58 example)', () {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    final regs = m.memory.registers;
+
+    // Pre-seed R0..R7 with junk to prove (a) CLEAR Σ wipes R0..R5, and
+    // (b) 11C doesn't touch the 15C-range registers R6/R7.
+    final junk = Value.fromDouble(0xdeadbeef.toDouble());
+    for (int i = 0; i <= 7; i++) {
+      regs[i] = junk;
+    }
+    tc.enter(Operations.fShift);
+    tc.enter(Operations11.clearSigma);
+    for (int i = 0; i <= 5; i++) {
+      expect(regs[i], Value.zero, reason: 'R$i after CLEAR Σ');
+    }
+    expect(regs[6], junk, reason: 'CLEAR Σ must not touch R6 on 11C');
+    expect(regs[7], junk, reason: 'CLEAR Σ must not touch R7 on 11C');
+
+    // (y, x) pairs from the HP-11C handbook coal/electricity example.
+    final pairs = <(double, double)>[
+      (1.761, 5.552),
+      (1.775, 5.963),
+      (1.792, 6.135),
+      (1.884, 6.313),
+      (1.943, 6.713),
+    ];
+    for (final (y, x) in pairs) {
+      m.yF = y;
+      m.xF = x;
+      tc.enter(Operations11.sigmaPlus);
+    }
+
+    // After Σ+, X holds the running n.
+    expect(m.x, Value.fromDouble(5));
+    // Handbook expected values (FIX 4 in the manual).
+    expect(regs[0], Value.fromDouble(5));            // n
+    expect(regs[1], Value.fromDouble(30.676));       // Σx
+    expect(regs[2], Value.fromDouble(188.938636));   // Σx²
+    expect(regs[3], Value.fromDouble(9.155));        // Σy
+    expect(regs[4], Value.fromDouble(16.787715));    // Σy²
+    expect(regs[5], Value.fromDouble(56.292368));    // Σxy
+
+    // 15C-style positions (R2..R7) must NOT be touched. We pre-seeded
+    // R6/R7 with junk; they should still be junk. R2..R5 were already
+    // cleared and re-used by 11C stats, so we can't assert on them here.
+    expect(regs[6], junk, reason: 'R6 must not be used by 11C stats');
+    expect(regs[7], junk, reason: 'R7 must not be used by 11C stats');
+  });
+
   test('11C keyboard matches the expected layout', () {
     final tc = TestCalculator(for11C: true);
     final keys = tc.model.logicalKeys;

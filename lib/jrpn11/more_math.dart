@@ -265,22 +265,22 @@ class LinearRegression {
     this.sumX,
   );
 
-  factory LinearRegression(Registers regs) {
-    regs[7]; // Throw exception if invalid
-    final numV = regs[2];
+  factory LinearRegression(Registers regs, StatsRegisterMap s) {
+    regs[s.sumXY]; // Throw exception if invalid
+    final numV = regs[s.n];
     if (numV == Value.zero || numV == Value.oneF) {
       throw CalculatorError(0);
     }
-    final num = DecimalFP22(regs[2]);
-    final sumX = DecimalFP22(regs[3]);
-    final m = num * DecimalFP22(regs[4]) - sumX * sumX;
-    final sumY = DecimalFP22(regs[5]);
-    final n = num * DecimalFP22(regs[6]) - sumY * sumY;
+    final num = DecimalFP22(regs[s.n]);
+    final sumX = DecimalFP22(regs[s.sumX]);
+    final m = num * DecimalFP22(regs[s.sumXSq]) - sumX * sumX;
+    final sumY = DecimalFP22(regs[s.sumY]);
+    final n = num * DecimalFP22(regs[s.sumYSq]) - sumY * sumY;
     final zero = DecimalFP22(Value.zero);
     if (m == zero || n == zero) {
       throw CalculatorError(0);
     }
-    final p = num * DecimalFP22(regs[7]) - sumX * sumY;
+    final p = num * DecimalFP22(regs[s.sumXY]) - sumX * sumY;
     return LinearRegression._internal(num, m, n, p, sumY, sumX);
   }
 

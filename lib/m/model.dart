@@ -677,6 +677,28 @@ enum CalculatorModelKind {
 }
 
 ///
+/// Which storage registers a model's statistics functions use.
+/// The HP-15C uses R2..R7 (base=2); the HP-11C uses R0..R5 (base=0).
+class StatsRegisterMap {
+  final int n; // count of data points
+  final int sumX;
+  final int sumXSq;
+  final int sumY;
+  final int sumYSq;
+  final int sumXY;
+
+  const StatsRegisterMap.contiguous(int base)
+    : n = base,
+      sumX = base + 1,
+      sumXSq = base + 2,
+      sumY = base + 3,
+      sumYSq = base + 4,
+      sumXY = base + 5;
+
+  Iterable<int> get all => [n, sumX, sumXSq, sumY, sumYSq, sumXY];
+}
+
+///
 /// Our model, the main entry point to this module.  See the library-level
 /// documentation for a description, and an explanation of the model's
 /// structure.  Extended by Model11, Model15 and Model16.
@@ -725,6 +747,14 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// Whether this model serializes the integer-mode display settings
   /// (word size, complement display, integer commas). Only the 16C does.
   bool get hasIntegerModeSettings => kind == CalculatorModelKind.jrpn16;
+
+  /// Which storage registers this model's statistics functions read/write.
+  /// 16C doesn't expose stats keys; its value is unused.
+  StatsRegisterMap get statsRegisters => switch (kind) {
+    CalculatorModelKind.jrpn11 => const StatsRegisterMap.contiguous(0),
+    CalculatorModelKind.jrpn15 => const StatsRegisterMap.contiguous(2),
+    CalculatorModelKind.jrpn16 => const StatsRegisterMap.contiguous(2),
+  };
 
   // See Model15.deferToButtonUp
   bool get hasDeferToButtonUp => false;
