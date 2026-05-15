@@ -1,13 +1,12 @@
 // ignore_for_file: avoid_print
 
-// 11C smoke suite. Boots the 11C target, exercises a few core operations
-// end-to-end, verifies the opcode table hasn't drifted from the 15C
-// reference, and runs the pre-existing `SelfTests11` battery.
+// 11C smoke + layout suite. Boots the 11C target, exercises a few core
+// operations end-to-end, asserts the keyboard matches the handbook,
+// verifies the opcode snapshot, and runs the pre-existing `SelfTests11`
+// battery.
 //
-// TODO: extend as 11C behavior diverges from 15C. In particular, add
-// targeted tests whenever:
-//   - the 11C keyboard layout is wired up (assert key-to-op mapping),
-//   - matrix entry points are removed from the 11C UI,
+// TODO: extend as 11C behavior diverges further. Add targeted tests when:
+//   - matrix entry points are closed off outside the keyboard,
 //   - complex mode is disabled on 11C,
 //   - the 11C stats register map is changed from the 15C mapping,
 //   - 11C-specific memory limits / program-handbook behavior is locked in.
@@ -136,6 +135,70 @@ Future<void> main() async {
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
     expect(m.x, Value.fromDouble(42));
+  });
+
+  test('11C keyboard matches the expected layout', () {
+    final tc = TestCalculator(for11C: true);
+    final keys = tc.model.logicalKeys;
+    // (row, col, primary, f-shift, g-shift). Row 3 col 5 is null
+    // (lower half of ENTER).
+    final expected = <List<Object>>[
+      // Row 0
+      [0, 0, Operations11.sqrtOp15, Operations11.letterLabelA, Operations11.xSquared],
+      [0, 1, Operations11.eX15, Operations11.letterLabelB, Operations11.lnOp],
+      [0, 2, Operations11.tenX15, Operations11.letterLabelC, Operations11.logOp],
+      [0, 3, Operations11.yX15, Operations11.letterLabelD, Operations11.percent],
+      [0, 4, Operations11.reciprocal15, Operations11.letterLabelE, Operations11.deltaPercent],
+      [0, 5, Operations.chs, Operations11.piOp, Operations.abs],
+      [0, 6, Operations.n7, Operations11.fix, Operations11.deg],
+      [0, 7, Operations.n8, Operations11.sci, Operations11.rad],
+      [0, 8, Operations.n9, Operations11.eng, Operations11.grd],
+      [0, 9, Operations11.div, Operations.xLEy, Operations.xLT0],
+      // Row 1
+      [1, 0, Operations.sst, Operations11.lbl15, Operations.bst],
+      [1, 1, Operations11.gto, Operations11.hyp, Operations11.hypInverse],
+      [1, 2, Operations11.sin, Operations.xSwapParenI, Operations11.sinInverse],
+      [1, 3, Operations11.cos, Operations11.parenI15, Operations11.cosInverse],
+      [1, 4, Operations11.tan, Operations11.I15, Operations11.tanInverse],
+      [1, 5, Operations.eex, Operations11.toR, Operations11.toP],
+      [1, 6, Operations.n4, Operations11.xExchange, Operations11.sf],
+      [1, 7, Operations.n5, Operations11.dse, Operations11.cf],
+      [1, 8, Operations.n6, Operations11.isg, Operations11.fQuestion],
+      [1, 9, Operations11.mult, Operations.xGTy, Operations.xGT0],
+      // Row 2
+      [2, 0, Operations.rs, Operations.pse, Operations.pr],
+      [2, 1, Operations11.gsb, Operations11.clearSigma, Operations.rtn],
+      [2, 2, Operations.rDown, Operations.clearPrgm, Operations.rUp],
+      [2, 3, Operations.xy, Operations.clearReg, Operations11.rnd],
+      [2, 4, Operations.bsp, Operations.clearPrefix, Operations.clx],
+      [2, 5, Operations.enter, Operations11.ranNum, Operations11.lstx15],
+      [2, 6, Operations.n1, Operations11.pYX, Operations11.cYX],
+      [2, 7, Operations.n2, Operations11.toHMS, Operations11.toH],
+      [2, 8, Operations.n3, Operations11.toRad, Operations11.toDeg],
+      [2, 9, Operations11.minus, Operations.xNEy, Operations.xNE0],
+      // Row 3
+      [3, 0, Operations.onOff, Operations.onOff, Operations.onOff],
+      [3, 1, Operations.fShift, Operations.fShift, Operations.fShift],
+      [3, 2, Operations.gShift, Operations.gShift, Operations.gShift],
+      [3, 3, Operations11.sto15, Operations11.fracOp, Operations11.intOp],
+      [3, 4, Operations11.rcl15, Operations11.userOp, Operations.mem],
+      // row 3 col 5 is null (under ENTER)
+      [3, 6, Operations.n0, Operations11.xFactorial, Operations11.xBar],
+      [3, 7, Operations.dot, Operations11.yHatR, Operations11.stdDeviation],
+      [3, 8, Operations11.sigmaPlus, Operations11.linearRegression, Operations11.sigmaMinus],
+      [3, 9, Operations11.plus, Operations.xEQy, Operations.xEQ0],
+    ];
+    for (final e in expected) {
+      final row = e[0] as int;
+      final col = e[1] as int;
+      final k = keys[row][col];
+      final pos = 'row $row col $col';
+      expect(k, isNotNull, reason: '$pos missing');
+      expect(k!.unshifted, same(e[2]), reason: '$pos primary');
+      expect(k.fShifted, same(e[3]), reason: '$pos f-shift');
+      expect(k.gShifted, same(e[4]), reason: '$pos g-shift');
+    }
+    expect(keys[3][5], isNull, reason: 'row 3 col 5 should be null (under ENTER)');
   });
 
   test('Built-in self tests 11C', () async {

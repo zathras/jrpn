@@ -837,15 +837,9 @@ class Operations11 extends Operations {
     name: 'TANH-1',
   );
 
-  static final _matrixSynonyms = {
-    Operations.chs: Operations11.matrix,
-    Operations.eex: Operations11.resultOp,
-    ..._letterSynonyms,
-  };
-
-  static final _matrixSynonymsPlusRandom = {
-    ..._matrixSynonyms,
+  static final _stoRclSynonyms = {
     Operations.enter: Operations11.ranNum,
+    ..._letterSynonyms,
   };
 
   static void _dim(Model m, int arg) {
@@ -1442,7 +1436,7 @@ class Operations11 extends Operations {
   static final NormalArgOperation sto15 = NormalArgOperation(
     maxOneByteOpcodes: 34,
     arg: ArgAlternates(
-      synonyms: _matrixSynonymsPlusRandom,
+      synonyms: _stoRclSynonyms,
       children: [
         // 0-.9, I
         RegisterWriteArg(
@@ -1455,17 +1449,6 @@ class Operations11 extends Operations {
           child: ArgDone(((m) {
             (m as Model11).rand.setSeed(m.xF);
           })),
-        ),
-        KeyArg(
-          key: Operations11.resultOp,
-          child: ArgDone((m) {
-            final matrix = (m as Model11).x.asMatrix;
-            if (matrix == null) {
-              throw CalculatorError(11);
-            } else {
-              m.resultMatrix = matrix;
-            }
-          }),
         ),
         // g A..E:
         KeysArg(
@@ -1511,15 +1494,6 @@ class Operations11 extends Operations {
                 child: ArgDone((m) => _storeToParenI(m, true)),
               ),
             ],
-          ),
-        ),
-        KeyArg(
-          // STO MATRIX A..E.  These are two-byte opcodes.
-          key: Operations11.matrix,
-          child: KeysArg(
-            synonyms: _matrixSynonyms,
-            keys: _letterLabels,
-            generator: (i) => ArgDone((m) => _storeMatrix(m, i)),
           ),
         ),
         KeyArg(
@@ -1591,10 +1565,7 @@ class Operations11 extends Operations {
       // as with normal operations.
     },
     arg: ArgAlternates(
-      synonyms: {
-        ..._matrixSynonymsPlusRandom,
-        Operations11.sin: Operations11.dim,
-      },
+      synonyms: _stoRclSynonyms,
       children: [
         RegisterReadArg(maxDigit: 19, noParenI: true, f: (m, v) => m.x = v),
         KeyArg(
@@ -1632,58 +1603,6 @@ class Operations11 extends Operations {
             },
             needsStackLiftIfEnabled: (m) =>
                 (m as Model11).memory.numRegisters >= 6,
-          ),
-        ),
-        KeyArg(
-          key: Operations11.dim,
-          child: ArgAlternates(
-            synonyms: _letterAndRegisterISynonyms,
-            children: [
-              KeysArg(
-                keys: _letterLabels,
-                generator: (i) => ArgDone((m) {
-                  final mat = (m as Model11).matrices[i];
-                  m.xF = mat.rows.toDouble();
-                  m.pushStack();
-                  m.xF = mat.columns.toDouble();
-                }),
-              ),
-              KeyArg(
-                key: Operations11.I15,
-                child: ArgDone((m) {
-                  final int? miv = m.memory.registers.index.asMatrix;
-                  if (miv == null) {
-                    throw CalculatorError(11);
-                  }
-                  final mat = (m as Model11).matrices[miv];
-                  m.xF = mat.rows.toDouble();
-                  m.pushStack();
-                  m.xF = mat.columns.toDouble();
-                }),
-              ),
-              KeyArg(
-                key: Operations11.parenI15,
-                child: ArgDone(
-                  (m) => m.xF = ((m as Model11).memory.numRegisters - 1)
-                      .toDouble(),
-                ),
-              ),
-            ],
-          ),
-        ),
-        KeyArg(
-          key: Operations11.resultOp,
-          child: ArgDone(
-            (m) => m.x = Value.fromMatrix((m as Model11).resultMatrix),
-          ),
-        ),
-        KeyArg(
-          // RCL MATRIX A..E.  These are one-byte opcodes.
-          key: Operations11.matrix,
-          child: KeysArg(
-            synonyms: _matrixSynonyms,
-            keys: _letterLabels,
-            generator: (i) => ArgDone((m) => m.x = Value.fromMatrix(i)),
           ),
         ),
         UserArg(
@@ -2178,10 +2097,10 @@ class ButtonLayout11 extends ButtonLayout {
   CalculatorButton get chs => CalculatorButton(
     factory,
     'CHS',
-    'MATRIX',
+    '\u03c0',
     'ABS',
     Operations.chs,
-    Operations11.matrix,
+    Operations11.piOp,
     Operations.abs,
     'H',
   );
@@ -2218,11 +2137,11 @@ class ButtonLayout11 extends ButtonLayout {
   CalculatorButton get div => CalculatorButton(
     factory,
     '\u00F7',
-    'SOLVE',
     'x\u2264y',
+    'x<0',
     Operations11.div,
-    Operations11.solve,
     Operations.xLEy,
+    Operations.xLT0,
     '/',
   );
 
@@ -2249,10 +2168,10 @@ class ButtonLayout11 extends ButtonLayout {
   CalculatorButton get sin => CalculatorButtonHyperbolic(
     factory,
     'SIN',
-    'DIM',
+    'x\u2b0c(i)',
     'SIN^\u2009\u22121',
     Operations11.sin,
-    Operations11.dim,
+    Operations.xSwapParenI,
     Operations11.sinInverse,
     Operations11.sinh,
     Operations11.sinhInverse,
@@ -2286,17 +2205,17 @@ class ButtonLayout11 extends ButtonLayout {
   CalculatorButton get eex => CalculatorButton(
     factory,
     'EEX',
-    'RESULT',
-    '\u03c0',
+    '\u279cR',
+    '\u279cP',
     Operations.eex,
-    Operations11.resultOp,
-    Operations11.piOp,
+    Operations11.toR,
+    Operations11.toP,
     'P',
   );
   CalculatorButton get n4 => CalculatorButton(
     factory,
     '4',
-    'x\u2b0c',
+    'x\u2b0cI',
     'SF',
     Operations.n4,
     Operations11.xExchange,
@@ -2325,12 +2244,12 @@ class ButtonLayout11 extends ButtonLayout {
   );
   CalculatorButton get mult => CalculatorOnSpecialButton(
     factory,
-    '\u00D7',
-    '\u222b^\u200ax^y',
-    'x=0',
+    '\u00d7',
+    'x>y',
+    'x>0',
     Operations11.mult,
-    Operations11.integrate,
-    Operations11.xEQ0_15,
+    Operations.xGTy,
+    Operations.xGT0,
     'X*',
     'TST',
     acceleratorLabel: '*\u00d7',
@@ -2403,11 +2322,11 @@ class ButtonLayout11 extends ButtonLayout {
   CalculatorButton get n1 => CalculatorButton(
     factory,
     '1',
-    '\u279cR',
-    '\u279cP',
+    'P\u200ay,x',
+    'C\u2009y,x',
     Operations.n1,
-    Operations11.toR,
-    Operations11.toP,
+    Operations11.pYX,
+    Operations11.cYX,
     '1',
   );
   CalculatorButton get n2 => CalculatorButton(
@@ -2433,11 +2352,11 @@ class ButtonLayout11 extends ButtonLayout {
   CalculatorButton get minus => CalculatorOnSpecialButton(
     factory,
     '\u2212',
-    'Re\u2b0cIm',
-    'TEST',
+    'x\u2260y',
+    'x\u22600',
     Operations11.minus,
-    Operations11.reImSwap,
-    Operations11.testOp,
+    Operations.xNEy,
+    Operations.xNE0,
     '-',
     'CLR',
     acceleratorLabel: '\u2212',
@@ -2533,11 +2452,11 @@ class ButtonLayout11 extends ButtonLayout {
   CalculatorButton get plus => CalculatorButton(
     factory,
     '+',
-    'P\u200ay,x',
-    'C\u2009y,x',
+    'x=y',
+    'x=0',
     Operations11.plus,
-    Operations11.pYX,
-    Operations11.cYX,
+    Operations.xEQy,
+    Operations.xEQ0,
     '+=',
   );
 
@@ -2902,18 +2821,18 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
       Operations11.letterLabelE,
       Operations11.deltaPercent,
     ),
-    MKey(Operations.chs, Operations11.matrix, Operations.abs),
+    MKey(Operations.chs, Operations11.piOp, Operations.abs),
     MKey(Operations.n7, Operations11.fix, Operations11.deg),
     MKey(Operations.n8, Operations11.sci, Operations11.rad),
     MKey(Operations.n9, Operations11.eng, Operations11.grd),
-    MKey(Operations11.div, Operations11.solve, Operations.xLEy),
+    MKey(Operations11.div, Operations.xLEy, Operations.xLT0),
   ],
   [
     MKey(Operations.sst, Operations11.lbl15, Operations.bst),
     MKey(Operations11.gto, Operations11.hyp, Operations11.hypInverse),
     MKey(
       Operations11.sin,
-      Operations11.dim,
+      Operations.xSwapParenI,
       Operations11.sinInverse,
       extensionOps: [
         MKeyExtensionOp(Operations11.sinh, Operations.fShift, Operations11.hyp),
@@ -2950,11 +2869,11 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
         ),
       ],
     ),
-    MKey(Operations.eex, Operations11.resultOp, Operations11.piOp),
+    MKey(Operations.eex, Operations11.toR, Operations11.toP),
     MKey(Operations.n4, Operations11.xExchange, Operations11.sf),
     MKey(Operations.n5, Operations11.dse, Operations11.cf),
     MKey(Operations.n6, Operations11.isg, Operations11.fQuestion),
-    MKey(Operations11.mult, Operations11.integrate, Operations11.xEQ0_15),
+    MKey(Operations11.mult, Operations.xGTy, Operations.xGT0),
   ],
   [
     MKey(Operations.rs, Operations.pse, Operations.pr),
@@ -2963,10 +2882,10 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
     MKey(Operations.xy, Operations.clearReg, Operations11.rnd),
     MKey(Operations.bsp, Operations.clearPrefix, Operations.clx),
     MKey(Operations.enter, Operations11.ranNum, Operations11.lstx15),
-    MKey(Operations.n1, Operations11.toR, Operations11.toP),
+    MKey(Operations.n1, Operations11.pYX, Operations11.cYX),
     MKey(Operations.n2, Operations11.toHMS, Operations11.toH),
     MKey(Operations.n3, Operations11.toRad, Operations11.toDeg),
-    MKey(Operations11.minus, Operations11.reImSwap, Operations11.testOp),
+    MKey(Operations11.minus, Operations.xNEy, Operations.xNE0),
   ],
   [
     MKey(Operations.onOff, Operations.onOff, Operations.onOff),
@@ -2982,7 +2901,7 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
       Operations11.linearRegression,
       Operations11.sigmaMinus,
     ),
-    MKey(Operations11.plus, Operations11.pYX, Operations11.cYX),
+    MKey(Operations11.plus, Operations.xEQy, Operations.xEQ0),
   ],
 ];
 
