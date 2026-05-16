@@ -36,7 +36,6 @@ import 'package:jrpn/v/isw.dart';
 
 import 'back_panel11c.dart';
 import 'matrix.dart';
-import 'runners.dart';
 import 'tests11c.dart';
 import 'model11c.dart';
 import 'linear_algebra.dart' as linalg;
@@ -457,129 +456,6 @@ class Operations11 extends Operations {
         },
         name: 'delta%',
       );
-  static final NormalArgOperation matrix = NormalArgOperation(
-    maxOneByteOpcodes: 0,
-    arg: ArgAlternates(
-      children: [
-        KeyArg(
-          key: Operations.n0,
-          child: ArgDone((m) {
-            for (final mat in (m as Model11).matrices) {
-              mat.resize(m, 0, 0);
-            }
-          }),
-        ),
-        KeyArg(
-          key: Operations.n1,
-          child: ArgDone((m) {
-            m.memory.registers[0] = m.memory.registers[1] = Value.fromDouble(1);
-          }),
-        ),
-        KeyArg(
-          key: Operations.n2,
-          child: ArgDone((m) {
-            final mat = _getMatrixFromValue(m as Model11, m.x);
-            mat.convertToZTilde(m);
-            m.needsSave = true;
-          }),
-        ),
-        KeyArg(
-          key: Operations.n3,
-          child: ArgDone((m) {
-            final mat = _getMatrixFromValue(m as Model11, m.x);
-            mat.convertFromZTilde(m);
-            m.needsSave = true;
-          }),
-        ),
-        KeyArg(
-          key: Operations.n4,
-          child: ArgDone((m) {
-            final mat = _getMatrixFromValue(m as Model11, m.x);
-            mat.transpose();
-            m.needsSave = true;
-          }),
-        ),
-        KeyArg(
-          key: Operations.n5,
-          child: ArgDone((m) {
-            final result = (m as Model11).matrices[m.resultMatrix];
-            final x = _getMatrixFromValue(m, m.x);
-            final y = _getMatrixFromValue(m, m.y);
-            final yt = TransposeMatrix(y);
-            try {
-              _matrixMultiply(m, x, yt, result);
-            } on FloatOverflow {
-              m.floatOverflow = true;
-            }
-            m.popSetResultX = Value.fromMatrix(m.resultMatrix);
-          }),
-        ),
-        KeyArg(
-          key: Operations.n6,
-          child: ArgDone((m) {
-            final result = (m as Model11).matrices[m.resultMatrix];
-            final x = _getMatrixFromValue(m, m.x);
-            final y = _getMatrixFromValue(m, m.y);
-            if (result == x || result == y) {
-              throw CalculatorError(11);
-            }
-            if (y.columns != x.rows) {
-              throw CalculatorError(11);
-            }
-            if (result.rows != y.rows || result.columns != x.columns) {
-              throw CalculatorError(11);
-            }
-            try {
-              result.residual(y, x);
-            } on FloatOverflow {
-              m.floatOverflow = true;
-            }
-            m.popSetResultX = Value.fromMatrix(m.resultMatrix);
-          }),
-        ),
-        KeyArg(
-          key: Operations.n7,
-          child: ArgDone((m) {
-            final mat = m.x.asMatrix;
-            if (mat != null) {
-              m.resultX = m.checkOverflow(
-                () => linalg.rowNorm((m as Model11).matrices[mat]).toValue(),
-              );
-            } else {
-              m.program.skipIfRunning();
-            }
-          }),
-        ),
-        KeyArg(
-          key: Operations.n8,
-          child: ArgDone((m) {
-            final mat = m.x.asMatrix;
-            if (mat != null) {
-              m.resultXF = linalg.frobeniusNorm((m as Model11).matrices[mat]);
-            } else {
-              m.program.skipIfRunning();
-            }
-          }),
-        ),
-        KeyArg(
-          key: Operations.n9,
-          child: ArgDone((m) {
-            final mat = m.x.asMatrix;
-            if (mat == null) {
-              throw CalculatorError(11);
-            }
-            final result = (m as Model11).matrices[m.resultMatrix];
-            result.copyFrom(m, m.matrices[mat]);
-            m.resultX = m.checkOverflow(
-              () => linalg.determinant(result).toValue(),
-            );
-          }),
-        ),
-      ],
-    ),
-    name: 'MATRIX',
-  );
-
   static Matrix _getMatrixFromValue(Model11 m, Value v) {
     final vi = v.asMatrix;
     if (vi == null) {
@@ -696,23 +572,6 @@ class Operations11 extends Operations {
       m.trigMode = TrigMode.grad;
     },
     name: 'GRD',
-  );
-  static final NormalArgOperation solve = RunProgramOperation(
-    maxOneByteOpcodes: 0,
-    runner: () => SolveProgramRunner(),
-    arg: LabelArg(
-      maxDigit: 19,
-      letters: _letterLabelsList,
-      noI: true,
-      f: (m, final int? label) {
-        if (label == null) {
-          throw CalculatorError(4);
-        }
-        m.memory.program.gosub(label);
-        m.program.runner?.startRunningProgram(SolveProgramRunner());
-      },
-    ),
-    name: 'SOLVE',
   );
   static final hyp = NonProgrammableOperation(
     pressed: (LimitedState c) => c.handleShift(ShiftKey.none),
@@ -851,69 +710,6 @@ class Operations11 extends Operations {
     ..._letterSynonyms,
   };
 
-  static void _dim(Model m, int arg) {
-    if (arg < 0 || arg >= (m as Model11).matrices.length) {
-      throw CalculatorError(11);
-    }
-    int r, c;
-    if (m.y == Value.zero || m.x == Value.zero) {
-      r = c = 0;
-    } else {
-      r = m.y.floatIntPart();
-      c = m.x.floatIntPart();
-    }
-    if (r < 0 || c < 0) {
-      throw CalculatorError(1);
-    }
-    final mat = m.matrices[arg];
-    m.memory.policy.checkAvailable(r * c - mat.length);
-    mat.resize(m, r, c);
-  }
-
-  static final NormalArgOperation dim = NormalArgOperation(
-    arg: ArgAlternates(
-      synonyms: _letterAndRegisterISynonyms,
-      children: [
-        ...List.generate(
-          _letterLabelsList.length,
-          (i) => KeyArg(
-            key: _letterLabelsList[i],
-            child: ArgDone((m) => _dim(m, i)),
-          ),
-        ),
-        KeyArg(
-          key: Operations11.I15,
-          child: ArgDone(
-            (m) => _dim(m, m.memory.registers.index.asMatrix ?? 99),
-          ),
-        ),
-        // "Dimension" the number of registers:
-        KeyArg(
-          key: Operations11.parenI15,
-          child: ArgDone(
-            (m) => (m as Model11).memory.numRegisters =
-                dart.max(m.x.floatIntPart().abs(), 1) + 1,
-          ),
-        ),
-      ],
-    ),
-    name: 'DIM',
-  );
-
-  static final NormalArgOperation resultOp = NormalArgOperation(
-    arg: ArgAlternates(
-      synonyms: _letterSynonyms,
-      children: List.generate(
-        _letterLabelsList.length,
-        (i) => KeyArg(
-          key: _letterLabelsList[i],
-          child: ArgDone((m) => (m as Model11).resultMatrix = i),
-        ),
-      ),
-    ),
-    name: 'RESULT',
-  );
-
   static final NormalOperation piOp = NormalOperation.floatOnly(
     pressed: (ActiveState s) => s.liftStackIfEnabled(),
     floatCalc: (Model m) {
@@ -979,23 +775,6 @@ class Operations11 extends Operations {
     return n.toValue();
   }
 
-  static final NormalArgOperation integrate = RunProgramOperation(
-    maxOneByteOpcodes: 0,
-    runner: () => IntegrateProgramRunner(),
-    arg: LabelArg(
-      maxDigit: 19,
-      letters: _letterLabelsList,
-      noI: true,
-      f: (m, final int? label) {
-        if (label == null) {
-          throw CalculatorError(4);
-        }
-        m.memory.program.gosub(label);
-        m.program.runner?.startRunningProgram(IntegrateProgramRunner());
-      },
-    ),
-    name: 'integrate',
-  );
   static final NormalOperation clearSigma = NormalOperation.floatOnly(
     floatCalc: (Model m) {
       for (final i in m.statsRegisters.all) {
@@ -1083,86 +862,6 @@ class Operations11 extends Operations {
     },
     name: '->DEG',
   );
-  static final NormalOperation reImSwap = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      (m as Model11).isComplexMode = true;
-      final x = m.x;
-      m.x = m.xImaginary; // Not m.resultX; don't change Last X
-      m.xImaginary = x;
-    },
-    name: 'Re<=>Im',
-  );
-
-  static final xEQ0_15 = NormalOperation(
-    name: 'x==0',
-    calc: (Model m) {
-      if (m.x.asMatrix != null) {
-        m.program.doNextIf(false);
-      } else if (m.isComplexMode) {
-        m.program.doNextIf(m.xC == Complex.zero);
-      } else {
-        m.program.doNextIf(m.x == Value.zero);
-      }
-    },
-  );
-
-  static void _testOp(Model m, int arg) {
-    switch (arg) {
-      case 0: // x != 0
-        if (m.x.asMatrix != null) {
-          m.program.doNextIf(true);
-        } else if (m.isComplexMode) {
-          m.program.doNextIf(m.xC != Complex.zero);
-        } else {
-          m.program.doNextIf(m.x != Value.zero);
-        }
-        break;
-      case 1: // x > 0
-        m.program.doNextIf(m.xF > 0.0); // Error 1 if matrix, ignores imaginary
-        break;
-      case 2: // x < 0
-        m.program.doNextIf(m.xF < 0.0);
-        break;
-      case 3: // x >= 0
-        m.program.doNextIf(m.xF >= 0.0);
-        break;
-      case 4: // x <= 0
-        m.program.doNextIf(m.xF <= 0.0);
-        break;
-      case 5: // x = y (matrices OK)
-        if (m.isComplexMode && m.x.asMatrix == null && m.y.asMatrix == null) {
-          m.program.doNextIf(m.xC == m.yC);
-        } else {
-          m.program.doNextIf(m.x == m.y);
-        }
-        break;
-      case 6: // x != y
-        if (m.isComplexMode && m.x.asMatrix == null && m.y.asMatrix == null) {
-          m.program.doNextIf(m.xC != m.yC);
-          // != is the same as !(==) in Dart:  Dart lang spec. v. 2.10 s. 17.26
-        } else {
-          m.program.doNextIf(m.x != m.y);
-        }
-        break;
-      case 7: // x > y
-        m.program.doNextIf(m.xF > m.yF);
-        break;
-      case 8: // x < y
-        m.program.doNextIf(m.xF < m.yF);
-        break;
-      case 9: // x >= y
-        m.program.doNextIf(m.xF >= m.yF);
-        break;
-      default:
-        throw ArgumentError('Internal error $arg');
-    }
-  }
-
-  static final NormalArgOperation testOp = NormalArgOperation(
-    arg: DigitArg(max: 9, calc: _testOp),
-    name: 'TEST',
-  );
-
   static final NormalOperation fracOp = NormalOperation.floatOnly(
     floatCalc: (Model m) {
       m.resultX = m.x.fracOp();
