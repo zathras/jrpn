@@ -24,24 +24,7 @@ import 'dart:math' as dart;
 
 import 'package:jrpn/m/model.dart';
 
-import 'matrix.dart';
-
 class Model11<OT extends ProgramOperation> extends Model<OT> {
-  late final List<Matrix> matrices = [
-    Matrix('a'),
-    Matrix('b'),
-    Matrix('c'),
-    Matrix('d'),
-    Matrix('e'),
-  ];
-
-  int _resultMatrix = 0; // Index into matrices
-  int get resultMatrix => _resultMatrix;
-  set resultMatrix(int v) {
-    _resultMatrix = v;
-    needsSave = true;
-  }
-
   final ProgramInstruction<OT> Function(OT, ArgDone) _newProgramInstructionF;
   final List<List<MKey<OT>?>> Function() _getLogicalKeys;
 
@@ -54,18 +37,10 @@ class Model11<OT extends ProgramOperation> extends Model<OT> {
 
   bool _userMode = false;
 
-  //
-  // A bit hacky:  Some operations, like matrix operations, don't run until
-  // the button is released, and they can be cancelled by holding the button
-  // down.  This doesn't fit in with the input design terribly well, so I was
-  // more or less forced to squirrel away an indication that a function has
-  // been deferred here, in the model.
-  //
-  // Returns true if stack lift needs to be enabled.
-  //
+  // Stub left in place: the deferred-on-button-up mechanism (used on 15C
+  // for matrix and indirect-recall ops) has no users on 11C, but the
+  // controller still polls it. Always null here.
   bool Function()? deferToButtonUp;
-  @override
-  bool get hasDeferToButtonUp => deferToButtonUp != null;
 
   Model11(this._getLogicalKeys, this._newProgramInstructionF)
     : super(DisplayMode.fix(4, false), 56, 10);
@@ -90,10 +65,6 @@ class Model11<OT extends ProgramOperation> extends Model<OT> {
     super.reset();
     rand.reset();
     trigMode = TrigMode.deg;
-    _resultMatrix = 0;
-    for (final mat in matrices) {
-      mat.resize(this, 0, 0);
-    }
     memory.program.suspendedProgram?.abort();
     memory.program.suspendedProgram = null;
     assert(memory.program.runner == null);
@@ -156,36 +127,9 @@ class Model11<OT extends ProgramOperation> extends Model<OT> {
   void resetErrorBlink() => setFlag(9, false);
 
   @override
-  void chsX() {
-    final mi = x.asMatrix;
-    if (mi == null) {
-      super.chsX();
-    } else {
-      matrices[mi].chsElements();
-      needsSave = true;
-    }
-  }
-
-  @override
-  String formatValue(Value v) {
-    final int? mx = v.asMatrix;
-    if (mx == null) {
-      return super.formatValue(v);
-    } else {
-      return matrices[mx].lcdString;
-    }
-  }
-
-  @override
   Map<String, Object> toJson() {
     final r = super.toJson();
     r['numRegisters'] = memory.numRegisters;
-    r['resultMatrix'] = resultMatrix;
-    r['matrices'] = List.generate(
-      matrices.length,
-      (i) => matrices[i].toJson(),
-      growable: false,
-    );
     r['lastRandom'] = rand.lastValue;
     r['userMode'] = userMode;
     return r;
@@ -195,11 +139,6 @@ class Model11<OT extends ProgramOperation> extends Model<OT> {
   void decodeJson(Map<String, dynamic> json, {required bool needsSave}) {
     super.decodeJson(json, needsSave: needsSave);
     memory.numRegisters = json['numRegisters'] as int;
-    resultMatrix = json['resultMatrix'] as int;
-    final ms = json['matrices'] as List;
-    for (int i = 0; i < matrices.length; i++) {
-      matrices[i].decodeJson(ms[i] as Map<String, dynamic>);
-    }
     final Object? lastRandom = json['lastRandom'];
     if (lastRandom is double) {
       rand.setNoReseed(lastRandom);
@@ -234,16 +173,6 @@ class Model11<OT extends ProgramOperation> extends Model<OT> {
     lcdDigits: 11,
   );
 
-  @override
-  addStuffToSnapshot(StringBuffer buf) {
-    for (final m in matrices) {
-      if (m.length > 0) {
-        buf.writeln();
-        buf.write(m.toString());
-      }
-    }
-    buf.writeln();
-  }
 }
 
 ///
@@ -368,23 +297,10 @@ class MemoryPolicy11 extends MemoryPolicy {
   }
 }
 
-/// HP 15C's memory.  Like in the HP 16C, registers and programs are
-/// stored by the nybble.  However, matrices, the imaginary stack, and
-/// storage for solve/integrate just deduct from the memory otherwise
-/// available, but don't actually use it.
-///
-/// On the 16C it made more sense to store the registers by the nybble,
-/// since register size changes with the word size, rounded up to the nearest
-/// nybble.  The 16C's memory contents aren't changed when the word size
-/// changes, and while the mapping of the memory interpretation isn't specified,
-/// the fact that a temporary change in word size doesn't lose information in
-/// the registers is.
-///
-/// On the 15C, there's nothing like this behavior; registers are always
-/// 14 nybbles.  We keep the user registers in the common storage, since
-/// we inherit that from our superclass, but the other uses of the
-/// register pool storage use regular dart structures for their underlying
-/// storage.
+/// HP-11C's memory. Registers and programs share a single 406-nybble
+/// pool: 14 nybbles per register, 7 program bytes per register-equivalent.
+/// The user trades data registers for program memory automatically
+/// (Phase 7's auto-conversion); R_I is held outside this pool.
 class Memory11<OT extends ProgramOperation> extends Memory<OT> {
   @override
   final Model11<OT> model;
@@ -435,12 +351,6 @@ class Memory11<OT extends ProgramOperation> extends Memory<OT> {
     int result = totalNybbles ~/ 14;
     result -= numRegisters;
     result -= program.programBytes ~/ 7;
-    if (model.isComplexMode) {
-      result -= 5;
-    }
-    for (final m in model.matrices) {
-      result -= m.length;
-    }
     result -= runner?.registersRequired ?? 0;
     return result;
   }

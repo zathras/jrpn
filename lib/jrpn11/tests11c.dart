@@ -24,7 +24,6 @@ import 'dart:math';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/c/controller.dart';
 
-import '../c/operations.dart';
 import 'main.dart';
 import 'model11c.dart';
 

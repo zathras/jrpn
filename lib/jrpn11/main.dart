@@ -20,7 +20,6 @@ this program; if not, see https://www.gnu.org/licenses/ .
 
 library;
 
-import 'dart:async';
 import 'dart:math' as dart;
 
 import 'package:flutter/material.dart';
@@ -35,10 +34,8 @@ import 'package:jrpn/v/main_screen.dart';
 import 'package:jrpn/v/isw.dart';
 
 import 'back_panel11c.dart';
-import 'matrix.dart';
 import 'tests11c.dart';
 import 'model11c.dart';
-import 'linear_algebra.dart' as linalg;
 import 'more_math.dart';
 
 void main(List<String> args) async {
@@ -111,185 +108,43 @@ class Operations11 extends Operations {
 
   static final NormalOperation div = NormalOperation.floatOnly(
     floatCalc: (Model m) {
-      final matX = m.x.asMatrix;
-      if (matX != null && m.y.asMatrix == null) {
-        // Page 179:  x is matrix, y is scalar
-        final result = (m as Model11).matrices[m.resultMatrix];
-        result.copyFrom(m, m.matrices[matX]);
-        linalg.invert(result);
-        final y = DecimalFP12(m.y);
-        result.visit((final int r, c) {
-          result.set(
-            r,
-            c,
-            m.checkOverflow(
-              () => (DecimalFP12(result.get(r, c)) * y).toValue(),
-            ),
-          );
-        });
-      } else {
-        _scalarOrMatrix(
-          m,
-          scalar: (x, y) {
-            return y.decimalDivideBy(x);
-          },
-          matrix: (m, x, y, r) {
-            if (x != r) {
-              r.resize(m, y.rows, y.columns);
-            }
-            linalg.solve(x, y, r);
-          },
-        );
-      }
-      m.needsSave = true;
+      m.popSetResultX = m.checkOverflow(() => m.y.decimalDivideBy(m.x));
     },
     complexCalc: (Model m) {
-      if (m.x.asMatrix != null || m.y.asMatrix != null) {
-        div.floatCalc!(m);
-      } else if (m.xC == Complex.zero) {
+      if (m.xC == Complex.zero) {
         throw CalculatorError(0);
-      } else {
-        m.popSetResultXCV = m.yCV.decimalDivideBy(m.xCV, m.checkOverflow);
       }
+      m.popSetResultXCV = m.yCV.decimalDivideBy(m.xCV, m.checkOverflow);
     },
     name: '/',
   );
 
-  static void _scalarOrMatrix(
-    Model m, {
-    required Value Function(Value, Value) scalar,
-    required void Function(Model11 m, Matrix x, Matrix y, Matrix r) matrix,
-  }) {
-    m as Model11;
-    final int? mx = m.x.asMatrix;
-    final int? my = m.y.asMatrix;
-    if (mx == null && my == null) {
-      m.popSetResultX = m.checkOverflow(() => scalar(m.x, m.y));
-    } else {
-      final result = m.matrices[m.resultMatrix];
-      if (mx == null) {
-        final matY = m.matrices[my!];
-        final x = m.x;
-        result.resize(m, matY.rows, matY.columns);
-        matY.visit((r, c) {
-          result.set(r, c, m.checkOverflow(() => scalar(x, matY.get(r, c))));
-        });
-      } else if (my == null) {
-        final matX = m.matrices[mx];
-        final y = m.y;
-        result.resize(m, matX.rows, matX.columns);
-        matX.visit((r, c) {
-          result.set(r, c, m.checkOverflow(() => scalar(matX.get(r, c), y)));
-        });
-      } else {
-        final matX = m.matrices[mx];
-        final matY = m.matrices[my];
-        final result = m.matrices[m.resultMatrix];
-        try {
-          matrix(m, matX, matY, result);
-        } on FloatOverflow {
-          m.floatOverflow = true;
-        }
-      }
-      m.popSetResultX = Value.fromMatrix(m.resultMatrix);
-    }
-  }
-
   static final NormalOperation mult = NormalOperation.floatOnly(
     floatCalc: (Model m) {
-      _scalarOrMatrix(
-        m,
-        scalar: (x, y) => y.decimalMultiply(x),
-        matrix: (m, x, y, r) => _matrixMultiply(m, x, y, r),
-      );
+      m.popSetResultX = m.checkOverflow(() => m.y.decimalMultiply(m.x));
     },
     complexCalc: (Model m) {
-      if (m.x.asMatrix != null || m.y.asMatrix != null) {
-        mult.floatCalc!(m);
-      } else {
-        m.popSetResultXCV = m.yCV.decimalMultiply(m.xCV, m.checkOverflow);
-      }
+      m.popSetResultXCV = m.yCV.decimalMultiply(m.xCV, m.checkOverflow);
     },
     name: '*',
   );
 
-  /// Calculate result = y * x
-  static void _matrixMultiply(Model11 m, AMatrix x, AMatrix y, Matrix result) {
-    if (result == x || result == y) {
-      // Identity, not equivalence
-      throw CalculatorError(11);
-    }
-    if (y.columns != x.rows) {
-      throw CalculatorError(11);
-    }
-    result.resize(m, y.rows, x.columns);
-    result.dot(y, x);
-  }
-
   static final NormalOperation plus = NormalOperation.floatOnly(
     floatCalc: (Model m) {
-      _scalarOrMatrix(
-        m,
-        scalar: (x, y) => y.decimalAdd(x),
-        matrix: (m, x, y, r) {
-          _addOrSubtractMatricesXY((x, y) => y.decimalAdd(x), m, x, y, r, m);
-        },
-      );
+      m.popSetResultX = m.checkOverflow(() => m.y.decimalAdd(m.x));
     },
     complexCalc: (Model m) {
-      if (m.x.asMatrix != null || m.y.asMatrix != null) {
-        plus.floatCalc!(m);
-      } else {
-        m.popSetResultXCV = m.yCV.decimalAdd(m.xCV, m.checkOverflow);
-      }
+      m.popSetResultXCV = m.yCV.decimalAdd(m.xCV, m.checkOverflow);
     },
     name: '+',
   );
 
-  static void _addOrSubtractMatricesXY(
-    Value Function(Value, Value) f,
-    Model11 m,
-    Matrix x,
-    Matrix y,
-    Matrix result,
-    Model model,
-  ) {
-    if (x.rows != y.rows || x.columns != y.columns) {
-      throw CalculatorError(11);
-    }
-    result.resize(m, x.rows, x.columns);
-    result.visit(
-      (r, c) => result.set(
-        r,
-        c,
-        model.checkOverflow(() => f(x.get(r, c), y.get(r, c))),
-      ),
-    );
-  }
-
   static final NormalOperation minus = NormalOperation.floatOnly(
     floatCalc: (Model m) {
-      _scalarOrMatrix(
-        m,
-        scalar: (x, y) => y.decimalSubtract(x),
-        matrix: (m, x, y, r) {
-          _addOrSubtractMatricesXY(
-            (x, y) => y.decimalSubtract(x),
-            m,
-            x,
-            y,
-            r,
-            m,
-          );
-        },
-      );
+      m.popSetResultX = m.checkOverflow(() => m.y.decimalSubtract(m.x));
     },
     complexCalc: (Model m) {
-      if (m.x.asMatrix != null || m.y.asMatrix != null) {
-        minus.floatCalc!(m);
-      } else {
-        m.popSetResultXCV = m.yCV.decimalSubtract(m.xCV, m.checkOverflow);
-      }
+      m.popSetResultXCV = m.yCV.decimalSubtract(m.xCV, m.checkOverflow);
     },
     name: '-',
   );
@@ -418,25 +273,11 @@ class Operations11 extends Operations {
       NormalOperationOrLetter.floatOnly(
         letter: letterLabelE,
         floatCalc: (Model m) {
-          final mat = m.x.asMatrix;
-          if (mat == null) {
-            Value x = m.x;
-            final one = DecimalFP12.tenTo(0);
-            m.resultX = m.checkOverflow(() => (one / DecimalFP12(x)).toValue());
-          } else {
-            final result = (m as Model11).matrices[m.resultMatrix];
-            result.copyFrom(m, m.matrices[mat]);
-            try {
-              linalg.invert(result);
-            } finally {
-              m.resultX = Value.fromMatrix(m.resultMatrix);
-            }
-          }
+          Value x = m.x;
+          final one = DecimalFP12.tenTo(0);
+          m.resultX = m.checkOverflow(() => (one / DecimalFP12(x)).toValue());
         },
         complexCalc: (Model m) {
-          if (m.x.asMatrix != null) {
-            return reciprocal15.floatCalc!(m);
-          }
           final one = ComplexValue(Value.fromDouble(1), Value.zero);
           m.resultXCV = one.decimalDivideBy(m.xCV, m.checkOverflow);
         },
@@ -456,14 +297,6 @@ class Operations11 extends Operations {
         },
         name: 'delta%',
       );
-  static Matrix _getMatrixFromValue(Model11 m, Value v) {
-    final vi = v.asMatrix;
-    if (vi == null) {
-      throw CalculatorError(11);
-    }
-    return m.matrices[vi];
-  }
-
   static final NormalArgOperation fix = NormalArgOperation(
     stackLift: StackLift.neutral,
     maxOneByteOpcodes: 0,
@@ -707,7 +540,6 @@ class Operations11 extends Operations {
 
   static final _stoRclSynonyms = {
     Operations.enter: Operations11.ranNum,
-    ..._letterSynonyms,
   };
 
   static final NormalOperation piOp = NormalOperation.floatOnly(
@@ -1017,139 +849,17 @@ class Operations11 extends Operations {
   );
   static final NormalOperation pYX = NormalOperation.floatOnly(
     floatCalc: (Model m) {
-      final mx = m.x.asMatrix;
-      if (mx == null) {
-        m.popSetResultX = m.checkOverflow(() => permutations(m.y, m.x));
-      } else {
-        (m as Model11).matrices[mx].convertToZP();
-        m.needsSave = true;
-      }
+      m.popSetResultX = m.checkOverflow(() => permutations(m.y, m.x));
     },
     name: 'Py,x',
   );
   static final NormalOperation cYX = NormalOperation.floatOnly(
     floatCalc: (Model m) {
-      final mx = m.x.asMatrix;
-      if (mx == null) {
-        m.popSetResultX = m.checkOverflow(() => binomialCoefficient(m.y, m.x));
-      } else {
-        (m as Model11).matrices[mx].convertToZC();
-        m.needsSave = true;
-      }
+      m.popSetResultX = m.checkOverflow(() => binomialCoefficient(m.y, m.x));
     },
     name: 'Cy,x',
   );
 
-  static void _storeToParenI(Model m, bool incrementMatrix) {
-    final Value iv = m.memory.registers.index;
-    final int? miv = iv.asMatrix;
-    if (miv != null) {
-      _storeToMatrix(m, incrementMatrix, miv);
-    } else {
-      final int reg = iv.asDouble.floor().abs();
-      m.memory.registers[reg] = m.x;
-      // Index exception becomes Error 3
-    }
-  }
-
-  static void _storeToMatrix(Model m, bool increment, int matrixNumber) {
-    final regs = m.memory.registers;
-    _storeToMatrixRC(m, matrixNumber, regs[0], regs[1], increment: increment);
-  }
-
-  static void _storeToMatrixRC(
-    Model m,
-    int matrixNumber,
-    Value r,
-    Value c, {
-    bool increment = false,
-  }) {
-    final matrix = (m as Model11).matrices[matrixNumber];
-    int toI(Value v) => v.floatIntPart().abs();
-
-    int row = toI(r) - 1;
-    int col = toI(c) - 1;
-    matrix.checkIndices(row, col);
-    _showMatrix(m, matrix, row, col);
-    m.deferToButtonUp = DeferredFunction(m, () {
-      m.xF; // Throws exception if matrix
-      if (row == 1 && col == 1) {
-        matrix.isLU = false;
-      }
-      matrix.set(row, col, m.x);
-      m.needsSave = true;
-      if (increment) {
-        _incrementR0R1(m, row, col, matrix);
-      }
-      return false; // Don't enable stack lift
-    }).run;
-  }
-
-  static void _recallFromMatrix(Model m, Matrix matrix, bool increment) {
-    int toI(int r) => m.memory.registers[r].floatIntPart().abs();
-
-    int row = toI(0) - 1;
-    int col = toI(1) - 1;
-    m.x = matrix.get(row, col);
-    if (increment) {
-      _incrementR0R1(m, row, col, matrix);
-    }
-  }
-
-  static void _incrementR0R1(Model m, int row, int col, Matrix matrix) {
-    void storeI(int r, int v) {
-      assert(v >= 0);
-      final reg = m.memory.registers[r];
-      final fractionPart = reg.fracOp();
-      final Value result;
-      if (reg.isNegative) {
-        result = Value.fromDouble(-v.toDouble()).decimalAdd(fractionPart);
-      } else {
-        result = Value.fromDouble(v.toDouble()).decimalAdd(fractionPart);
-      }
-      m.memory.registers[r] = result;
-    }
-
-    col++;
-    if (col >= matrix.columns) {
-      col = 0;
-      row++;
-      if (row >= matrix.rows) {
-        row = 0;
-        m.program.skipIfRunning();
-      }
-    }
-    storeI(0, row + 1);
-    storeI(1, col + 1);
-  }
-
-  static void _showMatrixR0R1(Model m, Matrix matrix) {
-    int toI(int r) => m.memory.registers[r].floatIntPart().abs();
-    int row = toI(0) - 1;
-    int col = toI(1) - 1;
-    matrix.checkIndices(row, col);
-    _showMatrix(m, matrix, row, col);
-  }
-
-  static void _showMatrix(Model m, Matrix matrix, int row, int col) {
-    m.display.current = '${matrix.name}  ${row + 1},${col + 1}';
-    m.display.update(flash: false);
-  }
-
-  static void _storeMatrix(Model m, int matrix) {
-    final srcMatrix = m.x.asMatrix;
-    final dest = (m as Model11).matrices[matrix];
-    if (srcMatrix != null) {
-      dest.copyFrom(m, m.matrices[srcMatrix]);
-    } else {
-      dest.isLU = false;
-      for (int i = 0; i < dest.rows; i++) {
-        for (int j = 0; j < dest.columns; j++) {
-          dest.set(i, j, m.x);
-        }
-      }
-    }
-  }
 
   static final NormalArgOperation sto15 = NormalArgOperation(
     maxOneByteOpcodes: 34,
@@ -1167,52 +877,6 @@ class Operations11 extends Operations {
           child: ArgDone(((m) {
             (m as Model11).rand.setSeed(m.xF);
           })),
-        ),
-        // g A..E:
-        KeysArg(
-          keys: _letterLabelsGShifted,
-          generator: (i) => ArgDone((m) {
-            final matrix = (m as Model11).matrices[i];
-            final int row = m.y.floatIntPart().abs() - 1;
-            final int col = m.x.floatIntPart().abs() - 1;
-            m.z.asDouble; // Make sure it's a float
-            matrix.set(row, col, m.z);
-            m.popStack();
-            m.popStack();
-          }),
-        ),
-        // Not user mode, A..E, (i)
-        UserArg(
-          userMode: false,
-          child: ArgAlternates(
-            synonyms: _letterAndRegisterISynonyms,
-            children: [
-              KeysArg(
-                keys: _letterLabels,
-                generator: (i) => ArgDone((m) => _storeToMatrix(m, false, i)),
-              ),
-              KeyArg(
-                key: Operations11.parenI15,
-                child: ArgDone((m) => _storeToParenI(m, false)),
-              ),
-            ],
-          ),
-        ),
-        UserArg(
-          userMode: true,
-          child: ArgAlternates(
-            synonyms: _letterAndRegisterISynonyms,
-            children: [
-              KeysArg(
-                keys: _letterLabels,
-                generator: (i) => ArgDone((m) => _storeToMatrix(m, true, i)),
-              ),
-              KeyArg(
-                key: Operations11.parenI15,
-                child: ArgDone((m) => _storeToParenI(m, true)),
-              ),
-            ],
-          ),
         ),
         KeyArg(
           key: Operations11.plus,
@@ -1250,23 +914,6 @@ class Operations11 extends Operations {
             ),
           ),
         ),
-        KeyArg(
-          key: Operations11.cosInverse, // That's g (i)
-          child: ArgDone((m) {
-            final Value iv = m.memory.registers.index;
-            final int? miv = iv.asMatrix;
-            if (miv != null) {
-              _storeToMatrixRC(m, miv, m.y, m.x);
-            } else {
-              final int reg = iv.floatIntPart().abs();
-              m.memory.registers[reg] = m.z;
-            }
-            // I checked on a real 15C:  Even when I is a register,
-            // it stores value in z, and pops stack twice.
-            m.popStack();
-            m.popStack();
-          }),
-        ),
       ],
     ),
     name: 'STO',
@@ -1274,12 +921,10 @@ class Operations11 extends Operations {
 
   static final NormalArgOperation rcl15 = NormalArgOperationWithBeforeCalc(
     beforeCalculate: (Resting s) {
-      // For the matrix operations, this is deferred to key release.  It is
-      // not run if the operation is cancelled.
       s.liftStackIfEnabled();
       return StackLift.neutral;
-      // But stack lift is still set after the calculation completes,
-      // as with normal operations.
+      // Stack lift is set after the calculation completes, as with
+      // normal operations.
     },
     arg: ArgAlternates(
       synonyms: _stoRclSynonyms,
@@ -1290,25 +935,6 @@ class Operations11 extends Operations {
           child: ArgDone(((m) {
             m.xF = (m as Model11).rand.lastValue;
           })),
-        ),
-        // g A..E
-        KeysArg(
-          keys: _letterLabelsGShifted,
-          generator: (i) => DeferredRclArg(
-            matrixNumber: i,
-            noStackLift: true,
-            pressed: (m, matrix) {
-              final int row = m.y.floatIntPart().abs() - 1;
-              final int col = m.x.floatIntPart().abs() - 1;
-              _showMatrix(m, matrix, row, col);
-            },
-            released: (m, matrix) {
-              final int row = m.y.floatIntPart().abs() - 1;
-              final int col = m.x.floatIntPart().abs() - 1;
-              m.popStack();
-              m.x = matrix.get(row, col);
-            },
-          ),
         ),
         KeyArg(
           key: Operations11.sigmaPlus,
@@ -1321,71 +947,6 @@ class Operations11 extends Operations {
             },
             needsStackLiftIfEnabled: (m) =>
                 (m as Model11).memory.numRegisters >= 6,
-          ),
-        ),
-        UserArg(
-          userMode: false,
-          child: ArgAlternates(
-            synonyms: _letterAndRegisterISynonyms,
-            children: [
-              KeysArg(
-                keys: _letterLabels,
-                generator: (i) => DeferredRclArg(
-                  matrixNumber: i,
-                  pressed: _showMatrixR0R1,
-                  released: (m, matrix) => _recallFromMatrix(m, matrix, false),
-                ),
-              ),
-              KeyArg(
-                key: Operations11.parenI15,
-                child: RclIndirectArg(
-                  matPressed: _showMatrixR0R1,
-                  matReleased: (m, matrix) =>
-                      _recallFromMatrix(m, matrix, false),
-                ),
-              ),
-            ],
-          ),
-        ),
-        UserArg(
-          userMode: true,
-          child: ArgAlternates(
-            synonyms: _letterAndRegisterISynonyms,
-            children: [
-              KeysArg(
-                keys: _letterLabels,
-                generator: (i) => DeferredRclArg(
-                  matrixNumber: i,
-                  pressed: _showMatrixR0R1,
-                  released: (m, matrix) => _recallFromMatrix(m, matrix, true),
-                ),
-              ),
-              KeyArg(
-                key: Operations11.parenI15,
-                child: RclIndirectArg(
-                  matPressed: _showMatrixR0R1,
-                  matReleased: (m, matrix) =>
-                      _recallFromMatrix(m, matrix, true),
-                ),
-              ),
-            ],
-          ),
-        ),
-        KeyArg(
-          key: Operations11.cosInverse, // That's g (i)
-          child: RclIndirectArg(
-            noStackLift: true,
-            matPressed: (m, matrix) {
-              final int row = m.y.floatIntPart().abs() - 1;
-              final int col = m.x.floatIntPart().abs() - 1;
-              _showMatrix(m, matrix, row, col);
-            },
-            matReleased: (m, matrix) {
-              final int row = m.y.floatIntPart().abs() - 1;
-              final int col = m.x.floatIntPart().abs() - 1;
-              m.popStack();
-              m.x = matrix.get(row, col);
-            },
           ),
         ),
       ],
@@ -1447,22 +1008,16 @@ class RegisterWriteOpArg extends ArgAlternates {
 
   RegisterWriteOpArg({required int maxDigit, required this.f})
     : super(
-        synonyms: Operations11._letterAndRegisterISynonyms,
+        synonyms: Operations11._registerISynonyms,
         children: [
           KeyArg(
             key: Arg.kParenI,
             child: ArgDone((m) {
-              final mi = m.memory.registers.index.asMatrix;
-              if (mi == null) {
-                m.memory.registers.indirectIndex = f(
-                  m,
-                  m.memory.registers.indirectIndex,
-                  m.x,
-                );
-              } else {
-                // See bottom of page 173
-                _forMatrix(m as Model11, mi, f);
-              }
+              m.memory.registers.indirectIndex = f(
+                m,
+                m.memory.registers.indirectIndex,
+                m.x,
+              );
             }),
           ),
           KeyArg(
@@ -1480,158 +1035,8 @@ class RegisterWriteOpArg extends ArgAlternates {
             calc: (m, i) =>
                 m.memory.registers[i] = f(m, m.memory.registers[i], m.x),
           ),
-          ...List.generate(
-            _letterLabelsList.length,
-            (i) => KeyArg(
-              key: _letterLabelsList[i],
-              child: ArgDone((m) {
-                _forMatrix(m as Model11, i, f);
-              }),
-            ),
-          ),
         ],
       );
-
-  static void _forMatrix(
-    Model11 m,
-    int mi,
-    final Value Function(Model, Value, Value) f,
-  ) {
-    final mat = m.matrices[mi];
-    int toI(int r) => m.memory.registers[r].floatIntPart().abs();
-    int row = toI(0) - 1;
-    int col = toI(1) - 1;
-    mat.set(row, col, f(m, mat.get(row, col), m.x));
-  }
-}
-
-class UserArg extends Arg {
-  final bool userMode;
-  final Arg child;
-
-  UserArg({required this.userMode, required this.child});
-
-  @override
-  Arg? matches(ProgramOperation key, bool userMode) {
-    if (this.userMode == userMode) {
-      return child.matches(key, userMode);
-    } else {
-      return null;
-    }
-  }
-
-  @override
-  void init(
-    int registerBase, {
-    required OpInitFunction f,
-    required ProgramOperation? shift,
-    required bool argDot,
-    required ProgramOperation? arg,
-    required bool userMode,
-  }) {
-    assert(!argDot);
-    child.init(
-      registerBase,
-      f: f,
-      shift: shift,
-      argDot: argDot,
-      arg: arg,
-      userMode: this.userMode,
-    );
-  }
-}
-
-class DeferredRclArg extends ArgDone {
-  final bool noStackLift;
-  final int matrixNumber;
-
-  final void Function(Model, Matrix) pressed;
-  final void Function(Model, Matrix) released;
-
-  DeferredRclArg({
-    required this.pressed,
-    required this.released,
-    required this.matrixNumber,
-    this.noStackLift = false,
-  }) : super((_) {});
-  // Our superclass's calculate function is a NOP, because we defer the
-  // real calculation.  We need a non-null NOP there, however, so that the
-  // state machine will call our beforeCalculate().  It's a little tangled,
-  // but the 15C has a really complicated state machine!
-
-  ///
-  /// For many of the RCL operations on matrices, we need to take over
-  /// stack lift, so we do the deferral on beforeCalculate rather than
-  /// calc.
-  ///
-  @override
-  void handleOpBeforeCalculate(Model m, void Function() opBeforeCalculate) {
-    final matrix = (m as Model11).matrices[matrixNumber];
-    pressed(m, matrix);
-    m.deferToButtonUp = DeferredFunction(m, () {
-      if (!noStackLift) {
-        // For RCL g <mat>, the column number is in X.  It might have come
-        // from pressing a number key (and NOT enter), or it might have come
-        // from some other operation.  We're about to consume the x and y
-        // registers.  For RCL g <mat>, we should not do stack lift.
-        opBeforeCalculate(); // Does a lift stack if enabled
-      }
-      released(m, matrix);
-      return true; // Enable stack lift
-    }).run;
-  }
-}
-
-///
-/// This is where the HP 15C shows its evil genius.  RCL (i), when I contains
-/// a number, immediately recalls the register whose number is given in I
-/// (converted to an integer), so it behaves like [ArgDone].
-///
-/// When I contains a matrix descriptor, it behaves like a matrix:  It shows
-/// the matrix row/column, with a timeout, and only completes the recall
-/// operation if the button is released before the timeout expires.  So, when
-/// I contains a matrix descriptor, it behaves like [DeferredRclArg], above.
-///
-/// And they did all this in a tiny, power-efficient form factor with a 4 bit
-/// processor, and (I assume) pushing the limits of their small ROM capacity.
-///
-class RclIndirectArg extends ArgDone {
-  final bool noStackLift;
-
-  final void Function(Model, Matrix) matPressed;
-  final void Function(Model, Matrix) matReleased;
-
-  RclIndirectArg({
-    required this.matPressed,
-    required this.matReleased,
-    this.noStackLift = false,
-  }) : super((_) {});
-
-  ///
-  /// For many of the RCL operations on matrices, we need to take over
-  /// stack lift, so we do the deferral on beforeCalculate rather than
-  /// calc.
-  ///
-  @override
-  void handleOpBeforeCalculate(Model m, void Function() opBeforeCalculate) {
-    final Value iv = m.memory.registers.index;
-    final int? miv = iv.asMatrix;
-    if (miv == null) {
-      opBeforeCalculate(); // noStackLift only relevant if I is a matrix
-      final int reg = iv.asDouble.floor().abs();
-      m.x = m.memory.registers[reg]; // Index exception becomes Error 3
-    } else {
-      final matrix = (m as Model11).matrices[miv];
-      matPressed(m, matrix);
-      m.deferToButtonUp = DeferredFunction(m, () {
-        if (!noStackLift) {
-          opBeforeCalculate();
-        }
-        matReleased(m, matrix);
-        return true; // Enable stack lift
-      }).run;
-    }
-  }
 }
 
 ///
@@ -2514,14 +1919,6 @@ final Set<LetterLabel> _letterLabels = {
   Operations11.letterLabelE,
 };
 
-final _letterLabelsGShifted = [
-  Operations11.xSquared,
-  Operations11.lnOp,
-  Operations11.logOp,
-  Operations11.percent,
-  Operations11.deltaPercent,
-];
-
 final _letterLabelsList = _letterLabels.toList(growable: false);
 
 ProgramInstruction<Operation> _newProgramInstruction(
@@ -2540,35 +1937,3 @@ class ProgramInstruction11<OT extends ProgramOperation>
   ProgramInstruction11(super.op, super.arg);
 }
 
-///
-/// A function that is deferred  until button up, like storing matrix
-/// elements (e.g. STO A).
-///
-class DeferredFunction {
-  final bool Function() f;
-  final Model m;
-  final bool disableDisplay;
-  late final Timer _timeout;
-
-  DeferredFunction(this.m, this.f) : disableDisplay = m.displayDisabled {
-    _timeout = Timer(const Duration(seconds: 2), _expired);
-    m.displayDisabled = true;
-  }
-
-  void _expired() {
-    m.displayDisabled = disableDisplay;
-    m.display.current = 'nv11';
-    m.display.update(flash: false);
-  }
-
-  /// Returns true if stack lift needs to be enabled
-  bool run() {
-    if (_timeout.isActive) {
-      m.displayDisabled = disableDisplay;
-      _timeout.cancel();
-      return f(); // could throw exception
-    } else {
-      return false;
-    }
-  }
-}
