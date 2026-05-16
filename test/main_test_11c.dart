@@ -75,6 +75,21 @@ Future<void> main() async {
     );
   });
 
+  test('11C decodeJson stays real-only even with imaginaryStack in JSON', () {
+    // Base Model.decodeJson gates `imaginaryStack` / `lastXImaginary`
+    // restoration on `supportsComplex`, which is false for 11C.
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    final json = m.toJson();
+    final flags = List<bool>.from(json['flags'] as List);
+    flags[8] = true;
+    json['flags'] = flags;
+    json['imaginaryStack'] = List.filled(4, Value.zero.toJson());
+    json['lastXImaginary'] = Value.zero.toJson();
+    m.decodeJson(Map<String, dynamic>.from(json), needsSave: false);
+    expect(m.isComplexMode, false);
+  });
+
   test('11C boots and does basic stack arithmetic', () {
     final tc = TestCalculator(for11C: true);
     final m = tc.model;

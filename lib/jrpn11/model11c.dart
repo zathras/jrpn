@@ -142,28 +142,11 @@ class Model11<OT extends ProgramOperation> extends Model<OT> {
     }
   }
 
+  // 11C is real-only: complex mode cannot be entered by any user action.
+  // SF 8 still sets the underlying flag bit (so program logic that polls
+  // flag 8 keeps working), but there is no side effect into complex mode.
   @override
-  void setFlag(int i, bool v) {
-    if (i == 8) {
-      isComplexMode = v;
-    } else {
-      super.setFlag(i, v);
-    }
-  }
-
-  @override
-  set isComplexMode(bool v) {
-    if (v && !isComplexMode) {
-      memory.policy.checkAvailable(5);
-      // Might throw CalculatorError
-    }
-    if (v != isComplexMode) {
-      setupComplex(
-        v ? List<Value>.filled(4, Value.zero, growable: false) : null,
-      );
-    }
-    super.setFlag(8, v);
-  }
+  set isComplexMode(bool v) {}
 
   @override
   bool get errorBlink => floatOverflow;
@@ -211,7 +194,6 @@ class Model11<OT extends ProgramOperation> extends Model<OT> {
     super.decodeJson(json, needsSave: needsSave);
     memory.numRegisters = json['numRegisters'] as int;
     resultMatrix = json['resultMatrix'] as int;
-    isComplexMode = getFlag(8);
     final ms = json['matrices'] as List;
     for (int i = 0; i < matrices.length; i++) {
       matrices[i].decodeJson(ms[i] as Map<String, dynamic>);

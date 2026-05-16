@@ -21,8 +21,6 @@ this program; if not, see https://www.gnu.org/licenses/ .
 library;
 
 import 'dart:math';
-
-import 'package:jrpn/m/complex.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/c/controller.dart';
 
@@ -46,36 +44,6 @@ class SelfTests11 extends SelfTests {
   @override
   int get pauseEvery => 4;
 
-  Future<void> _testOneArgComplex(
-    Model11 m,
-    NormalOperation op,
-    Complex arg,
-    Complex result, [
-    NormalOperation? inverse,
-  ]) async {
-    m.xC = arg;
-    op.complexCalc!(m);
-    await expect(m.x, Value.fromDouble(result.real));
-    await expect(m.xImaginary, Value.fromDouble(result.imaginary));
-    if (inverse != null) {
-      return _testOneArgComplex(m, inverse, result, arg);
-    }
-  }
-
-  Future<void> _testTwoArgComplex(
-    Model11 m,
-    NormalOperation op,
-    Complex x,
-    Complex y,
-    Complex result,
-  ) async {
-    m.xC = x;
-    m.yC = y;
-    op.complexCalc!(m);
-    await expect(m.x, Value.fromDouble(result.real));
-    await expect(m.xImaginary, Value.fromDouble(result.imaginary));
-  }
-
   Future<void> _testOneArgFloat(
     Model11 m,
     NormalOperation op,
@@ -86,12 +54,6 @@ class SelfTests11 extends SelfTests {
     m.xF = arg;
     op.floatCalc!(m);
     await expect(m.x, Value.fromDouble(result));
-    m.isComplexMode = true;
-    m.xC = Complex(arg, 0);
-    op.complexCalc!(m);
-    await expect(m.x, Value.fromDouble(result));
-    await expect(m.xImaginary, Value.zero);
-    m.isComplexMode = false;
     if (inverse != null) {
       return _testOneArgFloat(m, inverse, result, arg);
     }
@@ -115,13 +77,6 @@ class SelfTests11 extends SelfTests {
       return;
     }
     await expect(m.x, Value.fromDouble(result!));
-    m.isComplexMode = true;
-    m.xC = Complex(x, 0);
-    m.yC = Complex(y, 0);
-    op.complexCalc!(m);
-    await expect(m.x, Value.fromDouble(result));
-    await expect(m.xImaginary, Value.zero);
-    m.isComplexMode = false;
   }
 
   Future<void> testFloatFunctions() async {
@@ -326,217 +281,6 @@ class SelfTests11 extends SelfTests {
     });
   }
 
-  Future<void> testComplexFunctions() async {
-    await test('11c complex mode functions', () async {
-      final m = newModel();
-      m.isComplexMode = true;
-
-      await _testOneArgComplex(
-        m,
-        Operations.sqrtOp,
-        const Complex(4, 0),
-        const Complex(2, 0),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations.sqrtOp,
-        const Complex(0, 8),
-        const Complex(2, 2),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations.sqrtOp,
-        const Complex(3, -4),
-        const Complex(2, -1),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations.sqrtOp,
-        const Complex(3, 4),
-        const Complex(2, 1),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations.abs,
-        const Complex(2, 0),
-        const Complex(2, 0),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations.abs,
-        const Complex(-2, 0),
-        const Complex(2, 0),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations.abs,
-        const Complex(0, 2),
-        const Complex(2, 0),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations.abs,
-        const Complex(0, -2),
-        const Complex(2, 0),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations.abs,
-        const Complex(3, 4),
-        const Complex(5, 0),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations.abs,
-        const Complex(-3, -4),
-        const Complex(5, 0),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.lnOp,
-        const Complex(1.234, 5.678),
-        const Complex(1.759674471, 1.356794138),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.eX15,
-        const Complex(1.759674471, 1.356794138),
-        const Complex(1.234000001, 5.678),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.lnOp,
-        const Complex(1.234, -5.678),
-        const Complex(1.759674471, -1.356794138),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.eX15,
-        const Complex(1.759674471, -1.356794138),
-        const Complex(1.234000001, -5.678),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.lnOp,
-        const Complex(-1.234, 5.678),
-        const Complex(1.759674471, 1.784798515),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.eX15,
-        const Complex(1.759674471, 1.784798515),
-        const Complex(-1.233999998, 5.678000001),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.lnOp,
-        const Complex(-1.234, -5.678),
-        const Complex(1.759674471, -1.784798515),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.eX15,
-        const Complex(1.759674471, -1.784798515),
-        const Complex(-1.233999998, -5.678000001),
-      );
-
-      await _testOneArgComplex(
-        m,
-        Operations11.sqrtOp15,
-        const Complex(1.234, 5.678),
-        const Complex(1.876771907, 1.512703802),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.xSquared,
-        const Complex(1.876771907, 1.512703802),
-        const Complex(1.233999998, 5.677999998),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.sqrtOp15,
-        const Complex(1.234, -5.678),
-        const Complex(1.876771907, -1.512703802),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.xSquared,
-        const Complex(1.876771907, -1.512703802),
-        const Complex(1.233999998, -5.677999998),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.sqrtOp15,
-        const Complex(-1.234, 5.678),
-        const Complex(1.512703802, 1.876771907),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.xSquared,
-        const Complex(1.512703802, 1.876771907),
-        const Complex(-1.233999998, 5.677999998),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.sqrtOp15,
-        const Complex(-1.234, -5.678),
-        const Complex(1.512703802, -1.876771907),
-      );
-      await _testOneArgComplex(
-        m,
-        Operations11.xSquared,
-        const Complex(1.512703802, -1.876771907),
-        const Complex(-1.233999998, -5.677999998),
-      );
-
-      await _testOneArgComplex(
-        m,
-        Operations11.tenX15,
-        const Complex(-1.234, -5.678),
-        const Complex(0.05098501197, -0.02836565620),
-      );
-      // Note:  The above produces Complex(0.05098501197, -0.02836565619)
-      //        on a real 15C.  Our answer is more accurate:  The answer is
-      //        (5.09850119703065e-2, -2.83656561954365e-2) to 15 radix
-      //        digits.  See misc/test_float/TestFloat.java.
-      await _testOneArgComplex(
-        m,
-        Operations11.logOp,
-        const Complex(0.05098501197, -0.02836565620),
-        const Complex(-1.234, -0.2204945847),
-      );
-
-      await _testTwoArgComplex(
-        m,
-        Operations11.yX15,
-        const Complex(5.6, 7.8),
-        const Complex(1.2, 3.4),
-        const Complex(-0.03277613870, -0.08229096286),
-      );
-
-      await _testOneArgComplex(
-        m,
-        Operations11.reciprocal15,
-        const Complex(0.15, 0.25),
-        const Complex(1.764705882, -2.941176471),
-        Operations11.reciprocal15,
-      );
-
-      m.isComplexMode = false;
-      m.xF = 12.34;
-      Operations11.reImSwap.floatCalc!(m);
-      await expect(m.xF, 0);
-      await expect(m.xImaginary.asDouble, 12.34);
-      await expect(m.xC, const Complex(0, 12.34));
-      m.xC = Complex(56.78, m.xImaginary.asDouble);
-      Operations11.reImSwap.complexCalc!(m);
-      await expect(m.xF, 12.34);
-      await expect(m.xImaginary.asDouble, 56.78);
-      await expect(m.xC, const Complex(12.34, 56.78));
-
-      await expect(m.isComplexMode, true);
-    });
-  }
 
   Future<void> testStatisticsFunctions() async {
     await test('11c statistics functions', () async {
@@ -650,7 +394,6 @@ class SelfTests11 extends SelfTests {
   @override
   Future<void> runAll() async {
     await testFloatFunctions();
-    await testComplexFunctions();
     await testStatisticsFunctions();
     await testIssue119();
     return super.runAll();

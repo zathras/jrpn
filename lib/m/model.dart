@@ -748,6 +748,11 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// (word size, complement display, integer commas). Only the 16C does.
   bool get hasIntegerModeSettings => kind == CalculatorModelKind.jrpn16;
 
+  /// Whether this model supports complex-number mode. Only the 15C does.
+  /// Drives both runtime checks and JSON decode behavior for the
+  /// `imaginaryStack` / `lastXImaginary` fields.
+  bool get supportsComplex => kind == CalculatorModelKind.jrpn15;
+
   /// Which storage registers this model's statistics functions read/write.
   /// 16C doesn't expose stats keys; its value is unused.
   StatsRegisterMap get statsRegisters => switch (kind) {
@@ -1423,7 +1428,11 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     integerSignMode = IntegerSignMode.fromJson(
       json['integerSignMode'] as String,
     );
-    final List<dynamic>? ims = json['imaginaryStack'] as List<dynamic>?;
+    // Real-only models discard any `imaginaryStack` / `lastXImaginary`
+    // present in the JSON.
+    final List<dynamic>? ims = supportsComplex
+        ? json['imaginaryStack'] as List<dynamic>?
+        : null;
     displayMode = DisplayMode.fromJson(json['displayMode']!, ims != null);
     // displayMode must be set before stack, since setting
     // display mode alters stack
@@ -1442,7 +1451,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         _imaginaryStack![i] = Value.fromJson(v as String);
       }
     }
-    final imx = json['lastXImaginary'] as String?;
+    final imx =
+        supportsComplex ? json['lastXImaginary'] as String? : null;
     if (imx == null) {
       _lastXImaginary = null;
     } else {
