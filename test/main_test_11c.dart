@@ -266,6 +266,106 @@ Future<void> main() async {
     expect(keys[3][5], isNull, reason: 'row 3 col 5 should be null (under ENTER)');
   });
 
+  test('11C initial memory state: 20 registers + 63 free program lines', () {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    expect((m.memory as Memory11).numRegisters, 20);
+    expect(m.memory.program.lines, 0);
+    // 29 reg-equiv total pool − 20 registers − 0 program = 9 reg-equiv = 63 lines.
+    expect((m.memory as Memory11).availableRegisters, 9);
+  });
+
+  test('11C auto-converts a storage register on the 64th program line', () {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    tc.enter(Operations.pr); // enter program mode
+    // 63 single-byte digit instructions fit in the base program memory.
+    for (int i = 0; i < 63; i++) {
+      tc.enter(Operations.n0);
+    }
+    expect(m.memory.program.lines, 63);
+    expect((m.memory as Memory11).numRegisters, 20, reason: 'no conversion yet');
+    // The 64th instruction triggers conversion of R.9.
+    tc.enter(Operations.n0);
+    expect(m.memory.program.lines, 64);
+    expect((m.memory as Memory11).numRegisters, 19);
+    // The 71st instruction triggers conversion of R.8.
+    for (int i = 64; i < 71; i++) {
+      tc.enter(Operations.n0);
+    }
+    expect(m.memory.program.lines, 71);
+    expect((m.memory as Memory11).numRegisters, 18);
+  });
+
+  test('11C fills to 203 lines; the 204th throws Error 4', () {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    tc.enter(Operations.pr);
+    for (int i = 0; i < 203; i++) {
+      tc.enter(Operations.n0);
+    }
+    expect(m.memory.program.lines, 203);
+    expect((m.memory as Memory11).numRegisters, 0, reason: 'only R_I remains');
+    expect(
+      () => tc.enter(Operations.n0),
+      throwsA(isA<CalculatorError>().having((e) => e.num15, 'num15', 4)),
+    );
+  });
+
+  test('STO/RCL on a converted register throws Error 3', () {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    tc.enter(Operations.pr);
+    for (int i = 0; i < 64; i++) {
+      tc.enter(Operations.n0);
+    }
+    expect((m.memory as Memory11).numRegisters, 19);
+    // R.9 (index 19) is now backing program memory, not user data.
+    expect(
+      () => m.memory.registers[19],
+      throwsA(isA<CalculatorError>().having((e) => e.num15, 'num15', 3)),
+    );
+    expect(
+      () => m.memory.registers[19] = Value.fromDouble(42),
+      throwsA(isA<CalculatorError>().having((e) => e.num15, 'num15', 3)),
+    );
+  });
+
+  test('11C auto-restores a register on program deletion', () {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    tc.enter(Operations.pr);
+    for (int i = 0; i < 64; i++) {
+      tc.enter(Operations.n0);
+    }
+    expect((m.memory as Memory11).numRegisters, 19);
+    // Delete one line: 64 → 63, R.9 should come back.
+    tc.enter(Operations.bsp);
+    expect(m.memory.program.lines, 63);
+    expect((m.memory as Memory11).numRegisters, 20);
+    // Restored register reads as zero, not as leftover program data.
+    expect(m.memory.registers[19], Value.zero);
+  });
+
+  test('11C CLEAR PRGM restores all converted registers', () {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    tc.enter(Operations.pr);
+    for (int i = 0; i < 100; i++) {
+      tc.enter(Operations.n0);
+    }
+    expect((m.memory as Memory11).numRegisters, lessThan(20));
+    // f CLEAR PRGM resets to 20 registers, 63 free lines.
+    tc.enter(Operations.fShift);
+    tc.enter(Operations.clearPrgm);
+    expect(m.memory.program.lines, 0);
+    expect((m.memory as Memory11).numRegisters, 20);
+    // All convertible registers read as zero.
+    for (int i = 0; i < 20; i++) {
+      expect(m.memory.registers[i], Value.zero, reason: 'R$i');
+    }
+  });
+
   test('Built-in self tests 11C', () async {
     await SelfTests11(inCalculator: false).runAll();
   });

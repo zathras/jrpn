@@ -103,9 +103,11 @@ class Model11<OT extends ProgramOperation> extends Model<OT> {
   }
 
   @override
-  late final Memory11<OT> memory = Memory11<OT>(this, memoryNybbles: 66 * 14);
-  // cf. 16C manual, page 214.  The index register doesn't count against
-  // our storage, so that's space for 66 total registers, of 14 nybbles each.
+  late final Memory11<OT> memory = Memory11<OT>(this, memoryNybbles: 29 * 14);
+  // HP-11C pool: 20 convertible data registers + 9 register-equivalents
+  // of permanent program memory (63 base program lines / 7 lines per
+  // register-equivalent) = 29 register-equivalents × 14 nybbles each.
+  // R_I is held outside this pool.
 
   @override
   bool get displayLeadingZeros => false;
@@ -330,7 +332,31 @@ class MemoryPolicy11 extends MemoryPolicy {
   @override
   void checkExtendProgramMemory() {
     if (_memory.availableRegisters < 1) {
-      throw CalculatorError(4);
+      // 11C auto-converts the next storage register to 7 more lines of
+      // program memory. Order is descending JRPN index: R.9 first, then
+      // R.8, … R.0, R9, … R0. Once all 20 convertible registers are
+      // gone (only R_I remains), throw Error 4.
+      if (_memory.numRegisters > 0) {
+        _memory.numRegisters = _memory.numRegisters - 1;
+      } else {
+        throw CalculatorError(4);
+      }
+    }
+  }
+
+  @override
+  void onProgramMemoryShrunk() {
+    // Reverse direction of checkExtendProgramMemory: when deleting a
+    // line frees a register-equivalent and we previously converted a
+    // register away, hand one back. The newly-restored register's
+    // storage may still hold leftover program bytes (deleteCurrent
+    // only zeros the trailing bytes around the deletion point), so we
+    // explicitly write Value.zero into it.
+    while (_memory.availableRegisters > 0 &&
+        _memory.numRegisters < Memory11.initialNumRegisters) {
+      final newIndex = _memory.numRegisters;
+      _memory.numRegisters = newIndex + 1;
+      _memory.registers[newIndex] = Value.zero;
     }
   }
 
@@ -369,7 +395,11 @@ class Memory11<OT extends ProgramOperation> extends Memory<OT> {
   ///
   /// Number of registers, not including rI
   ///
-  int _numRegisters = 20;
+  int _numRegisters = initialNumRegisters;
+
+  /// Initial / maximum number of convertible storage registers on the
+  /// 11C (R0..R9 and R.0..R.9). R_I is held separately.
+  static const int initialNumRegisters = 20;
 
   Memory11(this.model, {required super.memoryNybbles});
 
