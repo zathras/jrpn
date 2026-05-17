@@ -71,7 +71,48 @@ class BackPanel11 extends BackPanel {
       ...jumpTableList(screen, 3.70, 0.2),
       screen.box(const Rect.fromLTWH(0.2, 1.57, 3.5, 2.2), metricTable(3.5)),
       screen.box(const Rect.fromLTWH(2.00, 7.20, 4, 5), numberTable(4.0)),
+      screen.box(const Rect.fromLTWH(2.20, 11.0, 4, 0.85), _tipTape()),
     ],
+  );
+
+  static const List<String> _tapeMessages = [
+    'ON + × : self-test',
+    'ENTER ≠ =',
+    'f USER for A..E',
+    'hold SST : peek',
+    'hold f PREFIX : 10 digits',
+    'jrpn.jovial.com',
+  ];
+
+  static final String _tapeMessage =
+      _tapeMessages[dart.Random().nextInt(_tapeMessages.length)];
+
+  Widget _tipTape() => Transform.rotate(
+    angle: -0.04,
+    child: ClipPath(
+      clipper: _TornTapeClipper(),
+      child: Container(
+        color: const Color(0xfff7eecf),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: Text(
+            _tapeMessage,
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w900,
+              fontStyle: FontStyle.italic,
+              decoration: TextDecoration.none,
+              fontFamilyFallback: [
+                'Marker Felt',
+                'Chalkboard SE',
+                'Comic Sans MS',
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
   );
 
   @override
@@ -97,7 +138,8 @@ class BackPanel11 extends BackPanel {
       screen.box(const Rect.fromLTWH(1.43, 3.76, 5, 3.4), drawingTable(5)),
       ...jumpTableList(screen, 3.29, 0.7),
       screen.box(const Rect.fromLTWH(6.73, 0.7, 3.5, 2.2), metricTable(3.5)),
-      screen.box(const Rect.fromLTWH(6.73, 2.40, 4, 5), numberTable(4.0)),
+      screen.box(const Rect.fromLTWH(7.55, 3.15, 4, 0.85), _tipTape()),
+      screen.box(const Rect.fromLTWH(6.73, 4.52, 4, 2.64), numberTable(4.0)),
     ],
   );
 
@@ -122,32 +164,32 @@ class BackPanel11 extends BackPanel {
     row([
       cell(list([italicText('n', align: bpRight), space(.7)])),
       cell(arrowRight(2)),
-      cell(list([text('R'), space(.05), subText('2'), space(.2)])),
+      cell(list([text('R'), space(.05), subText('0'), space(.2)])),
     ]),
     row([
       cell(list([text('\u03a3x', align: bpRight), space(.9)])),
       cell(arrowRight(2)),
-      cell(list([text('R'), space(0.05), subText('3')])),
+      cell(list([text('R'), space(0.05), subText('1')])),
     ]),
     row([
       cell(list([text('\u03a3x', align: bpRight), supText('2'), space(0)])),
       cell(arrowRight(2)),
-      cell(list([text('R'), space(0.05), subText('4')])),
+      cell(list([text('R'), space(0.05), subText('2')])),
     ]),
     row([
       cell(list([text('\u03a3y', align: bpRight), space(.9)])),
       cell(arrowRight(2)),
-      cell(list([text('R'), space(0.05), subText('5')])),
+      cell(list([text('R'), space(0.05), subText('3')])),
     ]),
     row([
       cell(list([text('\u03a3y', align: bpRight), supText('2'), space(0)])),
       cell(arrowRight(2)),
-      cell(list([text('R'), space(0.05), subText('6')])),
+      cell(list([text('R'), space(0.05), subText('4')])),
     ]),
     row([
       cell(text('\u03a3xy', align: bpRight)),
       cell(arrowRight(2)),
-      cell(list([text('R'), space(0.05), subText('7')])),
+      cell(list([text('R'), space(0.05), subText('5')])),
     ]),
   ], drawLines: false);
 
@@ -155,7 +197,19 @@ class BackPanel11 extends BackPanel {
     widthCM * 10,
     heightCM * 10,
     this,
-    topText: cell(text('R = nnnnn.xxxyy', scale: .85, align: bpCenter)),
+    topText: cell(
+      center(
+        list([
+          text('R', scale: .85),
+          text(
+            'I',
+            scale: .85 * 0.7,
+            offset: Offset(0, 0.25 * rowHeightMM),
+          ),
+          text(' = nnnnn.xxxyy', scale: .85),
+        ]),
+      ),
+    ),
     mainText: [
       [
         cell(text('nnnnn + yy', scale: .65, align: bpCenter)),
@@ -387,203 +441,51 @@ class BackPanel11 extends BackPanel {
     ]),
   ]);
 
-  Widget numberTable(double widthCM) => _NumberTable(widthCM, this, [
+  Widget numberTable(double widthCM) => table(widthCM, [
     row([
+      cell(text(' Error ')),
       cell(text('')),
-      cell(text('ERROR', align: bpCenter)),
-      cell(list([space(0.25), text('TEST', align: bpCenter), space(0.25)])),
-      cell(text('MATRIX', align: bpCenter)),
     ]),
     row([
       cell(text('0', align: bpCenter)),
-      cell(text(' y \u00f7 0, LN 0, ...')),
-      cell(text('x\u200a\u2260\u200a0', align: bpCenter)),
-      cell(text(' 0 DIM')),
+      cell(text(' y ÷ 0, LN 0, ...')),
     ]),
     row([
       cell(text('1', align: bpCenter)),
-      cell(text(' LN A , SIN A , ...')),
-      cell(text('x\u200a>\u200a0', align: bpCenter)),
       cell(
         list([
-          text(' 1'),
-          space(-0.1),
-          arrowRight(2),
-          text('R'),
-          space(-.1),
-          subText('0'),
-          space(-.1),
-          text(',\u200a1'),
-          space(-.1),
-          arrowRight(2),
-          text('R'),
-          space(-.1),
-          subText('1'),
+          text(' (R'),
+          subText('n'),
+          text(') > 9.999999999×10'),
+          supText('99'),
         ]),
       ),
     ]),
     row([
       cell(text('2', align: bpCenter)),
-      cell(text(' \u03a3 Error')),
-      cell(text('x\u200a<\u200a0', align: bpCenter)),
-      cell(
-        list([
-          text(' A'),
-          space(-0.2),
-          supText('P'),
-          space(.1),
-          arrowRight(2),
-          space(0.2),
-          text('A'),
-          space(-1.7),
-          text('~', offset: const Offset(0, -1.3)),
-        ]),
-      ),
+      cell(text(' Σ Error')),
     ]),
     row([
       cell(text('3', align: bpCenter)),
-      cell(
-        list([
-          text(' R?, A'),
-          space(0.1),
-          text('i\u200aj', scale: 0.8, offset: Offset(0, 0.15 * rowHeightMM)),
-          text('?'),
-        ]),
-      ),
-      cell(text('x\u200a\u2265\u200a0', align: bpCenter)),
-      cell(
-        list([
-          text(' A'),
-          space(-1.7),
-          text('~', offset: const Offset(0, -1.3)),
-          space(0.6),
-          arrowRight(2),
-          space(0.2),
-          text('A'),
-          space(-0.2),
-          supText('P'),
-        ]),
-      ),
+      cell(text(' R>MEM')),
     ]),
     row([
       cell(text('4', align: bpCenter)),
-      cell(list([space(0.1), text('LBL?,GTO>MEM,PRGM>MEM'), space(0.1)])),
-      cell(text('x\u200a\u2264\u200a0', align: bpCenter)),
-      cell(list([text(' A'), space(-.3), supText('T')])),
+      cell(text(' LBL?, GTO>MEM, PRGM>203 ')),
     ]),
     row([
       cell(text('5', align: bpCenter)),
       cell(
         list([
-          text(' > 7 '),
+          text(' > 4 '),
           text('RTN', boxOffset: const Offset(-0.28, -0.64), box: true),
         ]),
       ),
-      cell(text('x\u200a=\u200ay', align: bpCenter)),
-      cell(list([text(' A'), space(-.3), supText('T'), space(-.0), text('B')])),
     ]),
     row([
       cell(text('6', align: bpCenter)),
-      cell(text(' SF > 9 , CF > 9 , F? > 9')),
-      cell(text('x\u200a\u2260\u200ay', align: bpCenter)),
-      cell(list([text(' B = B - AC'), space(1.0)])),
+      cell(text(' SF > 1, CF > 1, F? > 1')),
     ]),
-    row([
-      cell(text('7', align: bpCenter)),
-      cell(
-        list([
-          text(' SOLVE(SOLVE), \u222b'),
-          space(0),
-          subText('y'),
-          space(-1),
-          supText('x'),
-          text('(\u222b'),
-          space(0),
-          subText('y'),
-          space(-1),
-          supText('x'),
-          text(')'),
-        ]),
-      ),
-      cell(text('x\u200a>\u200ay', align: bpCenter)),
-      cell(
-        list([
-          space(.5),
-          text('MAX', scale: .7, offset: const Offset(0, -1.2)),
-          space(-1.45),
-          text('i', scale: .6, offset: const Offset(0, .85)),
-          space(2.0),
-          text('j', scale: .6, offset: const Offset(-0.2, .85)),
-          space(-0.8),
-          text('\u03a3', scale: .8, offset: const Offset(0, -0.95)),
-          text('|\u200aa', scale: .7, offset: const Offset(0, -1.2)),
-          space(-.15),
-          text('i\u200aj', scale: .65, offset: const Offset(.2, -0.5)),
-          space(0.2),
-          text('|', scale: .7, offset: const Offset(-.2, -1.2)),
-        ]),
-      ),
-    ]),
-    row([
-      cell(text('8', align: bpCenter)),
-      cell(text(' SOLVE ?')),
-      cell(text('x\u200a<\u200ay', align: bpCenter)),
-      cell(
-        list([
-          space(0.25),
-          text('('),
-          space(0.25),
-          text('i\u200aj', scale: 0.6, offset: const Offset(0, 1)),
-          space(-1.1),
-          text('\u03a3', scale: .8, offset: const Offset(0, -0.90)),
-          space(-.0),
-          text('|\u200aa', scale: .7, offset: const Offset(0, -1.2)),
-          space(-.0),
-          text('i\u200aj', scale: .65, offset: const Offset(0, -0.5)),
-          space(-.04),
-          text('|', scale: .7, offset: const Offset(0, -1.2)),
-          space(-.1),
-          text('2', scale: .4, offset: const Offset(0, -3.8)),
-          text(')'),
-          space(-.2),
-          text('1', scale: .5, offset: const Offset(0, -2.6)),
-          space(-.2),
-          text('/', scale: .5, offset: const Offset(0, -2.3)),
-          space(-.1),
-          text('2', scale: .5, offset: const Offset(0, -1.3)),
-        ]),
-      ),
-    ]),
-    _NumberTableBottomRow([
-      cell(text('9', align: bpCenter)),
-      cell(
-        list([
-          space(.75),
-          text('ON', box: true, boxOffset: const Offset(-.28, -.64)),
-          text(' / '),
-          text(
-            '\u00d7',
-            box: true,
-            offset: const Offset(0.04, -.01),
-            boxOffset: const Offset(-.19, -.64),
-          ),
-        ]),
-      ),
-      cell(text('x\u200a\u2265\u200ay', align: bpCenter)),
-      cell(text(' |\u200aA\u200a| ')),
-    ], this),
-    _NumberTableBottomRow([
-      cell(text('10\u200a', align: bpCenter)),
-      cell(text(' DIM > MEM')),
-      cell(text('')),
-      cell(text('')),
-    ], this),
-    _NumberTableBottomRow([
-      cell(text('11', align: bpCenter)),
-      cell(text(' DIM A \u2260 DIM B')),
-      cell(text('')),
-      cell(text('')),
-    ], this),
   ]);
 }
 
@@ -882,50 +784,30 @@ class _TableWithDrawingPainter extends BPTablePainter {
   }
 }
 
-class _NumberTable extends BPTable {
-  const _NumberTable(double width, BackPanel panel, List<BPRow> rows)
-    : super(width, rows, true, true, panel);
-
+class _TornTapeClipper extends CustomClipper<Path> {
   @override
-  Widget build(BuildContext context) =>
-      CustomPaint(painter: _NumberTablePainter(this));
-}
-
-class _NumberTablePainter extends BPTablePainter {
-  _NumberTablePainter(_NumberTable super.table);
-
-  @override
-  void drawOutline(Canvas canvas, double width, double height) {
-    final thickW = table.thickLineWidth;
-    final path = Path()
-      ..moveTo(thickW / 2, thickW / 2)
-      ..lineTo(width - thickW / 2, thickW / 2)
-      ..lineTo(width - thickW / 2, height * 0.842)
-      ..lineTo(width * 0.645, height * 0.842)
-      ..lineTo(width * 0.645, height - thickW / 2)
-      ..lineTo(thickW / 2, height - thickW / 2)
-      ..close();
-    canvas.drawPath(path, thickLine);
-  }
-
-  @override
-  void paintVerticalLine(Canvas canvas, double x, double height, int c) {
-    if (c != 2) {
-      super.paintVerticalLine(canvas, x, height, c);
-    } else {
-      super.paintVerticalLine(
-        canvas,
-        x,
-        height - 2 * panel.rowHeightMM - panel.thickLineWidth,
-        c,
-      );
+  Path getClip(Size size) {
+    const List<double> leftOffsets = [0.0, 3.0, 1.0, 4.0, 2.0, 4.5, 1.5, 0.0];
+    const List<double> rightOffsets = [0.0, 2.5, 4.0, 1.5, 3.5, 1.0, 4.0, 0.0];
+    final w = size.width;
+    final h = size.height;
+    final int n = leftOffsets.length;
+    final step = h / (n - 1);
+    final path = Path();
+    // Left edge, top to bottom.
+    path.moveTo(leftOffsets[0], 0);
+    for (int i = 1; i < n; i++) {
+      path.lineTo(leftOffsets[i], i * step);
     }
+    // Right edge, bottom to top.
+    for (int i = n - 1; i >= 0; i--) {
+      path.lineTo(w - rightOffsets[i], i * step);
+    }
+    // Top edge implicit via close() back to start.
+    path.close();
+    return path;
   }
-}
-
-class _NumberTableBottomRow extends BPRow {
-  _NumberTableBottomRow(super.cells, super.panel);
 
   @override
-  bool get drawLastTwoColumnsBottomLine => false;
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
