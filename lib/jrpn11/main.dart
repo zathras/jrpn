@@ -36,7 +36,7 @@ import 'package:jrpn/v/isw.dart';
 import 'back_panel11c.dart';
 import 'tests11c.dart';
 import 'model11c.dart';
-import 'more_math.dart';
+import 'package:jrpn/m/more_math.dart';
 
 void main(List<String> args) async {
   if (!await InternalStateWindow.takeControl(args)) {

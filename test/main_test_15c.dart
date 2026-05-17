@@ -24,7 +24,7 @@ import 'dart:async';
 import 'dart:math' as dart;
 import 'dart:math';
 
-import 'package:jrpn/jrpn15/more_math.dart';
+import 'package:jrpn/m/more_math.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:jrpn/c/controller.dart';

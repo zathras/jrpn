@@ -40,7 +40,7 @@ import 'runners.dart';
 import 'tests15c.dart';
 import 'model15c.dart';
 import 'linear_algebra.dart' as linalg;
-import 'more_math.dart';
+import 'package:jrpn/m/more_math.dart';
 
 void main(List<String> args) async {
   if (!await InternalStateWindow.takeControl(args)) {
