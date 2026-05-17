@@ -261,6 +261,65 @@ Future<void> main() async {
     expect(m.x, Value.fromDouble(42));
   });
 
+  test('Pythagorean Theorem program (handbook p. 99)', () async {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    final out = StreamIterator<ProgramEvent>(tc.output.stream);
+
+    // LBL E, x², x↔y, x², +, √x, RTN
+    tc.enter(Operations.pr);
+    tc.enter(Operations11.lbl15);
+    tc.enter(Operations11.letterLabelE);
+    tc.enter(Operations11.xSquared);
+    tc.enter(Operations.xy);
+    tc.enter(Operations11.xSquared);
+    tc.enter(Operations11.plus);
+    tc.enter(Operations11.sqrtOp15);
+    tc.enter(Operations.rtn);
+    tc.enter(Operations.pr);
+
+    // 22 ENTER 9 GSB E → hypotenuse 23.7697 at FIX 4.
+    tc.enter(Operations.n2);
+    tc.enter(Operations.n2);
+    tc.enter(Operations.enter);
+    tc.enter(Operations.n9);
+    tc.enter(Operations11.gsb);
+    tc.enter(Operations11.letterLabelE);
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect(m.formatValue(m.x).trim(), '23.7697');
+  });
+
+  test('Area of Circle program (handbook p. 87)', () async {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    final out = StreamIterator<ProgramEvent>(tc.output.stream);
+
+    // LBL A, x², π, ×, RTN
+    tc.enter(Operations.pr);
+    tc.enter(Operations11.lbl15);
+    tc.enter(Operations11.letterLabelA);
+    tc.enter(Operations11.xSquared);
+    tc.enter(Operations11.piOp);
+    tc.enter(Operations11.mult);
+    tc.enter(Operations.rtn);
+    tc.enter(Operations.pr);
+
+    // Three handbook input/output pairs at FIX 4.
+    for (final (radius, expected) in [
+      (7.5, '176.7146'),
+      (9.0, '254.4690'),
+      (15.3, '735.4154'),
+    ]) {
+      m.xF = radius;
+      tc.enter(Operations11.gsb);
+      tc.enter(Operations11.letterLabelA);
+      expect(await out.moveNext(), true);
+      expect(out.current, ProgramEvent.done);
+      expect(m.formatValue(m.x).trim(), expected, reason: 'r=$radius');
+    }
+  });
+
   test('11C statistics accumulate into R0..R5 (handbook p. 58 example)', () {
     final tc = TestCalculator(for11C: true);
     final m = tc.model;
