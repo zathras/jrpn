@@ -18,6 +18,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:jrpn/c/operations.dart';
+import 'package:jrpn/c/operations_scientific.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/jrpn11/main.dart';
 import 'package:jrpn/jrpn11/model11c.dart';
@@ -204,10 +205,10 @@ Future<void> main() async {
     // Program:  LBL A, F? 1, GTO 0, 0, RTN, LBL 0, 4, 2, RTN
     tc.enter(Operations.pr);
     tc.enter(Operations11.lbl15);
-    tc.enter(Operations11.letterLabelA);
+    tc.enter(OperationsScientific.letterLabelA);
     tc.enter(Operations11.fQuestion);
     tc.enter(Operations.n1);
-    tc.enter(Operations11.gto);
+    tc.enter(OperationsScientific.gto);
     tc.enter(Operations.n0);
     tc.enter(Operations.n0);
     tc.enter(Operations.rtn);
@@ -218,8 +219,8 @@ Future<void> main() async {
     tc.enter(Operations.rtn);
     tc.enter(Operations.pr);
 
-    tc.enter(Operations11.gsb);
-    tc.enter(Operations11.letterLabelA);
+    tc.enter(OperationsScientific.gsb);
+    tc.enter(OperationsScientific.letterLabelA);
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
     expect(m.x, Value.fromDouble(42));
@@ -246,7 +247,7 @@ Future<void> main() async {
     // Program:  LBL A, 2, +, RTN
     tc.enter(Operations.pr);
     tc.enter(Operations11.lbl15);
-    tc.enter(Operations11.letterLabelA);
+    tc.enter(OperationsScientific.letterLabelA);
     tc.enter(Operations.n2);
     tc.enter(Operations11.plus);
     tc.enter(Operations.rtn);
@@ -254,8 +255,8 @@ Future<void> main() async {
 
     tc.enter(Operations.n4);
     tc.enter(Operations.n0);
-    tc.enter(Operations11.gsb);
-    tc.enter(Operations11.letterLabelA);
+    tc.enter(OperationsScientific.gsb);
+    tc.enter(OperationsScientific.letterLabelA);
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
     expect(m.x, Value.fromDouble(42));
@@ -269,12 +270,12 @@ Future<void> main() async {
     // LBL E, x², x↔y, x², +, √x, RTN
     tc.enter(Operations.pr);
     tc.enter(Operations11.lbl15);
-    tc.enter(Operations11.letterLabelE);
-    tc.enter(Operations11.xSquared);
+    tc.enter(OperationsScientific.letterLabelE);
+    tc.enter(OperationsScientific.xSquared);
     tc.enter(Operations.xy);
-    tc.enter(Operations11.xSquared);
+    tc.enter(OperationsScientific.xSquared);
     tc.enter(Operations11.plus);
-    tc.enter(Operations11.sqrtOp15);
+    tc.enter(OperationsScientific.sqrtOp15);
     tc.enter(Operations.rtn);
     tc.enter(Operations.pr);
 
@@ -283,8 +284,8 @@ Future<void> main() async {
     tc.enter(Operations.n2);
     tc.enter(Operations.enter);
     tc.enter(Operations.n9);
-    tc.enter(Operations11.gsb);
-    tc.enter(Operations11.letterLabelE);
+    tc.enter(OperationsScientific.gsb);
+    tc.enter(OperationsScientific.letterLabelE);
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
     expect(m.formatValue(m.x).trim(), '23.7697');
@@ -298,9 +299,9 @@ Future<void> main() async {
     // LBL A, x², π, ×, RTN
     tc.enter(Operations.pr);
     tc.enter(Operations11.lbl15);
-    tc.enter(Operations11.letterLabelA);
-    tc.enter(Operations11.xSquared);
-    tc.enter(Operations11.piOp);
+    tc.enter(OperationsScientific.letterLabelA);
+    tc.enter(OperationsScientific.xSquared);
+    tc.enter(OperationsScientific.piOp);
     tc.enter(Operations11.mult);
     tc.enter(Operations.rtn);
     tc.enter(Operations.pr);
@@ -312,8 +313,8 @@ Future<void> main() async {
       (15.3, '735.4154'),
     ]) {
       m.xF = radius;
-      tc.enter(Operations11.gsb);
-      tc.enter(Operations11.letterLabelA);
+      tc.enter(OperationsScientific.gsb);
+      tc.enter(OperationsScientific.letterLabelA);
       expect(await out.moveNext(), true);
       expect(out.current, ProgramEvent.done);
       expect(m.formatValue(m.x).trim(), expected, reason: 'r=$radius');
@@ -332,7 +333,7 @@ Future<void> main() async {
       regs[i] = junk;
     }
     tc.enter(Operations.fShift);
-    tc.enter(Operations11.clearSigma);
+    tc.enter(OperationsScientific.clearSigma);
     for (int i = 0; i <= 5; i++) {
       expect(regs[i], Value.zero, reason: 'R$i after CLEAR Σ');
     }
@@ -350,7 +351,7 @@ Future<void> main() async {
     for (final (y, x) in pairs) {
       m.yF = y;
       m.xF = x;
-      tc.enter(Operations11.sigmaPlus);
+      tc.enter(OperationsScientific.sigmaPlus);
     }
 
     // After Σ+, X holds the running n.
@@ -377,48 +378,48 @@ Future<void> main() async {
     // (lower half of ENTER).
     final expected = <List<Object>>[
       // Row 0
-      [0, 0, Operations11.sqrtOp15, Operations11.letterLabelA, Operations11.xSquared],
-      [0, 1, Operations11.eX15, Operations11.letterLabelB, Operations11.lnOp],
-      [0, 2, Operations11.tenX15, Operations11.letterLabelC, Operations11.logOp],
-      [0, 3, Operations11.yX15, Operations11.letterLabelD, Operations11.percent],
-      [0, 4, Operations11.reciprocal15, Operations11.letterLabelE, Operations11.deltaPercent],
-      [0, 5, Operations.chs, Operations11.piOp, Operations.abs],
-      [0, 6, Operations.n7, Operations11.fix, Operations11.deg],
-      [0, 7, Operations.n8, Operations11.sci, Operations11.rad],
-      [0, 8, Operations.n9, Operations11.eng, Operations11.grd],
+      [0, 0, OperationsScientific.sqrtOp15, OperationsScientific.letterLabelA, OperationsScientific.xSquared],
+      [0, 1, OperationsScientific.eX15, OperationsScientific.letterLabelB, OperationsScientific.lnOp],
+      [0, 2, OperationsScientific.tenX15, OperationsScientific.letterLabelC, OperationsScientific.logOp],
+      [0, 3, OperationsScientific.yX15, OperationsScientific.letterLabelD, OperationsScientific.percent],
+      [0, 4, Operations11.reciprocal15, OperationsScientific.letterLabelE, OperationsScientific.deltaPercent],
+      [0, 5, Operations.chs, OperationsScientific.piOp, Operations.abs],
+      [0, 6, Operations.n7, OperationsScientific.fix, OperationsScientific.deg],
+      [0, 7, Operations.n8, OperationsScientific.sci, OperationsScientific.rad],
+      [0, 8, Operations.n9, OperationsScientific.eng, OperationsScientific.grd],
       [0, 9, Operations11.div, Operations.xLEy, Operations.xLT0],
       // Row 1
       [1, 0, Operations.sst, Operations11.lbl15, Operations.bst],
-      [1, 1, Operations11.gto, Operations11.hyp, Operations11.hypInverse],
-      [1, 2, Operations11.sin, Operations.xSwapParenI, Operations11.sinInverse],
-      [1, 3, Operations11.cos, Operations11.parenI15, Operations11.cosInverse],
-      [1, 4, Operations11.tan, Operations11.I15, Operations11.tanInverse],
-      [1, 5, Operations.eex, Operations11.toR, Operations11.toP],
+      [1, 1, OperationsScientific.gto, OperationsScientific.hyp, OperationsScientific.hypInverse],
+      [1, 2, OperationsScientific.sin, Operations.xSwapParenI, OperationsScientific.sinInverse],
+      [1, 3, OperationsScientific.cos, OperationsScientific.parenIOp, OperationsScientific.cosInverse],
+      [1, 4, OperationsScientific.tan, OperationsScientific.iOp, OperationsScientific.tanInverse],
+      [1, 5, Operations.eex, OperationsScientific.toR, OperationsScientific.toP],
       [1, 6, Operations.n4, Operations11.xExchange, Operations11.sf],
       [1, 7, Operations.n5, Operations11.dse, Operations11.cf],
       [1, 8, Operations.n6, Operations11.isg, Operations11.fQuestion],
       [1, 9, Operations11.mult, Operations.xGTy, Operations.xGT0],
       // Row 2
       [2, 0, Operations.rs, Operations.pse, Operations.pr],
-      [2, 1, Operations11.gsb, Operations11.clearSigma, Operations.rtn],
+      [2, 1, OperationsScientific.gsb, OperationsScientific.clearSigma, Operations.rtn],
       [2, 2, Operations.rDown, Operations.clearPrgm, Operations.rUp],
-      [2, 3, Operations.xy, Operations.clearReg, Operations11.rnd],
+      [2, 3, Operations.xy, Operations.clearReg, OperationsScientific.rnd],
       [2, 4, Operations.bsp, Operations.clearPrefix, Operations.clx],
-      [2, 5, Operations.enter, Operations11.ranNum, Operations11.lstx15],
+      [2, 5, Operations.enter, Operations11.ranNum, OperationsScientific.lstx15],
       [2, 6, Operations.n1, Operations11.pYX, Operations11.cYX],
-      [2, 7, Operations.n2, Operations11.toHMS, Operations11.toH],
-      [2, 8, Operations.n3, Operations11.toRad, Operations11.toDeg],
+      [2, 7, Operations.n2, OperationsScientific.toHMS, OperationsScientific.toH],
+      [2, 8, Operations.n3, OperationsScientific.toRad, OperationsScientific.toDeg],
       [2, 9, Operations11.minus, Operations.xNEy, Operations.xNE0],
       // Row 3
       [3, 0, Operations.onOff, Operations.onOff, Operations.onOff],
       [3, 1, Operations.fShift, Operations.fShift, Operations.fShift],
       [3, 2, Operations.gShift, Operations.gShift, Operations.gShift],
-      [3, 3, Operations11.sto15, Operations11.fracOp, Operations11.intOp],
+      [3, 3, Operations11.sto15, OperationsScientific.fracOp, OperationsScientific.intOp],
       [3, 4, Operations11.rcl15, Operations11.userOp, Operations.mem],
       // row 3 col 5 is null (under ENTER)
-      [3, 6, Operations.n0, Operations11.xFactorial, Operations11.xBar],
-      [3, 7, Operations.dot, Operations11.yHatR, Operations11.stdDeviation],
-      [3, 8, Operations11.sigmaPlus, Operations11.linearRegression, Operations11.sigmaMinus],
+      [3, 6, Operations.n0, OperationsScientific.xFactorial, OperationsScientific.xBar],
+      [3, 7, Operations.dot, OperationsScientific.yHatR, OperationsScientific.stdDeviation],
+      [3, 8, OperationsScientific.sigmaPlus, OperationsScientific.linearRegression, OperationsScientific.sigmaMinus],
       [3, 9, Operations11.plus, Operations.xEQy, Operations.xEQ0],
     ];
     for (final e in expected) {
@@ -553,16 +554,16 @@ Future<void> main() async {
     m.memory.registers.index = Value.fromDouble(48.05002);
     tc.enter(Operations.pr);
     tc.enter(Operations11.lbl15);
-    tc.enter(Operations11.letterLabelA);
+    tc.enter(OperationsScientific.letterLabelA);
     tc.enter(Operations.fShift);
     tc.enter(Operations11.isg);
-    tc.enter(Operations11.gto);
-    tc.enter(Operations11.letterLabelA);
+    tc.enter(OperationsScientific.gto);
+    tc.enter(OperationsScientific.letterLabelA);
     tc.enter(Operations.rtn);
     tc.enter(Operations.pr);
 
-    tc.enter(Operations11.gsb);
-    tc.enter(Operations11.letterLabelA);
+    tc.enter(OperationsScientific.gsb);
+    tc.enter(OperationsScientific.letterLabelA);
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
     // After 50 → 52 (incremented past 50), ISG skipped the GTO and RTN ran.
@@ -613,20 +614,20 @@ Future<void> main() async {
     m.memory.registers[0] = Value.zero;
     tc.enter(Operations.pr);
     tc.enter(Operations11.lbl15);
-    tc.enter(Operations11.letterLabelA);
+    tc.enter(OperationsScientific.letterLabelA);
     tc.enter(Operations.n1);
     tc.enter(Operations11.sto15);
     tc.enter(Operations11.plus);
     tc.enter(Operations.n0);
     tc.enter(Operations.fShift);
     tc.enter(Operations11.dse);
-    tc.enter(Operations11.gto);
-    tc.enter(Operations11.letterLabelA);
+    tc.enter(OperationsScientific.gto);
+    tc.enter(OperationsScientific.letterLabelA);
     tc.enter(Operations.rtn);
     tc.enter(Operations.pr);
 
-    tc.enter(Operations11.gsb);
-    tc.enter(Operations11.letterLabelA);
+    tc.enter(OperationsScientific.gsb);
+    tc.enter(OperationsScientific.letterLabelA);
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
     expect(m.memory.registers[0], Value.fromDouble(3),

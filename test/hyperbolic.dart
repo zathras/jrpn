@@ -3,6 +3,7 @@ import 'package:jrpn/m/complex.dart';
 import 'package:jrpn/m/model.dart';
 
 import 'package:jrpn/v/buttons.dart';
+import 'package:jrpn/c/operations_scientific.dart';
 import 'package:jrpn/jrpn15/main.dart';
 
 ///
@@ -222,7 +223,7 @@ class TrigInputTests {
           final arg = Complex(re, im);
           model.xC = arg;
           Complex r = arg;
-          if (re < 0 && b.uKey == Operations15.cos) {
+          if (re < 0 && b.uKey == OperationsScientific.cos) {
             r = -r;
           }
           _testInverse(b, arg, r, r, digits: 7);
@@ -348,9 +349,9 @@ class TrigInputTests {
 
     // An extra hyperbolic tangent function, for historical reasons.
     controller.model.xC = const Complex(0.22, 0.73);
-    Operations15.tanh.complexCalc!(controller.model);
+    OperationsScientific.tanh.complexCalc!(controller.model);
     expectC(const Complex(0.3758125280, 0.8220979109));
-    Operations15.tanhInverse.complexCalc!(controller.model);
+    OperationsScientific.tanhInverse.complexCalc!(controller.model);
     expectC(const Complex(0.22, 0.73));
 
     _testInverses();
