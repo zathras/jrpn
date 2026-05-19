@@ -383,11 +383,9 @@ class SelfTests11 extends SelfTests {
 
       // Check the operation that lead to the bug's discovery
       final m = newModel() as Model<ProgramOperation>;
-      final v = Value.fromDouble(9.014);
-      m.memory.registers.index = v;
-      final arg = Operations11.isg.arg as RegisterWriteOpArg;
-      final r = arg.f(m, v, v);
-      await expect(r, Value.fromDouble(10.014));
+      m.memory.registers.index = Value.fromDouble(9.014);
+      Operations11.isg.floatCalc!(m);
+      await expect(m.memory.registers.index, Value.fromDouble(10.014));
     });
   }
 

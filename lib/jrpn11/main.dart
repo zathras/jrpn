@@ -923,24 +923,27 @@ class Operations11 extends Operations {
     ),
     name: 'x<->',
   );
-  static final NormalArgOperation dse = NormalArgOperation(
-    maxOneByteOpcodes: 4,
-    arg: RegisterWriteOpArg(
-      maxDigit: 19,
-      f: (m, Value r, Value x) {
-        return _skipIf(m, r, (n, x) => n <= x, (n, y) => n - y);
-      },
-    ),
+  static final NormalOperation dse = NormalOperation.floatOnly(
+    floatCalc: (Model m) {
+      m.memory.registers.index = _skipIf(
+        m,
+        m.memory.registers.index,
+        (n, x) => n <= x,
+        (n, y) => n - y,
+      );
+    },
     name: 'DSE',
   );
-  static final NormalArgOperation isg = NormalArgOperation(
-    maxOneByteOpcodes: 4,
-    arg: RegisterWriteOpArg(
-      maxDigit: 19,
-      f: (m, Value r, Value x) {
-        return _skipIf(m, r, (n, x) => n > x, (n, y) => n + y);
-      },
-    ),
+
+  static final NormalOperation isg = NormalOperation.floatOnly(
+    floatCalc: (Model m) {
+      m.memory.registers.index = _skipIf(
+        m,
+        m.memory.registers.index,
+        (n, x) => n > x,
+        (n, y) => n + y,
+      );
+    },
     name: 'ISG',
   );
 

@@ -366,6 +366,107 @@ Future<void> main() async {
     }
   });
 
+  test('11C ISG operates on R_I only (handbook pp. 132-134)', () async {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    final out = StreamIterator<ProgramEvent>(tc.output.stream);
+
+    // Manual p. 132: control word 2.05002 in R_I = (counter=2, test=050,
+    // increment=02). After one ISG, R_I = 4.05002 (counter advances by 2).
+    m.memory.registers.index = Value.fromDouble(2.05002);
+    tc.enter(Operations.fShift);
+    tc.enter(Operations11.isg);
+    expect(m.memory.registers.index, Value.fromDouble(4.05002));
+
+    // Manual p. 133: when the loop runs past test value 050, the next
+    // program line is skipped. Build a program that ISGs and then GTOs
+    // back; on the skipping iteration GTO is bypassed and we hit RTN.
+    //   LBL A: ISG, GTO A, RTN
+    m.memory.registers.index = Value.fromDouble(48.05002);
+    tc.enter(Operations.pr);
+    tc.enter(Operations11.lbl15);
+    tc.enter(Operations11.letterLabelA);
+    tc.enter(Operations.fShift);
+    tc.enter(Operations11.isg);
+    tc.enter(Operations11.gto);
+    tc.enter(Operations11.letterLabelA);
+    tc.enter(Operations.rtn);
+    tc.enter(Operations.pr);
+
+    tc.enter(Operations11.gsb);
+    tc.enter(Operations11.letterLabelA);
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    // After 50 → 52 (incremented past 50), ISG skipped the GTO and RTN ran.
+    expect(m.memory.registers.index, Value.fromDouble(52.05002));
+  });
+
+  test('11C DSE operates on R_I only', () async {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+
+    // Manual p. 130 iteration table: 6.00002 decrements by 2 each pass
+    // (yy=02), passing through 4.00002 → 2.00002 → 0.00002 → -2.00002.
+    m.memory.registers.index = Value.fromDouble(6.00002);
+    tc.enter(Operations.fShift);
+    tc.enter(Operations11.dse);
+    expect(m.memory.registers.index, Value.fromDouble(4.00002));
+
+    tc.enter(Operations.fShift);
+    tc.enter(Operations11.dse);
+    expect(m.memory.registers.index, Value.fromDouble(2.00002));
+  });
+
+  test('11C DSE / ISG default to step 1 when R_I has no decimal portion '
+      '(handbook p. 129: "unspecified yy defaults to 01")', () async {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    final out = StreamIterator<ProgramEvent>(tc.output.stream);
+
+    // Plain integer R_I: yy=00 → step 1, xxx=000 → test value 0.
+    m.memory.registers.index = Value.fromDouble(3);
+    tc.enter(Operations.fShift);
+    tc.enter(Operations11.dse);
+    expect(m.memory.registers.index, Value.fromDouble(2));
+
+    // ISG on R_I = 0 with step-default-1: 0 → 1, skip since 1 > 0.
+    m.memory.registers.index = Value.zero;
+    tc.enter(Operations.fShift);
+    tc.enter(Operations11.isg);
+    expect(m.memory.registers.index, Value.fromDouble(1));
+
+    // Program: integer R_I = 3 should loop exactly three times via DSE
+    // (3 → 2, 2 → 1, 1 → 0 + skip), then RTN.
+    //   LBL A: ISG R_I dummy (no, use stats reg as counter), GSB B (counts), DSE, GTO A, RTN
+    //   LBL B: 1, +, RTN
+    // Simpler: count iterations into R0 directly.
+    //   LBL A: 1, STO + 0, DSE, GTO A, RTN
+    m.memory.registers.index = Value.fromDouble(3);
+    m.memory.registers[0] = Value.zero;
+    tc.enter(Operations.pr);
+    tc.enter(Operations11.lbl15);
+    tc.enter(Operations11.letterLabelA);
+    tc.enter(Operations.n1);
+    tc.enter(Operations11.sto15);
+    tc.enter(Operations11.plus);
+    tc.enter(Operations.n0);
+    tc.enter(Operations.fShift);
+    tc.enter(Operations11.dse);
+    tc.enter(Operations11.gto);
+    tc.enter(Operations11.letterLabelA);
+    tc.enter(Operations.rtn);
+    tc.enter(Operations.pr);
+
+    tc.enter(Operations11.gsb);
+    tc.enter(Operations11.letterLabelA);
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect(m.memory.registers[0], Value.fromDouble(3),
+        reason: 'DSE loop should execute body exactly 3 times on R_I=3');
+    expect(m.memory.registers.index, Value.zero,
+        reason: 'final DSE call landed on 0 and skipped the GTO');
+  });
+
   test('Built-in self tests 11C', () async {
     await SelfTests11(inCalculator: false).runAll();
   });
