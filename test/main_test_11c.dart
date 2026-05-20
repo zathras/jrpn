@@ -178,6 +178,66 @@ Future<void> main() async {
     expect(keys.contains(Operations11.div), isFalse);
   });
 
+  test('11C SF/CF/F? only target flags 0 and 1 (p. 116)', () async {
+    // "The two flags in your HP-11C are numbered 0 and 1."
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+    final out = StreamIterator<ProgramEvent>(tc.output.stream);
+
+    expect(m.getFlag(0), false);
+    expect(m.getFlag(1), false);
+
+    tc.enter(Operations11.sf);
+    tc.enter(Operations.n0);
+    expect(m.getFlag(0), true);
+
+    tc.enter(Operations11.sf);
+    tc.enter(Operations.n1);
+    expect(m.getFlag(1), true);
+
+    tc.enter(Operations11.cf);
+    tc.enter(Operations.n0);
+    expect(m.getFlag(0), false);
+    expect(m.getFlag(1), true);
+
+    // Verify F? branches a running program based on flag state.
+    // Program:  LBL A, F? 1, GTO 0, 0, RTN, LBL 0, 4, 2, RTN
+    tc.enter(Operations.pr);
+    tc.enter(Operations11.lbl15);
+    tc.enter(Operations11.letterLabelA);
+    tc.enter(Operations11.fQuestion);
+    tc.enter(Operations.n1);
+    tc.enter(Operations11.gto);
+    tc.enter(Operations.n0);
+    tc.enter(Operations.n0);
+    tc.enter(Operations.rtn);
+    tc.enter(Operations11.lbl15);
+    tc.enter(Operations.n0);
+    tc.enter(Operations.n4);
+    tc.enter(Operations.n2);
+    tc.enter(Operations.rtn);
+    tc.enter(Operations.pr);
+
+    tc.enter(Operations11.gsb);
+    tc.enter(Operations11.letterLabelA);
+    expect(await out.moveNext(), true);
+    expect(out.current, ProgramEvent.done);
+    expect(m.x, Value.fromDouble(42));
+  });
+
+  test('11C SF/CF/F? arg structure has no I path and only digits 0-1', () {
+    // Only "SF/CF/F? followed by the digit key (0 or 1)".
+    // There is no indirect (I) addressing for flags on the 11C.
+    for (final op in [Operations11.sf, Operations11.cf, Operations11.fQuestion]) {
+      final arg = op.arg as ArgAlternates;
+      final keys = arg.children.whereType<KeyArg>().map((c) => c.key).toSet();
+      expect(keys.contains(Arg.kI), isFalse,
+          reason: '${op.name} must not accept I as argument on 11C');
+      expect(keys.contains(Arg.kParenI), isFalse,
+          reason: '${op.name} must not accept (i) as argument on 11C');
+    }
+  });
+
   test('11C GSB runs a stored program', () async {
     final tc = TestCalculator(for11C: true);
     final m = tc.model;

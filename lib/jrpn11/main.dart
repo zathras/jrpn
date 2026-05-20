@@ -599,20 +599,29 @@ class Operations11 extends Operations {
 
   static final NormalArgOperation sf = NormalArgOperation(
     maxOneByteOpcodes: 0,
-    arg: LabelArg(maxDigit: 9, f: (m, v) => m.setFlag(v ?? 999, true)),
+    arg: LabelArg(
+      maxDigit: 1,
+      noI: true,
+      f: (m, v) => m.setFlag(v ?? 999, true),
+    ),
     name: 'SF',
   );
 
   static final NormalArgOperation cf = NormalArgOperation(
     maxOneByteOpcodes: 0,
-    arg: LabelArg(maxDigit: 9, f: (m, v) => m.setFlag(v ?? 999, false)),
+    arg: LabelArg(
+      maxDigit: 1,
+      noI: true,
+      f: (m, v) => m.setFlag(v ?? 999, false),
+    ),
     name: 'CF',
   );
 
   static final fQuestion = NormalArgOperation(
     maxOneByteOpcodes: 0,
     arg: LabelArg(
-      maxDigit: 9,
+      maxDigit: 1,
+      noI: true,
       f: (m, v) => m.program.doNextIf(m.getFlag(v ?? 99)),
     ),
     name: 'F?',
