@@ -1565,7 +1565,6 @@ class Operations11 extends Operations {
   );
 
   static final NormalArgOperation rcl15 = NormalArgOperationWithBeforeCalc(
-    maxOneByteOpcodes: 47,
     beforeCalculate: (Resting s) {
       // For the matrix operations, this is deferred to key release.  It is
       // not run if the operation is cancelled.
@@ -1665,34 +1664,6 @@ class Operations11 extends Operations {
           ),
         ),
         KeyArg(
-          key: Operations11.plus,
-          child: RegisterReadOpArg(
-            maxDigit: 19,
-            f: (DecimalFP12 r, DecimalFP12 x) => r + x,
-          ),
-        ),
-        KeyArg(
-          key: Operations11.minus,
-          child: RegisterReadOpArg(
-            maxDigit: 19,
-            f: (DecimalFP12 r, DecimalFP12 x) => r - x,
-          ),
-        ),
-        KeyArg(
-          key: Operations11.mult,
-          child: RegisterReadOpArg(
-            maxDigit: 19,
-            f: (DecimalFP12 r, DecimalFP12 x) => r * x,
-          ),
-        ),
-        KeyArg(
-          key: Operations11.div,
-          child: RegisterReadOpArg(
-            maxDigit: 19,
-            f: (DecimalFP12 r, DecimalFP12 x) => r / x,
-          ),
-        ),
-        KeyArg(
           key: Operations11.cosInverse, // That's g (i)
           child: RclIndirectArg(
             noStackLift: true,
@@ -1761,81 +1732,6 @@ class PrecisionArg extends ArgAlternates {
           ),
         ],
       );
-}
-
-class RegisterReadOpArg extends ArgAlternates {
-  final DecimalFP12 Function(DecimalFP12, DecimalFP12) f;
-
-  RegisterReadOpArg({required int maxDigit, required this.f})
-    : super(
-        synonyms: Operations11._letterAndRegisterISynonyms,
-        children: [
-          KeyArg(
-            key: Arg.kParenI,
-            child: RegisterReadOpArgDone((m) {
-              final mi = m.memory.registers.index.asMatrix;
-              if (mi == null) {
-                final xr = f(
-                  DecimalFP12(m.x),
-                  DecimalFP12(m.memory.registers.indirectIndex),
-                );
-                m.xReal = m.checkOverflow(() => xr.toValue());
-                // Do not set LastX, as per real 15C's behavior, so no resultX
-                // Do not alter imaginary part
-              } else {
-                // See bottom of page 173
-                _forMatrix(m as Model11, mi, f);
-              }
-            }),
-          ),
-          KeyArg(
-            key: Arg.kI,
-            child: RegisterReadOpArgDone((m) {
-              // Do not set LastX, as per real 15C's behavior
-              final x = f(
-                DecimalFP12(m.x),
-                DecimalFP12(m.memory.registers.index),
-              );
-              m.xReal = m.checkOverflow(() => x.toValue());
-            }),
-          ),
-          DigitArg(
-            max: maxDigit,
-            calc: (m, i) {
-              final x = f(DecimalFP12(m.x), DecimalFP12(m.memory.registers[i]));
-              m.xReal = m.checkOverflow(() => x.toValue());
-            },
-            // The 15C doesn't doesn't do the real complex operation, it just
-            // maintains imaginary part.  So, if x contains 1+2i, and you
-            // multiply by a register containing 3, you get 3+2i.  Oopsie!'
-            //
-            // Also, here we do not set LastX, as per real 15C's behavior.
-            argDoneFactory: (calc) => RegisterReadOpArgDone(calc),
-          ),
-          ...List.generate(
-            _letterLabelsList.length,
-            (i) => KeyArg(
-              key: _letterLabelsList[i],
-              child: RegisterReadOpArgDone((m) {
-                _forMatrix(m as Model11, i, f);
-              }),
-            ),
-          ),
-        ],
-      );
-
-  static void _forMatrix(
-    Model11 m,
-    int mi,
-    final DecimalFP12 Function(DecimalFP12, DecimalFP12) f,
-  ) {
-    final mat = m.matrices[mi];
-    int toI(int r) => m.memory.registers[r].floatIntPart().abs();
-    int row = toI(0) - 1;
-    int col = toI(1) - 1;
-    final x = f(DecimalFP12(m.x), DecimalFP12(mat.get(row, col)));
-    m.resultX = m.checkOverflow(() => x.toValue());
-  }
 }
 
 class RegisterWriteOpArg extends ArgAlternates {
@@ -1975,20 +1871,6 @@ class DeferredRclArg extends ArgDone {
       released(m, matrix);
       return true; // Enable stack lift
     }).run;
-  }
-}
-
-///
-/// RCL [+-*/] reg does NOT lift the stack - see Recall Arithmetic, page 44.
-///
-class RegisterReadOpArgDone extends ArgDone {
-  RegisterReadOpArgDone(super.calculate);
-
-  @override
-  void handleOpBeforeCalculate(Model m, void Function() opBeforeCalculate) {
-    // Do nothing - don't lift the stack, as per page 44.  Note that
-    // stack lift is enabled after the calculation completes, via the
-    // normal op.stackLift mechanism.
   }
 }
 

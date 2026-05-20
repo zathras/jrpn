@@ -129,6 +129,55 @@ Future<void> main() async {
     expect(m.x, Value.fromDouble(42));
   });
 
+  test('11C storage register arithmetic exercises (handbook p. 40)', () {
+    final tc = TestCalculator(for11C: true);
+    final m = tc.model;
+
+    tc.enter(Operations.n1);
+    tc.enter(Operations.n8);
+    tc.enter(Operations11.sto15);
+    tc.enter(Operations.n0);
+    expect(m.memory.registers[0], Value.fromDouble(18));
+
+    tc.enter(Operations.n3);
+    tc.enter(Operations11.sto15);
+    tc.enter(Operations11.div);
+    tc.enter(Operations.n0);
+    expect(m.memory.registers[0], Value.fromDouble(6));
+
+    tc.enter(Operations.n4);
+    tc.enter(Operations11.sto15);
+    tc.enter(Operations11.mult);
+    tc.enter(Operations.n0);
+    expect(m.memory.registers[0], Value.fromDouble(24));
+
+    tc.enter(Operations11.rcl15);
+    tc.enter(Operations.n0);
+    tc.enter(Operations11.sto15);
+    tc.enter(Operations11.plus);
+    tc.enter(Operations.n0);
+    expect(m.memory.registers[0], Value.fromDouble(48));
+
+    tc.enter(Operations.n4);
+    tc.enter(Operations.n0);
+    tc.enter(Operations11.sto15);
+    tc.enter(Operations11.minus);
+    tc.enter(Operations.n0);
+    expect(m.memory.registers[0], Value.fromDouble(8));
+  });
+
+  test('11C RCL has no arithmetic argument (only STO does)', () {
+    // The 11C only supports STO arithmetic, no RCL arithmetic
+    // RCL's argument structure should expose register reads
+    // and RAN# / Sigma+ keys, but no +/-/*/div keys.
+    final arg = Operations11.rcl15.arg as ArgAlternates;
+    final keys = arg.children.whereType<KeyArg>().map((c) => c.key).toSet();
+    expect(keys.contains(Operations11.plus), isFalse);
+    expect(keys.contains(Operations11.minus), isFalse);
+    expect(keys.contains(Operations11.mult), isFalse);
+    expect(keys.contains(Operations11.div), isFalse);
+  });
+
   test('11C GSB runs a stored program', () async {
     final tc = TestCalculator(for11C: true);
     final m = tc.model;
