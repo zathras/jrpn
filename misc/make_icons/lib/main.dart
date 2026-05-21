@@ -49,10 +49,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> makeIcons() async {
-    const base = '/Users/billf/github/jrpn';
+    const base = '../..';
     // ignore: avoid_print
     print('cwd is ${File(".").absolute}');
-    for (final model in ['15', '16']) {
+    for (final model in ['11', '15', '16']) {
       // https://developer.android.com/distribute/google-play/resources/icon-design-specifications
       await makeIcon(File('$base/jrpn$model/assets_$model/icon_adaptive.png'),
           size: 512, border: 92, modelName: '${model}C', adaptive: true);
