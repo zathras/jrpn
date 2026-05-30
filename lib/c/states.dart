@@ -507,14 +507,16 @@ class DigitEntry extends ActiveState {
   static final _decimalDigits = RegExp('[0-9]');
 
   bool _tryNewValue(String ent, String sign, int? ex, final bool negEx) {
-    final int intDigits;
+    int intDigits;
     if (model.isFloatMode) {
       intDigits = 0;
     } else {
       final ism = model.integerSignMode;
-      final maxV = ism.fromBigInt(ism.maxValue(model), model, false);
-      intDigits =
-          model.displayMode.format(maxV, model).replaceAll(',', '').length - 2;
+      final dm = model.displayMode;
+      intDigits = dm.maxDisplayDigits(model.wordSize, ism) - 2;
+      if (model.displayMode.showsMinusSign(model)) {
+        intDigits--;
+      }
     }
     final Value? v;
     if (ex == null) {

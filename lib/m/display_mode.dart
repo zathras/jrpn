@@ -134,6 +134,8 @@ abstract class DisplayMode {
 
   String format(Value v, Model m);
 
+  bool showsMinusSign(Model m);
+
   bool get isFloatMode => false;
 
   ///
@@ -286,6 +288,9 @@ abstract class _Pow2IntegerMode extends IntegerDisplayMode {
       return Value.fromInternal(v);
     }
   }
+
+  @override
+  bool showsMinusSign(Model m) => false;
 }
 
 class _HexMode extends _Pow2IntegerMode {
@@ -410,6 +415,9 @@ class _DecimalMode extends IntegerDisplayMode {
       return 3 + ((wordSize - 1) / log2Of10).ceil();
     }
   }
+
+  @override
+  bool showsMinusSign(Model m) => !m.integerSignMode.isUnsigned;
 }
 
 class _FloatMode extends DisplayMode {
@@ -521,6 +529,9 @@ class _FloatMode extends DisplayMode {
   @override
   int maxDisplayDigits(int wordSize, IntegerSignMode signMode) =>
       _formatter.maxDisplayDigits;
+
+  @override
+  bool showsMinusSign(Model m) => true;
 }
 
 class _ComplexMode extends _FloatMode {
@@ -663,7 +674,7 @@ abstract class FloatFormatter {
   ///
   /// See [DisplayMode.leastSignificantDigitNoFloor]
   ///
-  /// This assumes scientific notation, and is overriden for fixed-point.
+  /// This assumes scientific notation, and is overridden for fixed-point.
   ///
   double leastSignificantDigitNoFloor(double value) {
     if (value != 0) {
