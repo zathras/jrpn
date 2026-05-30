@@ -47,7 +47,7 @@ class Model15<OT extends ProgramOperation> extends Model<OT> {
 
   @override
   bool get userMode => _userMode;
-  void set userMode(bool v) {
+  set userMode(bool v) {
     _userMode = v;
     needsSave = true;
   }
