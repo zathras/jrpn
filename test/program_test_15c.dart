@@ -27,6 +27,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/m/model.dart';
+import 'package:jrpn/c/operations_scientific.dart';
 import 'package:jrpn/jrpn15/main.dart';
 
 import 'programs.dart';
@@ -491,11 +492,11 @@ class _ProgramRun {
   int pauseCount = 0;
 
   static final letters = <String, Operation>{
-    'A': Operations15.letterLabelA,
-    'B': Operations15.letterLabelB,
-    'C': Operations15.letterLabelC,
-    'D': Operations15.letterLabelD,
-    'E': Operations15.letterLabelE,
+    'A': OperationsScientific.letterLabelA,
+    'B': OperationsScientific.letterLabelB,
+    'C': OperationsScientific.letterLabelC,
+    'D': OperationsScientific.letterLabelD,
+    'E': OperationsScientific.letterLabelE,
   };
 
   static final numbers = <String, Operation>{
@@ -527,15 +528,15 @@ class _ProgramRun {
     '-': Operations15.minus,
     '–': Operations15.minus,
     'x↔y': Operations.xy,
-    'DEG': Operations15.deg,
-    '->DEG': Operations15.toDeg,
-    'RAD': Operations15.rad,
-    '->RAD': Operations15.toRad,
-    'FIX': Operations15.fix,
-    '→H': Operations15.toH,
+    'DEG': OperationsScientific.deg,
+    '->DEG': OperationsScientific.toDeg,
+    'RAD': OperationsScientific.rad,
+    '->RAD': OperationsScientific.toRad,
+    'FIX': OperationsScientific.fix,
+    '→H': OperationsScientific.toH,
     'DIM': Operations15.dim,
-    '(i)': Operations15.parenI15,
-    'I': Operations15.I15,
+    '(i)': OperationsScientific.parenIOp,
+    'I': OperationsScientific.iOp,
     'CF': Operations15.cf,
     'SF': Operations15.sf,
     'R/S': Operations.rs,
@@ -543,22 +544,22 @@ class _ProgramRun {
     'SOLVE': Operations15.solve,
     'X<=>Y': Operations.xy,
     'RE<=>IM': Operations15.reImSwap,
-    'PI': Operations15.piOp,
+    'PI': OperationsScientific.piOp,
     'MATRIX': Operations15.matrix,
     'USER': Operations15.userOp,
-    'argA': Operations15.letterLabelA,
-    'argB': Operations15.letterLabelB,
-    'argC': Operations15.letterLabelC,
-    'argD': Operations15.letterLabelD,
-    'argE': Operations15.letterLabelE,
+    'argA': OperationsScientific.letterLabelA,
+    'argB': OperationsScientific.letterLabelB,
+    'argC': OperationsScientific.letterLabelC,
+    'argD': OperationsScientific.letterLabelD,
+    'argE': OperationsScientific.letterLabelE,
     'Re<=>Im': Operations15.reImSwap,
     'INTEGRATE': Operations15.integrate,
-    'x!': Operations15.xFactorial,
-    'LN': Operations15.lnOp,
+    'x!': OperationsScientific.xFactorial,
+    'LN': OperationsScientific.lnOp,
     '1/x': Operations15.reciprocal15,
-    'COS': Operations15.cos,
-    'SIN': Operations15.sin,
-    'TAN': Operations15.tan,
+    'COS': OperationsScientific.cos,
+    'SIN': OperationsScientific.sin,
+    'TAN': OperationsScientific.tan,
     'rDown': Operations.rDown,
     'rUp': Operations.rUp,
   };
@@ -592,7 +593,7 @@ class _ProgramRun {
       play(Operations15.solve);
     } else if (keys == 'GSB') {
       state = gsbState;
-      play(Operations15.gsb);
+      play(OperationsScientific.gsb);
     } else if (keys == 'R/S') {
       play(Operations.rs);
       await waitProgramDone();

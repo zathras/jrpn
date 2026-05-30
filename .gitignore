@@ -49,6 +49,11 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
+# Flutter build stuff
+/jrpn11/ios/Flutter/ephemeral
+/jrpn15/ios/Flutter/ephemeral
+/jrpn16/ios/Flutter/ephemeral
+
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile

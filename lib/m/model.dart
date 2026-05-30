@@ -555,7 +555,7 @@ class Settings {
     if (_useAndroidVibrateAPI) {
       r['useAndroidVibrateAPI'] = true;
     }
-    if (_model.modelName != '15C') {
+    if (_model.hasIntegerModeSettings) {
       r['showWordSize'] = _showWordSize;
       r['hideComplement'] = _hideComplement;
       r['integerModeCommas'] = _integerModeCommas;
@@ -656,10 +656,50 @@ abstract class NumStatus {
   IntegerSignMode get integerSignMode;
 }
 
+enum CalculatorModelKind {
+
+  jrpn11(displayName: '11C', persistentStorageKey: 'init11C'),
+  jrpn15(displayName: '15C', persistentStorageKey: 'init15C'),
+  jrpn16(displayName: '16C', persistentStorageKey: 'init');
+
+  /// User-visible model name. Also persisted in JSON state files.
+  final String displayName;
+
+  /// SharedPreferences key under which this model persists its state.
+  final String persistentStorageKey;
+
+  const CalculatorModelKind({
+    required this.displayName,
+    required this.persistentStorageKey
+  });
+}
+
+///
+/// Which storage registers a model's statistics functions use.
+/// The HP-15C uses R2..R7 (base=2); the HP-11C uses R0..R5 (base=0).
+class StatsRegisterMap {
+  final int n; // count of data points
+  final int sumX;
+  final int sumXSq;
+  final int sumY;
+  final int sumYSq;
+  final int sumXY;
+
+  const StatsRegisterMap.contiguous(int base)
+    : n = base,
+      sumX = base + 1,
+      sumXSq = base + 2,
+      sumY = base + 3,
+      sumYSq = base + 4,
+      sumXY = base + 5;
+
+  Iterable<int> get all => [n, sumX, sumXSq, sumY, sumYSq, sumXY];
+}
+
 ///
 /// Our model, the main entry point to this module.  See the library-level
 /// documentation for a description, and an explanation of the model's
-/// structure.  Extended by Model15 and Model16.
+/// structure.  Extended by Model11, Model15 and Model16.
 ///
 abstract class Model<OT extends ProgramOperation> implements NumStatus {
   late final DisplayModel display;
@@ -694,12 +734,30 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   /// calculator's state obsolete.
   List<List<MKey<OT>?>> get logicalKeys;
 
-  ///
-  /// The name of this model of the calculator (16C or 15C).
-  ///
-  String get modelName;
+  /// Identity discriminator. Single source of truth for "which calculator
+  /// model is this?"
+  CalculatorModelKind get kind;
 
-  bool get is15C;
+  /// User-visible model name. Derived from [kind] so the model can't lie.
+  /// Also persisted in JSON state files as a backwards-compat sanity check.
+  String get modelName => kind.displayName;
+
+  /// Whether this model serializes the integer-mode display settings
+  /// (word size, complement display, integer commas). Only the 16C does.
+  bool get hasIntegerModeSettings => kind == CalculatorModelKind.jrpn16;
+
+  /// Whether this model supports complex-number mode. Only the 15C does.
+  /// Drives both runtime checks and JSON decode behavior for the
+  /// `imaginaryStack` / `lastXImaginary` fields.
+  bool get supportsComplex => kind == CalculatorModelKind.jrpn15;
+
+  /// Which storage registers this model's statistics functions read/write.
+  /// 16C doesn't expose stats keys; its value is unused.
+  StatsRegisterMap get statsRegisters => switch (kind) {
+    CalculatorModelKind.jrpn11 => const StatsRegisterMap.contiguous(0),
+    CalculatorModelKind.jrpn15 => const StatsRegisterMap.contiguous(2),
+    CalculatorModelKind.jrpn16 => const StatsRegisterMap.contiguous(2),
+  };
 
   // See Model15.deferToButtonUp
   bool get hasDeferToButtonUp => false;
@@ -1368,7 +1426,11 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     integerSignMode = IntegerSignMode.fromJson(
       json['integerSignMode'] as String,
     );
-    final List<dynamic>? ims = json['imaginaryStack'] as List<dynamic>?;
+    // Real-only models discard any `imaginaryStack` / `lastXImaginary`
+    // present in the JSON.
+    final List<dynamic>? ims = supportsComplex
+        ? json['imaginaryStack'] as List<dynamic>?
+        : null;
     displayMode = DisplayMode.fromJson(json['displayMode']!, ims != null);
     // displayMode must be set before stack, since setting
     // display mode alters stack
@@ -1387,7 +1449,8 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         _imaginaryStack![i] = Value.fromJson(v as String);
       }
     }
-    final imx = json['lastXImaginary'] as String?;
+    final imx =
+        supportsComplex ? json['lastXImaginary'] as String? : null;
     if (imx == null) {
       _lastXImaginary = null;
     } else {
@@ -1403,8 +1466,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
     this.needsSave = needsSave;
   }
 
-  String get _persistentStorageKey =>
-      modelName == '16C' ? 'init' : 'init$modelName';
+  String get _persistentStorageKey => kind.persistentStorageKey;
   Future<void> readFromPersistentStorage() async {
     final storage = await SharedPreferences.getInstance();
     String? js = storage.getString(_persistentStorageKey);

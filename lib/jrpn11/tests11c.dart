@@ -1,0 +1,400 @@
+/*
+Copyright (c) 2021-2024 William Foote
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 3 of the License, or (at your option) any later
+version.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, see https://www.gnu.org/licenses/ .
+*/
+
+library;
+
+import 'package:jrpn/c/operations_scientific.dart';
+
+import 'dart:math';
+import 'package:jrpn/m/model.dart';
+import 'package:jrpn/c/controller.dart';
+
+import 'main.dart';
+import 'model11c.dart';
+
+class SelfTests11 extends SelfTests {
+  SelfTests11({super.inCalculator});
+
+  @override
+  Model11<Operation> newModel() {
+    final m = createModel11();
+    Controller11(m); // Initializes late final fields in model
+    return m;
+  }
+
+  @override
+  Controller newController() => Controller11(createModel11());
+
+  @override
+  int get pauseEvery => 4;
+
+  Future<void> _testOneArgFloat(
+    Model11 m,
+    NormalOperation op,
+    double arg,
+    double result, [
+    NormalOperation? inverse,
+  ]) async {
+    m.xF = arg;
+    op.floatCalc!(m);
+    await expect(m.x, Value.fromDouble(result));
+    if (inverse != null) {
+      return _testOneArgFloat(m, inverse, result, arg);
+    }
+  }
+
+  Future<void> _testTwoArgFloat(
+    Model11 m,
+    NormalOperation op,
+    double x,
+    double y,
+    double? result, {
+    int? err,
+  }) async {
+    assert(result != null || err != null);
+    m.xF = x;
+    m.yF = y;
+    try {
+      op.floatCalc!(m);
+    } on CalculatorError catch (e) {
+      await expect(e.num15, err);
+      return;
+    }
+    await expect(m.x, Value.fromDouble(result!));
+  }
+
+  Future<void> testFloatFunctions() async {
+    await test('11c float mode functions', () async {
+      final m = newModel();
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.lnOp,
+        2.37,
+        0.8628899551,
+        OperationsScientific.eX15,
+      );
+      await _testOneArgFloat(m, OperationsScientific.sqrtOp15, 7.37, 2.714774392);
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.xSquared,
+        2.714774392,
+        7.369999999,
+      );
+      // On the real 15C, the xSquared result is that, too.
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.xSquared,
+        4,
+        16,
+        OperationsScientific.sqrtOp15,
+      );
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.tenX15,
+        3.7,
+        5011.872336,
+        OperationsScientific.logOp,
+      );
+      await _testTwoArgFloat(m, OperationsScientific.yX15, 1.234, 5.678, 8.524660835);
+      await _testOneArgFloat(
+        m,
+        Operations11.reciprocal15,
+        0.01,
+        100,
+        Operations11.reciprocal15,
+      );
+      await _testTwoArgFloat(
+        m,
+        OperationsScientific.deltaPercent,
+        5.678,
+        1.234,
+        360.1296596,
+      );
+
+      await _testOneArgFloat(m, OperationsScientific.fracOp, 2.37, 0.37);
+      await _testOneArgFloat(m, OperationsScientific.fracOp, -2.37, -0.37);
+      await _testOneArgFloat(m, OperationsScientific.fracOp, 2.37e54, 0);
+      await _testOneArgFloat(m, OperationsScientific.fracOp, -2.37e54, 0);
+      await _testOneArgFloat(m, OperationsScientific.fracOp, 2.37e-54, 2.37e-54);
+      await _testOneArgFloat(m, OperationsScientific.fracOp, -2.37e-54, -2.37e-54);
+
+      await _testOneArgFloat(m, OperationsScientific.intOp, 2.37, 2);
+      await _testOneArgFloat(m, OperationsScientific.intOp, -2.37, -2);
+      await _testOneArgFloat(m, OperationsScientific.intOp, 2.37e54, 2.37e54);
+      await _testOneArgFloat(m, OperationsScientific.intOp, -2.37e54, -2.37e54);
+      await _testOneArgFloat(m, OperationsScientific.intOp, -2.37e-54, 0);
+      await _testOneArgFloat(m, OperationsScientific.intOp, 2.37e-54, 0);
+
+      for (final sign in [1.0, -1.0]) {
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toH,
+          sign * 1.2345,
+          sign * 1.395833333,
+          OperationsScientific.toHMS,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toH,
+          sign * 1.6789,
+          sign * 2.141388889,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 2.141388889,
+          sign * 2.0829,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 2.141388889,
+          sign * 2.0829,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toH,
+          sign * 1.595999999,
+          sign * 1.999999997,
+          OperationsScientific.toHMS,
+        );
+        // The following three are verified on a physical 15C.  59.999996
+        // is rounded to 59.99999, and not 60.00000, even though 6 >= 5.
+        // In general, it never rounds up to 60 (or up to 6, where only the
+        // tens digit is available).
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 1.999999999,
+          sign * 1.595999999,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 99999999.99,
+          sign * 99999999.59,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 999999999.9,
+          sign * 999999999.5,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 999999.9999,
+          sign * 999999.5959,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 9999999.999,
+          sign * 9999999.595,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 99999.99999,
+          sign * 99999.59599,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 1.666666667e-2,
+          sign * 0.01,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 1.666666666e-2,
+          sign * 0.01,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 1.666666665e-2,
+          sign * 0.005999999990,
+        ); // 15C gives 0:00:59.99999990
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 1.666666664e-2,
+          sign * 0.005999999990,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 123456789.9,
+          sign * 123456789.5,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 1234567891,
+          sign * 1234567891,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toHMS,
+          sign * 0.9999999999,
+          sign * 0.5959999999,
+        );
+
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toRad,
+          sign * 100,
+          sign * 1.745329252,
+          OperationsScientific.toDeg,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toDeg,
+          sign * 42.1,
+          sign * 2412.152318,
+        );
+        await _testOneArgFloat(
+          m,
+          OperationsScientific.toRad,
+          sign * 2412.152318,
+          sign * 42.10000001,
+          OperationsScientific.toDeg,
+        ); // Matches 15C
+      }
+    });
+  }
+
+
+  Future<void> testStatisticsFunctions() async {
+    await test('11c statistics functions', () async {
+      final m = newModel();
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 0, 1);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 1, 1);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 9, 362880);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 0.5, 0.8862269255);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, -0.7, 2.991568988);
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.xFactorial,
+        -31.2,
+        -1.016536828e-32,
+      );
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 57.3, 1.367681189e77);
+      await expect(m.getFlag(9), false);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 70, 9.999999999e+99);
+      await expect(m.getFlag(9), true);
+      m.setFlag(9, false);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 70.1, 9.999999999e+99);
+      await expect(m.getFlag(9), true);
+      m.setFlag(9, false);
+
+      await _testTwoArgFloat(m, Operations11.pYX, 1, 0, null, err: 0);
+      await _testTwoArgFloat(m, Operations11.pYX, 0, 1, 1);
+      await _testTwoArgFloat(m, Operations11.pYX, 0, 1.1, null, err: 0);
+      await _testTwoArgFloat(m, Operations11.pYX, 0, 5, 1);
+      await _testTwoArgFloat(m, Operations11.pYX, 1, 5, 5);
+      await _testTwoArgFloat(m, Operations11.pYX, 2, 5, 20);
+      await _testTwoArgFloat(m, Operations11.pYX, 3, 5, 60);
+      await _testTwoArgFloat(m, Operations11.pYX, 4, 5, 120);
+      await _testTwoArgFloat(m, Operations11.pYX, 5, 5, 120);
+      await expect(m.getFlag(9), false);
+      await _testTwoArgFloat(m, Operations11.pYX, 341, 357, 9.999999999e+99);
+      await expect(m.getFlag(9), true);
+      m.setFlag(9, false);
+      await _testTwoArgFloat(m, Operations11.pYX, 7, 101, 8.668605053e13);
+      await _testTwoArgFloat(m, Operations11.pYX, 15, 111, 1.777747078e30);
+      await _testTwoArgFloat(m, Operations11.pYX, 21, 213, 2.840246967e48);
+      await expect(m.getFlag(9), false);
+
+      await _testTwoArgFloat(m, Operations11.cYX, 1, 0, null, err: 0);
+      await _testTwoArgFloat(m, Operations11.cYX, 0, 1, 1);
+      await _testTwoArgFloat(m, Operations11.cYX, 0, 1.1, null, err: 0);
+      await _testTwoArgFloat(m, Operations11.cYX, 0, 5, 1);
+      await _testTwoArgFloat(m, Operations11.cYX, 1, 5, 5);
+      await _testTwoArgFloat(m, Operations11.cYX, 2, 5, 10);
+      await _testTwoArgFloat(m, Operations11.cYX, 3, 5, 10);
+      await _testTwoArgFloat(m, Operations11.cYX, 4, 5, 5);
+      await _testTwoArgFloat(m, Operations11.cYX, 5, 5, 1);
+      await _testTwoArgFloat(m, Operations11.cYX, 341, 357, 2.365542599e27);
+      await expect(m.getFlag(9), false);
+      await _testTwoArgFloat(m, Operations11.cYX, 3410, 3570, 9.999999999e99);
+      await expect(m.getFlag(9), true);
+      m.setFlag(9, false);
+      await _testTwoArgFloat(
+        m,
+        Operations11.cYX,
+        10097,
+        10101,
+        433499141500425,
+      );
+      // That's 10 places of accuracy, much more accurate than real 15C
+      await expect(m.getFlag(9), false);
+      await _testTwoArgFloat(m, Operations11.cYX, 10007, 10101, 9.999999999e99);
+      await expect(m.getFlag(9), true);
+      m.setFlag(9, false);
+    });
+  }
+
+  Future<void> testIssue119() async {
+    await test('11c Issue 119', () async {
+      // Make sure Value.flaotIntPart works
+      Future<void> testIntPart(final int x) async {
+        final Value v = Value.fromDouble(x.toDouble());
+        await expect(v.floatIntPart(), x);
+        await expect(v.negateAsFloat().floatIntPart(), -x);
+      }
+
+      await expect(Value.fromDouble(99.99999999).floatIntPart(), 99);
+      await expect(Value.fromDouble(-99.99999999).floatIntPart(), -99);
+      await testIntPart(0);
+      await testIntPart(42);
+      await testIntPart(1234567891);
+      await testIntPart(12345678910000);
+      final rand = Random();
+      for (int trial = 0; trial < 10; trial++) {
+        for (int digits = 1; digits <= 10; digits++) {
+          final int x;
+          if (digits <= 9) {
+            x = rand.nextInt(pow(10, digits).toInt());
+          } else {
+            x = rand.nextInt(pow(10, 9).toInt()) * 10 + rand.nextInt(10);
+          }
+          await testIntPart(x);
+          await testIntPart(x * pow(10, rand.nextInt(5)).toInt());
+        }
+      }
+
+      // Check the operation that lead to the bug's discovery
+      final m = newModel() as Model<ProgramOperation>;
+      m.memory.registers.index = Value.fromDouble(9.014);
+      Operations11.isg.floatCalc!(m);
+      await expect(m.memory.registers.index, Value.fromDouble(10.014));
+    });
+  }
+
+  @override
+  Future<void> runAll() async {
+    await testFloatFunctions();
+    await testStatisticsFunctions();
+    await testIssue119();
+    return super.runAll();
+  }
+}

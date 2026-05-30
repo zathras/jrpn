@@ -133,10 +133,7 @@ class Model16 extends Model<Operation> {
   set gFlag(bool v) => setFlag(5, v);
 
   @override
-  String get modelName => '16C';
-
-  @override
-  bool get is15C => false;
+  CalculatorModelKind get kind => CalculatorModelKind.jrpn16;
 
   @override
   ProgramInstruction<Operation> newProgramInstruction(

@@ -24,7 +24,7 @@ import 'dart:async';
 import 'dart:math' as dart;
 import 'dart:math';
 
-import 'package:jrpn/jrpn15/more_math.dart';
+import 'package:jrpn/m/more_math.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:jrpn/c/controller.dart';
@@ -34,6 +34,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:decimal/decimal.dart';
 
 import 'package:jrpn/c/operations.dart';
+import 'package:jrpn/c/operations_scientific.dart';
 import 'package:jrpn/m/model.dart';
 
 import 'package:jrpn/v/main_screen.dart';
@@ -138,18 +139,18 @@ class MiscTests {
   }
 
   void _toPolar(Value Function() getY) {
-    controller.buttonDown(Operations15.deg);
+    controller.buttonDown(OperationsScientific.deg);
 
     model.yF = 5;
     model.xF = 4;
     if (model.isComplexMode) {
       controller.buttonDown(Operations.xy);
-      controller.buttonDown(Operations15.I15);
+      controller.buttonDown(OperationsScientific.iOp);
     }
-    controller.buttonDown(Operations15.toP);
+    controller.buttonDown(OperationsScientific.toP);
     expect(model.x, Value.fromDouble(6.403124237));
     expect(getY(), Value.fromDouble(51.34019175));
-    controller.buttonDown(Operations15.toR);
+    controller.buttonDown(OperationsScientific.toR);
     expect(model.x, Value.fromDouble(3.999999999));
     expect(getY(), Value.fromDouble(5));
 
@@ -157,12 +158,12 @@ class MiscTests {
     model.xF = -4;
     if (model.isComplexMode) {
       controller.buttonDown(Operations.xy);
-      controller.buttonDown(Operations15.I15);
+      controller.buttonDown(OperationsScientific.iOp);
     }
-    controller.buttonDown(Operations15.toP);
+    controller.buttonDown(OperationsScientific.toP);
     expect(model.x, Value.fromDouble(6.403124237));
     expect(getY(), Value.fromDouble(128.6598083));
-    controller.buttonDown(Operations15.toR);
+    controller.buttonDown(OperationsScientific.toR);
     expect(model.x, Value.fromDouble(-4.000000004));
     expect(getY(), Value.fromDouble(4.999999996));
 
@@ -170,12 +171,12 @@ class MiscTests {
     model.xF = 4;
     if (model.isComplexMode) {
       controller.buttonDown(Operations.xy);
-      controller.buttonDown(Operations15.I15);
+      controller.buttonDown(OperationsScientific.iOp);
     }
-    controller.buttonDown(Operations15.toP);
+    controller.buttonDown(OperationsScientific.toP);
     expect(model.x, Value.fromDouble(6.403124237));
     expect(getY(), Value.fromDouble(-51.34019175));
-    controller.buttonDown(Operations15.toR);
+    controller.buttonDown(OperationsScientific.toR);
     expect(model.x, Value.fromDouble(3.999999999));
     expect(getY(), Value.fromDouble(-5));
 
@@ -183,44 +184,44 @@ class MiscTests {
     model.xF = -4;
     if (model.isComplexMode) {
       controller.buttonDown(Operations.xy);
-      controller.buttonDown(Operations15.I15);
+      controller.buttonDown(OperationsScientific.iOp);
     }
-    controller.buttonDown(Operations15.toP);
+    controller.buttonDown(OperationsScientific.toP);
     expect(model.x, Value.fromDouble(6.403124237));
     expect(getY(), Value.fromDouble(-128.6598083));
-    controller.buttonDown(Operations15.toR);
+    controller.buttonDown(OperationsScientific.toR);
     expect(model.x, Value.fromDouble(-4.000000004));
     expect(getY(), Value.fromDouble(-4.999999996));
 
-    controller.buttonDown(Operations15.rad);
+    controller.buttonDown(OperationsScientific.rad);
     model.yF = 5;
     model.xF = 4;
     if (model.isComplexMode) {
       controller.buttonDown(Operations.xy);
-      controller.buttonDown(Operations15.I15);
+      controller.buttonDown(OperationsScientific.iOp);
     }
-    controller.buttonDown(Operations15.toP);
+    controller.buttonDown(OperationsScientific.toP);
     expect(model.x, Value.fromDouble(6.403124237));
     expect(getY(), Value.fromDouble(0.8960553846));
-    controller.buttonDown(Operations15.toR);
+    controller.buttonDown(OperationsScientific.toR);
     expect(model.x, Value.fromDouble(4));
     expect(getY(), Value.fromDouble(5));
 
-    controller.buttonDown(Operations15.grd);
+    controller.buttonDown(OperationsScientific.grd);
     model.yF = 5;
     model.xF = 4;
     if (model.isComplexMode) {
       controller.buttonDown(Operations.xy);
-      controller.buttonDown(Operations15.I15);
+      controller.buttonDown(OperationsScientific.iOp);
     }
-    controller.buttonDown(Operations15.toP);
+    controller.buttonDown(OperationsScientific.toP);
     expect(model.x, Value.fromDouble(6.403124237));
     expect(getY(), Value.fromDouble(57.04465750));
-    controller.buttonDown(Operations15.toR);
+    controller.buttonDown(OperationsScientific.toR);
     expect(model.x, Value.fromDouble(3.999999999));
     expect(getY(), Value.fromDouble(5));
 
-    controller.buttonDown(Operations15.deg);
+    controller.buttonDown(OperationsScientific.deg);
   }
 
   void run() {
@@ -926,11 +927,11 @@ class AdvancedFunctionTests {
     final result = model.matrices[model.resultMatrix = 2];
     controller.buttonDown(Operations15.rcl15);
     controller.buttonDown(Operations15.matrix);
-    controller.buttonDown(Operations15.letterLabelB);
+    controller.buttonDown(OperationsScientific.letterLabelB);
     controller.buttonUp();
     controller.buttonDown(Operations15.rcl15);
     controller.buttonDown(Operations15.matrix);
-    controller.buttonDown(Operations15.letterLabelA);
+    controller.buttonDown(OperationsScientific.letterLabelA);
     controller.buttonUp();
     controller.buttonDown(Operations15.div);
     expect(mat.isLU, true);
@@ -954,7 +955,7 @@ class AdvancedFunctionTests {
         final orig = CopyMatrix(mat);
         controller.buttonDown(Operations15.rcl15);
         controller.buttonDown(Operations15.matrix);
-        controller.buttonDown(Operations15.letterLabelB);
+        controller.buttonDown(OperationsScientific.letterLabelB);
         controller.buttonDown(Operations15.matrix);
         controller.buttonDown(Operations.n4);
         expect(mat.rows, orig.columns);
@@ -978,7 +979,7 @@ class AdvancedFunctionTests {
         final orig = CopyMatrix(mat);
         controller.buttonDown(Operations15.rcl15);
         controller.buttonDown(Operations15.matrix);
-        controller.buttonDown(Operations15.letterLabelB);
+        controller.buttonDown(OperationsScientific.letterLabelB);
         controller.buttonDown(Operations15.pYX);
         expect(mat.rows, orig.rows * 2);
         expect(mat.columns, orig.columns ~/ 2);
@@ -1035,14 +1036,14 @@ class AdvancedFunctionTests {
     mat.visit((r, c) => mat.set(r, c, _toValue(vals[r][c])));
     controller.buttonDown(Operations15.rcl15);
     controller.buttonDown(Operations15.matrix);
-    controller.buttonDown(Operations15.letterLabelB);
+    controller.buttonDown(OperationsScientific.letterLabelB);
     controller.buttonDown(Operations15.matrix);
     controller.buttonDown(Operations.n7); // Row norm
     expect(model.x, Value.fromDouble(275));
 
     controller.buttonDown(Operations15.rcl15);
     controller.buttonDown(Operations15.matrix);
-    controller.buttonDown(Operations15.letterLabelB);
+    controller.buttonDown(OperationsScientific.letterLabelB);
     controller.buttonDown(Operations15.matrix);
     controller.buttonDown(Operations.n8); // Frobenius norm
     expect(model.x, Value.fromDouble(284.5818154));
@@ -1051,14 +1052,14 @@ class AdvancedFunctionTests {
 
     controller.buttonDown(Operations15.rcl15);
     controller.buttonDown(Operations15.matrix);
-    controller.buttonDown(Operations15.letterLabelB);
+    controller.buttonDown(OperationsScientific.letterLabelB);
     controller.buttonDown(Operations15.matrix);
     controller.buttonDown(Operations.n7); // Row norm
     expect(model.x, Value.fromDouble(360));
 
     controller.buttonDown(Operations15.rcl15);
     controller.buttonDown(Operations15.matrix);
-    controller.buttonDown(Operations15.letterLabelB);
+    controller.buttonDown(OperationsScientific.letterLabelB);
     controller.buttonDown(Operations15.matrix);
     controller.buttonDown(Operations.n8); // Frobenius norm
     expect(model.x, Value.fromDouble(284.5818154));
@@ -1069,14 +1070,14 @@ class AdvancedFunctionTests {
     model.x = Value.fromMatrix(1);
     model.yF = 0;
     controller.buttonDown(Operations15.dim);
-    controller.buttonDown(Operations15.eX15); // B
+    controller.buttonDown(OperationsScientific.eX15); // B
     expect(mat.columns, 0);
     expect(mat.rows, 0);
     mat.resize(model, 3, 3);
     model.xF = 0;
     model.y = Value.fromMatrix(1);
     controller.buttonDown(Operations15.dim);
-    controller.buttonDown(Operations15.eX15);
+    controller.buttonDown(OperationsScientific.eX15);
     expect(mat.columns, 0);
     expect(mat.rows, 0);
 
@@ -1087,7 +1088,7 @@ class AdvancedFunctionTests {
     controller.buttonDown(Operations.n1);
     model.xF = -5;
     controller.buttonDown(Operations15.sto15);
-    controller.buttonDown(Operations15.eX15); // B
+    controller.buttonDown(OperationsScientific.eX15); // B
     controller.buttonUp();
 
     controller.buttonDown(Operations.enter);
@@ -1099,7 +1100,7 @@ class AdvancedFunctionTests {
     controller.buttonDown(Operations.enter);
     controller.buttonDown(Operations.n4);
     controller.buttonDown(Operations15.rcl15);
-    controller.buttonDown(Operations15.eX15); // B
+    controller.buttonDown(OperationsScientific.eX15); // B
     controller.buttonUp();
     expect(model.xF, -5);
     expect(model.yF, 4);
@@ -1119,7 +1120,7 @@ class AdvancedFunctionTests {
     controller.buttonDown(Operations.n3);
     controller.buttonDown(Operations.enter);
     controller.buttonDown(Operations15.rcl15);
-    controller.buttonDown(Operations15.eX15); // B
+    controller.buttonDown(OperationsScientific.eX15); // B
     controller.buttonUp();
     expect(model.xF, -5);
     expect(model.yF, 3);
@@ -2921,7 +2922,7 @@ Future<void> numberEntry() async {
     LongNumbersSetting.window,
   ]) {
     model.settings.longNumbers = lcd;
-    for (final mode in [Operations15.fix, Operations15.sci, Operations15.eng]) {
+    for (final mode in [OperationsScientific.fix, OperationsScientific.sci, OperationsScientific.eng]) {
       for (final negate in [-1, 1]) {
         for (final modeN in n) {
           play([mode, modeN]);
@@ -2989,13 +2990,13 @@ Future<void> numberEntry() async {
     Operations.n1,
     Operations.enter,
     Operations.n2,
-    Operations15.sigmaPlus,
+    OperationsScientific.sigmaPlus,
   ]);
   play([
     Operations.n3,
     Operations.enter,
     Operations.n4,
-    Operations15.sigmaPlus,
+    OperationsScientific.sigmaPlus,
   ]);
 
   for (final complex in [false, true]) {
@@ -3003,38 +3004,38 @@ Future<void> numberEntry() async {
 
     /// Single argument operations:
     for (final op in [
-      Operations15.sqrtOp15,
-      Operations15.xSquared,
-      Operations15.eX15,
-      Operations15.lnOp,
-      Operations15.tenX15,
-      Operations15.logOp,
-      Operations15.percent,
+      OperationsScientific.sqrtOp15,
+      OperationsScientific.xSquared,
+      OperationsScientific.eX15,
+      OperationsScientific.lnOp,
+      OperationsScientific.tenX15,
+      OperationsScientific.logOp,
+      OperationsScientific.percent,
       Operations15.reciprocal15,
-      Operations15.deltaPercent,
+      OperationsScientific.deltaPercent,
       Operations.abs,
-      Operations15.sin,
-      Operations15.sinh,
-      Operations15.sinInverse,
-      Operations15.sinhInverse,
-      Operations15.cos,
-      Operations15.cosh,
-      Operations15.cosInverse,
-      Operations15.coshInverse,
-      Operations15.tan,
-      Operations15.tanh,
-      Operations15.tanInverse,
-      Operations15.tanhInverse,
-      Operations15.toR,
-      Operations15.toP,
-      Operations15.toHMS,
-      Operations15.toH,
-      Operations15.toRad,
-      Operations15.toDeg,
-      Operations15.fracOp,
-      Operations15.intOp,
-      Operations15.xFactorial,
-      Operations15.yHatR,
+      OperationsScientific.sin,
+      OperationsScientific.sinh,
+      OperationsScientific.sinInverse,
+      OperationsScientific.sinhInverse,
+      OperationsScientific.cos,
+      OperationsScientific.cosh,
+      OperationsScientific.cosInverse,
+      OperationsScientific.coshInverse,
+      OperationsScientific.tan,
+      OperationsScientific.tanh,
+      OperationsScientific.tanInverse,
+      OperationsScientific.tanhInverse,
+      OperationsScientific.toR,
+      OperationsScientific.toP,
+      OperationsScientific.toHMS,
+      OperationsScientific.toH,
+      OperationsScientific.toRad,
+      OperationsScientific.toDeg,
+      OperationsScientific.fracOp,
+      OperationsScientific.intOp,
+      OperationsScientific.xFactorial,
+      OperationsScientific.yHatR,
     ]) {
       play([Operations.n9, Operations.enter, Operations15.plus]);
       play([Operations.dot, Operations.n1, Operations.enter]);
@@ -3047,13 +3048,13 @@ Future<void> numberEntry() async {
         reason: 'lastX for $op $complex',
       );
       play([op]);
-      if (op == Operations15.yHatR) {
+      if (op == OperationsScientific.yHatR) {
         expect(model.t, Value.fromDouble(.2), reason: 't for $op $complex');
         expect(model.z, Value.fromDouble(.3), reason: 'z for $op $complex');
       } else {
         expect(model.t, Value.fromDouble(.1), reason: 't for $op $complex');
         expect(model.z, Value.fromDouble(.2), reason: 'z for $op $complex');
-        if (!{Operations15.toR, Operations15.toP}.contains(op)) {
+        if (!{OperationsScientific.toR, OperationsScientific.toP}.contains(op)) {
           expect(model.y, Value.fromDouble(.3), reason: 'y for $op $complex');
         }
       }
@@ -3066,7 +3067,7 @@ Future<void> numberEntry() async {
 
     /// Two argument operations:
     for (final op in [
-      Operations15.yX15,
+      OperationsScientific.yX15,
       Operations15.div,
       Operations15.mult,
       Operations15.minus,
@@ -3093,9 +3094,9 @@ Future<void> numberEntry() async {
 
     // Stuff that doesn't touch LastX:
     for (final op in [
-      Operations15.xBar,
-      Operations15.stdDeviation,
-      Operations15.linearRegression,
+      OperationsScientific.xBar,
+      OperationsScientific.stdDeviation,
+      OperationsScientific.linearRegression,
     ]) {
       play([Operations.n9, Operations.enter, Operations15.plus]);
       play([Operations.n4, Operations.enter]);
@@ -3156,13 +3157,13 @@ Future<void> lastX15C() async {
     Operations.n1,
     Operations.enter,
     Operations.n2,
-    Operations15.sigmaPlus,
+    OperationsScientific.sigmaPlus,
   ]);
   play([
     Operations.n3,
     Operations.enter,
     Operations.n4,
-    Operations15.sigmaPlus,
+    OperationsScientific.sigmaPlus,
   ]);
 
   for (final complex in [false, true]) {
@@ -3170,38 +3171,38 @@ Future<void> lastX15C() async {
 
     /// Single argument operations:
     for (final op in [
-      Operations15.sqrtOp15,
-      Operations15.xSquared,
-      Operations15.eX15,
-      Operations15.lnOp,
-      Operations15.tenX15,
-      Operations15.logOp,
-      Operations15.percent,
+      OperationsScientific.sqrtOp15,
+      OperationsScientific.xSquared,
+      OperationsScientific.eX15,
+      OperationsScientific.lnOp,
+      OperationsScientific.tenX15,
+      OperationsScientific.logOp,
+      OperationsScientific.percent,
       Operations15.reciprocal15,
-      Operations15.deltaPercent,
+      OperationsScientific.deltaPercent,
       Operations.abs,
-      Operations15.sin,
-      Operations15.sinh,
-      Operations15.sinInverse,
-      Operations15.sinhInverse,
-      Operations15.cos,
-      Operations15.cosh,
-      Operations15.cosInverse,
-      Operations15.coshInverse,
-      Operations15.tan,
-      Operations15.tanh,
-      Operations15.tanInverse,
-      Operations15.tanhInverse,
-      Operations15.toR,
-      Operations15.toP,
-      Operations15.toHMS,
-      Operations15.toH,
-      Operations15.toRad,
-      Operations15.toDeg,
-      Operations15.fracOp,
-      Operations15.intOp,
-      Operations15.xFactorial,
-      Operations15.yHatR,
+      OperationsScientific.sin,
+      OperationsScientific.sinh,
+      OperationsScientific.sinInverse,
+      OperationsScientific.sinhInverse,
+      OperationsScientific.cos,
+      OperationsScientific.cosh,
+      OperationsScientific.cosInverse,
+      OperationsScientific.coshInverse,
+      OperationsScientific.tan,
+      OperationsScientific.tanh,
+      OperationsScientific.tanInverse,
+      OperationsScientific.tanhInverse,
+      OperationsScientific.toR,
+      OperationsScientific.toP,
+      OperationsScientific.toHMS,
+      OperationsScientific.toH,
+      OperationsScientific.toRad,
+      OperationsScientific.toDeg,
+      OperationsScientific.fracOp,
+      OperationsScientific.intOp,
+      OperationsScientific.xFactorial,
+      OperationsScientific.yHatR,
     ]) {
       play([Operations.n9, Operations.enter, Operations15.plus]);
       play([Operations.dot, Operations.n1, Operations.enter]);
@@ -3214,13 +3215,13 @@ Future<void> lastX15C() async {
         reason: 'lastX for $op $complex',
       );
       play([op]);
-      if (op == Operations15.yHatR) {
+      if (op == OperationsScientific.yHatR) {
         expect(model.t, Value.fromDouble(.2), reason: 't for $op $complex');
         expect(model.z, Value.fromDouble(.3), reason: 'z for $op $complex');
       } else {
         expect(model.t, Value.fromDouble(.1), reason: 't for $op $complex');
         expect(model.z, Value.fromDouble(.2), reason: 'z for $op $complex');
-        if (!{Operations15.toR, Operations15.toP}.contains(op)) {
+        if (!{OperationsScientific.toR, OperationsScientific.toP}.contains(op)) {
           expect(model.y, Value.fromDouble(.3), reason: 'y for $op $complex');
         }
       }
@@ -3233,7 +3234,7 @@ Future<void> lastX15C() async {
 
     /// Two argument operations:
     for (final op in [
-      Operations15.yX15,
+      OperationsScientific.yX15,
       Operations15.div,
       Operations15.mult,
       Operations15.minus,
@@ -3260,9 +3261,9 @@ Future<void> lastX15C() async {
 
     // Stuff that doesn't touch LastX:
     for (final op in [
-      Operations15.xBar,
-      Operations15.stdDeviation,
-      Operations15.linearRegression,
+      OperationsScientific.xBar,
+      OperationsScientific.stdDeviation,
+      OperationsScientific.linearRegression,
     ]) {
       play([Operations.n9, Operations.enter, Operations15.plus]);
       play([Operations.n4, Operations.enter]);

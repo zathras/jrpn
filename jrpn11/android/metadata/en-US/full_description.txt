@@ -1,0 +1,1 @@
+<p><i>JRPN 11C</i> is a scientific calculator that simulates an HP-11C. It simulates the appearance and behavior of the original, including the seven-segment display, and the little blink you get when entering numbers. Includes scientific and statistical functions. Very state of the art for 1981!</p>

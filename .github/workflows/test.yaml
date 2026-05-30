@@ -19,5 +19,6 @@ jobs:
                   channel: 'stable'
                   # flutter:version: '3.0.0'
             - run: flutter pub upgrade
+            - run: flutter test test/main_test_11c.dart
             - run: flutter test test/main_test_15c.dart
             - run: flutter test test/main_test_16c.dart

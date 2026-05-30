@@ -31,6 +31,11 @@ abstract class MemoryPolicy {
   /// of program memory.
   void checkExtendProgramMemory();
 
+  /// Called after a program line is deleted. Default: no-op. The 11C
+  /// uses this to auto-restore a storage register when the shrinking
+  /// program crosses a 7-byte boundary.
+  void onProgramMemoryShrunk() {}
+
   int get maxProgramBytes;
 }
 
@@ -474,6 +479,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     storage.setUint8(addr++, 0);
     storage.setUint8(addr, 0);
 
+    memory.policy.onProgramMemoryShrunk();
     memory.model.needsSave = true;
   }
 
@@ -554,6 +560,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     resetReturnStack();
     suspendedProgram?.abort();
     suspendedProgram = null;
+    memory.policy.onProgramMemoryShrunk();
   }
 
   Map<String, dynamic> toJson() => <String, Object>{

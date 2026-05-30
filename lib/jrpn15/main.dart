@@ -26,6 +26,7 @@ import 'dart:math' as dart;
 import 'package:flutter/material.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/c/operations.dart';
+import 'package:jrpn/c/operations_scientific.dart';
 import 'package:jrpn/c/states.dart';
 import 'package:jrpn/generic_main.dart';
 import 'package:jrpn/m/complex.dart';
@@ -40,7 +41,7 @@ import 'runners.dart';
 import 'tests15c.dart';
 import 'model15c.dart';
 import 'linear_algebra.dart' as linalg;
-import 'more_math.dart';
+import 'package:jrpn/m/more_math.dart';
 
 void main(List<String> args) async {
   if (!await InternalStateWindow.takeControl(args)) {
@@ -52,8 +53,8 @@ void main(List<String> args) async {
 void runStaticInitialization15() {
   // None of these operations has an argument, so there is no circular
   // initialization here.
-  Arg.kI = Operations15.I15;
-  Arg.kParenI = Operations15.parenI15;
+  Arg.kI = OperationsScientific.iOp;
+  Arg.kParenI = OperationsScientific.parenIOp;
   Arg.kDigits = Controller15.numbers;
   Arg.kDot = Operations.dot;
   Arg.fShift = Operations.fShift;
@@ -67,26 +68,21 @@ Model15<Operation> createModel15() {
   return Model15<Operation>(() => _logicalKeys, _newProgramInstruction);
 }
 
-class Operations15 extends Operations {
-  static final letterLabelA = LetterLabel('A', 20);
-  static final letterLabelB = LetterLabel('B', 21);
-  static final letterLabelC = LetterLabel('C', 22);
-  static final letterLabelD = LetterLabel('D', 23);
-  static final letterLabelE = LetterLabel('E', 24);
+class Operations15 extends OperationsScientific {
   // The numeric values match the I register values for GSB I, as per the
   // table on page 107 of the 15C manual.
 
   static final _registerISynonyms = {
-    Operations15.tan: Operations15.I15,
-    Operations15.cos: Operations15.parenI15,
+    OperationsScientific.tan: OperationsScientific.iOp,
+    OperationsScientific.cos: OperationsScientific.parenIOp,
   };
 
   static final _letterSynonyms = {
-    Operations15.sqrtOp15: Operations15.letterLabelA,
-    Operations15.eX15: Operations15.letterLabelB,
-    Operations15.tenX15: Operations15.letterLabelC,
-    Operations15.yX15: Operations15.letterLabelD,
-    Operations15.reciprocal15: Operations15.letterLabelE,
+    OperationsScientific.sqrtOp15: OperationsScientific.letterLabelA,
+    OperationsScientific.eX15: OperationsScientific.letterLabelB,
+    OperationsScientific.tenX15: OperationsScientific.letterLabelC,
+    OperationsScientific.yX15: OperationsScientific.letterLabelD,
+    Operations15.reciprocal15: OperationsScientific.letterLabelE,
   };
 
   static final _letterAndRegisterISynonyms = {
@@ -99,11 +95,11 @@ class Operations15 extends Operations {
     arg: ArgAlternates(
       synonyms: _letterSynonyms,
       children: [
-        KeyArg(key: letterLabelA, child: ArgDone((m) {})),
-        KeyArg(key: letterLabelB, child: ArgDone((m) {})),
-        KeyArg(key: letterLabelC, child: ArgDone((m) {})),
-        KeyArg(key: letterLabelD, child: ArgDone((m) {})),
-        KeyArg(key: letterLabelE, child: ArgDone((m) {})),
+        KeyArg(key: OperationsScientific.letterLabelA, child: ArgDone((m) {})),
+        KeyArg(key: OperationsScientific.letterLabelB, child: ArgDone((m) {})),
+        KeyArg(key: OperationsScientific.letterLabelC, child: ArgDone((m) {})),
+        KeyArg(key: OperationsScientific.letterLabelD, child: ArgDone((m) {})),
+        KeyArg(key: OperationsScientific.letterLabelE, child: ArgDone((m) {})),
         DigitArg(max: 19, calc: (_, _) {}),
       ],
     ),
@@ -299,125 +295,15 @@ class Operations15 extends Operations {
   /// The HP15'c I operation, for entry of imaginary numbers.
   ///
   // ignore: non_constant_identifier_names
-  static final NormalOperation I15 = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.isComplexMode = true;
-      I15.complexCalc!(m);
-    },
-    complexCalc: (Model m) {
-      final im = m.x;
-      m.popStack();
-      m.xImaginary = im;
-    },
-    name: 'I',
-  );
 
   ///
   /// The HP 15's (i) operation, to see the imaginary part.
   ///
-  static final NormalOperation parenI15 = NonProgrammableOperation(
-    pressed: (LimitedState cs) => cs.handleShowImaginary(),
-    name: '(i)',
-  );
 
-  static final sqrtOp15 = NormalOperationOrLetter(
-    Operations.sqrtOp,
-    letterLabelA,
-  );
-  static final NormalOperation eX15 = NormalOperationOrLetter.floatOnly(
-    letter: letterLabelB,
-    floatCalc: (Model m) {
-      double x = m.xF;
-      m.resultXF = dart.pow(dart.e, x) as double;
-    },
-    complexCalc: (Model m) {
-      m.resultXC = m.xC.exp();
-    },
-    name: 'eX',
-  );
-  static final NormalOperation xSquared = NormalOperationShiftedArg.floatOnly(
-    argShift: Operations.gShift,
-    programListingArgName: 'g A',
-    floatCalc: (Model m) {
-      final x = DecimalFP22(m.x);
-      m.resultX = m.checkOverflow(() => (x * x).toValue());
-    },
-    complexCalc: (Model m) {
-      final v = m.xCV;
-      m.resultXCV = v.decimalMultiply(v, m.checkOverflow);
-    },
-    name: 'x^2',
-  );
-  static final NormalOperation lnOp = NormalOperationShiftedArg.floatOnly(
-    argShift: Operations.gShift,
-    programListingArgName: 'g B',
-    floatCalc: (Model m) {
-      double x = m.xF;
-      if (x <= 0) {
-        throw CalculatorError(0);
-      }
-      m.resultXF = _checkResult(() => dart.log(x), 0);
-    },
-    complexCalc: (Model m) {
-      m.resultXC = _checkResultC(m.xC.ln, 0);
-    },
-    name: 'ln',
-  );
-  static final NormalOperation tenX15 = NormalOperationOrLetter.floatOnly(
-    letter: letterLabelC,
-    floatCalc: (Model m) {
-      double x = m.xF;
-      m.resultXF = dart.pow(10.0, x) as double;
-    },
-    complexCalc: (Model m) {
-      m.resultXC = (m.xC * const Complex(dart.ln10, 0)).exp();
-    },
-    name: '10^x',
-  );
-  static final NormalOperation logOp = NormalOperationShiftedArg.floatOnly(
-    programListingArgName: 'g C',
-    argShift: Operations.gShift,
-    floatCalc: (Model m) {
-      double x = m.xF;
-      if (x <= 0) {
-        throw CalculatorError(0);
-      }
-      m.resultXF = dart.log(x) / dart.ln10;
-    },
-    complexCalc: (Model m) {
-      m.resultXC = _checkResultC(m.xC.ln, 0) / const Complex(dart.ln10, 0);
-    },
-    name: 'log',
-  );
-  static final NormalOperation yX15 = NormalOperationOrLetter.floatOnly(
-    letter: letterLabelD,
-    floatCalc: (Model m) {
-      if (m.x == Value.zero && m.y == Value.zero) {
-        throw CalculatorError(0);
-        // https://github.com/zathras/jrpn/issues/126
-      }
-      m.popSetResultXF = dart.pow(m.yF, m.xF) as double;
-    },
-    complexCalc: (Model m) {
-      m.popSetResultXC = m.yC.pow(m.xC);
-    },
-    name: 'yX',
-  );
-  static final NormalOperation percent = NormalOperationShiftedArg.floatOnly(
-    programListingArgName: 'g D',
-    argShift: Operations.gShift,
-    floatCalc: (Model m) {
-      final x = DecimalFP12(m.x);
-      final y = DecimalFP12(m.y);
-      final hundred = DecimalFP12(Value.fromDouble(100));
-      m.resultX = m.checkOverflow(() => ((x * y) / hundred).toValue());
-    },
-    name: '%',
-  );
 
   static final NormalOperationOrLetter reciprocal15 =
       NormalOperationOrLetter.floatOnly(
-        letter: letterLabelE,
+        letter: OperationsScientific.letterLabelE,
         floatCalc: (Model m) {
           final mat = m.x.asMatrix;
           if (mat == null) {
@@ -444,19 +330,6 @@ class Operations15 extends Operations {
         name: '1/x',
       );
 
-  static final NormalOperation deltaPercent =
-      NormalOperationShiftedArg.floatOnly(
-        programListingArgName: 'g E',
-        argShift: Operations.gShift,
-        floatCalc: (Model m) {
-          final x = DecimalFP12(m.x);
-          final y = DecimalFP12(m.y);
-          final hundred = DecimalFP12(Value.fromDouble(100));
-          final result = ((x - y) / y) * hundred;
-          m.resultX = m.checkOverflow(() => result.toValue());
-        },
-        name: 'delta%',
-      );
   static final NormalArgOperation matrix = NormalArgOperation(
     maxOneByteOpcodes: 0,
     arg: ArgAlternates(
@@ -588,15 +461,6 @@ class Operations15 extends Operations {
     return m.matrices[vi];
   }
 
-  static final NormalArgOperation fix = NormalArgOperation(
-    stackLift: StackLift.neutral,
-    maxOneByteOpcodes: 0,
-    arg: PrecisionArg(
-      f: (m, v) => m.displayMode = DisplayMode.fix(v, m.isComplexMode),
-    ),
-    name: 'FIX',
-  );
-
   static final NormalArgOperation sf = NormalArgOperation(
     maxOneByteOpcodes: 0,
     arg: LabelArg(maxDigit: 9, f: (m, v) => m.setFlag(v ?? 999, true)),
@@ -618,82 +482,12 @@ class Operations15 extends Operations {
     name: 'F?',
   );
 
-  static final NormalArgOperation gsb = RunProgramOperation(
-    maxOneByteOpcodes:
-        16, // The user's guide is wrong on p. 218, GSB .0-.9 are two-byte
-    runner: () => GosubProgramRunner(),
-    arg: LabelArg(
-      maxDigit: 19,
-      letters: _letterLabelsList,
-      iFirst: true,
-      negativeIsLineNumber: true,
-      f: (m, final int? label) {
-        if (label == null) {
-          throw CalculatorError(4);
-        }
-        m.memory.program.gosub(label);
-      },
-    ),
-    name: 'GSB',
-  );
-
-  static final NormalArgOperation gto = NormalArgOperation(
-    maxOneByteOpcodes: 16, // I, A..E, 0..9.  .0-.9 are two byte.
-    arg: LabelArg(
-      iFirst: true,
-      maxDigit: 19,
-      letters: _letterLabelsList,
-      negativeIsLineNumber: true,
-      f: (m, final int? label) {
-        if (label == null) {
-          throw CalculatorError(4);
-        }
-        m.memory.program.goto(label);
-      },
-    ),
-    name: 'GTO',
-  );
-
-  static final NormalArgOperation sci = NormalArgOperation(
-    stackLift: StackLift.neutral,
-    maxOneByteOpcodes: 0,
-    arg: PrecisionArg(
-      f: (m, v) => m.displayMode = DisplayMode.sci(v, m.isComplexMode),
-    ),
-    name: 'SCI',
-  );
-  static final NormalArgOperation eng = NormalArgOperation(
-    stackLift: StackLift.neutral,
-    maxOneByteOpcodes: 0,
-    arg: PrecisionArg(
-      f: (m, v) => m.displayMode = DisplayMode.eng(v, m.isComplexMode),
-    ),
-    name: 'SCI',
-  );
-  static final NormalOperation deg = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.trigMode = TrigMode.deg;
-    },
-    name: 'DEG',
-  );
-  static final NormalOperation rad = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.trigMode = TrigMode.rad;
-    },
-    name: 'RAD',
-  );
-  static final NormalOperation grd = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.trigMode = TrigMode.grad;
-    },
-    name: 'GRD',
-  );
   static final NormalArgOperation solve = RunProgramOperation(
     maxOneByteOpcodes: 0,
     runner: () => SolveProgramRunner(),
     arg: LabelArg(
       maxDigit: 19,
-      letters: _letterLabelsList,
+      letters: OperationsScientific.letterLabelsList,
       noI: true,
       f: (m, final int? label) {
         if (label == null) {
@@ -704,137 +498,6 @@ class Operations15 extends Operations {
       },
     ),
     name: 'SOLVE',
-  );
-  static final hyp = NonProgrammableOperation(
-    pressed: (LimitedState c) => c.handleShift(ShiftKey.none),
-    // Controller15 handles the rest
-    name: 'HYP',
-  );
-  static final hypInverse = NonProgrammableOperation(
-    pressed: (LimitedState c) => c.handleShift(ShiftKey.none),
-    name: 'HYP-1',
-  );
-  static final NormalOperation sin = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = sin15(m.x, m.trigMode);
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.sin();
-    },
-    name: 'SIN',
-  );
-  static final NormalOperation sinInverse = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = dart.asin(m.xF) / m.trigMode.scaleFactor;
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.asin();
-    },
-    name: 'SIN-1',
-  );
-  static final NormalOperation cos = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = cos15(m.x, m.trigMode);
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.cos();
-    },
-    name: 'COS',
-  );
-  static final NormalOperation cosInverse = NormalOperationShiftedArg.floatOnly(
-    argShift: Operations.gShift,
-    programListingArgName: 'g (i)',
-    floatCalc: (Model m) {
-      m.resultXF = dart.acos(m.xF) / m.trigMode.scaleFactor;
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.acos();
-    },
-    name: 'COS-1',
-  );
-  static final NormalOperation tan = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = tan15(m.x, m.trigMode);
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.tan();
-    },
-    name: 'TAN',
-  );
-  static final NormalOperation tanInverse = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = dart.atan(m.xF) / m.trigMode.scaleFactor;
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.atan();
-    },
-    name: 'TAN-1',
-  );
-  static final NormalOperation sinh = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = Real.sinh(m.xF);
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.sinh();
-    },
-    name: 'SINH',
-  );
-  static final NormalOperation sinhInverse = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = Real.asinh(m.xF);
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.asinh();
-    },
-    name: 'SINH-1',
-  );
-  static final NormalOperation cosh = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = Real.cosh(m.xF);
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.cosh();
-    },
-    name: 'COSH',
-  );
-  static final NormalOperation coshInverse = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = Real.acosh(m.xF);
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.acosh();
-    },
-    name: 'COSH-1',
-  );
-  static final NormalOperation tanh = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = Real.tanh(m.xF);
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.tanh();
-    },
-    name: 'TANH',
-  );
-  static final NormalOperation tanhInverse = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = Real.atanh(m.xF);
-    },
-    complexCalc: (Model m) {
-      // Always in radians - see 15C manual p. 131, "For the trigonometric..."
-      m.resultXC = m.xC.atanh();
-    },
-    name: 'TANH-1',
   );
 
   static final _matrixSynonyms = {
@@ -872,21 +535,21 @@ class Operations15 extends Operations {
       synonyms: _letterAndRegisterISynonyms,
       children: [
         ...List.generate(
-          _letterLabelsList.length,
+          OperationsScientific.letterLabelsList.length,
           (i) => KeyArg(
-            key: _letterLabelsList[i],
+            key: OperationsScientific.letterLabelsList[i],
             child: ArgDone((m) => _dim(m, i)),
           ),
         ),
         KeyArg(
-          key: Operations15.I15,
+          key: OperationsScientific.iOp,
           child: ArgDone(
             (m) => _dim(m, m.memory.registers.index.asMatrix ?? 99),
           ),
         ),
         // "Dimension" the number of registers:
         KeyArg(
-          key: Operations15.parenI15,
+          key: OperationsScientific.parenIOp,
           child: ArgDone(
             (m) => (m as Model15).memory.numRegisters =
                 dart.max(m.x.floatIntPart().abs(), 1) + 1,
@@ -901,9 +564,9 @@ class Operations15 extends Operations {
     arg: ArgAlternates(
       synonyms: _letterSynonyms,
       children: List.generate(
-        _letterLabelsList.length,
+        OperationsScientific.letterLabelsList.length,
         (i) => KeyArg(
-          key: _letterLabelsList[i],
+          key: OperationsScientific.letterLabelsList[i],
           child: ArgDone((m) => (m as Model15).resultMatrix = i),
         ),
       ),
@@ -911,13 +574,6 @@ class Operations15 extends Operations {
     name: 'RESULT',
   );
 
-  static final NormalOperation piOp = NormalOperation.floatOnly(
-    pressed: (ActiveState s) => s.liftStackIfEnabled(),
-    floatCalc: (Model m) {
-      m.resultXF = dart.pi;
-    },
-    name: 'PI',
-  );
   static final NormalArgOperation xExchange = NormalArgOperation(
     maxOneByteOpcodes: 4,
     arg: RegisterWriteOpArg(
@@ -978,7 +634,7 @@ class Operations15 extends Operations {
     runner: () => IntegrateProgramRunner(),
     arg: LabelArg(
       maxDigit: 19,
-      letters: _letterLabelsList,
+      letters: OperationsScientific.letterLabelsList,
       noI: true,
       f: (m, final int? label) {
         if (label == null) {
@@ -990,92 +646,12 @@ class Operations15 extends Operations {
     ),
     name: 'integrate',
   );
-  static final NormalOperation clearSigma = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      for (int i = 7; i >= 2; i--) {
-        m.memory.registers[i] = Value.zero;
-      }
-      m.setXYZT(Value.zero);
-    },
-    name: 'CLEAR-E',
-  );
-  static final NormalOperation rnd = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultX = m.displayMode.round(m.x);
-    },
-    name: 'RND',
-  );
   static final NormalOperation ranNum = NormalOperation.floatOnly(
     pressed: (ActiveState s) => s.liftStackIfEnabled(),
     floatCalc: (Model m) {
       m.resultXF = (m as Model15).rand.nextValue;
     },
     name: 'RAN #',
-  );
-  static final NormalOperation lstx15 = NormalOperation.floatOnly(
-    pressed: (ActiveState s) => s.liftStackIfEnabled(),
-    floatCalc: (Model m) {
-      m.x = m.lastX;
-      m.display.displayX();
-    },
-    complexCalc: (Model m) {
-      m.x = m.lastX;
-      m.xImaginary = m.lastXImaginary;
-      m.display.displayX();
-    },
-    name: 'LSTx',
-  );
-  static final NormalOperation toR = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      double r = m.xF;
-      double theta = m.yF;
-      m.resultXF = r * dart.cos(theta * m.trigMode.scaleFactor);
-      m.yF = r * dart.sin(theta * m.trigMode.scaleFactor);
-    },
-    complexCalc: (Model m) {
-      Complex v = m.xC;
-      m.resultXC = Complex(
-        v.real * dart.cos(v.imaginary * m.trigMode.scaleFactor),
-        v.real * dart.sin(v.imaginary * m.trigMode.scaleFactor),
-      );
-    },
-    name: '->R',
-  );
-  static final NormalOperation toP = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      double x = m.xF;
-      double y = m.yF;
-      m.resultXF = dart.sqrt(x * x + y * y);
-      m.yF = dart.atan2(y, x) / m.trigMode.scaleFactor;
-    },
-    complexCalc: (Model m) {
-      Complex v = m.xC;
-      m.resultXC = Complex(
-        dart.sqrt(v.real * v.real + v.imaginary * v.imaginary),
-        dart.atan2(v.imaginary, v.real) / m.trigMode.scaleFactor,
-      );
-    },
-    name: '->P',
-  );
-  static final NormalOperation toHMS = NormalOperation.floatOnly(
-    floatCalc: convertHtoHMS,
-    name: '->H.MS',
-  );
-  static final NormalOperation toH = NormalOperation.floatOnly(
-    floatCalc: convertHMStoH,
-    name: '->H',
-  );
-  static final NormalOperation toRad = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = m.xF * dart.pi / 180;
-    },
-    name: '->RAD',
-  );
-  static final NormalOperation toDeg = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultXF = 180 * m.xF / dart.pi;
-    },
-    name: '->DEG',
   );
   static final NormalOperation reImSwap = NormalOperation.floatOnly(
     floatCalc: (Model m) {
@@ -1157,18 +733,6 @@ class Operations15 extends Operations {
     name: 'TEST',
   );
 
-  static final NormalOperation fracOp = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultX = m.x.fracOp();
-    },
-    name: 'FRAC',
-  );
-  static final NormalOperation intOp = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultX = m.x.intOp();
-    },
-    name: 'INT',
-  );
   static final userOp = NonProgrammableOperation(
     endsDigitEntry: true,
     calc: (_) {},
@@ -1179,130 +743,7 @@ class Operations15 extends Operations {
     },
     name: 'USER',
   );
-  static final NormalOperation xFactorial = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      m.resultX = m.checkOverflow(() => factorial(m.x));
-    },
-    name: 'x!',
-  );
-  static final NormalOperation xBar = StackLiftingNormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      final denom = m.memory.registers[2];
-      m.x = m.checkOverflow(() => m.memory.registers[5].decimalDivideBy(denom));
-      // Don't set LastX - checked on 15C
-      m.pushStack();
-      m.x = m.checkOverflow(() => m.memory.registers[3].decimalDivideBy(denom));
-    },
-    needsStackLiftIfEnabled: _statsLift,
-    name: 'xBar',
-  );
-  static final NormalOperation yHatR = NormalOperation.floatOnly(
-    floatCalc: (Model m) {
-      final lr = LinearRegression(m.memory.registers);
-      final x = m.x;
-      m.resultX = m.checkOverflow(() => lr.r.toValue());
-      // Do set LastX - checked on 15C.
-      m.pushStack();
-      // We do push the stack, without regard to stack lift.  This is how
-      // the real 15C behaves, and is checked with a regression test.
-      m.y = m.checkOverflow(() => lr.r.toValue());
-      m.x = m.checkOverflow(() => lr.yHat(DecimalFP22(x)).toValue());
-    },
-    name: 'yHat,r',
-  );
-  static final NormalOperation stdDeviation =
-      StackLiftingNormalOperation.floatOnly(
-        floatCalc: (Model m) {
-          final n = m.memory.registers[2];
-          m.x = m.checkOverflow(() => _stdDev(m.memory.registers, 5, 6, n));
-          // Don't set LastX - checked on 15C
-          m.pushStack();
-          m.x = m.checkOverflow(() => _stdDev(m.memory.registers, 3, 4, n));
-        },
-        needsStackLiftIfEnabled: (m) =>
-            _statsLift(m) && m.memory.registers[2] != Value.oneF,
-        name: 's',
-      );
-  static bool _statsLift(Model m) {
-    m.memory.registers[7]; // Throw exception if not valid
-    if (m.memory.registers[2] == Value.zero) {
-      throw CalculatorError(0);
-    }
-    return true;
-  }
 
-  static Value _stdDev(Registers r, int sumR, int sumSqR, Value nV) {
-    final n = DecimalFP22(nV);
-    final sum = DecimalFP22(r[sumR]);
-    final sumSq = DecimalFP22(r[sumSqR]);
-    final m = n * sumSq - sum * sum;
-    return Value.fromDouble(
-      dart.sqrt(m.asDouble / (n.asDouble * (n.asDouble - 1))),
-    );
-  }
-
-  static final NormalOperation linearRegression =
-      StackLiftingNormalOperation.floatOnly(
-        floatCalc: (Model m) {
-          final lr = LinearRegression(m.memory.registers);
-          m.x = m.checkOverflow(() => lr.slope.toValue());
-          // Don't set LastX - checked on 15C
-          m.pushStack();
-          m.x = m.checkOverflow(() => lr.yIntercept.toValue());
-        },
-        needsStackLiftIfEnabled: (m) {
-          LinearRegression(m.memory.registers); // Throw exception if error
-          return true;
-        },
-        name: 'L.R.',
-      );
-
-  static final NormalOperation sigmaPlus = NormalOperation.floatOnly(
-    stackLift: StackLift.disable,
-    floatCalc: (Model m) {
-      final reg = m.memory.registers;
-      final x = DecimalFP22(m.x);
-      final y = DecimalFP22(m.y);
-      reg[7] = m.checkOverflow(() => (DecimalFP22(reg[7]) + x * y).toValue());
-      reg[6] = m.checkOverflow(() => (DecimalFP22(reg[6]) + y * y).toValue());
-      reg[5] = m.checkOverflow(() => (DecimalFP22(reg[5]) + y).toValue());
-      reg[4] = m.checkOverflow(() => (DecimalFP22(reg[4]) + x * x).toValue());
-      reg[3] = m.checkOverflow(() => (DecimalFP22(reg[3]) + x).toValue());
-      final newReg = m.checkOverflow(() => reg[2].decimalAdd(Value.oneF));
-      reg[2] = newReg;
-      if (m.isComplexMode) {
-        m.lastXCV = m.xCV;
-        m.xCV = ComplexValue(newReg, m.xCV.imaginary);
-      } else {
-        m.lastX = m.x;
-        m.x = newReg;
-      }
-    },
-    name: 'E+',
-  );
-  static final NormalOperation sigmaMinus = NormalOperation.floatOnly(
-    stackLift: StackLift.disable,
-    floatCalc: (Model m) {
-      final reg = m.memory.registers;
-      final x = DecimalFP22(m.x);
-      final y = DecimalFP22(m.y);
-      reg[7] = m.checkOverflow(() => (DecimalFP22(reg[7]) - x * y).toValue());
-      reg[6] = m.checkOverflow(() => (DecimalFP22(reg[6]) - y * y).toValue());
-      reg[5] = m.checkOverflow(() => (DecimalFP22(reg[5]) - y).toValue());
-      reg[4] = m.checkOverflow(() => (DecimalFP22(reg[4]) - x * x).toValue());
-      reg[3] = m.checkOverflow(() => (DecimalFP22(reg[3]) - x).toValue());
-      final newReg = m.checkOverflow(() => reg[2].decimalSubtract(Value.oneF));
-      reg[2] = newReg;
-      if (m.isComplexMode) {
-        m.lastXCV = m.xCV;
-        m.xCV = ComplexValue(newReg, m.xCV.imaginary);
-      } else {
-        m.lastX = m.x;
-        m.x = reg[2];
-      }
-    },
-    name: 'E-',
-  );
   static final NormalOperation pYX = NormalOperation.floatOnly(
     floatCalc: (Model m) {
       final mx = m.x.asMatrix;
@@ -1487,11 +928,11 @@ class Operations15 extends Operations {
             synonyms: _letterAndRegisterISynonyms,
             children: [
               KeysArg(
-                keys: _letterLabels,
+                keys: OperationsScientific.letterLabels,
                 generator: (i) => ArgDone((m) => _storeToMatrix(m, false, i)),
               ),
               KeyArg(
-                key: Operations15.parenI15,
+                key: OperationsScientific.parenIOp,
                 child: ArgDone((m) => _storeToParenI(m, false)),
               ),
             ],
@@ -1503,11 +944,11 @@ class Operations15 extends Operations {
             synonyms: _letterAndRegisterISynonyms,
             children: [
               KeysArg(
-                keys: _letterLabels,
+                keys: OperationsScientific.letterLabels,
                 generator: (i) => ArgDone((m) => _storeToMatrix(m, true, i)),
               ),
               KeyArg(
-                key: Operations15.parenI15,
+                key: OperationsScientific.parenIOp,
                 child: ArgDone((m) => _storeToParenI(m, true)),
               ),
             ],
@@ -1518,7 +959,7 @@ class Operations15 extends Operations {
           key: Operations15.matrix,
           child: KeysArg(
             synonyms: _matrixSynonyms,
-            keys: _letterLabels,
+            keys: OperationsScientific.letterLabels,
             generator: (i) => ArgDone((m) => _storeMatrix(m, i)),
           ),
         ),
@@ -1559,7 +1000,7 @@ class Operations15 extends Operations {
           ),
         ),
         KeyArg(
-          key: Operations15.cosInverse, // That's g (i)
+          key: OperationsScientific.cosInverse, // That's g (i)
           child: ArgDone((m) {
             final Value iv = m.memory.registers.index;
             final int? miv = iv.asMatrix;
@@ -1593,7 +1034,7 @@ class Operations15 extends Operations {
     arg: ArgAlternates(
       synonyms: {
         ..._matrixSynonymsPlusRandom,
-        Operations15.sin: Operations15.dim,
+        OperationsScientific.sin: Operations15.dim,
       },
       children: [
         RegisterReadArg(maxDigit: 19, noParenI: true, f: (m, v) => m.x = v),
@@ -1623,12 +1064,13 @@ class Operations15 extends Operations {
           ),
         ),
         KeyArg(
-          key: Operations15.sigmaPlus,
+          key: OperationsScientific.sigmaPlus,
           child: StackLiftingArgDone(
             (m) {
-              m.x = m.memory.registers[5]; // Don't set lastX
+              final s = m.statsRegisters;
+              m.x = m.memory.registers[s.sumY]; // Don't set lastX
               m.pushStack();
-              m.x = m.memory.registers[3];
+              m.x = m.memory.registers[s.sumX];
             },
             needsStackLiftIfEnabled: (m) =>
                 (m as Model15).memory.numRegisters >= 6,
@@ -1640,7 +1082,7 @@ class Operations15 extends Operations {
             synonyms: _letterAndRegisterISynonyms,
             children: [
               KeysArg(
-                keys: _letterLabels,
+                keys: OperationsScientific.letterLabels,
                 generator: (i) => ArgDone((m) {
                   final mat = (m as Model15).matrices[i];
                   m.xF = mat.rows.toDouble();
@@ -1649,7 +1091,7 @@ class Operations15 extends Operations {
                 }),
               ),
               KeyArg(
-                key: Operations15.I15,
+                key: OperationsScientific.iOp,
                 child: ArgDone((m) {
                   final int? miv = m.memory.registers.index.asMatrix;
                   if (miv == null) {
@@ -1662,7 +1104,7 @@ class Operations15 extends Operations {
                 }),
               ),
               KeyArg(
-                key: Operations15.parenI15,
+                key: OperationsScientific.parenIOp,
                 child: ArgDone(
                   (m) => m.xF = ((m as Model15).memory.numRegisters - 1)
                       .toDouble(),
@@ -1682,7 +1124,7 @@ class Operations15 extends Operations {
           key: Operations15.matrix,
           child: KeysArg(
             synonyms: _matrixSynonyms,
-            keys: _letterLabels,
+            keys: OperationsScientific.letterLabels,
             generator: (i) => ArgDone((m) => m.x = Value.fromMatrix(i)),
           ),
         ),
@@ -1692,7 +1134,7 @@ class Operations15 extends Operations {
             synonyms: _letterAndRegisterISynonyms,
             children: [
               KeysArg(
-                keys: _letterLabels,
+                keys: OperationsScientific.letterLabels,
                 generator: (i) => DeferredRclArg(
                   matrixNumber: i,
                   pressed: _showMatrixR0R1,
@@ -1700,7 +1142,7 @@ class Operations15 extends Operations {
                 ),
               ),
               KeyArg(
-                key: Operations15.parenI15,
+                key: OperationsScientific.parenIOp,
                 child: RclIndirectArg(
                   matPressed: _showMatrixR0R1,
                   matReleased: (m, matrix) =>
@@ -1716,7 +1158,7 @@ class Operations15 extends Operations {
             synonyms: _letterAndRegisterISynonyms,
             children: [
               KeysArg(
-                keys: _letterLabels,
+                keys: OperationsScientific.letterLabels,
                 generator: (i) => DeferredRclArg(
                   matrixNumber: i,
                   pressed: _showMatrixR0R1,
@@ -1724,7 +1166,7 @@ class Operations15 extends Operations {
                 ),
               ),
               KeyArg(
-                key: Operations15.parenI15,
+                key: OperationsScientific.parenIOp,
                 child: RclIndirectArg(
                   matPressed: _showMatrixR0R1,
                   matReleased: (m, matrix) =>
@@ -1763,7 +1205,7 @@ class Operations15 extends Operations {
           ),
         ),
         KeyArg(
-          key: Operations15.cosInverse, // That's g (i)
+          key: OperationsScientific.cosInverse, // That's g (i)
           child: RclIndirectArg(
             noStackLift: true,
             matPressed: (m, matrix) {
@@ -1784,53 +1226,6 @@ class Operations15 extends Operations {
     name: 'RCL',
   );
 
-  static double _checkResult(double Function() f, int errNo) {
-    try {
-      final v = f();
-      if (!v.isNaN) {
-        return v;
-      }
-    } catch (ex) {
-      debugPrint('Converting $ex to CalculatorException($errNo)');
-    }
-    throw CalculatorError(errNo);
-  }
-
-  static Complex _checkResultC(Complex Function() f, int errNo) {
-    try {
-      final v = f();
-      if (!v.real.isNaN && !v.imaginary.isNaN) {
-        return v;
-      }
-    } catch (ex) {
-      debugPrint('Converting $ex to CalculatorException($errNo)');
-    }
-    throw CalculatorError(errNo);
-  }
-}
-
-///
-/// The argument to the 15C's FIX, SCI and ENG keys
-///
-class PrecisionArg extends ArgAlternates {
-  final void Function(Model m, int v) f;
-
-  static int _translate(Model m, Value v) =>
-      dart.min(9, dart.max(0, v.floatIntPart()));
-
-  PrecisionArg({required this.f})
-    : super(
-        synonyms: Arg.registerISynonyms,
-        children: [
-          DigitArg(max: 9, calc: (m, i) => f(m, i)),
-          KeyArg(
-            key: Arg.kI,
-            child: ArgDone(
-              (m) => f(m, _translate(m, m.memory.registers.index)),
-            ),
-          ),
-        ],
-      );
 }
 
 class RegisterReadOpArg extends ArgAlternates {
@@ -1883,9 +1278,9 @@ class RegisterReadOpArg extends ArgAlternates {
             argDoneFactory: (calc) => RegisterReadOpArgDone(calc),
           ),
           ...List.generate(
-            _letterLabelsList.length,
+            OperationsScientific.letterLabelsList.length,
             (i) => KeyArg(
-              key: _letterLabelsList[i],
+              key: OperationsScientific.letterLabelsList[i],
               child: RegisterReadOpArgDone((m) {
                 _forMatrix(m as Model15, i, f);
               }),
@@ -1947,9 +1342,9 @@ class RegisterWriteOpArg extends ArgAlternates {
                 m.memory.registers[i] = f(m, m.memory.registers[i], m.x),
           ),
           ...List.generate(
-            _letterLabelsList.length,
+            OperationsScientific.letterLabelsList.length,
             (i) => KeyArg(
-              key: _letterLabelsList[i],
+              key: OperationsScientific.letterLabelsList[i],
               child: ArgDone((m) {
                 _forMatrix(m as Model15, i, f);
               }),
@@ -2130,9 +1525,9 @@ class ButtonLayout15 extends ButtonLayout {
     '\u221Ax',
     'A',
     'x^2',
-    Operations15.sqrtOp15,
-    Operations15.letterLabelA,
-    Operations15.xSquared,
+    OperationsScientific.sqrtOp15,
+    OperationsScientific.letterLabelA,
+    OperationsScientific.xSquared,
     'A',
   );
   CalculatorButton get eX => CalculatorButton(
@@ -2140,9 +1535,9 @@ class ButtonLayout15 extends ButtonLayout {
     'e^x',
     'B',
     'LN',
-    Operations15.eX15,
-    Operations15.letterLabelB,
-    Operations15.lnOp,
+    OperationsScientific.eX15,
+    OperationsScientific.letterLabelB,
+    OperationsScientific.lnOp,
     'B',
   );
   CalculatorButton get tenX => CalculatorButton(
@@ -2150,9 +1545,9 @@ class ButtonLayout15 extends ButtonLayout {
     '10^x',
     'C',
     'LOG',
-    Operations15.tenX15,
-    Operations15.letterLabelC,
-    Operations15.logOp,
+    OperationsScientific.tenX15,
+    OperationsScientific.letterLabelC,
+    OperationsScientific.logOp,
     'C',
   );
   CalculatorButton get yX => CalculatorButton(
@@ -2160,9 +1555,9 @@ class ButtonLayout15 extends ButtonLayout {
     'y^x',
     'D',
     '%',
-    Operations15.yX15,
-    Operations15.letterLabelD,
-    Operations15.percent,
+    OperationsScientific.yX15,
+    OperationsScientific.letterLabelD,
+    OperationsScientific.percent,
     'D',
   );
   CalculatorButton get reciprocal => CalculatorButton(
@@ -2171,8 +1566,8 @@ class ButtonLayout15 extends ButtonLayout {
     'E',
     '\u0394%',
     Operations15.reciprocal15,
-    Operations15.letterLabelE,
-    Operations15.deltaPercent,
+    OperationsScientific.letterLabelE,
+    OperationsScientific.deltaPercent,
     'E',
   );
   CalculatorButton get chs => CalculatorButton(
@@ -2191,8 +1586,8 @@ class ButtonLayout15 extends ButtonLayout {
     'FIX',
     'DEG',
     Operations.n7,
-    Operations15.fix,
-    Operations15.deg,
+    OperationsScientific.fix,
+    OperationsScientific.deg,
     '7',
   );
   CalculatorButton get n8 => CalculatorButton(
@@ -2201,8 +1596,8 @@ class ButtonLayout15 extends ButtonLayout {
     'SCI',
     'RAD',
     Operations.n8,
-    Operations15.sci,
-    Operations15.rad,
+    OperationsScientific.sci,
+    OperationsScientific.rad,
     '8',
   );
   CalculatorButton get n9 => CalculatorButton(
@@ -2211,8 +1606,8 @@ class ButtonLayout15 extends ButtonLayout {
     'ENG',
     'GRD',
     Operations.n9,
-    Operations15.eng,
-    Operations15.grd,
+    OperationsScientific.eng,
+    OperationsScientific.grd,
     '9',
   );
   CalculatorButton get div => CalculatorButton(
@@ -2241,9 +1636,9 @@ class ButtonLayout15 extends ButtonLayout {
     'GTO',
     'HYP',
     'HYP^\u2009\u22121',
-    Operations15.gto,
-    Operations15.hyp,
-    Operations15.hypInverse,
+    OperationsScientific.gto,
+    OperationsScientific.hyp,
+    OperationsScientific.hypInverse,
     'L',
   );
   CalculatorButton get sin => CalculatorButtonHyperbolic(
@@ -2251,11 +1646,11 @@ class ButtonLayout15 extends ButtonLayout {
     'SIN',
     'DIM',
     'SIN^\u2009\u22121',
-    Operations15.sin,
+    OperationsScientific.sin,
     Operations15.dim,
-    Operations15.sinInverse,
-    Operations15.sinh,
-    Operations15.sinhInverse,
+    OperationsScientific.sinInverse,
+    OperationsScientific.sinh,
+    OperationsScientific.sinhInverse,
     'S',
   );
   CalculatorButton get cos => CalculatorButtonHyperbolic(
@@ -2263,11 +1658,11 @@ class ButtonLayout15 extends ButtonLayout {
     'COS',
     '(i)',
     'COS^\u2009\u22121',
-    Operations15.cos,
-    Operations15.parenI15,
-    Operations15.cosInverse,
-    Operations15.cosh,
-    Operations15.coshInverse,
+    OperationsScientific.cos,
+    OperationsScientific.parenIOp,
+    OperationsScientific.cosInverse,
+    OperationsScientific.cosh,
+    OperationsScientific.coshInverse,
     'O',
   );
   CalculatorButton get tan => CalculatorButtonHyperbolic(
@@ -2275,11 +1670,11 @@ class ButtonLayout15 extends ButtonLayout {
     'TAN',
     'I',
     'TAN^\u2009\u22121',
-    Operations15.tan,
-    Operations15.I15,
-    Operations15.tanInverse,
-    Operations15.tanh,
-    Operations15.tanhInverse,
+    OperationsScientific.tan,
+    OperationsScientific.iOp,
+    OperationsScientific.tanInverse,
+    OperationsScientific.tanh,
+    OperationsScientific.tanhInverse,
     'T',
   );
 
@@ -2290,7 +1685,7 @@ class ButtonLayout15 extends ButtonLayout {
     '\u03c0',
     Operations.eex,
     Operations15.resultOp,
-    Operations15.piOp,
+    OperationsScientific.piOp,
     'P',
   );
   CalculatorButton get n4 => CalculatorButton(
@@ -2351,8 +1746,8 @@ class ButtonLayout15 extends ButtonLayout {
     'GSB',
     '\u03a3',
     'RTN',
-    Operations15.gsb,
-    Operations15.clearSigma,
+    OperationsScientific.gsb,
+    OperationsScientific.clearSigma,
     Operations.rtn,
     'U',
   );
@@ -2373,7 +1768,7 @@ class ButtonLayout15 extends ButtonLayout {
     'RND',
     Operations.xy,
     Operations.clearReg,
-    Operations15.rnd,
+    OperationsScientific.rnd,
     'Y',
   );
   CalculatorButton get bsp => CalculatorButton(
@@ -2395,7 +1790,7 @@ class ButtonLayout15 extends ButtonLayout {
     'LSTx',
     Operations.enter,
     Operations15.ranNum,
-    Operations15.lstx15,
+    OperationsScientific.lstx15,
     '\n\r',
     extraHeight: factory.height * _totalButtonHeight / _buttonHeight,
     acceleratorLabel: ' \u23ce',
@@ -2406,8 +1801,8 @@ class ButtonLayout15 extends ButtonLayout {
     '\u279cR',
     '\u279cP',
     Operations.n1,
-    Operations15.toR,
-    Operations15.toP,
+    OperationsScientific.toR,
+    OperationsScientific.toP,
     '1',
   );
   CalculatorButton get n2 => CalculatorButton(
@@ -2416,8 +1811,8 @@ class ButtonLayout15 extends ButtonLayout {
     '\u279cH.MS',
     '\u279cH',
     Operations.n2,
-    Operations15.toHMS,
-    Operations15.toH,
+    OperationsScientific.toHMS,
+    OperationsScientific.toH,
     '2',
   );
   CalculatorButton get n3 => CalculatorButton(
@@ -2426,8 +1821,8 @@ class ButtonLayout15 extends ButtonLayout {
     '\u279cRAD',
     '\u279cDEG',
     Operations.n3,
-    Operations15.toRad,
-    Operations15.toDeg,
+    OperationsScientific.toRad,
+    OperationsScientific.toDeg,
     '3',
   );
   CalculatorButton get minus => CalculatorOnSpecialButton(
@@ -2484,8 +1879,8 @@ class ButtonLayout15 extends ButtonLayout {
     'FRAC',
     'INT',
     Operations15.sto15,
-    Operations15.fracOp,
-    Operations15.intOp,
+    OperationsScientific.fracOp,
+    OperationsScientific.intOp,
     'M',
   );
   CalculatorButton get rcl => CalculatorButton(
@@ -2504,8 +1899,8 @@ class ButtonLayout15 extends ButtonLayout {
     'x!',
     'x\u0305',
     Operations.n0,
-    Operations15.xFactorial,
-    Operations15.xBar,
+    OperationsScientific.xFactorial,
+    OperationsScientific.xBar,
     '0',
   );
   CalculatorButton get dot => CalculatorDotButton(
@@ -2514,8 +1909,8 @@ class ButtonLayout15 extends ButtonLayout {
     'y\u0302,r',
     's',
     Operations.dot,
-    Operations15.yHatR,
-    Operations15.stdDeviation,
+    OperationsScientific.yHatR,
+    OperationsScientific.stdDeviation,
     '.,',
     '\u2219/\u201a',
     factory.settings,
@@ -2525,9 +1920,9 @@ class ButtonLayout15 extends ButtonLayout {
     '\u03a3+',
     'L.R.',
     '\u03a3\u2212',
-    Operations15.sigmaPlus,
-    Operations15.linearRegression,
-    Operations15.sigmaMinus,
+    OperationsScientific.sigmaPlus,
+    OperationsScientific.linearRegression,
+    OperationsScientific.sigmaMinus,
     'W',
   );
   CalculatorButton get plus => CalculatorButton(
@@ -2718,25 +2113,25 @@ class Controller15 extends RealController {
       );
 
   static final Map<Operation, ArgDone> _shortcuts = {
-    Operations15.letterLabelA: _makeShortcut(
-      Operations15.gsb.arg,
-      Operations15.letterLabelA,
+    OperationsScientific.letterLabelA: _makeShortcut(
+      OperationsScientific.gsb.arg,
+      OperationsScientific.letterLabelA,
     )!,
-    Operations15.letterLabelB: _makeShortcut(
-      Operations15.gsb.arg,
-      Operations15.letterLabelB,
+    OperationsScientific.letterLabelB: _makeShortcut(
+      OperationsScientific.gsb.arg,
+      OperationsScientific.letterLabelB,
     )!,
-    Operations15.letterLabelC: _makeShortcut(
-      Operations15.gsb.arg,
-      Operations15.letterLabelC,
+    OperationsScientific.letterLabelC: _makeShortcut(
+      OperationsScientific.gsb.arg,
+      OperationsScientific.letterLabelC,
     )!,
-    Operations15.letterLabelD: _makeShortcut(
-      Operations15.gsb.arg,
-      Operations15.letterLabelD,
+    OperationsScientific.letterLabelD: _makeShortcut(
+      OperationsScientific.gsb.arg,
+      OperationsScientific.letterLabelD,
     )!,
-    Operations15.letterLabelE: _makeShortcut(
-      Operations15.gsb.arg,
-      Operations15.letterLabelE,
+    OperationsScientific.letterLabelE: _makeShortcut(
+      OperationsScientific.gsb.arg,
+      OperationsScientific.letterLabelE,
     )!,
   };
 
@@ -2764,23 +2159,23 @@ class Controller15 extends RealController {
 
   static final _nonProgrammableOperations = [
     ...Operations.special,
-    Operations15.hyp,
-    Operations15.hypInverse,
+    OperationsScientific.hyp,
+    OperationsScientific.hypInverse,
     Operations15.userOp,
-    Operations15.parenI15,
+    OperationsScientific.parenIOp,
   ];
 
   static final _userModeSwapped = <Operation, Operation>{
-    Operations15.letterLabelA: Operations15.sqrtOp15,
-    Operations15.sqrtOp15: Operations15.letterLabelA,
-    Operations15.letterLabelB: Operations15.eX15,
-    Operations15.eX15: Operations15.letterLabelB,
-    Operations15.letterLabelC: Operations15.tenX15,
-    Operations15.tenX15: Operations15.letterLabelC,
-    Operations15.letterLabelD: Operations15.yX15,
-    Operations15.yX15: Operations15.letterLabelD,
-    Operations15.letterLabelE: Operations15.reciprocal15,
-    Operations15.reciprocal15: Operations15.letterLabelE,
+    OperationsScientific.letterLabelA: OperationsScientific.sqrtOp15,
+    OperationsScientific.sqrtOp15: OperationsScientific.letterLabelA,
+    OperationsScientific.letterLabelB: OperationsScientific.eX15,
+    OperationsScientific.eX15: OperationsScientific.letterLabelB,
+    OperationsScientific.letterLabelC: OperationsScientific.tenX15,
+    OperationsScientific.tenX15: OperationsScientific.letterLabelC,
+    OperationsScientific.letterLabelD: OperationsScientific.yX15,
+    OperationsScientific.yX15: OperationsScientific.letterLabelD,
+    OperationsScientific.letterLabelE: Operations15.reciprocal15,
+    Operations15.reciprocal15: OperationsScientific.letterLabelE,
   };
 
   @override
@@ -2792,9 +2187,9 @@ class Controller15 extends RealController {
       } else {
         super.buttonWidgetDown(b);
       }
-    } else if (lastKey == Operations15.hyp) {
+    } else if (lastKey == OperationsScientific.hyp) {
       buttonDown(b.hyperOp);
-    } else if (lastKey == Operations15.hypInverse) {
+    } else if (lastKey == OperationsScientific.hypInverse) {
       buttonDown(b.inverseHyperOp);
     } else {
       super.buttonWidgetDown(b);
@@ -2868,10 +2263,10 @@ class Controller15 extends RealController {
   int getErrorNumber(CalculatorError err) => err.num15;
 
   @override
-  NormalArgOperation get gsbOperation => Operations15.gsb;
+  NormalArgOperation get gsbOperation => OperationsScientific.gsb;
 
   @override
-  NormalArgOperation get gtoOperation => Operations15.gto;
+  NormalArgOperation get gtoOperation => OperationsScientific.gto;
 
   @override
   Operation get minusOp => Operations15.minus;
@@ -2890,67 +2285,67 @@ class Controller15 extends RealController {
 final List<List<MKey<Operation>?>> _logicalKeys = [
   [
     MKey(
-      Operations15.sqrtOp15,
-      Operations15.letterLabelA,
-      Operations15.xSquared,
+      OperationsScientific.sqrtOp15,
+      OperationsScientific.letterLabelA,
+      OperationsScientific.xSquared,
     ),
-    MKey(Operations15.eX15, Operations15.letterLabelB, Operations15.lnOp),
-    MKey(Operations15.tenX15, Operations15.letterLabelC, Operations15.logOp),
-    MKey(Operations15.yX15, Operations15.letterLabelD, Operations15.percent),
+    MKey(OperationsScientific.eX15, OperationsScientific.letterLabelB, OperationsScientific.lnOp),
+    MKey(OperationsScientific.tenX15, OperationsScientific.letterLabelC, OperationsScientific.logOp),
+    MKey(OperationsScientific.yX15, OperationsScientific.letterLabelD, OperationsScientific.percent),
     MKey(
       Operations15.reciprocal15,
-      Operations15.letterLabelE,
-      Operations15.deltaPercent,
+      OperationsScientific.letterLabelE,
+      OperationsScientific.deltaPercent,
     ),
     MKey(Operations.chs, Operations15.matrix, Operations.abs),
-    MKey(Operations.n7, Operations15.fix, Operations15.deg),
-    MKey(Operations.n8, Operations15.sci, Operations15.rad),
-    MKey(Operations.n9, Operations15.eng, Operations15.grd),
+    MKey(Operations.n7, OperationsScientific.fix, OperationsScientific.deg),
+    MKey(Operations.n8, OperationsScientific.sci, OperationsScientific.rad),
+    MKey(Operations.n9, OperationsScientific.eng, OperationsScientific.grd),
     MKey(Operations15.div, Operations15.solve, Operations.xLEy),
   ],
   [
     MKey(Operations.sst, Operations15.lbl15, Operations.bst),
-    MKey(Operations15.gto, Operations15.hyp, Operations15.hypInverse),
+    MKey(OperationsScientific.gto, OperationsScientific.hyp, OperationsScientific.hypInverse),
     MKey(
-      Operations15.sin,
+      OperationsScientific.sin,
       Operations15.dim,
-      Operations15.sinInverse,
+      OperationsScientific.sinInverse,
       extensionOps: [
-        MKeyExtensionOp(Operations15.sinh, Operations.fShift, Operations15.hyp),
+        MKeyExtensionOp(OperationsScientific.sinh, Operations.fShift, OperationsScientific.hyp),
         MKeyExtensionOp(
-          Operations15.sinhInverse,
+          OperationsScientific.sinhInverse,
           Operations.gShift,
-          Operations15.hypInverse,
+          OperationsScientific.hypInverse,
         ),
       ],
     ),
     MKey(
-      Operations15.cos,
-      Operations15.parenI15,
-      Operations15.cosInverse,
+      OperationsScientific.cos,
+      OperationsScientific.parenIOp,
+      OperationsScientific.cosInverse,
       extensionOps: [
-        MKeyExtensionOp(Operations15.cosh, Operations.fShift, Operations15.hyp),
+        MKeyExtensionOp(OperationsScientific.cosh, Operations.fShift, OperationsScientific.hyp),
         MKeyExtensionOp(
-          Operations15.coshInverse,
+          OperationsScientific.coshInverse,
           Operations.gShift,
-          Operations15.hypInverse,
+          OperationsScientific.hypInverse,
         ),
       ],
     ),
     MKey(
-      Operations15.tan,
-      Operations15.I15,
-      Operations15.tanInverse,
+      OperationsScientific.tan,
+      OperationsScientific.iOp,
+      OperationsScientific.tanInverse,
       extensionOps: [
-        MKeyExtensionOp(Operations15.tanh, Operations.fShift, Operations15.hyp),
+        MKeyExtensionOp(OperationsScientific.tanh, Operations.fShift, OperationsScientific.hyp),
         MKeyExtensionOp(
-          Operations15.tanhInverse,
+          OperationsScientific.tanhInverse,
           Operations.gShift,
-          Operations15.hypInverse,
+          OperationsScientific.hypInverse,
         ),
       ],
     ),
-    MKey(Operations.eex, Operations15.resultOp, Operations15.piOp),
+    MKey(Operations.eex, Operations15.resultOp, OperationsScientific.piOp),
     MKey(Operations.n4, Operations15.xExchange, Operations15.sf),
     MKey(Operations.n5, Operations15.dse, Operations15.cf),
     MKey(Operations.n6, Operations15.isg, Operations15.fQuestion),
@@ -2958,59 +2353,49 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
   ],
   [
     MKey(Operations.rs, Operations.pse, Operations.pr),
-    MKey(Operations15.gsb, Operations15.clearSigma, Operations.rtn),
+    MKey(OperationsScientific.gsb, OperationsScientific.clearSigma, Operations.rtn),
     MKey(Operations.rDown, Operations.clearPrgm, Operations.rUp),
-    MKey(Operations.xy, Operations.clearReg, Operations15.rnd),
+    MKey(Operations.xy, Operations.clearReg, OperationsScientific.rnd),
     MKey(Operations.bsp, Operations.clearPrefix, Operations.clx),
-    MKey(Operations.enter, Operations15.ranNum, Operations15.lstx15),
-    MKey(Operations.n1, Operations15.toR, Operations15.toP),
-    MKey(Operations.n2, Operations15.toHMS, Operations15.toH),
-    MKey(Operations.n3, Operations15.toRad, Operations15.toDeg),
+    MKey(Operations.enter, Operations15.ranNum, OperationsScientific.lstx15),
+    MKey(Operations.n1, OperationsScientific.toR, OperationsScientific.toP),
+    MKey(Operations.n2, OperationsScientific.toHMS, OperationsScientific.toH),
+    MKey(Operations.n3, OperationsScientific.toRad, OperationsScientific.toDeg),
     MKey(Operations15.minus, Operations15.reImSwap, Operations15.testOp),
   ],
   [
     MKey(Operations.onOff, Operations.onOff, Operations.onOff),
     MKey(Operations.fShift, Operations.fShift, Operations.fShift),
     MKey(Operations.gShift, Operations.gShift, Operations.gShift),
-    MKey(Operations15.sto15, Operations15.fracOp, Operations15.intOp),
+    MKey(Operations15.sto15, OperationsScientific.fracOp, OperationsScientific.intOp),
     MKey(Operations15.rcl15, Operations15.userOp, Operations.mem),
     null,
-    MKey(Operations.n0, Operations15.xFactorial, Operations15.xBar),
-    MKey(Operations.dot, Operations15.yHatR, Operations15.stdDeviation),
+    MKey(Operations.n0, OperationsScientific.xFactorial, OperationsScientific.xBar),
+    MKey(Operations.dot, OperationsScientific.yHatR, OperationsScientific.stdDeviation),
     MKey(
-      Operations15.sigmaPlus,
-      Operations15.linearRegression,
-      Operations15.sigmaMinus,
+      OperationsScientific.sigmaPlus,
+      OperationsScientific.linearRegression,
+      OperationsScientific.sigmaMinus,
     ),
     MKey(Operations15.plus, Operations15.pYX, Operations15.cYX),
   ],
 ];
 
-final Set<LetterLabel> _letterLabels = {
-  Operations15.letterLabelA,
-  Operations15.letterLabelB,
-  Operations15.letterLabelC,
-  Operations15.letterLabelD,
-  Operations15.letterLabelE,
-};
-
 final _letterLabelsGShifted = [
-  Operations15.xSquared,
-  Operations15.lnOp,
-  Operations15.logOp,
-  Operations15.percent,
-  Operations15.deltaPercent,
+  OperationsScientific.xSquared,
+  OperationsScientific.lnOp,
+  OperationsScientific.logOp,
+  OperationsScientific.percent,
+  OperationsScientific.deltaPercent,
 ];
-
-final _letterLabelsList = _letterLabels.toList(growable: false);
 
 ProgramInstruction<Operation> _newProgramInstruction(
   Operation operation,
   ArgDone arg,
 ) {
-  if (_letterLabels.contains(operation)) {
-    arg = Operations15.gsb.arg.matches(operation, false) as ArgDone;
-    operation = Operations15.gsb;
+  if (OperationsScientific.letterLabels.contains(operation)) {
+    arg = OperationsScientific.gsb.arg.matches(operation, false) as ArgDone;
+    operation = OperationsScientific.gsb;
   }
   return ProgramInstruction15(operation, arg);
 }

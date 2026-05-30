@@ -1,0 +1,77 @@
+name: jrpn11
+description: Jovial RPN 11C, a calculator simulator inspired by the HP-11C "Computer Scientist" Calculator
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 2.1.19+35    # See also lib/generic_main.dart
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  jrpn:
+    path: ..
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.13.0
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+  test: ^1.16.5
+
+flutter_icons:
+  image_path: "assets_11/icon256.png"
+  image_path_ios:  assets_11/icon_ios.png
+  adaptive_icon_foreground: "assets_11/icon_adaptive.png"
+  adaptive_icon_background: "#dbdad1"
+  android: true
+  ios: true
+  macos:
+    generate: true
+    image_path: assets_11/macos_icon.png
+  web:
+    generate: true
+    image_path: assets_11/icon256.png
+    background_color: "#dbdad1"
+    theme_color: "#dbdad1"
+  windows:
+    generate: true
+    image_path: assets_11/windows_icon.png
+  # If changed, "dart run flutter_launcher_icons"
+  # See https://pub.dev/packages/flutter_launcher_icons
+  # For Android, need to manually add a transparent icon entry to manfiest,
+  # viz: 
+  # git diff android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+  #  <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+  #    <background android:drawable="@color/ic_launcher_background"/>
+  #    <foreground android:drawable="@drawable/ic_launcher_foreground"/>
+  # +  <monochrome android:drawable="@drawable/ic_launcher_foreground"/>
+  #  </adaptive-icon>
+
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: KeyLabelFont
+      fonts:
+          - asset: packages/jrpn/fonts/deja_vu_sans.ttf
+            style: normal
+            weight: 400
+          - asset: packages/jrpn/fonts/deja_vu_sans_bold.ttf
+            style: normal
+            weight: 700
+    - family: LogoFont
+      fonts:
+        - asset: packages/jrpn/fonts/WorkSans-Regular.ttf
+          style: normal
+          weight: 400
+        - asset: packages/jrpn/fonts/WorkSans-Medium.ttf
+          style: normal
+          weight: 500
+    - family: LiberationMono
+      fonts:
+        - asset: packages/jrpn/fonts/LiberationMono.ttf
+          style: normal
+          weight: 400

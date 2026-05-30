@@ -20,6 +20,8 @@ this program; if not, see https://www.gnu.org/licenses/ .
 
 library;
 
+import 'package:jrpn/c/operations_scientific.dart';
+
 import 'dart:math';
 
 import 'package:jrpn/m/complex.dart';
@@ -129,34 +131,34 @@ class SelfTests15 extends SelfTests {
       final m = newModel();
       await _testOneArgFloat(
         m,
-        Operations15.lnOp,
+        OperationsScientific.lnOp,
         2.37,
         0.8628899551,
-        Operations15.eX15,
+        OperationsScientific.eX15,
       );
-      await _testOneArgFloat(m, Operations15.sqrtOp15, 7.37, 2.714774392);
+      await _testOneArgFloat(m, OperationsScientific.sqrtOp15, 7.37, 2.714774392);
       await _testOneArgFloat(
         m,
-        Operations15.xSquared,
+        OperationsScientific.xSquared,
         2.714774392,
         7.369999999,
       );
       // On the real 15C, the xSquared result is that, too.
       await _testOneArgFloat(
         m,
-        Operations15.xSquared,
+        OperationsScientific.xSquared,
         4,
         16,
-        Operations15.sqrtOp15,
+        OperationsScientific.sqrtOp15,
       );
       await _testOneArgFloat(
         m,
-        Operations15.tenX15,
+        OperationsScientific.tenX15,
         3.7,
         5011.872336,
-        Operations15.logOp,
+        OperationsScientific.logOp,
       );
-      await _testTwoArgFloat(m, Operations15.yX15, 1.234, 5.678, 8.524660835);
+      await _testTwoArgFloat(m, OperationsScientific.yX15, 1.234, 5.678, 8.524660835);
       await _testOneArgFloat(
         m,
         Operations15.reciprocal15,
@@ -166,58 +168,58 @@ class SelfTests15 extends SelfTests {
       );
       await _testTwoArgFloat(
         m,
-        Operations15.deltaPercent,
+        OperationsScientific.deltaPercent,
         5.678,
         1.234,
         360.1296596,
       );
 
-      await _testOneArgFloat(m, Operations15.fracOp, 2.37, 0.37);
-      await _testOneArgFloat(m, Operations15.fracOp, -2.37, -0.37);
-      await _testOneArgFloat(m, Operations15.fracOp, 2.37e54, 0);
-      await _testOneArgFloat(m, Operations15.fracOp, -2.37e54, 0);
-      await _testOneArgFloat(m, Operations15.fracOp, 2.37e-54, 2.37e-54);
-      await _testOneArgFloat(m, Operations15.fracOp, -2.37e-54, -2.37e-54);
+      await _testOneArgFloat(m, OperationsScientific.fracOp, 2.37, 0.37);
+      await _testOneArgFloat(m, OperationsScientific.fracOp, -2.37, -0.37);
+      await _testOneArgFloat(m, OperationsScientific.fracOp, 2.37e54, 0);
+      await _testOneArgFloat(m, OperationsScientific.fracOp, -2.37e54, 0);
+      await _testOneArgFloat(m, OperationsScientific.fracOp, 2.37e-54, 2.37e-54);
+      await _testOneArgFloat(m, OperationsScientific.fracOp, -2.37e-54, -2.37e-54);
 
-      await _testOneArgFloat(m, Operations15.intOp, 2.37, 2);
-      await _testOneArgFloat(m, Operations15.intOp, -2.37, -2);
-      await _testOneArgFloat(m, Operations15.intOp, 2.37e54, 2.37e54);
-      await _testOneArgFloat(m, Operations15.intOp, -2.37e54, -2.37e54);
-      await _testOneArgFloat(m, Operations15.intOp, -2.37e-54, 0);
-      await _testOneArgFloat(m, Operations15.intOp, 2.37e-54, 0);
+      await _testOneArgFloat(m, OperationsScientific.intOp, 2.37, 2);
+      await _testOneArgFloat(m, OperationsScientific.intOp, -2.37, -2);
+      await _testOneArgFloat(m, OperationsScientific.intOp, 2.37e54, 2.37e54);
+      await _testOneArgFloat(m, OperationsScientific.intOp, -2.37e54, -2.37e54);
+      await _testOneArgFloat(m, OperationsScientific.intOp, -2.37e-54, 0);
+      await _testOneArgFloat(m, OperationsScientific.intOp, 2.37e-54, 0);
 
       for (final sign in [1.0, -1.0]) {
         await _testOneArgFloat(
           m,
-          Operations15.toH,
+          OperationsScientific.toH,
           sign * 1.2345,
           sign * 1.395833333,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toH,
+          OperationsScientific.toH,
           sign * 1.6789,
           sign * 2.141388889,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 2.141388889,
           sign * 2.0829,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 2.141388889,
           sign * 2.0829,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toH,
+          OperationsScientific.toH,
           sign * 1.595999999,
           sign * 1.999999997,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
         );
         // The following three are verified on a physical 15C.  59.999996
         // is rounded to 59.99999, and not 60.00000, even though 6 >= 5.
@@ -225,102 +227,102 @@ class SelfTests15 extends SelfTests {
         // tens digit is available).
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 1.999999999,
           sign * 1.595999999,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 99999999.99,
           sign * 99999999.59,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 999999999.9,
           sign * 999999999.5,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 999999.9999,
           sign * 999999.5959,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 9999999.999,
           sign * 9999999.595,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 99999.99999,
           sign * 99999.59599,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 1.666666667e-2,
           sign * 0.01,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 1.666666666e-2,
           sign * 0.01,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 1.666666665e-2,
           sign * 0.005999999990,
         ); // 15C gives 0:00:59.99999990
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 1.666666664e-2,
           sign * 0.005999999990,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 123456789.9,
           sign * 123456789.5,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 1234567891,
           sign * 1234567891,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toHMS,
+          OperationsScientific.toHMS,
           sign * 0.9999999999,
           sign * 0.5959999999,
         );
 
         await _testOneArgFloat(
           m,
-          Operations15.toRad,
+          OperationsScientific.toRad,
           sign * 100,
           sign * 1.745329252,
-          Operations15.toDeg,
+          OperationsScientific.toDeg,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toDeg,
+          OperationsScientific.toDeg,
           sign * 42.1,
           sign * 2412.152318,
         );
         await _testOneArgFloat(
           m,
-          Operations15.toRad,
+          OperationsScientific.toRad,
           sign * 2412.152318,
           sign * 42.10000001,
-          Operations15.toDeg,
+          OperationsScientific.toDeg,
         ); // Matches 15C
       }
     });
@@ -393,105 +395,105 @@ class SelfTests15 extends SelfTests {
       );
       await _testOneArgComplex(
         m,
-        Operations15.lnOp,
+        OperationsScientific.lnOp,
         const Complex(1.234, 5.678),
         const Complex(1.759674471, 1.356794138),
       );
       await _testOneArgComplex(
         m,
-        Operations15.eX15,
+        OperationsScientific.eX15,
         const Complex(1.759674471, 1.356794138),
         const Complex(1.234000001, 5.678),
       );
       await _testOneArgComplex(
         m,
-        Operations15.lnOp,
+        OperationsScientific.lnOp,
         const Complex(1.234, -5.678),
         const Complex(1.759674471, -1.356794138),
       );
       await _testOneArgComplex(
         m,
-        Operations15.eX15,
+        OperationsScientific.eX15,
         const Complex(1.759674471, -1.356794138),
         const Complex(1.234000001, -5.678),
       );
       await _testOneArgComplex(
         m,
-        Operations15.lnOp,
+        OperationsScientific.lnOp,
         const Complex(-1.234, 5.678),
         const Complex(1.759674471, 1.784798515),
       );
       await _testOneArgComplex(
         m,
-        Operations15.eX15,
+        OperationsScientific.eX15,
         const Complex(1.759674471, 1.784798515),
         const Complex(-1.233999998, 5.678000001),
       );
       await _testOneArgComplex(
         m,
-        Operations15.lnOp,
+        OperationsScientific.lnOp,
         const Complex(-1.234, -5.678),
         const Complex(1.759674471, -1.784798515),
       );
       await _testOneArgComplex(
         m,
-        Operations15.eX15,
+        OperationsScientific.eX15,
         const Complex(1.759674471, -1.784798515),
         const Complex(-1.233999998, -5.678000001),
       );
 
       await _testOneArgComplex(
         m,
-        Operations15.sqrtOp15,
+        OperationsScientific.sqrtOp15,
         const Complex(1.234, 5.678),
         const Complex(1.876771907, 1.512703802),
       );
       await _testOneArgComplex(
         m,
-        Operations15.xSquared,
+        OperationsScientific.xSquared,
         const Complex(1.876771907, 1.512703802),
         const Complex(1.233999998, 5.677999998),
       );
       await _testOneArgComplex(
         m,
-        Operations15.sqrtOp15,
+        OperationsScientific.sqrtOp15,
         const Complex(1.234, -5.678),
         const Complex(1.876771907, -1.512703802),
       );
       await _testOneArgComplex(
         m,
-        Operations15.xSquared,
+        OperationsScientific.xSquared,
         const Complex(1.876771907, -1.512703802),
         const Complex(1.233999998, -5.677999998),
       );
       await _testOneArgComplex(
         m,
-        Operations15.sqrtOp15,
+        OperationsScientific.sqrtOp15,
         const Complex(-1.234, 5.678),
         const Complex(1.512703802, 1.876771907),
       );
       await _testOneArgComplex(
         m,
-        Operations15.xSquared,
+        OperationsScientific.xSquared,
         const Complex(1.512703802, 1.876771907),
         const Complex(-1.233999998, 5.677999998),
       );
       await _testOneArgComplex(
         m,
-        Operations15.sqrtOp15,
+        OperationsScientific.sqrtOp15,
         const Complex(-1.234, -5.678),
         const Complex(1.512703802, -1.876771907),
       );
       await _testOneArgComplex(
         m,
-        Operations15.xSquared,
+        OperationsScientific.xSquared,
         const Complex(1.512703802, -1.876771907),
         const Complex(-1.233999998, -5.677999998),
       );
 
       await _testOneArgComplex(
         m,
-        Operations15.tenX15,
+        OperationsScientific.tenX15,
         const Complex(-1.234, -5.678),
         const Complex(0.05098501197, -0.02836565620),
       );
@@ -501,14 +503,14 @@ class SelfTests15 extends SelfTests {
       //        digits.  See misc/test_float/TestFloat.java.
       await _testOneArgComplex(
         m,
-        Operations15.logOp,
+        OperationsScientific.logOp,
         const Complex(0.05098501197, -0.02836565620),
         const Complex(-1.234, -0.2204945847),
       );
 
       await _testTwoArgComplex(
         m,
-        Operations15.yX15,
+        OperationsScientific.yX15,
         const Complex(5.6, 7.8),
         const Complex(1.2, 3.4),
         const Complex(-0.03277613870, -0.08229096286),
@@ -541,23 +543,23 @@ class SelfTests15 extends SelfTests {
   Future<void> testStatisticsFunctions() async {
     await test('15c statistics functions', () async {
       final m = newModel();
-      await _testOneArgFloat(m, Operations15.xFactorial, 0, 1);
-      await _testOneArgFloat(m, Operations15.xFactorial, 1, 1);
-      await _testOneArgFloat(m, Operations15.xFactorial, 9, 362880);
-      await _testOneArgFloat(m, Operations15.xFactorial, 0.5, 0.8862269255);
-      await _testOneArgFloat(m, Operations15.xFactorial, -0.7, 2.991568988);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 0, 1);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 1, 1);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 9, 362880);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 0.5, 0.8862269255);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, -0.7, 2.991568988);
       await _testOneArgFloat(
         m,
-        Operations15.xFactorial,
+        OperationsScientific.xFactorial,
         -31.2,
         -1.016536828e-32,
       );
-      await _testOneArgFloat(m, Operations15.xFactorial, 57.3, 1.367681189e77);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 57.3, 1.367681189e77);
       await expect(m.getFlag(9), false);
-      await _testOneArgFloat(m, Operations15.xFactorial, 70, 9.999999999e+99);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 70, 9.999999999e+99);
       await expect(m.getFlag(9), true);
       m.setFlag(9, false);
-      await _testOneArgFloat(m, Operations15.xFactorial, 70.1, 9.999999999e+99);
+      await _testOneArgFloat(m, OperationsScientific.xFactorial, 70.1, 9.999999999e+99);
       await expect(m.getFlag(9), true);
       m.setFlag(9, false);
 
