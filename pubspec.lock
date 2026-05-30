@@ -170,6 +170,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.4"
+  desktop_multi_window:
+    dependency: "direct main"
+    description:
+      path: "packages/desktop_multi_window"
+      ref: main
+      resolved-ref: f7b40083aeb4ac1c3b9cc25883c66c38228c28d9
+      url: "https://github.com/zathras/tmp_desktop_multi_window.git"
+    source: git
+    version: "0.2.0"
   fake_async:
     dependency: transitive
     description:

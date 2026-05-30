@@ -212,12 +212,8 @@ class _OnesComplement extends IntegerSignMode {
       r = r + BigInt.one;
       r = r & m.wordMask;
     }
-    if (r == m.wordMask) {
-      // -0
-      m.popSetResultX = Value.zero;
-    } else {
-      m.popSetResultX = Value.fromInternal(r);
-    }
+    // On -0, we keep the result.  See 16C manual, page 42, and #152
+    m.popSetResultX = Value.fromInternal(r);
     m.gFlag =
         (xi & m.signMask == yi & m.signMask) &&
         (xi & m.signMask != r & m.signMask);
