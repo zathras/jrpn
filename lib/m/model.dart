@@ -657,23 +657,21 @@ abstract class NumStatus {
 }
 
 enum CalculatorModelKind {
-  jrpn11,
-  jrpn15,
-  jrpn16;
+
+  jrpn11(displayName: '11C', persistentStorageKey: 'init11C'),
+  jrpn15(displayName: '15C', persistentStorageKey: 'init15C'),
+  jrpn16(displayName: '16C', persistentStorageKey: 'init');
 
   /// User-visible model name. Also persisted in JSON state files.
-  String get displayName => switch (this) {
-    jrpn11 => '11C',
-    jrpn15 => '15C',
-    jrpn16 => '16C',
-  };
+  final String displayName;
 
   /// SharedPreferences key under which this model persists its state.
-  String get persistentStorageKey => switch (this) {
-    jrpn16 => 'init',
-    jrpn15 => 'init15C',
-    jrpn11 => 'init11C',
-  };
+  final String persistentStorageKey;
+
+  const CalculatorModelKind({
+    required this.displayName,
+    required this.persistentStorageKey
+  });
 }
 
 ///
