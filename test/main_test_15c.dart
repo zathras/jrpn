@@ -2922,7 +2922,11 @@ Future<void> numberEntry() async {
     LongNumbersSetting.window,
   ]) {
     model.settings.longNumbers = lcd;
-    for (final mode in [OperationsScientific.fix, OperationsScientific.sci, OperationsScientific.eng]) {
+    for (final mode in [
+      OperationsScientific.fix,
+      OperationsScientific.sci,
+      OperationsScientific.eng,
+    ]) {
       for (final negate in [-1, 1]) {
         for (final modeN in n) {
           play([mode, modeN]);
@@ -3054,7 +3058,10 @@ Future<void> numberEntry() async {
       } else {
         expect(model.t, Value.fromDouble(.1), reason: 't for $op $complex');
         expect(model.z, Value.fromDouble(.2), reason: 'z for $op $complex');
-        if (!{OperationsScientific.toR, OperationsScientific.toP}.contains(op)) {
+        if (!{
+          OperationsScientific.toR,
+          OperationsScientific.toP,
+        }.contains(op)) {
           expect(model.y, Value.fromDouble(.3), reason: 'y for $op $complex');
         }
       }
@@ -3221,7 +3228,10 @@ Future<void> lastX15C() async {
       } else {
         expect(model.t, Value.fromDouble(.1), reason: 't for $op $complex');
         expect(model.z, Value.fromDouble(.2), reason: 'z for $op $complex');
-        if (!{OperationsScientific.toR, OperationsScientific.toP}.contains(op)) {
+        if (!{
+          OperationsScientific.toR,
+          OperationsScientific.toP,
+        }.contains(op)) {
           expect(model.y, Value.fromDouble(.3), reason: 'y for $op $complex');
         }
       }

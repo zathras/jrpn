@@ -154,7 +154,6 @@ class Operations11 extends OperationsScientific {
   /// The HP 15's (i) operation, to see the imaginary part.
   ///
 
-
   static final NormalOperationOrLetter reciprocal15 =
       NormalOperationOrLetter.floatOnly(
         letter: OperationsScientific.letterLabelE,
@@ -200,9 +199,7 @@ class Operations11 extends OperationsScientific {
     name: 'F?',
   );
 
-  static final _stoRclSynonyms = {
-    Operations.enter: Operations11.ranNum,
-  };
+  static final _stoRclSynonyms = {Operations.enter: Operations11.ranNum};
 
   static final NormalArgOperation xExchange = NormalArgOperation(
     maxOneByteOpcodes: 4,
@@ -292,7 +289,6 @@ class Operations11 extends OperationsScientific {
     },
     name: 'Cy,x',
   );
-
 
   static final NormalArgOperation sto15 = NormalArgOperation(
     maxOneByteOpcodes: 34,
@@ -386,7 +382,6 @@ class Operations11 extends OperationsScientific {
     ),
     name: 'RCL',
   );
-
 }
 
 class RegisterWriteOpArg extends ArgAlternates {
@@ -1205,9 +1200,21 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
       OperationsScientific.letterLabelA,
       OperationsScientific.xSquared,
     ),
-    MKey(OperationsScientific.eX15, OperationsScientific.letterLabelB, OperationsScientific.lnOp),
-    MKey(OperationsScientific.tenX15, OperationsScientific.letterLabelC, OperationsScientific.logOp),
-    MKey(OperationsScientific.yX15, OperationsScientific.letterLabelD, OperationsScientific.percent),
+    MKey(
+      OperationsScientific.eX15,
+      OperationsScientific.letterLabelB,
+      OperationsScientific.lnOp,
+    ),
+    MKey(
+      OperationsScientific.tenX15,
+      OperationsScientific.letterLabelC,
+      OperationsScientific.logOp,
+    ),
+    MKey(
+      OperationsScientific.yX15,
+      OperationsScientific.letterLabelD,
+      OperationsScientific.percent,
+    ),
     MKey(
       Operations11.reciprocal15,
       OperationsScientific.letterLabelE,
@@ -1221,13 +1228,21 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
   ],
   [
     MKey(Operations.sst, Operations11.lbl15, Operations.bst),
-    MKey(OperationsScientific.gto, OperationsScientific.hyp, OperationsScientific.hypInverse),
+    MKey(
+      OperationsScientific.gto,
+      OperationsScientific.hyp,
+      OperationsScientific.hypInverse,
+    ),
     MKey(
       OperationsScientific.sin,
       Operations.xSwapParenI,
       OperationsScientific.sinInverse,
       extensionOps: [
-        MKeyExtensionOp(OperationsScientific.sinh, Operations.fShift, OperationsScientific.hyp),
+        MKeyExtensionOp(
+          OperationsScientific.sinh,
+          Operations.fShift,
+          OperationsScientific.hyp,
+        ),
         MKeyExtensionOp(
           OperationsScientific.sinhInverse,
           Operations.gShift,
@@ -1240,7 +1255,11 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
       OperationsScientific.parenIOp,
       OperationsScientific.cosInverse,
       extensionOps: [
-        MKeyExtensionOp(OperationsScientific.cosh, Operations.fShift, OperationsScientific.hyp),
+        MKeyExtensionOp(
+          OperationsScientific.cosh,
+          Operations.fShift,
+          OperationsScientific.hyp,
+        ),
         MKeyExtensionOp(
           OperationsScientific.coshInverse,
           Operations.gShift,
@@ -1253,7 +1272,11 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
       OperationsScientific.iOp,
       OperationsScientific.tanInverse,
       extensionOps: [
-        MKeyExtensionOp(OperationsScientific.tanh, Operations.fShift, OperationsScientific.hyp),
+        MKeyExtensionOp(
+          OperationsScientific.tanh,
+          Operations.fShift,
+          OperationsScientific.hyp,
+        ),
         MKeyExtensionOp(
           OperationsScientific.tanhInverse,
           Operations.gShift,
@@ -1269,7 +1292,11 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
   ],
   [
     MKey(Operations.rs, Operations.pse, Operations.pr),
-    MKey(OperationsScientific.gsb, OperationsScientific.clearSigma, Operations.rtn),
+    MKey(
+      OperationsScientific.gsb,
+      OperationsScientific.clearSigma,
+      Operations.rtn,
+    ),
     MKey(Operations.rDown, Operations.clearPrgm, Operations.rUp),
     MKey(Operations.xy, Operations.clearReg, OperationsScientific.rnd),
     MKey(Operations.bsp, Operations.clearPrefix, Operations.clx),
@@ -1283,11 +1310,23 @@ final List<List<MKey<Operation>?>> _logicalKeys = [
     MKey(Operations.onOff, Operations.onOff, Operations.onOff),
     MKey(Operations.fShift, Operations.fShift, Operations.fShift),
     MKey(Operations.gShift, Operations.gShift, Operations.gShift),
-    MKey(Operations11.sto15, OperationsScientific.fracOp, OperationsScientific.intOp),
+    MKey(
+      Operations11.sto15,
+      OperationsScientific.fracOp,
+      OperationsScientific.intOp,
+    ),
     MKey(Operations11.rcl15, Operations11.userOp, Operations.mem),
     null,
-    MKey(Operations.n0, OperationsScientific.xFactorial, OperationsScientific.xBar),
-    MKey(Operations.dot, OperationsScientific.yHatR, OperationsScientific.stdDeviation),
+    MKey(
+      Operations.n0,
+      OperationsScientific.xFactorial,
+      OperationsScientific.xBar,
+    ),
+    MKey(
+      Operations.dot,
+      OperationsScientific.yHatR,
+      OperationsScientific.stdDeviation,
+    ),
     MKey(
       OperationsScientific.sigmaPlus,
       OperationsScientific.linearRegression,
@@ -1312,4 +1351,3 @@ class ProgramInstruction11<OT extends ProgramOperation>
     extends ProgramInstruction<OT> {
   ProgramInstruction11(super.op, super.arg);
 }
-

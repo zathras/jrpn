@@ -657,7 +657,6 @@ abstract class NumStatus {
 }
 
 enum CalculatorModelKind {
-
   jrpn11(displayName: '11C', persistentStorageKey: 'init11C'),
   jrpn15(displayName: '15C', persistentStorageKey: 'init15C'),
   jrpn16(displayName: '16C', persistentStorageKey: 'init');
@@ -670,7 +669,7 @@ enum CalculatorModelKind {
 
   const CalculatorModelKind({
     required this.displayName,
-    required this.persistentStorageKey
+    required this.persistentStorageKey,
   });
 }
 
@@ -1449,8 +1448,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
         _imaginaryStack![i] = Value.fromJson(v as String);
       }
     }
-    final imx =
-        supportsComplex ? json['lastXImaginary'] as String? : null;
+    final imx = supportsComplex ? json['lastXImaginary'] as String? : null;
     if (imx == null) {
       _lastXImaginary = null;
     } else {

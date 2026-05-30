@@ -90,7 +90,12 @@ class SelfTests11 extends SelfTests {
         0.8628899551,
         OperationsScientific.eX15,
       );
-      await _testOneArgFloat(m, OperationsScientific.sqrtOp15, 7.37, 2.714774392);
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.sqrtOp15,
+        7.37,
+        2.714774392,
+      );
       await _testOneArgFloat(
         m,
         OperationsScientific.xSquared,
@@ -112,7 +117,13 @@ class SelfTests11 extends SelfTests {
         5011.872336,
         OperationsScientific.logOp,
       );
-      await _testTwoArgFloat(m, OperationsScientific.yX15, 1.234, 5.678, 8.524660835);
+      await _testTwoArgFloat(
+        m,
+        OperationsScientific.yX15,
+        1.234,
+        5.678,
+        8.524660835,
+      );
       await _testOneArgFloat(
         m,
         Operations11.reciprocal15,
@@ -132,8 +143,18 @@ class SelfTests11 extends SelfTests {
       await _testOneArgFloat(m, OperationsScientific.fracOp, -2.37, -0.37);
       await _testOneArgFloat(m, OperationsScientific.fracOp, 2.37e54, 0);
       await _testOneArgFloat(m, OperationsScientific.fracOp, -2.37e54, 0);
-      await _testOneArgFloat(m, OperationsScientific.fracOp, 2.37e-54, 2.37e-54);
-      await _testOneArgFloat(m, OperationsScientific.fracOp, -2.37e-54, -2.37e-54);
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.fracOp,
+        2.37e-54,
+        2.37e-54,
+      );
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.fracOp,
+        -2.37e-54,
+        -2.37e-54,
+      );
 
       await _testOneArgFloat(m, OperationsScientific.intOp, 2.37, 2);
       await _testOneArgFloat(m, OperationsScientific.intOp, -2.37, -2);
@@ -282,27 +303,51 @@ class SelfTests11 extends SelfTests {
     });
   }
 
-
   Future<void> testStatisticsFunctions() async {
     await test('11c statistics functions', () async {
       final m = newModel();
       await _testOneArgFloat(m, OperationsScientific.xFactorial, 0, 1);
       await _testOneArgFloat(m, OperationsScientific.xFactorial, 1, 1);
       await _testOneArgFloat(m, OperationsScientific.xFactorial, 9, 362880);
-      await _testOneArgFloat(m, OperationsScientific.xFactorial, 0.5, 0.8862269255);
-      await _testOneArgFloat(m, OperationsScientific.xFactorial, -0.7, 2.991568988);
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.xFactorial,
+        0.5,
+        0.8862269255,
+      );
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.xFactorial,
+        -0.7,
+        2.991568988,
+      );
       await _testOneArgFloat(
         m,
         OperationsScientific.xFactorial,
         -31.2,
         -1.016536828e-32,
       );
-      await _testOneArgFloat(m, OperationsScientific.xFactorial, 57.3, 1.367681189e77);
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.xFactorial,
+        57.3,
+        1.367681189e77,
+      );
       await expect(m.getFlag(9), false);
-      await _testOneArgFloat(m, OperationsScientific.xFactorial, 70, 9.999999999e+99);
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.xFactorial,
+        70,
+        9.999999999e+99,
+      );
       await expect(m.getFlag(9), true);
       m.setFlag(9, false);
-      await _testOneArgFloat(m, OperationsScientific.xFactorial, 70.1, 9.999999999e+99);
+      await _testOneArgFloat(
+        m,
+        OperationsScientific.xFactorial,
+        70.1,
+        9.999999999e+99,
+      );
       await expect(m.getFlag(9), true);
       m.setFlag(9, false);
 

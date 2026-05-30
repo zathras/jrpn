@@ -201,11 +201,7 @@ class BackPanel11 extends BackPanel {
       center(
         list([
           text('R', scale: .85),
-          text(
-            'I',
-            scale: .85 * 0.7,
-            offset: Offset(0, 0.25 * rowHeightMM),
-          ),
+          text('I', scale: .85 * 0.7, offset: Offset(0, 0.25 * rowHeightMM)),
           text(' = nnnnn.xxxyy', scale: .85),
         ]),
       ),
@@ -442,14 +438,8 @@ class BackPanel11 extends BackPanel {
   ]);
 
   Widget numberTable(double widthCM) => table(widthCM, [
-    row([
-      cell(text(' Error ')),
-      cell(text('')),
-    ]),
-    row([
-      cell(text('0', align: bpCenter)),
-      cell(text(' y ÷ 0, LN 0, ...')),
-    ]),
+    row([cell(text(' Error ')), cell(text(''))]),
+    row([cell(text('0', align: bpCenter)), cell(text(' y ÷ 0, LN 0, ...'))]),
     row([
       cell(text('1', align: bpCenter)),
       cell(
@@ -461,14 +451,8 @@ class BackPanel11 extends BackPanel {
         ]),
       ),
     ]),
-    row([
-      cell(text('2', align: bpCenter)),
-      cell(text(' Σ Error')),
-    ]),
-    row([
-      cell(text('3', align: bpCenter)),
-      cell(text(' R>MEM')),
-    ]),
+    row([cell(text('2', align: bpCenter)), cell(text(' Σ Error'))]),
+    row([cell(text('3', align: bpCenter)), cell(text(' R>MEM'))]),
     row([
       cell(text('4', align: bpCenter)),
       cell(text(' LBL?, GTO>MEM, PRGM>203 ')),

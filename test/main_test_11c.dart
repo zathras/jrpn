@@ -229,13 +229,23 @@ Future<void> main() async {
   test('11C SF/CF/F? arg structure has no I path and only digits 0-1', () {
     // Only "SF/CF/F? followed by the digit key (0 or 1)".
     // There is no indirect (I) addressing for flags on the 11C.
-    for (final op in [Operations11.sf, Operations11.cf, Operations11.fQuestion]) {
+    for (final op in [
+      Operations11.sf,
+      Operations11.cf,
+      Operations11.fQuestion,
+    ]) {
       final arg = op.arg as ArgAlternates;
       final keys = arg.children.whereType<KeyArg>().map((c) => c.key).toSet();
-      expect(keys.contains(Arg.kI), isFalse,
-          reason: '${op.name} must not accept I as argument on 11C');
-      expect(keys.contains(Arg.kParenI), isFalse,
-          reason: '${op.name} must not accept (i) as argument on 11C');
+      expect(
+        keys.contains(Arg.kI),
+        isFalse,
+        reason: '${op.name} must not accept I as argument on 11C',
+      );
+      expect(
+        keys.contains(Arg.kParenI),
+        isFalse,
+        reason: '${op.name} must not accept (i) as argument on 11C',
+      );
     }
   });
 
@@ -357,12 +367,12 @@ Future<void> main() async {
     // After Σ+, X holds the running n.
     expect(m.x, Value.fromDouble(5));
     // Handbook expected values (FIX 4 in the manual).
-    expect(regs[0], Value.fromDouble(5));            // n
-    expect(regs[1], Value.fromDouble(30.676));       // Σx
-    expect(regs[2], Value.fromDouble(188.938636));   // Σx²
-    expect(regs[3], Value.fromDouble(9.155));        // Σy
-    expect(regs[4], Value.fromDouble(16.787715));    // Σy²
-    expect(regs[5], Value.fromDouble(56.292368));    // Σxy
+    expect(regs[0], Value.fromDouble(5)); // n
+    expect(regs[1], Value.fromDouble(30.676)); // Σx
+    expect(regs[2], Value.fromDouble(188.938636)); // Σx²
+    expect(regs[3], Value.fromDouble(9.155)); // Σy
+    expect(regs[4], Value.fromDouble(16.787715)); // Σy²
+    expect(regs[5], Value.fromDouble(56.292368)); // Σxy
 
     // 15C-style positions (R2..R7) must NOT be touched. We pre-seeded
     // R6/R7 with junk; they should still be junk. R2..R5 were already
@@ -378,11 +388,41 @@ Future<void> main() async {
     // (lower half of ENTER).
     final expected = <List<Object>>[
       // Row 0
-      [0, 0, OperationsScientific.sqrtOp15, OperationsScientific.letterLabelA, OperationsScientific.xSquared],
-      [0, 1, OperationsScientific.eX15, OperationsScientific.letterLabelB, OperationsScientific.lnOp],
-      [0, 2, OperationsScientific.tenX15, OperationsScientific.letterLabelC, OperationsScientific.logOp],
-      [0, 3, OperationsScientific.yX15, OperationsScientific.letterLabelD, OperationsScientific.percent],
-      [0, 4, Operations11.reciprocal15, OperationsScientific.letterLabelE, OperationsScientific.deltaPercent],
+      [
+        0,
+        0,
+        OperationsScientific.sqrtOp15,
+        OperationsScientific.letterLabelA,
+        OperationsScientific.xSquared,
+      ],
+      [
+        0,
+        1,
+        OperationsScientific.eX15,
+        OperationsScientific.letterLabelB,
+        OperationsScientific.lnOp,
+      ],
+      [
+        0,
+        2,
+        OperationsScientific.tenX15,
+        OperationsScientific.letterLabelC,
+        OperationsScientific.logOp,
+      ],
+      [
+        0,
+        3,
+        OperationsScientific.yX15,
+        OperationsScientific.letterLabelD,
+        OperationsScientific.percent,
+      ],
+      [
+        0,
+        4,
+        Operations11.reciprocal15,
+        OperationsScientific.letterLabelE,
+        OperationsScientific.deltaPercent,
+      ],
       [0, 5, Operations.chs, OperationsScientific.piOp, Operations.abs],
       [0, 6, Operations.n7, OperationsScientific.fix, OperationsScientific.deg],
       [0, 7, Operations.n8, OperationsScientific.sci, OperationsScientific.rad],
@@ -390,36 +430,114 @@ Future<void> main() async {
       [0, 9, Operations11.div, Operations.xLEy, Operations.xLT0],
       // Row 1
       [1, 0, Operations.sst, Operations11.lbl15, Operations.bst],
-      [1, 1, OperationsScientific.gto, OperationsScientific.hyp, OperationsScientific.hypInverse],
-      [1, 2, OperationsScientific.sin, Operations.xSwapParenI, OperationsScientific.sinInverse],
-      [1, 3, OperationsScientific.cos, OperationsScientific.parenIOp, OperationsScientific.cosInverse],
-      [1, 4, OperationsScientific.tan, OperationsScientific.iOp, OperationsScientific.tanInverse],
-      [1, 5, Operations.eex, OperationsScientific.toR, OperationsScientific.toP],
+      [
+        1,
+        1,
+        OperationsScientific.gto,
+        OperationsScientific.hyp,
+        OperationsScientific.hypInverse,
+      ],
+      [
+        1,
+        2,
+        OperationsScientific.sin,
+        Operations.xSwapParenI,
+        OperationsScientific.sinInverse,
+      ],
+      [
+        1,
+        3,
+        OperationsScientific.cos,
+        OperationsScientific.parenIOp,
+        OperationsScientific.cosInverse,
+      ],
+      [
+        1,
+        4,
+        OperationsScientific.tan,
+        OperationsScientific.iOp,
+        OperationsScientific.tanInverse,
+      ],
+      [
+        1,
+        5,
+        Operations.eex,
+        OperationsScientific.toR,
+        OperationsScientific.toP,
+      ],
       [1, 6, Operations.n4, Operations11.xExchange, Operations11.sf],
       [1, 7, Operations.n5, Operations11.dse, Operations11.cf],
       [1, 8, Operations.n6, Operations11.isg, Operations11.fQuestion],
       [1, 9, Operations11.mult, Operations.xGTy, Operations.xGT0],
       // Row 2
       [2, 0, Operations.rs, Operations.pse, Operations.pr],
-      [2, 1, OperationsScientific.gsb, OperationsScientific.clearSigma, Operations.rtn],
+      [
+        2,
+        1,
+        OperationsScientific.gsb,
+        OperationsScientific.clearSigma,
+        Operations.rtn,
+      ],
       [2, 2, Operations.rDown, Operations.clearPrgm, Operations.rUp],
       [2, 3, Operations.xy, Operations.clearReg, OperationsScientific.rnd],
       [2, 4, Operations.bsp, Operations.clearPrefix, Operations.clx],
-      [2, 5, Operations.enter, Operations11.ranNum, OperationsScientific.lstx15],
+      [
+        2,
+        5,
+        Operations.enter,
+        Operations11.ranNum,
+        OperationsScientific.lstx15,
+      ],
       [2, 6, Operations.n1, Operations11.pYX, Operations11.cYX],
-      [2, 7, Operations.n2, OperationsScientific.toHMS, OperationsScientific.toH],
-      [2, 8, Operations.n3, OperationsScientific.toRad, OperationsScientific.toDeg],
+      [
+        2,
+        7,
+        Operations.n2,
+        OperationsScientific.toHMS,
+        OperationsScientific.toH,
+      ],
+      [
+        2,
+        8,
+        Operations.n3,
+        OperationsScientific.toRad,
+        OperationsScientific.toDeg,
+      ],
       [2, 9, Operations11.minus, Operations.xNEy, Operations.xNE0],
       // Row 3
       [3, 0, Operations.onOff, Operations.onOff, Operations.onOff],
       [3, 1, Operations.fShift, Operations.fShift, Operations.fShift],
       [3, 2, Operations.gShift, Operations.gShift, Operations.gShift],
-      [3, 3, Operations11.sto15, OperationsScientific.fracOp, OperationsScientific.intOp],
+      [
+        3,
+        3,
+        Operations11.sto15,
+        OperationsScientific.fracOp,
+        OperationsScientific.intOp,
+      ],
       [3, 4, Operations11.rcl15, Operations11.userOp, Operations.mem],
       // row 3 col 5 is null (under ENTER)
-      [3, 6, Operations.n0, OperationsScientific.xFactorial, OperationsScientific.xBar],
-      [3, 7, Operations.dot, OperationsScientific.yHatR, OperationsScientific.stdDeviation],
-      [3, 8, OperationsScientific.sigmaPlus, OperationsScientific.linearRegression, OperationsScientific.sigmaMinus],
+      [
+        3,
+        6,
+        Operations.n0,
+        OperationsScientific.xFactorial,
+        OperationsScientific.xBar,
+      ],
+      [
+        3,
+        7,
+        Operations.dot,
+        OperationsScientific.yHatR,
+        OperationsScientific.stdDeviation,
+      ],
+      [
+        3,
+        8,
+        OperationsScientific.sigmaPlus,
+        OperationsScientific.linearRegression,
+        OperationsScientific.sigmaMinus,
+      ],
       [3, 9, Operations11.plus, Operations.xEQy, Operations.xEQ0],
     ];
     for (final e in expected) {
@@ -432,7 +550,11 @@ Future<void> main() async {
       expect(k.fShifted, same(e[3]), reason: '$pos f-shift');
       expect(k.gShifted, same(e[4]), reason: '$pos g-shift');
     }
-    expect(keys[3][5], isNull, reason: 'row 3 col 5 should be null (under ENTER)');
+    expect(
+      keys[3][5],
+      isNull,
+      reason: 'row 3 col 5 should be null (under ENTER)',
+    );
   });
 
   test('11C initial memory state: 20 registers + 63 free program lines', () {
@@ -453,7 +575,11 @@ Future<void> main() async {
       tc.enter(Operations.n0);
     }
     expect(m.memory.program.lines, 63);
-    expect((m.memory as Memory11).numRegisters, 20, reason: 'no conversion yet');
+    expect(
+      (m.memory as Memory11).numRegisters,
+      20,
+      reason: 'no conversion yet',
+    );
     // The 64th instruction triggers conversion of R.9.
     tc.enter(Operations.n0);
     expect(m.memory.program.lines, 64);
@@ -630,10 +756,16 @@ Future<void> main() async {
     tc.enter(OperationsScientific.letterLabelA);
     expect(await out.moveNext(), true);
     expect(out.current, ProgramEvent.done);
-    expect(m.memory.registers[0], Value.fromDouble(3),
-        reason: 'DSE loop should execute body exactly 3 times on R_I=3');
-    expect(m.memory.registers.index, Value.zero,
-        reason: 'final DSE call landed on 0 and skipped the GTO');
+    expect(
+      m.memory.registers[0],
+      Value.fromDouble(3),
+      reason: 'DSE loop should execute body exactly 3 times on R_I=3',
+    );
+    expect(
+      m.memory.registers.index,
+      Value.zero,
+      reason: 'final DSE call landed on 0 and skipped the GTO',
+    );
   });
 
   test('Built-in self tests 11C', () async {

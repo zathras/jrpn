@@ -172,7 +172,6 @@ class Model11<OT extends ProgramOperation> extends Model<OT> {
     extraShift: ShiftKey.f,
     lcdDigits: 11,
   );
-
 }
 
 ///
