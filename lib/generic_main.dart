@@ -1209,7 +1209,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
 /// at least one otehr configuration item.
 ///
 class ScreenConfiguration {
-  final SharedPreferences _storage;
+  final SharedPreferences? _storage; // null for testing
   final String _configKey;
   final LayoutConfiguration? portrait;
   final LayoutConfiguration? landscape;
@@ -1228,6 +1228,19 @@ class ScreenConfiguration {
     this.buttonLook,
     this.chsBug,
   );
+  static ScreenConfiguration empty(
+    SharedPreferences? storage,
+    String configKey,
+  ) => ScreenConfiguration._p(
+    storage,
+    configKey,
+    null,
+    null,
+    null,
+    null,
+    ButtonLookConfiguration.fromJson(null),
+    false,
+  );
 
   static Future<ScreenConfiguration> fromPersistentStorage(
     String configKey,
@@ -1238,16 +1251,7 @@ class ScreenConfiguration {
       return _fromString(storage, configKey, json);
     } catch (e) {
       debugPrint('Error reading configuration from persistent store:  $e');
-      return ScreenConfiguration._p(
-        storage,
-        configKey,
-        null,
-        null,
-        null,
-        null,
-        ButtonLookConfiguration.fromJson(null),
-        false,
-      );
+      return empty(storage, configKey);
     }
   }
 
@@ -1256,7 +1260,7 @@ class ScreenConfiguration {
   /// a problem is detected.
   ///
   ScreenConfiguration newFromJson(String json) =>
-      _fromString(_storage, _configKey, json);
+      _fromString(_storage!, _configKey, json);
 
   static ScreenConfiguration _fromString(
     SharedPreferences storage,
@@ -1373,7 +1377,8 @@ class ScreenConfiguration {
 
   void saveToPersistentStore() {
     final jsonStr = json.encoder.convert(toJson());
-    unawaited(_storage.setString(_configKey, jsonStr));
+    assert(_storage != null); // Only null for testing
+    unawaited(_storage!.setString(_configKey, jsonStr));
   }
 }
 

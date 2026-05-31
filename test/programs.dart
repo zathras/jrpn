@@ -26,6 +26,7 @@ import 'package:flutter/foundation.dart';
 import 'package:jrpn/c/operations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jrpn/c/controller.dart';
+import 'package:jrpn/generic_main.dart';
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/jrpn11/main.dart';
 import 'package:jrpn/jrpn15/main.dart';
@@ -69,6 +70,7 @@ class TestCalculator implements ProgramListener {
           : for11C
           ? Controller11(createModel11())
           : Controller16(Model16()) {
+    controller.screenConfig = ScreenConfiguration.empty(null, 'dummy');
     model.settings.msPerInstruction = 0;
     model.program.programListener = this;
   }
