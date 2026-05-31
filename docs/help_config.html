@@ -4,7 +4,7 @@
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
 <title>
-JRPN Screen Configuration Help
+JRPN Configuration Help
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <style>
@@ -16,10 +16,10 @@ blockquote {margin-left: 10%; margin-right: 12%}
 </head>
 <body style="background-color: #ffffff">
 <p style="text-align: center; font-size: x-large; font-weight: bold;">
-    JRPN 15C/16C - Screen Configuration Guide
+    JRPN 15C/16C - Configuration Guide
 </p>
 <p>
-The calculator's button layout and other screen configuration items
+The calculator's button layout and other configuration items
 can be customized.  For example, the button layout in portrait mode could
 changed - there's no "standard" portrait button layout for these calculators
 any.  The default 6x7 layout can be change to 5x8, to allow a taller and
@@ -27,10 +27,10 @@ narrower calculator, too.  The landscape layout can also be changed, but
 that would of course mean not being faithful to the original calculator.
 <p>
 In addition, keyboard accelerators can be mapped and/or added.  The default
-keyboard acceleratos aren't standard in any way, and were chosen somewhat
+keyboard accelerators aren't standard in any way, and were chosen somewhat
 arbitrarily, so it could be interesting to re-map them.
 <p>
-To restore the default, simply set the screen configuration to the
+To restore the default, simply set the configuration to the
 blank JSON object, "<code>{}</code>".
 <p>
 The JSON file is read into the calculator from Settings, System Settings.  On
@@ -78,9 +78,15 @@ that rearranges the keyboard, and configures other configurable items:
                "lower_surface_color_pressed" : "423F42",
                "upper_surface_color" : "4b4b4e",
                "upper_surface_color_pressed" : "58585C"
-           }
+           },
+           "chs_zero_stack_lift_bug" : false
         }
 </pre>
+<p>
+Any missing entries will simply take the default value.  For
+example, the above example has no layout
+for <code><font size="-1">"landscape"</font></code>,
+so in landscape mode, the default layout would be used.
 <p>
 In thie file, keys are identified by their default primary 
 keyboard accelerator.  To find the accelerators, select
@@ -118,7 +124,7 @@ space symbol
 <p>
 <b><code>portrait</code></b>
 <p>
-An object called "portrait" contains a screen layout for portrait
+An object called "portrait" contains a screen layout for landscape
 mode.  If not present, the default layout will be used.
 <p>
 <b><code>portrait.buttons</code></b>
@@ -184,6 +190,17 @@ field of <code>button_look</code> is best figured out by looking at the code of
 values given here result in a more realistic, but somewhat more subtle presed
 look.  See also <a href="https://github.com/zathras/jrpn/issues/138">Issue
 138</a>.
+<p>
+<b><code>chs_zero_stack_lift_bug</code></b>
+<p>
+If set true, the calculator will simulate a bug in the original Voyager
+series calculators related to stack lift and the CHS key when the X register
+contains zero.  This is discussed in
+<a href="https://github.com/zathras/jrpn/issues/150">JRPN issue 150</a>,
+and <a href="https://www.hpmuseum.org/cgi-bin/archv016.cgi?read=107829">this
+HP Forum thread</a>.  Defaults to false.  This setting was added in 
+JRPN version 2.1.20.
+
 <h2>Existing Configurations</h2>
 <p>
 The portrait layout given above probably isn't all that good.  Personally, I
@@ -194,7 +211,7 @@ that you'd like to share, feel free to attach a file to a comment on
 <p>
 &nbsp;
 <p>
-<a href="help.html">Back to main help screen</a>
+<a href="help.html">Back to main help page</a>
 
 <p style="float: right; align-items: center; font-style: italic;">
 <a href="http://en.wikipedia.org/wiki/Vi"><img alt="*" src="vi.powered.gif"></a>

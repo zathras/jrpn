@@ -1191,7 +1191,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
 }
 
 ///
-/// User-modifiable screen configuration, with button layout and the like.
+/// User-modifiable configuration, with button layout and the like.
 ///
 /// Note that button colors more naturally belong here, but they were
 /// added to settings before this existed (cf.
@@ -1204,6 +1204,10 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
 ///     Landscape:
 ///       1.2500 cm  between the top of one row of buttons and the next
 ///       1.1496 cm between the left side of one column of buttons and the next
+///
+/// This is moslty a screen configuration, but it has since been extended to
+/// at least one otehr configuration item.
+///
 class ScreenConfiguration {
   final SharedPreferences _storage;
   final String _configKey;
@@ -1212,6 +1216,7 @@ class ScreenConfiguration {
   final Map<String, String>? acceleratorTranslation;
   final Map<String, String>? acceleratorLabels;
   final ButtonLookConfiguration buttonLook;
+  final bool chsBug; // https://github.com/zathras/jrpn/issues/150
 
   ScreenConfiguration._p(
     this._storage,
@@ -1221,6 +1226,7 @@ class ScreenConfiguration {
     this.acceleratorTranslation,
     this.acceleratorLabels,
     this.buttonLook,
+    this.chsBug,
   );
 
   static Future<ScreenConfiguration> fromPersistentStorage(
@@ -1240,6 +1246,7 @@ class ScreenConfiguration {
         null,
         null,
         ButtonLookConfiguration.fromJson(null),
+        false,
       );
     }
   }
@@ -1344,6 +1351,7 @@ class ScreenConfiguration {
       ButtonLookConfiguration.fromJson(
         jsonMap?['button_look'] as Map<String, dynamic>?,
       ),
+      jsonMap?['chs_zero_stack_lift_bug'] == true,
     );
   }
 

@@ -339,6 +339,7 @@ class RunningController extends Controller {
   static final _dummy = ArgDone((_) {});
 
   RunningController(this.real, {bool digitEntryState = false}) {
+    screenConfig = real.screenConfig;
     if (digitEntryState) {
       state = DigitEntry(this);
     } else {

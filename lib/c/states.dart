@@ -260,7 +260,11 @@ class Resting extends ActiveState {
     }
     model.chsX();
     model.display.displayX();
-    stackLiftEnabled = true;
+    // Voyager calculators have a bug that we can emulate:  Issue 150
+    final chsBug = controller.screenConfig.chsBug && model.isFloatMode;
+    if (!chsBug || model.x != Value.zero) {
+      stackLiftEnabled = true;
+    }
   }
 
   @override
