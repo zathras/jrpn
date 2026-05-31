@@ -1,5 +1,10 @@
-Version 2.1.20 - Upcoming
+Version 2.1.20 - June 2026
   * Floating point entry fidelity improvements in Grow LCD mode:  Issue 141
+  * 16C int mode: Better handling of leading zeroes on digit entry:  Issue 159
+  * 16C ones-complement mode:  Fix handling of -0 for addition/subtraction:  Issue 152
+  * Add option to simulate Voyager stack-lift bug on CHS:  Issue 150
+  * 15C: Persist USER mode
+  * Default to allowing "," keyboard accelerator alias for ".":  Issue 147
 
 Version 2.1.19 - June 2025
   * Android:  Allow choice between Android haptic or vibrate API:  Issue 102

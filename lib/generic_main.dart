@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021-2024 William Foote
+Copyright (c) 2021-2026 William Foote
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -53,7 +53,7 @@ SOFTWARE.
 ''';
 
 const gnuLicense = '''
-Copyright (c) 2021-2024 William Foote
+Copyright (c) 2021-2026 William Foote
 
 Program includes portions derived from other sources, as specified
 in the relevant source files.  Source is available in the repository
@@ -755,7 +755,7 @@ Public License instead of this License.  But first, please read
 
 /// package_info doesn't exist for all platforms, so I'm doing the version
 /// number the old fashioned way.
-const applicationVersion = '2.1.19';
+const applicationVersion = '2.1.20';
 final Uri applicationWebAddress = Uri.https('jrpn.jovial.com', '');
 final Uri applicationHelpAddress = Uri.https('jrpn.jovial.com', 'help.html');
 final Uri applicationIssueAddress = Uri.https(

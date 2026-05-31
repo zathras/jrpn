@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021-2024 William Foote
+Copyright (c) 2021-2026 William Foote
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -699,7 +699,7 @@ class _HelpMenu extends StatelessWidget {
               applicationIcon: ScalableImageWidget(si: icon, scale: 0.15),
               applicationName: 'JRPN ${controller.model.modelName}',
               applicationVersion: 'Version $applicationVersion',
-              applicationLegalese: '© 2021-2024 Bill Foote',
+              applicationLegalese: '© 2021-2026 Bill Foote',
               children: [
                 const SizedBox(height: 40),
                 InkWell(
