@@ -541,12 +541,15 @@ class JrpnLogoPainter extends CustomPainter {
     tp.layout();
     canvas.save();
     canvas.translate(x, y);
+    final bl = tp.computeDistanceToActualBaseline(TextBaseline.alphabetic);
     canvas.translate(
       (rectSize.width - tp.width * embiggen) / 2,
-      rectSize.height * 1.08 - tp.height,
+      rectSize.height * 0.880 - bl,
     );
     canvas.scale(embiggen, 1);
     tp.paint(canvas, Offset.zero);
+    tp.dispose();
+    canvas.drawRect(Rect.fromLTRB(-1, -1 + bl, 1, 1+ bl), Paint()..color = Colors.red);
     canvas.restore();
   }
 
