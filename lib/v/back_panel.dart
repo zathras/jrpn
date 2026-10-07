@@ -524,7 +524,6 @@ class _SuperimposeItem extends BPItem {
 }
 
 class _TextItem extends BPItem {
-  final TextPainter painter;
   final bool box;
   // We scale the font and the width by scale, but not the height
   final double scale;
@@ -533,15 +532,20 @@ class _TextItem extends BPItem {
   final BackPanel panel;
   @override
   final double width;
+  final TextAlign align;
+  final FontStyle fontStyle;
+  final String text;
 
   _TextItem._p(
-    this.painter,
     this.panel,
     this.box,
     this.scale,
     this.width,
     this.offset,
     this.boxOffset,
+    this.align,
+    this.fontStyle,
+    this.text,
   );
 
   factory _TextItem(
@@ -574,19 +578,50 @@ class _TextItem extends BPItem {
       width += 0.2; // Bug in font with hairline space, I think
     }
     width += offset.dx;
-    return _TextItem._p(painter, panel, box, scale, width, offset, boxOffset);
+    painter.dispose();
+    return _TextItem._p(
+      panel,
+      box,
+      scale,
+      width,
+      offset,
+      boxOffset,
+      align,
+      fontStyle,
+      text,
+    );
   }
 
   @override
-  TextAlign get align => painter.textAlign;
-
-  @override
   void paint(Canvas c, BPItemPainter p, double x, double w) {
+    final style = TextStyle(
+      color: MainScreen.keyFrameSilver,
+      fontSize: panel.fontSize,
+      fontFamily: 'KeyLabelFont',
+      fontStyle: fontStyle,
+      fontWeight: FontWeight.normal,
+    );
+    paintWithStyle(c, p, x, w, style);
+  }
+
+  void paintWithStyle(
+    Canvas c,
+    BPItemPainter p,
+    double x,
+    double w,
+    TextStyle style,
+  ) {
     if (scale != 1.0) {
       c.save();
       c.translate(0, panel.rowHeightMM * (1.0 - scale) / 2);
       c.scale(scale);
     }
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textAlign: align,
+      textDirection: TextDirection.ltr,
+    );
+    painter.layout();
     painter.layout(minWidth: w / scale);
     painter.paint(
       c,
@@ -616,18 +651,21 @@ class _TextItem extends BPItem {
         p.thinLine,
       );
     }
+    painter.dispose();
   }
 }
 
 class _SqrtTextItem extends _TextItem {
   _SqrtTextItem._p(
-    super.painter,
     super.panel,
     super.box,
     super.scale,
     super.width,
     super.offset,
     super.boxOffset,
+    super.align,
+    super.fontStyle,
+    super.text,
   ) : super._p();
 
   factory _SqrtTextItem(
@@ -646,13 +684,15 @@ class _SqrtTextItem extends _TextItem {
       offset: offset,
     );
     return _SqrtTextItem._p(
-      init.painter,
       panel,
       init.box,
       init.scale,
       init.width,
       init.offset,
       init.boxOffset,
+      init.align,
+      init.fontStyle,
+      init.text,
     );
   }
 
@@ -660,10 +700,16 @@ class _SqrtTextItem extends _TextItem {
   double get width => super.width + 0.6;
 
   @override
-  void paint(Canvas c, BPItemPainter p, double x, double w) {
-    super.paint(c, p, x, w);
+  void paintWithStyle(
+    Canvas c,
+    BPItemPainter p,
+    double x,
+    double w,
+    TextStyle style,
+  ) {
+    super.paintWithStyle(c, p, x, w, style);
     // Extend the line on the top of the square root symbol
-    TextSpan span = TextSpan(style: painter.text!.style, text: '\u203E');
+    TextSpan span = TextSpan(style: style, text: '\u203E');
     TextPainter tp = TextPainter(
       text: span,
       textAlign: TextAlign.center,
@@ -675,5 +721,6 @@ class _SqrtTextItem extends _TextItem {
     tp.paint(c, Offset(offset.dx + x / 0.75 + 1.65, 0.32 + offset.dy));
     tp.paint(c, Offset(offset.dx + (x + width - 1.8) / 0.75, 0.32 + offset.dy));
     c.restore();
+    tp.dispose();
   }
 }

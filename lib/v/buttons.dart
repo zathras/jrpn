@@ -457,6 +457,7 @@ class UpperLabel extends CustomPainter {
         ], false);
       canvas.drawPath(p, linePaint);
     }
+    tp.dispose();
   }
 
   @override
@@ -619,6 +620,7 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
       p.layout(minWidth: 25);
       p.paint(canvas, Offset(x, y));
       y += s.fontSize!;
+      p.dispose();
     }
   }
 
@@ -708,6 +710,9 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
       canvas.translate(0, 22);
       tpSub?.paint(canvas, const Offset(0, 0));
       canvas.restore();
+      tp.dispose();
+      tpSup?.dispose();
+      tpSub?.dispose();
     }
   }
 
@@ -919,6 +924,7 @@ abstract class CalculatorShiftButton extends CalculatorButton {
     p.layout(minWidth: 29);
     p.paint(canvas, Offset(x, y));
     y += s.fontSize!;
+    p.dispose();
   }
 }
 
@@ -1007,6 +1013,7 @@ class CalculatorButtonWithLJ extends CalculatorButton {
     );
     tp.layout(minWidth: w);
     tp.paint(canvas, gTextOffset);
+    tp.dispose();
   }
 }
 
@@ -1041,6 +1048,7 @@ class CalculatorWhiteSqrtButton extends CalculatorButton {
     tp.layout(minWidth: w);
     tp.paint(canvas, keyTextOffset.translate(8.4, -2.2));
     tp.paint(canvas, keyTextOffset.translate(16, -2.2));
+    tp.dispose();
   }
 }
 
@@ -1075,6 +1083,7 @@ class CalculatorBlueSqrtButton extends CalculatorButton {
     tp.layout(minWidth: w);
     tp.paint(canvas, gTextOffset.translate(5.4, -2.2));
     tp.paint(canvas, gTextOffset.translate(13, -2.2));
+    tp.dispose();
   }
 }
 

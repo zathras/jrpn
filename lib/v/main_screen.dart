@@ -444,6 +444,7 @@ class DrawnBackground extends CustomPainter {
       p,
     );
     tp.paint(canvas, Offset(x + 0.5 * cm, bottom - 0.06 * cm));
+    tp.dispose();
   }
 
   @override

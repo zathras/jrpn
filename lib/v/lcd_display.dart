@@ -215,6 +215,7 @@ class _DisplayPainter extends CustomPainter {
       );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.09, size.height * annY));
+      tp.dispose();
     }
     if (contents.wordSize != null) {
       final String text = contents.wordSize.toString();
@@ -226,6 +227,7 @@ class _DisplayPainter extends CustomPainter {
       );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.16, size.height * annY));
+      tp.dispose();
     }
     if (contents.userMode) {
       const String text = 'USER';
@@ -237,6 +239,7 @@ class _DisplayPainter extends CustomPainter {
       );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.18, size.height * annY));
+      tp.dispose();
     }
     if (contents.shift.name != '') {
       final TextSpan span = TextSpan(style: aStyle, text: contents.shift.name);
@@ -253,6 +256,7 @@ class _DisplayPainter extends CustomPainter {
           size.height * annY,
         ),
       );
+      tp.dispose();
     }
     if (contents.extraShift != null) {
       final TextSpan span = TextSpan(
@@ -272,6 +276,7 @@ class _DisplayPainter extends CustomPainter {
           size.height * annY,
         ),
       );
+      tp.dispose();
     }
     if (contents.cFlag) {
       final TextSpan span = TextSpan(style: aStyle, text: 'C');
@@ -282,6 +287,7 @@ class _DisplayPainter extends CustomPainter {
       );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.6, size.height * annY));
+      tp.dispose();
     }
     if (contents.gFlag) {
       final TextSpan span = TextSpan(style: aStyle, text: 'G');
@@ -292,6 +298,7 @@ class _DisplayPainter extends CustomPainter {
       );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.65, size.height * annY));
+      tp.dispose();
     }
     final trig = contents.trigMode;
     if (trig.label != null) {
@@ -304,6 +311,7 @@ class _DisplayPainter extends CustomPainter {
         );
         tp.layout();
         _gradWidth = tp.width;
+        tp.dispose();
       }
       final TextSpan span = TextSpan(style: aStyle, text: trig.label);
       final TextPainter tp = TextPainter(
@@ -316,6 +324,7 @@ class _DisplayPainter extends CustomPainter {
         canvas,
         Offset(_gradWidth - tp.width + size.width * 0.52, size.height * annY),
       );
+      tp.dispose();
     }
     if (contents.complexFlag) {
       final TextSpan span = TextSpan(style: aStyle, text: 'C');
@@ -326,6 +335,7 @@ class _DisplayPainter extends CustomPainter {
       );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.78, size.height * annY));
+      tp.dispose();
     }
     if (contents.prgmFlag) {
       final TextSpan span = TextSpan(style: aStyle, text: 'PRGM');
@@ -336,6 +346,7 @@ class _DisplayPainter extends CustomPainter {
       );
       tp.layout();
       tp.paint(canvas, Offset(size.width * 0.82, size.height * annY));
+      tp.dispose();
     }
 
     // Digits:

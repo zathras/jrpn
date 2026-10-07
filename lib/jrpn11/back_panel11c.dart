@@ -745,6 +745,13 @@ class _TableWithDrawingPainter extends BPTablePainter {
     dashedLine(canvas, .72, 1.44, p2, mid, thinLine);
     xT.paint(canvas, const Offset(9, -2.8));
     yT.paint(canvas, const Offset(15.7, -7.5));
+    curlyT.dispose();
+    xT.dispose();
+    yT.dispose();
+    rT.dispose();
+    thetaT.dispose();
+    bT.dispose();
+    formulaT.dispose();
   }
 
   void dashedLine(
