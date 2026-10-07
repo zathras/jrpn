@@ -525,14 +525,14 @@ class JrpnLogoPainter extends CustomPainter {
     }
 
     const embiggen = 1.25;
-    const style = TextStyle(
-      fontSize: 0.3, // in cm
+    final double cm = rectSize.width / 0.9;
+    final style = TextStyle(
+      fontSize: 0.3 * cm,
       fontFamily: 'LogoFont',
       fontWeight: FontWeight.w500,
       color: Colors.black,
     );
     final span = TextSpan(style: style, text: modelName);
-    final double cm = rectSize.width / 0.9;
     TextPainter tp = TextPainter(
       text: span,
       textAlign: TextAlign.center,
@@ -542,10 +542,10 @@ class JrpnLogoPainter extends CustomPainter {
     canvas.save();
     canvas.translate(x, y);
     canvas.translate(
-      (rectSize.width - tp.width * cm * embiggen) / 2,
-      rectSize.height * 0.85,
+      (rectSize.width - tp.width * embiggen) / 2,
+      rectSize.height * 1.08 - tp.height,
     );
-    canvas.scale(cm * embiggen, cm);
+    canvas.scale(embiggen, 1);
     tp.paint(canvas, Offset.zero);
     canvas.restore();
   }
