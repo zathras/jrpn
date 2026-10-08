@@ -884,7 +884,7 @@ class __SettingsMenuState extends State<_SettingsMenu> {
                 ),
               ]
             : []),
-        ...(Platform.isAndroid
+        ...(!kIsWeb && Platform.isAndroid
             ? [
                 CheckedPopupMenuItem(
                   checked: settings.useAndroidVibrateAPI,

@@ -6,13 +6,13 @@
 cd `dirname $0`
 cd jrpn15
 flutter clean
-flutter build web --release
+flutter build web --wasm --release
 if [ $? != 0 ]; then
     exit 1
 fi
 cd ../jrpn16
 flutter clean
-flutter build web --release
+flutter build web --wasm --release
 if [ $? != 0 ]; then
     exit 1
 fi
