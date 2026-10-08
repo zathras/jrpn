@@ -50,6 +50,7 @@ void runStaticInitialization16() {
   Arg.kDot = Operations.dot;
   Arg.fShift = Operations.fShift;
   Arg.gShift = Operations.gShift;
+  Arg.testOp = null;
   Arg.gsbLabelSynonyms = Arg.registerISynonyms = {
     Operations.sst: Operations16.I,
     Operations.rs: Operations16.parenI,
@@ -493,7 +494,7 @@ class Operations16 extends Operations {
       m.popSetResultX = m.checkOverflow(() => m.y.decimalMultiply(m.x));
     },
     intCalc: (Model m) => _storeMultDiv(m.yI * m.xI, m),
-    name: '*',
+    name: '×',
   );
 
   static final NormalOperation div = NormalOperation.differentFloatAndInt(
@@ -518,7 +519,7 @@ class Operations16 extends Operations {
         throw CalculatorError(0);
       }
     },
-    name: '/',
+    name: '÷',
   );
 
   static final NormalOperation and = NormalOperation.intOnly(
@@ -564,7 +565,7 @@ class Operations16 extends Operations {
       m.memory.registers.index = m.x;
       m.resultX = tmp;
     },
-    name: 'x<=>I',
+    name: 'x↔I',
   );
 
   static final NormalArgOperation window = NormalArgOperation(
@@ -779,7 +780,7 @@ class Operations16 extends Operations {
 
   static final NormalOperation dblDiv = NormalOperation.intOnly(
     intCalc: _doubleIntDivide,
-    name: 'DBL/',
+    name: 'DBL÷',
   );
 
   static final NormalArgOperation lbl = NormalArgOperation(
@@ -805,7 +806,7 @@ class Operations16 extends Operations {
 
   static final NormalOperation dblx = NormalOperation.intOnly(
     intCalc: _doubleIntMultiply,
-    name: 'DBLx',
+    name: 'DBL×',
   );
 
   /// Shown as blue "<" on the keyboard - it shifts the number left,
@@ -1041,7 +1042,7 @@ class ButtonLayout16 extends ButtonLayout {
     factory,
     '\u00D7',
     'AND',
-    'DBLx',
+    'DBL×',
     Operations16.mult,
     Operations16.and,
     Operations16.dblx,

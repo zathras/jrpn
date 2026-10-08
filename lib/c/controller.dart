@@ -573,12 +573,15 @@ class NumberEntry extends NoArgOperation {
   final int numericValue;
 
   @override
+  final String? programListingTestArgName;
+
+  @override
   bool get endsDigitEntry => false;
 
   @override
   bool liftStackIfEnabled(Model m) => false;
 
-  NumberEntry(String name, this.numericValue) : super(name: name);
+  NumberEntry(String name, this.numericValue, {this.programListingTestArgName}) : super(name: name);
 
   @override
   void pressed(LimitedState arg) =>
@@ -722,6 +725,22 @@ class NormalOperation extends NoArgOperation implements ArgDone {
     Model m,
     DisplayModeSelector<void Function(Model)?, T> selector,
   ) => m.displayMode.select(selector, this);
+}
+
+class NormalOperationWithListingArgName extends NormalOperation {
+  NormalOperationWithListingArgName.floatOnly({
+    super.pressed,
+    super.stackLift,
+    required super.floatCalc,
+    super.complexCalc,
+    required super.name,
+    super.endsDigitEntry,
+    super.maxOneByteOpcodes,
+    required this.programListingArgName
+  }) : super.floatOnly();
+
+  @override
+  final String programListingArgName;
 }
 
 ///

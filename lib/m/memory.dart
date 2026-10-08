@@ -928,6 +928,10 @@ abstract class ProgramOperation {
   /// default.
   String? get programListingArgName => null;
 
+  /// Name for this key as an arg in the program listing for the TEST
+  /// operation on the 15C.
+  String? get programListingTestArgName => null;
+
   /// Is this the f or g shift key?
   bool get isShift => false;
 }
@@ -1225,6 +1229,8 @@ class OperationMap<OT extends ProgramOperation> {
                   las = ' ${arg.name}';
                 } else if (arg == Arg.kDot) {
                   las = ' .'; // "FLOAT  ." is nicer than "FLOAT 48".
+                } else if (op == Arg.testOp) {
+                  las = ' ${arg.programListingTestArgName}';
                 } else {
                   las = ' ${(arg.programListingArgName ?? as.trim())}';
                 }

@@ -76,7 +76,7 @@ class OperationsScientific extends Operations {
     complexCalc: (Model m) {
       m.resultXC = m.xC.exp();
     },
-    name: 'eX',
+    name: 'eˣ',
   );
 
   static final NormalOperation xSquared = NormalOperationShiftedArg.floatOnly(
@@ -90,7 +90,7 @@ class OperationsScientific extends Operations {
       final v = m.xCV;
       m.resultXCV = v.decimalMultiply(v, m.checkOverflow);
     },
-    name: 'x^2',
+    name: 'x²',
   );
 
   static final NormalOperation lnOp = NormalOperationShiftedArg.floatOnly(
@@ -106,7 +106,7 @@ class OperationsScientific extends Operations {
     complexCalc: (Model m) {
       m.resultXC = _checkResultC(m.xC.ln, 0);
     },
-    name: 'ln',
+    name: 'LN',
   );
 
   static final NormalOperation tenX15 = NormalOperationOrLetter.floatOnly(
@@ -118,7 +118,7 @@ class OperationsScientific extends Operations {
     complexCalc: (Model m) {
       m.resultXC = (m.xC * const Complex(dart.ln10, 0)).exp();
     },
-    name: '10^x',
+    name: '10ˣ',
   );
 
   static final NormalOperation logOp = NormalOperationShiftedArg.floatOnly(
@@ -134,7 +134,7 @@ class OperationsScientific extends Operations {
     complexCalc: (Model m) {
       m.resultXC = _checkResultC(m.xC.ln, 0) / const Complex(dart.ln10, 0);
     },
-    name: 'log',
+    name: 'LOG',
   );
 
   static final NormalOperation yX15 = NormalOperationOrLetter.floatOnly(
@@ -149,7 +149,7 @@ class OperationsScientific extends Operations {
     complexCalc: (Model m) {
       m.popSetResultXC = m.yC.pow(m.xC);
     },
-    name: 'yX',
+    name: 'yˣ',
   );
 
   static final NormalOperation percent = NormalOperationShiftedArg.floatOnly(
@@ -175,7 +175,7 @@ class OperationsScientific extends Operations {
           final result = ((x - y) / y) * hundred;
           m.resultX = m.checkOverflow(() => result.toValue());
         },
-        name: 'delta%',
+        name: 'Δ%',
       );
 
   static final NormalOperation piOp = NormalOperation.floatOnly(
@@ -183,7 +183,7 @@ class OperationsScientific extends Operations {
     floatCalc: (Model m) {
       m.resultXF = dart.pi;
     },
-    name: 'PI',
+    name: 'π',
   );
 
   static final NormalOperation iOp = NormalOperation.floatOnly(
@@ -255,7 +255,7 @@ class OperationsScientific extends Operations {
       // Always in radians - see 15C manual p. 131, "For the trigonometric..."
       m.resultXC = m.xC.asin();
     },
-    name: 'SIN-1',
+    name: 'SIN⁻¹',
   );
 
   static final NormalOperation cos = NormalOperation.floatOnly(
@@ -279,7 +279,7 @@ class OperationsScientific extends Operations {
       // Always in radians - see 15C manual p. 131, "For the trigonometric..."
       m.resultXC = m.xC.acos();
     },
-    name: 'COS-1',
+    name: 'COS⁻¹',
   );
 
   static final NormalOperation tan = NormalOperation.floatOnly(
@@ -301,7 +301,7 @@ class OperationsScientific extends Operations {
       // Always in radians - see 15C manual p. 131, "For the trigonometric..."
       m.resultXC = m.xC.atan();
     },
-    name: 'TAN-1',
+    name: 'TAN⁻¹',
   );
 
   static final NormalOperation sinh = NormalOperation.floatOnly(
@@ -323,7 +323,7 @@ class OperationsScientific extends Operations {
       // Always in radians - see 15C manual p. 131, "For the trigonometric..."
       m.resultXC = m.xC.asinh();
     },
-    name: 'SINH-1',
+    name: 'SINH⁻¹',
   );
 
   static final NormalOperation cosh = NormalOperation.floatOnly(
@@ -345,7 +345,7 @@ class OperationsScientific extends Operations {
       // Always in radians - see 15C manual p. 131, "For the trigonometric..."
       m.resultXC = m.xC.acosh();
     },
-    name: 'COSH-1',
+    name: 'COSH⁻¹',
   );
 
   static final NormalOperation tanh = NormalOperation.floatOnly(
@@ -367,7 +367,7 @@ class OperationsScientific extends Operations {
       // Always in radians - see 15C manual p. 131, "For the trigonometric..."
       m.resultXC = m.xC.atanh();
     },
-    name: 'TANH-1',
+    name: 'TANH⁻¹',
   );
 
   static final NormalOperation lstx15 = NormalOperation.floatOnly(
@@ -398,7 +398,7 @@ class OperationsScientific extends Operations {
         v.real * dart.sin(v.imaginary * m.trigMode.scaleFactor),
       );
     },
-    name: '->R',
+    name: '→R',
   );
 
   static final NormalOperation toP = NormalOperation.floatOnly(
@@ -415,31 +415,31 @@ class OperationsScientific extends Operations {
         dart.atan2(v.imaginary, v.real) / m.trigMode.scaleFactor,
       );
     },
-    name: '->P',
+    name: '→P',
   );
 
   static final NormalOperation toHMS = NormalOperation.floatOnly(
     floatCalc: convertHtoHMS,
-    name: '->H.MS',
+    name: '→H.MS',
   );
 
   static final NormalOperation toH = NormalOperation.floatOnly(
     floatCalc: convertHMStoH,
-    name: '->H',
+    name: '→H',
   );
 
   static final NormalOperation toRad = NormalOperation.floatOnly(
     floatCalc: (Model m) {
       m.resultXF = m.xF * dart.pi / 180;
     },
-    name: '->RAD',
+    name: '→RAD',
   );
 
   static final NormalOperation toDeg = NormalOperation.floatOnly(
     floatCalc: (Model m) {
       m.resultXF = 180 * m.xF / dart.pi;
     },
-    name: '->DEG',
+    name: '→DEG',
   );
 
   static final NormalOperation fracOp = NormalOperation.floatOnly(
@@ -484,7 +484,7 @@ class OperationsScientific extends Operations {
       );
     },
     needsStackLiftIfEnabled: _statsLift,
-    name: 'xBar',
+    name: 'x̅',
   );
 
   static final NormalOperation yHatR = NormalOperation.floatOnly(
@@ -499,7 +499,7 @@ class OperationsScientific extends Operations {
       m.y = m.checkOverflow(() => lr.r.toValue());
       m.x = m.checkOverflow(() => lr.yHat(DecimalFP22(x)).toValue());
     },
-    name: 'yHat,r',
+    name: 'ŷ,r',
   );
 
   static final NormalOperation stdDeviation =
@@ -573,7 +573,7 @@ class OperationsScientific extends Operations {
         m.x = newReg;
       }
     },
-    name: 'E+',
+    name: '∑+',
   );
 
   static final NormalOperation sigmaMinus = NormalOperation.floatOnly(
@@ -610,7 +610,7 @@ class OperationsScientific extends Operations {
         m.x = reg[s.n];
       }
     },
-    name: 'E-',
+    name: '∑-',
   );
 
   static final NormalOperation clearSigma = NormalOperation.floatOnly(
@@ -620,7 +620,7 @@ class OperationsScientific extends Operations {
       }
       m.setXYZT(Value.zero);
     },
-    name: 'CLEAR-E',
+    name: 'CLEAR ∑',
   );
 
   static final NormalArgOperation fix = NormalArgOperation(
@@ -647,7 +647,7 @@ class OperationsScientific extends Operations {
     arg: PrecisionArg(
       f: (m, v) => m.displayMode = DisplayMode.eng(v, m.isComplexMode),
     ),
-    name: 'SCI',
+    name: 'ENG',
   );
 
   static final NormalArgOperation gsb = RunProgramOperation(

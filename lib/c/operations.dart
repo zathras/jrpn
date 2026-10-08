@@ -55,13 +55,13 @@ import 'states.dart';
 class Operations {
   // Unshifted keys:
 
-  static final n7 = NumberEntry('7', 7);
-  static final n8 = NumberEntry('8', 8);
-  static final n9 = NumberEntry('9', 9);
+  static final n7 = NumberEntry('7', 7, programListingTestArgName: 'x>y');
+  static final n8 = NumberEntry('8', 8, programListingTestArgName: 'x<y');
+  static final n9 = NumberEntry('9', 9, programListingTestArgName: 'x≥y');
 
-  static final n4 = NumberEntry('4', 4);
-  static final n5 = NumberEntry('5', 5);
-  static final n6 = NumberEntry('6', 6);
+  static final n4 = NumberEntry('4', 4, programListingTestArgName: 'x≤0');
+  static final n5 = NumberEntry('5', 5, programListingTestArgName: 'x=y');
+  static final n6 = NumberEntry('6', 6, programListingTestArgName: 'x≠y');
 
   static final NormalOperation rs = NormalOperation(
     stackLift: StackLift.neutral,
@@ -77,12 +77,12 @@ class Operations {
 
   static final NormalOperation rDown = NormalOperation(
     calc: (Model m) => m.rotateStackDown(),
-    name: 'Rv',
+    name: 'R⬇',
   );
 
   static final NormalOperation xy = NormalOperation(
     calc: (Model m) => m.swapXY(),
-    name: 'X<=>Y',
+    name: 'x↔y',
   );
 
   static final bsp = NonProgrammableOperation(
@@ -94,12 +94,12 @@ class Operations {
   static final NormalOperation enter = NormalOperation(
     calc: (Model m) => m.pushStack(),
     stackLift: StackLift.disable,
-    name: 'ENTER',
+    name: 'ENTER'
   );
 
-  static final n1 = NumberEntry('1', 1);
-  static final n2 = NumberEntry('2', 2);
-  static final n3 = NumberEntry('3', 3);
+  static final n1 = NumberEntry('1', 1, programListingTestArgName: 'x>0');
+  static final n2 = NumberEntry('2', 2, programListingTestArgName: 'x<0');
+  static final n3 = NumberEntry('3', 3, programListingTestArgName: 'x≥0');
 
   // On . changes decimal point
   // On on turns off
@@ -121,7 +121,7 @@ class Operations {
     name: 'g',
   );
 
-  static final n0 = NumberEntry('0', 0);
+  static final n0 = NumberEntry('0', 0, programListingTestArgName: 'x≠0');
 
   static final LimitedOperation dot = LimitedOperation(
     endsDigitEntry: false,
@@ -142,7 +142,7 @@ class Operations {
       m.resultX = m.memory.registers.indirectIndex;
       m.memory.registers.indirectIndex = tmp;
     },
-    name: 'x<=>(i)',
+    name: 'x↔(i)',
   );
 
   static final clearPrgm = NonProgrammableOperation(
@@ -216,14 +216,13 @@ class Operations {
       m.resultXC = m.xC.sqrt();
     },
     intCalc: (Model m) => m.resultXI = _sqrtI(m.xI, m),
-    name: 'sqrt(x)',
+    name: '√x̅',
   );
 
   static final pr = NonProgrammableOperation(
     pressed: (LimitedState s) => s.handlePR(),
     name: 'P/R',
   );
-
   static final bst = NonProgrammableOperation(
     name: 'BST',
     pressed: (LimitedState s) => s.handleBST(),
@@ -231,7 +230,7 @@ class Operations {
 
   static final NormalOperation rUp = NormalOperation(
     calc: (Model m) => m.rotateStackUp(),
-    name: 'R^',
+    name: 'R⬆',
   );
 
   static final NormalOperation pse = NormalOperation(
@@ -248,7 +247,7 @@ class Operations {
   );
 
   static final xLEy = NormalOperation(
-    name: 'x<=y',
+    name: 'x≤y',
     calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) <= 0),
   );
 
@@ -277,22 +276,22 @@ class Operations {
   );
 
   static final xNEy = NormalOperation(
-    name: 'x!=y',
+    name: 'x≠y',
     calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) != 0),
   );
 
   static final xNE0 = NormalOperation(
-    name: 'x!=0',
+    name: 'x≠0',
     calc: (Model m) => m.program.doNextIf(!m.isZero(m.x)),
   );
 
   static final xEQy = NormalOperation(
-    name: 'x==y',
+    name: 'x=y',
     calc: (Model m) => m.program.doNextIf(m.compare(m.x, m.y) == 0),
   );
 
   static final xEQ0 = NormalOperation(
-    name: 'x==0',
+    name: 'x=0',
     calc: (Model m) => m.program.doNextIf(m.isZero(m.x)),
   );
 

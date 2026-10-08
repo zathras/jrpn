@@ -532,6 +532,7 @@ class _TextItem extends BPItem {
   final BackPanel panel;
   @override
   final double width;
+  @override
   final TextAlign align;
   final FontStyle fontStyle;
   final String text;

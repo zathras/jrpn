@@ -8,3 +8,19 @@ When releasing, the version number needs to be changed in:
         version property
         msix_version
     ../jrpn1[56]_build/snap/snapcraft.yaml
+
+    ... And run flutter pub upgrade in all five places
+
+Release steps:
+    Android:  ./make_android.sh; upload to play store
+    MacOS:  Build in jrpn1?_build, upload to github
+    MSIX:  Build in jrpn1?_build, upload to MSFT store
+    Web:  ./make_web.sh
+    Linux SNAP:  Go to SNAP web page and select automatic jrpn1?_build versino
+    Linux flatpak: ./make_flatpak.sh
+        build_flatpak.sh  (can lint_flatpak.sh on Linux)
+        git push
+        build_flatpaks github action to get binaries
+        jrpn1?-flathub repo:
+            Pull request
+        

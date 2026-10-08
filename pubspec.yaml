@@ -19,7 +19,7 @@ dependencies:
   shared_preferences: ^2.3.4
   meta: ^1.15.0
   share_plus: ^13.1.0
-  app_links: ^6.0.1
+  app_links: ^7.0.0
   archive: ^4.0.2
   url_launcher: ^6.0.3
   file_selector: ^1.0.0

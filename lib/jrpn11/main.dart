@@ -55,6 +55,7 @@ void runStaticInitialization11() {
   Arg.kDot = Operations.dot;
   Arg.fShift = Operations.fShift;
   Arg.gShift = Operations.gShift;
+  Arg.testOp = null;
   Arg.registerISynonyms = Operations11._registerISynonyms;
   Arg.gsbLabelSynonyms = Operations11._letterAndRegisterISynonyms;
   assert(Arg.assertStaticInitialized());
@@ -112,7 +113,7 @@ class Operations11 extends OperationsScientific {
       }
       m.popSetResultXCV = m.yCV.decimalDivideBy(m.xCV, m.checkOverflow);
     },
-    name: '/',
+    name: '÷',
   );
 
   static final NormalOperation mult = NormalOperation.floatOnly(
@@ -122,7 +123,7 @@ class Operations11 extends OperationsScientific {
     complexCalc: (Model m) {
       m.popSetResultXCV = m.yCV.decimalMultiply(m.xCV, m.checkOverflow);
     },
-    name: '*',
+    name: '×',
   );
 
   static final NormalOperation plus = NormalOperation.floatOnly(
@@ -210,7 +211,7 @@ class Operations11 extends OperationsScientific {
         return x;
       },
     ),
-    name: 'x<->',
+    name: 'x↔',
   );
   static final NormalOperation dse = NormalOperation.floatOnly(
     floatCalc: (Model m) {
@@ -259,13 +260,15 @@ class Operations11 extends OperationsScientific {
     return n.toValue();
   }
 
-  static final NormalOperation ranNum = NormalOperation.floatOnly(
-    pressed: (ActiveState s) => s.liftStackIfEnabled(),
-    floatCalc: (Model m) {
-      m.resultXF = (m as Model11).rand.nextValue;
-    },
-    name: 'RAN #',
-  );
+  static final NormalOperation ranNum =
+      NormalOperationWithListingArgName.floatOnly(
+        pressed: (ActiveState s) => s.liftStackIfEnabled(),
+        floatCalc: (Model m) {
+          m.resultXF = (m as Model11).rand.nextValue;
+        },
+        name: 'RAN #',
+        programListingArgName: 'RAN #',
+      );
   static final userOp = NonProgrammableOperation(
     endsDigitEntry: true,
     calc: (_) {},
@@ -875,30 +878,19 @@ class CalculatorButtonHyperbolic extends CalculatorButton {
   final Operation inverseHyperOp;
 
   CalculatorButtonHyperbolic(
-    ButtonFactory bFactory,
-    String uText,
-    String fText,
-    String gText,
-    Operation uKey,
-    Operation fKey,
-    Operation gKey,
+    super.bFactory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
     this.hyperOp,
     this.inverseHyperOp,
-    String acceleratorKey, {
-    String? acceleratorLabel,
-    Key? key,
-  }) : super(
-         bFactory,
-         uText,
-         fText,
-         gText,
-         uKey,
-         fKey,
-         gKey,
-         acceleratorKey,
-         acceleratorLabel: acceleratorLabel,
-         key: key,
-       );
+    super.acceleratorKey, {
+    super.acceleratorLabel,
+    super.key,
+  });
 }
 
 class LandscapeButtonFactory11 extends LandscapeButtonFactory {
@@ -985,30 +977,19 @@ class CalculatorButtonWithUserMode extends CalculatorButton {
   final Operation fKeyUser;
 
   CalculatorButtonWithUserMode(
-    ButtonFactory bFactory,
-    String uText,
-    String fText,
-    String gText,
-    Operation uKey,
-    Operation fKey,
-    Operation gKey,
+    super.bFactory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
     this.uKeyUser,
     this.fKeyUser,
-    String acceleratorKey, {
-    String? acceleratorLabel,
-    Key? key,
-  }) : super(
-         bFactory,
-         uText,
-         fText,
-         gText,
-         uKey,
-         fKey,
-         gKey,
-         acceleratorKey,
-         acceleratorLabel: acceleratorLabel,
-         key: key,
-       );
+    super.acceleratorKey, {
+    super.acceleratorLabel,
+    super.key,
+  });
 }
 
 class Controller11 extends RealController {

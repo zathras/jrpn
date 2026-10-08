@@ -35,6 +35,7 @@ abstract class Arg {
   static late final ProgramOperation kDot;
   static late final ProgramOperation fShift;
   static late final ProgramOperation gShift;
+  static late final ProgramOperation? testOp;
   static late final Map<ProgramOperation, ProgramOperation> registerISynonyms;
   static late final Map<ProgramOperation, ProgramOperation> gsbLabelSynonyms;
 

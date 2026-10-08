@@ -59,6 +59,7 @@ void runStaticInitialization15() {
   Arg.kDot = Operations.dot;
   Arg.fShift = Operations.fShift;
   Arg.gShift = Operations.gShift;
+  Arg.testOp = Operations15.testOp;
   Arg.registerISynonyms = Operations15._registerISynonyms;
   Arg.gsbLabelSynonyms = Operations15._letterAndRegisterISynonyms;
   assert(Arg.assertStaticInitialized());
@@ -149,7 +150,7 @@ class Operations15 extends OperationsScientific {
         m.popSetResultXCV = m.yCV.decimalDivideBy(m.xCV, m.checkOverflow);
       }
     },
-    name: '/',
+    name: '÷',
   );
 
   static void _scalarOrMatrix(
@@ -207,7 +208,7 @@ class Operations15 extends OperationsScientific {
         m.popSetResultXCV = m.yCV.decimalMultiply(m.xCV, m.checkOverflow);
       }
     },
-    name: '*',
+    name: '×',
   );
 
   /// Calculate result = y * x
@@ -582,7 +583,7 @@ class Operations15 extends OperationsScientific {
         return x;
       },
     ),
-    name: 'x<->',
+    name: 'x↔',
   );
   static final NormalArgOperation dse = NormalArgOperation(
     maxOneByteOpcodes: 4,
@@ -643,15 +644,17 @@ class Operations15 extends OperationsScientific {
         m.program.runner?.startRunningProgram(IntegrateProgramRunner());
       },
     ),
-    name: 'integrate',
+    name: '∫',
   );
-  static final NormalOperation ranNum = NormalOperation.floatOnly(
-    pressed: (ActiveState s) => s.liftStackIfEnabled(),
-    floatCalc: (Model m) {
-      m.resultXF = (m as Model15).rand.nextValue;
-    },
-    name: 'RAN #',
-  );
+  static final NormalOperation ranNum =
+      NormalOperationWithListingArgName.floatOnly(
+        pressed: (ActiveState s) => s.liftStackIfEnabled(),
+        floatCalc: (Model m) {
+          m.resultXF = (m as Model15).rand.nextValue;
+        },
+        name: 'RAN #',
+        programListingArgName: 'RAN #',
+      );
   static final NormalOperation reImSwap = NormalOperation.floatOnly(
     floatCalc: (Model m) {
       (m as Model15).isComplexMode = true;
@@ -659,11 +662,11 @@ class Operations15 extends OperationsScientific {
       m.x = m.xImaginary; // Not m.resultX; don't change Last X
       m.xImaginary = x;
     },
-    name: 'Re<=>Im',
+    name: 'Re↔Im',
   );
 
   static final xEQ0_15 = NormalOperation(
-    name: 'x==0',
+    name: 'x=0',
     calc: (Model m) {
       if (m.x.asMatrix != null) {
         m.program.doNextIf(false);
@@ -1962,30 +1965,19 @@ class CalculatorButtonHyperbolic extends CalculatorButton {
   final Operation inverseHyperOp;
 
   CalculatorButtonHyperbolic(
-    ButtonFactory bFactory,
-    String uText,
-    String fText,
-    String gText,
-    Operation uKey,
-    Operation fKey,
-    Operation gKey,
+    super.bFactory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
     this.hyperOp,
     this.inverseHyperOp,
-    String acceleratorKey, {
-    String? acceleratorLabel,
-    Key? key,
-  }) : super(
-         bFactory,
-         uText,
-         fText,
-         gText,
-         uKey,
-         fKey,
-         gKey,
-         acceleratorKey,
-         acceleratorLabel: acceleratorLabel,
-         key: key,
-       );
+    super.acceleratorKey, {
+    super.acceleratorLabel,
+    super.key,
+  });
 }
 
 class LandscapeButtonFactory15 extends LandscapeButtonFactory {
@@ -2072,30 +2064,19 @@ class CalculatorButtonWithUserMode extends CalculatorButton {
   final Operation fKeyUser;
 
   CalculatorButtonWithUserMode(
-    ButtonFactory bFactory,
-    String uText,
-    String fText,
-    String gText,
-    Operation uKey,
-    Operation fKey,
-    Operation gKey,
+    super.bFactory,
+    super.uText,
+    super.fText,
+    super.gText,
+    super.uKey,
+    super.fKey,
+    super.gKey,
     this.uKeyUser,
     this.fKeyUser,
-    String acceleratorKey, {
-    String? acceleratorLabel,
-    Key? key,
-  }) : super(
-         bFactory,
-         uText,
-         fText,
-         gText,
-         uKey,
-         fKey,
-         gKey,
-         acceleratorKey,
-         acceleratorLabel: acceleratorLabel,
-         key: key,
-       );
+    super.acceleratorKey, {
+    super.acceleratorLabel,
+    super.key,
+  });
 }
 
 class Controller15 extends RealController {
