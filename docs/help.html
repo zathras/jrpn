@@ -17,7 +17,7 @@ blockquote {margin-left: 10%; margin-right: 12%}
 <body style="background-color: #ffffff">
 <p style="text-align: center; font-size: x-large; font-weight: bold;">
     JRPN 15C/16C - User Guide
-</p>
+</p>/
 <p>
 This is the user guide for JRPN 15C and JRPN 16C calculator 
 simulators.  The main page is
@@ -54,6 +54,15 @@ internal mantissa, rouding the 5 to an even number in the next digit over.
 JRPN's value is a 64 bit IEEE float, which has a more precise 53 bit
 binary mantissa that's used when rounding to a 10 digit decimal mantissa.
 A 53 bit binary mantissa is equivalent to between 15 and 16 decimal digits.
+
+<h2>Flashing LCD Display</h2>
+<p>
+A flashing display is how an HP 15C indicates an overflow.  To clear it,
+clear flag 9 (g-CF-9), or turn the calculator off then on again.  JRPN
+works the same.  See the HP 15C user's guide (easily found online),
+and this
+<a href="https://www.hpmuseum.org/forum/archive/index.php?thread-17400.html">HP
+Forum post</a>.
 
 <h2>The ON Button</h2>
 <p>
