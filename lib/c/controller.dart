@@ -581,7 +581,8 @@ class NumberEntry extends NoArgOperation {
   @override
   bool liftStackIfEnabled(Model m) => false;
 
-  NumberEntry(String name, this.numericValue, {this.programListingTestArgName}) : super(name: name);
+  NumberEntry(String name, this.numericValue, {this.programListingTestArgName})
+    : super(name: name);
 
   @override
   void pressed(LimitedState arg) =>
@@ -736,7 +737,7 @@ class NormalOperationWithListingArgName extends NormalOperation {
     required super.name,
     super.endsDigitEntry,
     super.maxOneByteOpcodes,
-    required this.programListingArgName
+    required this.programListingArgName,
   }) : super.floatOnly();
 
   @override

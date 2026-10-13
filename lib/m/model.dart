@@ -1596,6 +1596,20 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
       }
       buf.writeln();
     }
+    buf.writeln();
+    buf.write('Memory:  ');
+    buf.writeln(memory.policy.showMemory());
+    buf.write('Platform:  ');
+    if (kIsWeb) {
+      if (kIsWasm) {
+        buf.write('Web / WASM ');
+      } else {
+        buf.write('Web / JavaScript ');
+      }
+    }
+    buf.writeln(
+      defaultTargetPlatform.toString().replaceFirst('TargetPlatform.', ''),
+    );
     return buf.toString();
   }
 

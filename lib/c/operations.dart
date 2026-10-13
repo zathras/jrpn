@@ -94,7 +94,7 @@ class Operations {
   static final NormalOperation enter = NormalOperation(
     calc: (Model m) => m.pushStack(),
     stackLift: StackLift.disable,
-    name: 'ENTER'
+    name: 'ENTER',
   );
 
   static final n1 = NumberEntry('1', 1, programListingTestArgName: 'x>0');
