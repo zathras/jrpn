@@ -7,7 +7,14 @@
     "theme_color": "#0175C2",
     "description": "JRPN 15, HP 15C Simulator",
     "orientation": "any",
-    "prefer_related_applications": false,
+    "prefer_related_applications": true,
+    "related_applications": [
+      {
+        "platform": "play",
+        "url": "https://play.google.com/store/apps/details?id=com.jovial.jrpn15",
+        "id": "com.jovial.jrpn15"
+      }
+    ],
     "icons": [
         {
             "src": "icons/icon192.png",
