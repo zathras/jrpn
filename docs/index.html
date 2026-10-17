@@ -42,10 +42,10 @@ calculator.  JRPN 15C is similarly inspired by the
 <a href="https://en.wikipedia.org/wiki/HP-15C" rel="nofollow">HP 15C</a>.
 Both came out in 1982, and for my money, there were marvels of their time.
 The 15C I bought in early '83 still works great!  If you're looking for
-a user guide, it's available <a href="help.html">here</a>.
+the JRPN user guide, it's available <a href="help.html">here</a>.
 <h2>Project Goals</h2>
 <p>
-I've tried to make them work the same as a
+I've tried to make JRPN work the same as a
 real 16C/15C, and to mimic the appearance as closely as possible.  This is a
 completely clean-room implementation; I didn't have access to any of the
 calculators' source code.  I just read the manuals (very closely!), asked a 
@@ -82,7 +82,7 @@ which can be easily found on the web.  A couple of little things are different:
     <li>The app can interpret a URL that contains an encoding of
         the calculator state.  This works in the web version, and
         also on the mobile versions:  The Android app
-        registers to intercept navigation to the calculator's domain.
+        registers to intercept navigation to the calculator's internet domain.
     <li>If you want calculator programs to run faster, there's a 
         setting for that.  But watching the 7-segment flashing 
         "running" message is, to my mind, part of the fun!
@@ -113,7 +113,7 @@ Much later, I ran across
 Gray's</a> wonderful <a href="http://www.wrpn.emmet-gray.com/">WRPN
 calculator</a>.  I always wanted a 16C, but I never really <i>needed</i> it,
 and I was a starving student at the time :-)  WRPN works great on Android, but
-the UI uses images that were created back when screen resolutions weren't so
+the UI used images that were created back when screen resolutions weren't so
 high, so I dropped Emmet a line, and re-did some of the UI and published 
 that as what I'm now calling
 <a href="https://legacy.jrpn.jovial.com/">"Legacy JRPN"</a>.
@@ -134,7 +134,7 @@ into such limited hardware is amazing!
 
 <h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;What about the 12C?</h3>
 <p>
-JRPN is a hobbyproject; there's no revenue of any sort.  I don't have any
+JRPN is a hobby project; there's no revenue of any sort.  I don't have any
 plans to make a 12C version.  If anyone wants to build a 12C from the code,
 go ahead!  It's open-source with a permissive license.  I'd be happy to answer
 wuestions about JRPN's internals.
@@ -213,42 +213,51 @@ This is the same page as you get from the Help -&gt; User Guide in the app.
 <p>
 You can get JRPN 16C and 15C at the following locations:
 <ul>
-    <li>Android app store:  <a href="https://play.google.com/store/apps/details?id=com.jovial.jrpn15">JRPN 15C</a> and
+    <li><b>Android</b> app store:  <a href="https://play.google.com/store/apps/details?id=com.jovial.jrpn15">JRPN 15C</a> and
         <a href="https://play.google.com/store/apps/details?id=com.jovial.jrpn2">JRPN 16C</a>.</li>
-    <li>Linux:  in Flathub at <a href="https://flathub.org/en/apps/com.jovial.jrpn15">JRPN 15C</a> and <a href="https://flathub.org/en/apps/com.jovial.jrpn16">JRPN 16C</a>, and in the Snap store at <a href="https://snapcraft.io/jrpn15" rel="nofollow">JRPN 15C</a> and <a href="https://snapcraft.io/jrpn16" rel="nofollow">JRPN 16C</a></li>
-    <li>Windows app store:  <a href="https://apps.microsoft.com/store/detail/jrpn-15c/9P2FG47MD49M" rel="nofollow">JRPN 15C</a> and <a href="https://apps.microsoft.com/store/detail/jrpn-16c/9NHCLCBXP7T5" rel="nofollow">JRPN 16C</a>, with icons <a href="https://github.com/zathras/jrpn/tree/main/misc">here</a> if you need them.</li>
+    <li><b>Linux</b>:  in Flathub at <a href="https://flathub.org/en/apps/com.jovial.jrpn15">JRPN 15C</a> and <a href="https://flathub.org/en/apps/com.jovial.jrpn16">JRPN 16C</a>, and in the Snap store at <a href="https://snapcraft.io/jrpn15" rel="nofollow">JRPN 15C</a> and <a href="https://snapcraft.io/jrpn16" rel="nofollow">JRPN 16C</a></li>
+    <li><b>Windows</b> app store:  <a href="https://apps.microsoft.com/store/detail/jrpn-15c/9P2FG47MD49M" rel="nofollow">JRPN 15C</a> and <a href="https://apps.microsoft.com/store/detail/jrpn-16c/9NHCLCBXP7T5" rel="nofollow">JRPN 16C</a>, with icons <a href="https://github.com/zathras/jrpn/tree/main/misc">here</a> if you need them.</li>
+    <li>For <b>MacOS</b> as of 2026, Apple imposes
+    some hoops to jump through the first time launching.  You can download
+    the <font size="+1"><code>.app</code></font> from Github (see below),
+    and drag it to your Applications folder.  The first time you double-click,
+    it will refuse to launch.  The "launch anyway" option is hidden, under
+    System Settings -> Privacy & Security, toward the bottom.  You
+    only have to do this once.
+    <li>For <b>iOS</b>, you can install the web version as a Progressive Web
+        App (PWA).  This means you have an icon on the home screen.  It might
+        work offline too, though PWAs seem to be rather fragile in that
+        regard.  To install, go to
+        <a href="https://jrpn.jovial.com/run15/index.html">JRPN 15</a> or
+        <a href="https://jrpn.jovial.com/run/index.html">JRPN 16</a> on the
+        web, then Menu -> Install -> INSTALL.  Depending on Apple's current
+        level of support for PWAs, it might suggest other steps.
+    <li>For other platforms, like phones that aren't Android or iOS, the PWA
+        described above for iOS might work, too.  Go to
+        <a href="https://jrpn.jovial.com/run15/index.html">JRPN 15</a> or
+        <a href="https://jrpn.jovial.com/run/index.html">JRPN 16</a> on the
+        web, then Menu -> Install -> INSTALL.
     <li>The <a href="https://github.com/zathras/jrpn/">Github Repository</a>
         has source, and binaries for MacOS, iOS, and an Android universal APK,
         under
         <a href="https://github.com/zathras/jrpn/releases">releases</a>.
-    <li>For MacOS circa 2025 (Sequoia / 15.x), there are some new hoops 
-        to jump through the first time launching.  The first time, it will 
-        refuse to launch.  The "launch anyway" option is hidden, under
-        System Settings -> Privacy & Security, toward the bottom.  You
-        only have to do this once.
-    <li>For iOS, it might be available through my friend's developer account, at
-        <a href="https://apps.apple.com/us/app/jrpn-15c/id6484504019">JRPN
-        15C</a> and
-        <a href="https://apps.apple.com/us/app/jrpn-16c/id6484402697">JRPN
-        16C</a>.  I have heard reports of a "not available in your region"
-        error at times.  I'm not sure what hoops Apple makes my friend jump
-        through to keep this current, so no promises!
     <li>Dartdoc documentation for the source is
         <a href="dartdoc/index.html">available here</a>.
 </ul>
 
 <p>
-The problem with Apple is that in order to give
-away software for free, you have to pay Apple $100 a year for the privilege.
-It's not really about the amount of money -- it's more about the ongoing 
-hassle.  Well, and ten buck a month for nothing tangible in return is a
+The reason there isn't a native iOS version is that in order to give
+away software for free, you have to go through a bunch of administration,
+and pay Apple $100 a year for the privilege.  It's not really about 
+the amount of money -- it's more about the ongoing 
+hassle.  Well, and ten bucks a month for nothing tangible in return is a
 stretch :-)  I vaguely remember there being something about Apple wanting me to
 own an iOS phone in order to publish for iOS, too.  Me, I have a cheap Android
 phone that I replace maybe every five years.  Anyway, the source builds and
-runs fine for iOS.
+runs fine for iOS, if you're set up to build from source.
 
 <p style="float: right; align-items: center; font-style: italic;">
-<a href="http://en.wikipedia.org/wiki/Vi"><img alt="*" src="vi.powered.gif"></a>
+<a href="https://en.wikipedia.org/wiki/Vi_(text_editor)"><img alt="*" src="vi.powered.gif"></a>
 <p style="float: right; align-items: center; font-style: italic;">
 <a href="https://bill.jovial.com/">Bill Foote</a>&nbsp;&nbsp;&nbsp;&nbsp;
 </body>

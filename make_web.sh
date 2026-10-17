@@ -6,13 +6,15 @@
 cd `dirname $0`
 cd jrpn15
 flutter clean
-flutter build web --wasm --release
+flutter build web --wasm --no-web-resources-cdn --no-tree-shake-icons --release  
+# Seems to have no effect, and is deprecated as of 10/2026: --pwa-strategy=offline-first 
+#
 if [ $? != 0 ]; then
     exit 1
 fi
 cd ../jrpn16
 flutter clean
-flutter build web --wasm --release
+flutter build web --wasm --no-web-resources-cdn --no-tree-shake-icons --release  
 if [ $? != 0 ]; then
     exit 1
 fi

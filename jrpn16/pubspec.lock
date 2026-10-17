@@ -641,6 +641,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
+  pwa_install_wasm:
+    dependency: transitive
+    description:
+      name: pwa_install_wasm
+      sha256: "2d3dbd227f03cfa100d7305c5b73b4cd0a566aa7265333ca6e62ab4f1d015685"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   record_use:
     dependency: transitive
     description:

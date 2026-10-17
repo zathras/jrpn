@@ -10,8 +10,8 @@
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="jrpn16">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <meta name="apple-mobile-web-app-title" content="JRPN 16C">
+  <link rel="apple-touch-icon" href="icons/icon192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
@@ -21,5 +21,40 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+
+  <!-- Capture PWA install prompt event -->
+<script>
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      deferredPrompt = e;
+      // The event may fire after PWAInstall().setup() has already run
+      if (typeof hasPrompt === 'function') hasPrompt();
+    });
+
+    function promptInstall(){
+       deferredPrompt.prompt();
+    }
+
+    // Listen for app install event
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null;
+      appInstalled();
+    });
+
+    // Track how PWA was launched (either from browser or as PWA)
+    function getLaunchMode() {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+      if(deferredPrompt) hasPrompt();
+      if (document.referrer.startsWith('android-app://')) {
+        appLaunchedAsTWA();
+      } else if (navigator.standalone || isStandalone) {
+        appLaunchedAsPWA();
+      } else {
+        window.appLaunchedInBrowser();
+      }
+    }
+</script>
+
 </body>
 </html>

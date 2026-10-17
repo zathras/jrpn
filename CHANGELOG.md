@@ -1,3 +1,8 @@
+Version 2.1.21 (upcoming)
+  * Packaged JRPN 15 and 16 as flatpak; posted to flathub
+  * Packeged as PWA (Progressive Web App)
+  * Build web version with WASM enabled
+
 Version 2.1.20 - June 2026
   * Floating point entry fidelity improvements in Grow LCD mode:  Issue 141
   * 16C int mode: Better handling of leading zeroes on digit entry:  Issue 159

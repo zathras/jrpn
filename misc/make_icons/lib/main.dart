@@ -58,6 +58,22 @@ class _MyHomePageState extends State<MyHomePage> {
           size: 512, border: 92, modelName: '${model}C', adaptive: true);
       await makeIcon(File('$base/jrpn$model/assets_$model/icon_ios.png'),
           size: 1024, border: 72, modelName: '${model}C', adaptive: false);
+      await makeIcon(File('$base/jrpn$model/web/icons/app_icon_16.png'),
+          size: 16, border: 1, modelName: '${model}C', adaptive: false);
+      await makeIcon(File('$base/jrpn$model/web/icons/app_icon_32.png'),
+          size: 32, border: 2, modelName: '${model}C', adaptive: false);
+      await makeIcon(File('$base/jrpn$model/web/icons/icon192.png'),
+          size: 192, border: 12, modelName: '${model}C', adaptive: false);
+      await makeIcon(File('$base/jrpn$model/web/icons/icon256.png'),
+          size: 256, border: 16, modelName: '${model}C', adaptive: false);
+      await makeIcon(File('$base/jrpn$model/web/icons/icon512.png'),
+          size: 512, border: 32, modelName: '${model}C', adaptive: false);
+      await makeIcon(File('$base/jrpn$model/web/icons/icon_maskable192.png'),
+          size: 192, border: 12, modelName: '${model}C', adaptive: false);
+      await makeIcon(File('$base/jrpn$model/web/icons/icon_maskable256.png'),
+          size: 256, border: 16, modelName: '${model}C', adaptive: false);
+      await makeIcon(File('$base/jrpn$model/web/icons/icon_maskable512.png'),
+          size: 512, border: 32, modelName: '${model}C', adaptive: false);
     }
   }
 
@@ -88,13 +104,6 @@ class _MyHomePageState extends State<MyHomePage> {
     print('Created $out');
   }
 
-  /*
-  final im = await getImage(const Text('Hello, world'));
-  final png = await im.toByteData(format: ui.ImageByteFormat.png);
-  im.dispose();
-  final f = File('/tmp/foo.png');
-  await f.writeAsBytes(png!.buffer.asUint8List());
-   */
 
   @override
   Widget build(BuildContext context) {

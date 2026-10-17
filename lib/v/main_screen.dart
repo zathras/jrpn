@@ -33,6 +33,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
+import 'package:pwa_install_wasm/pwa_install_wasm.dart' show PWAInstall;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../c/controller.dart';
@@ -614,6 +615,8 @@ class _MainMenuState extends State<MainMenu> {
     icon: const Icon(null),
     onSelected: (void Function() action) => setState(() => action()),
     itemBuilder: (BuildContext context) {
+      final bool appIsInstalled =
+          !kIsWeb || (PWAInstall().launchMode?.installed == true);
       return <PopupMenuEntry<void Function()>>[
         PopupMenuItem(
           value: () {},
@@ -624,6 +627,21 @@ class _MainMenuState extends State<MainMenu> {
           child: _SettingsMenu('Settings', widget.main.topWidget),
         ),
         // PopupMenuDivider(),
+        ...(!appIsInstalled
+            ? [
+                PopupMenuItem(
+                  value: () {
+                    unawaited(
+                      showDialog(
+                        context: context,
+                        builder: _showInstallPWADialog,
+                      ),
+                    );
+                  },
+                  child: const Text('Install'),
+                ),
+              ]
+            : []),
         PopupMenuItem(
           value: () {},
           child: _HelpMenu('Help', widget.main.icon, controller),
@@ -735,6 +753,56 @@ class _HelpMenu extends StatelessWidget {
           const Spacer(),
           const Icon(Icons.arrow_right, size: 30.0),
         ],
+      ),
+    );
+  }
+}
+
+Widget _showInstallPWADialog(BuildContext context) {
+  const installText =
+      'If your browser supports it, you can install JRPN as a '
+      'Progressive Web App (PWA).  This will cause an icon for JRPN '
+      'to be installed on your device.  This icon should allow you to launch '
+      'and use JRPN, even when you\'re not connected to the internet.\n\n'
+      'You might need to close the browser tab or window or after installation '
+      'for the icon to appear.';
+
+  return AlertDialog(
+    title: const Text('Install as PWA'),
+    content: const Text(installText),
+    actions: [
+      TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        child: const Text('CANCEL'),
+      ),
+      TextButton(
+        onPressed: () {
+          _installPWA(context);
+        },
+        child: const Text('INSTALL'),
+      ),
+    ],
+  );
+}
+
+void _installPWA(BuildContext context) async {
+  Navigator.of(context).pop();
+  const msg =
+      'Unable to install PWA.\n\n'
+      'On iOS, as of Oct. 2026 you can only install a PWA from the browser '
+      'menu.  From the Safari menu, tap "Share," scroll down and tap "Add '
+      'to Home Screen", then tap "Add" in the top right corner.\n\n'
+      'Other browsers and other platforms might have a browser option to '
+      'install a PWA, too.';
+  try {
+    PWAInstall().promptInstall_();
+  } catch (e) {
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => ErrorDialog('Install Error', msg),
       ),
     );
   }

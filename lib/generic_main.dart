@@ -32,6 +32,7 @@ import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
 import 'package:jrpn/v/buttons.dart';
 import 'package:jrpn/v/isw.dart';
+import 'package:pwa_install_wasm/pwa_install_wasm.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:app_links/app_links.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -776,6 +777,9 @@ void genericMain(Jrpn calculator) async {
       SystemUiMode.manual,
       overlays: [SystemUiOverlay.top],
     );
+  }
+  if (kIsWeb) {
+    PWAInstall().setup();
   }
   runApp(calculator);
 }

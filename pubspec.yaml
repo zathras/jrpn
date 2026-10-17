@@ -23,6 +23,7 @@ dependencies:
   archive: ^4.0.2
   url_launcher: ^6.0.3
   file_selector: ^1.0.0
+  pwa_install_wasm: ^0.1.1
   desktop_multi_window:
     git:
       url: https://github.com/zathras/tmp_desktop_multi_window.git
