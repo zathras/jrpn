@@ -5,6 +5,18 @@ allprojects {
     }
 }
 
+android {
+    packagingOptions {
+        dex.useLegacyPackaging = true
+        jniLibs.useLegacyPackaging = true
+    }
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs 
+        // (for IzzyOnDroid/F-Droid)
+        includeInApk = false
+    }
+}
+
 rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
