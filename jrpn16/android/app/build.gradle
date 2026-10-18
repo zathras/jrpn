@@ -27,6 +27,16 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    packagingOptions {
+        dex.useLegacyPackaging = true
+        jniLibs.useLegacyPackaging = true
+    }
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs 
+        // (for IzzyOnDroid/F-Droid)
+        includeInApk = false
+    }
+
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
     }
