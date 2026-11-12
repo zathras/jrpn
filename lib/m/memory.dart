@@ -422,7 +422,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   bool get hasExtended => _extendedOpcode < 0x100;
 
   /// Insert a new instruction, and increment currentLine to refer to it.
-  void insert(final ProgramInstruction<OT> instruction) {
+  void insert(ProgramInstruction<OT> instruction) {
     final needed = instruction.isExtended ? 2 : 1;
     if (bytesToNextAllocation < needed) {
       memory.policy.checkExtendProgramMemory();
@@ -484,7 +484,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
   }
 
   /// line counts from 1, with a phantom return at line 0
-  ProgramInstruction<OT> operator [](final int line) {
+  ProgramInstruction<OT> operator [](int line) {
     final int opCode = opcodeAt(line);
     final OT op = _operationTable[opCode]!;
     // "!" throws an exception on an illegal opCode, which is what we want.
@@ -513,7 +513,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     return result;
   }
 
-  void _setCachedAddress(final int line) {
+  void _setCachedAddress(int line) {
     if (line < _cachedLine) {
       _cachedLine = 1;
       _cachedAddress = 0;
@@ -528,7 +528,7 @@ abstract class ProgramMemory<OT extends ProgramOperation> {
     }
   }
 
-  int opcodeAt(final int line) {
+  int opcodeAt(int line) {
     if (line == 0) {
       return (_rtn.arg as ArgDone).opcode;
     }

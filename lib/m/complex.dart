@@ -22,6 +22,7 @@ import 'dart:math';
 import 'dart:math' as dart;
 
 import 'package:meta/meta.dart';
+
 import 'model.dart' show CalculatorError;
 
 ///

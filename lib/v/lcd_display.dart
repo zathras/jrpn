@@ -45,7 +45,9 @@ library;
 
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
+
 import '../m/model.dart';
 
 // See the library comments, above!  (Android Studio  hides them by default.)
@@ -99,7 +101,7 @@ class _LcdDisplayState extends State<LcdDisplay> {
     super.dispose();
   }
 
-  void _update(final LcdContents next) {
+  void _update(LcdContents next) {
     if (_contents.lcdDigits != next.lcdDigits) {
       // Repaint whole UI, since the display size might have changed
       widget.jrpnState.setState(() {
@@ -749,8 +751,8 @@ class Segments {
   /// <img src="dartdoc/view.lcd_display/add_corner.jpg" style="width: 100%"/>
   ///
   static void _addCorner(
-    final Path path,
-    final double xa,
+    Path path,
+    double xa,
     double ya,
     double xb,
     double yb,

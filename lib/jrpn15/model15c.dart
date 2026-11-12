@@ -449,7 +449,7 @@ class ProgramMemory15<OT extends ProgramOperation> extends ProgramMemory<OT> {
     /// Because LBL . n is two-byte, we have to chase down the opcodes
     /// assigned to the LBL instruction.
     final List<int?> table = List.filled(25, null);
-    void visit(final Arg arg) {
+    void visit(Arg arg) {
       if (arg is KeyArg) {
         final ad = arg.child as ArgDone;
         final nv = arg.key.numericValue!;

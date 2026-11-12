@@ -23,9 +23,10 @@ this program; if not, see https://www.gnu.org/licenses/ .
 
 library;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:jrpn/v/main_screen.dart';
 import 'package:jrpn/v/back_panel.dart';
+
 import 'dart:math' as dart;
 
 ///
@@ -50,7 +51,7 @@ class BackPanel15 extends BackPanel {
   @override
   Widget buildBackPanelPortrait(
     BuildContext context,
-    final ScreenPositioner screen,
+    ScreenPositioner screen,
   ) => Stack(
     fit: StackFit.expand,
     children: [
@@ -77,7 +78,7 @@ class BackPanel15 extends BackPanel {
   @override
   Widget buildBackPanelLandscape(
     BuildContext context,
-    final ScreenPositioner screen,
+    ScreenPositioner screen,
   ) => Stack(
     fit: StackFit.expand,
     children: [

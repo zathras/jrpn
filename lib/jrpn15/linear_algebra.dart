@@ -149,7 +149,7 @@ void solve(Matrix a, AMatrix b, AMatrix result) {
 ///
 /// Invert m in place.
 ///
-void invert(final Matrix m) {
+void invert(Matrix m) {
   if (!m.isLU) {
     decomposeLU(m);
   }

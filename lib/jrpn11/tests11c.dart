@@ -23,6 +23,7 @@ library;
 import 'package:jrpn/c/operations_scientific.dart';
 
 import 'dart:math';
+
 import 'package:jrpn/m/model.dart';
 import 'package:jrpn/c/controller.dart';
 
@@ -401,7 +402,7 @@ class SelfTests11 extends SelfTests {
   Future<void> testIssue119() async {
     await test('11c Issue 119', () async {
       // Make sure Value.flaotIntPart works
-      Future<void> testIntPart(final int x) async {
+      Future<void> testIntPart(int x) async {
         final Value v = Value.fromDouble(x.toDouble());
         await expect(v.floatIntPart(), x);
         await expect(v.negateAsFloat().floatIntPart(), -x);

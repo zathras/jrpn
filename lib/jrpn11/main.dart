@@ -22,7 +22,7 @@ library;
 
 import 'dart:math' as dart;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/c/operations_scientific.dart';
@@ -37,6 +37,7 @@ import 'package:jrpn/v/isw.dart';
 import 'back_panel11c.dart';
 import 'tests11c.dart';
 import 'model11c.dart';
+
 import 'package:jrpn/m/more_math.dart';
 
 void main(List<String> args) async {

@@ -26,7 +26,7 @@ import 'dart:math';
 
 import 'package:jrpn/m/more_math.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/v/buttons.dart';
 import 'package:vector_math/vector_math_64.dart' as dart_mat;
@@ -43,10 +43,12 @@ import 'package:jrpn/jrpn15/matrix.dart';
 import 'package:jrpn/jrpn15/model15c.dart';
 import 'package:jrpn/jrpn15/tests15c.dart';
 import 'package:jrpn/generic_main.dart' show ScreenConfiguration;
+
 import 'hyperbolic.dart';
 import 'opcodes15c.dart';
 import 'program_test_15c.dart';
 import 'programs.dart';
+
 import 'package:jrpn/jrpn15/linear_algebra.dart' as linalg;
 
 Future<void> main() async {
@@ -2227,7 +2229,7 @@ class AdvancedFunctionTests {
   void expectMatrixVals(
     AMatrix m,
     List<List<num>> expected, [
-    final double epsilon = 0,
+    double epsilon = 0,
   ]) {
     expect(m.rows, expected.length);
     for (int r = 0; r < expected.length; r++) {
@@ -2672,7 +2674,7 @@ Future<void> decimalAddSubtract() async {
   final random = Random();
   // No real point in setting a seed, since Random() can change across
   // platforms and versions of the library.
-  double getRandom(final int exp) {
+  double getRandom(int exp) {
     return 2 * (random.nextDouble() - 0.5) * pow(10.0, exp);
   }
 
@@ -2780,9 +2782,8 @@ Future<void> decimalMultiplyAndDivide() async {
   }
 
   expect(
-    Value.fromDouble(
-      -6.087e+14,
-    ).decimalMultiply(Value.fromDouble(0.000013838095)),
+    Value.fromDouble(-6.087e+14)
+        .decimalMultiply(Value.fromDouble(0.000013838095)),
     Value.fromDouble(-8423248427.0),
   );
   // The actual answer is -8423248426.5, and IEEE FP rounds down, wheras
@@ -2843,7 +2844,7 @@ Future<void> decimalMultiplyAndDivide() async {
   final random = Random();
   // No real point in setting a seed, since Random() can change across
   // platforms and versions of the library.
-  double getRandom(final int exp) {
+  double getRandom(int exp) {
     return 2 * (random.nextDouble() - 0.5) * pow(10.0, exp);
   }
 

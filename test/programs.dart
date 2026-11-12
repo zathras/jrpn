@@ -79,12 +79,12 @@ class TestCalculator implements ProgramListener {
     // print(msg);
   }
 
-  void loadState(final String fileName) {
+  void loadState(String fileName) {
     final state = File('./test/examples/$fileName').readAsStringSync();
     loadStateFromString(state);
   }
 
-  void loadStateFromString(final String state) {
+  void loadStateFromString(String state) {
     model.decodeJson(
       json.decoder.convert(state) as Map<String, dynamic>,
       needsSave: false,

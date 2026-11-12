@@ -30,7 +30,7 @@ import 'dart:math';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
 import 'package:pwa_install_wasm/pwa_install_wasm.dart' show PWAInstall;
@@ -60,7 +60,7 @@ class ScreenPositioner {
   ScreenPositioner(this.width, this.height);
 
   /// x, y, w and h are in cm
-  Widget box(final Rect pos, final Widget child) {
+  Widget box(Rect pos, Widget child) {
     final double dx = (pos.width >= width) ? 0 : pos.left / (width - pos.width);
     final double dy = (pos.height >= height)
         ? 0
@@ -84,8 +84,8 @@ abstract class OrientedScreen extends StatelessWidget {
   static final ScreenPositioner _portrait = ScreenPositioner(8, 12.7);
   ScreenPositioner get portrait => _portrait;
 
-  Widget buildLandscape(BuildContext context, final ScreenPositioner screen);
-  Widget buildPortrait(BuildContext context, final ScreenPositioner screen);
+  Widget buildLandscape(BuildContext context, ScreenPositioner screen);
+  Widget buildPortrait(BuildContext context, ScreenPositioner screen);
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +214,7 @@ class MainScreen extends OrientedScreen {
   }
 
   @override
-  Widget buildLandscape(BuildContext context, final ScreenPositioner screen) {
+  Widget buildLandscape(BuildContext context, ScreenPositioner screen) {
     final display = controller.model.display;
     int digitsH = min(18, display.lcdDigits);
     // Over 18 digits, we shrink the font.  18 is enough for
@@ -1227,9 +1227,8 @@ class __FileSaveMenuState extends State<_FileSaveMenu> {
     final model = widget.app.model;
     final ext = 'j${model.modelName.toLowerCase()}';
     final suggested = 'calculator.$ext';
-    final String? path = (await getSaveLocation(
-      suggestedName: suggested,
-    ))?.path;
+    final String? path = (await getSaveLocation(suggestedName: suggested))
+        ?.path;
     if (path == null) {
       return;
     }
@@ -1409,9 +1408,8 @@ class __ExportProgramMenuState extends State<_ExportProgramMenu> {
     final model = widget.app.model;
     final ext = model.modelName.toLowerCase();
     final suggested = 'program.$ext';
-    final String? path = (await getSaveLocation(
-      suggestedName: suggested,
-    ))?.path;
+    final String? path = (await getSaveLocation(suggestedName: suggested))
+        ?.path;
     if (path == null) {
       return;
     }

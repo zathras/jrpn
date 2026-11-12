@@ -25,8 +25,9 @@ library;
 
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:jovial_svg/jovial_svg.dart';
+
 import 'main_screen.dart';
 
 import '../generic_main.dart';
@@ -53,7 +54,7 @@ abstract class BackPanel extends OrientedScreen {
     ..color = MainScreen.keyFrameSilver;
 
   @override
-  Widget buildPortrait(BuildContext context, final ScreenPositioner screen) {
+  Widget buildPortrait(BuildContext context, ScreenPositioner screen) {
     return GestureDetector(
       onTap: () => Navigator.pop(context),
       child: Container(
@@ -67,13 +68,10 @@ abstract class BackPanel extends OrientedScreen {
     );
   }
 
-  Widget buildBackPanelPortrait(
-    BuildContext context,
-    final ScreenPositioner screen,
-  );
+  Widget buildBackPanelPortrait(BuildContext context, ScreenPositioner screen);
 
   @override
-  Widget buildLandscape(BuildContext context, final ScreenPositioner screen) {
+  Widget buildLandscape(BuildContext context, ScreenPositioner screen) {
     return GestureDetector(
       onTap: () => Navigator.pop(context),
       child: Container(
@@ -87,10 +85,7 @@ abstract class BackPanel extends OrientedScreen {
     );
   }
 
-  Widget buildBackPanelLandscape(
-    BuildContext context,
-    final ScreenPositioner screen,
-  );
+  Widget buildBackPanelLandscape(BuildContext context, ScreenPositioner screen);
 
   @protected
   Widget table(

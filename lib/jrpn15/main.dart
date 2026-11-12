@@ -23,7 +23,7 @@ library;
 import 'dart:async';
 import 'dart:math' as dart;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/c/operations.dart';
 import 'package:jrpn/c/operations_scientific.dart';
@@ -41,6 +41,7 @@ import 'runners.dart';
 import 'tests15c.dart';
 import 'model15c.dart';
 import 'linear_algebra.dart' as linalg;
+
 import 'package:jrpn/m/more_math.dart';
 
 void main(List<String> args) async {
@@ -116,7 +117,7 @@ class Operations15 extends OperationsScientific {
         result.copyFrom(m, m.matrices[matX]);
         linalg.invert(result);
         final y = DecimalFP12(m.y);
-        result.visit((final int r, c) {
+        result.visit((int r, c) {
           result.set(
             r,
             c,
@@ -489,7 +490,7 @@ class Operations15 extends OperationsScientific {
       maxDigit: 19,
       letters: OperationsScientific.letterLabelsList,
       noI: true,
-      f: (m, final int? label) {
+      f: (m, int? label) {
         if (label == null) {
           throw CalculatorError(4);
         }
@@ -636,7 +637,7 @@ class Operations15 extends OperationsScientific {
       maxDigit: 19,
       letters: OperationsScientific.letterLabelsList,
       noI: true,
-      f: (m, final int? label) {
+      f: (m, int? label) {
         if (label == null) {
           throw CalculatorError(4);
         }
@@ -1293,7 +1294,7 @@ class RegisterReadOpArg extends ArgAlternates {
   static void _forMatrix(
     Model15 m,
     int mi,
-    final DecimalFP12 Function(DecimalFP12, DecimalFP12) f,
+    DecimalFP12 Function(DecimalFP12, DecimalFP12) f,
   ) {
     final mat = m.matrices[mi];
     int toI(int r) => m.memory.registers[r].floatIntPart().abs();
@@ -1357,7 +1358,7 @@ class RegisterWriteOpArg extends ArgAlternates {
   static void _forMatrix(
     Model15 m,
     int mi,
-    final Value Function(Model, Value, Value) f,
+    Value Function(Model, Value, Value) f,
   ) {
     final mat = m.matrices[mi];
     int toI(int r) => m.memory.registers[r].floatIntPart().abs();

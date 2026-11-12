@@ -1167,7 +1167,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   void popStack() {
-    void f(final List<Value>? st) {
+    void f(List<Value>? st) {
       if (st != null) {
         st[0] = st[1];
         st[1] = st[2];
@@ -1183,7 +1183,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   }
 
   void swapXY() {
-    void f(final List<Value>? st) {
+    void f(List<Value>? st) {
       if (st != null) {
         Value t = st[0];
         st[0] = st[1];
@@ -1200,7 +1200,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   /// "lift" stack, after which one can write to x
   void pushStack() {
-    void f(final List<Value>? st) {
+    void f(List<Value>? st) {
       if (st != null) {
         st[3] = st[2];
         st[2] = st[1];
@@ -1216,7 +1216,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   /// the R(down arrow) key
   void rotateStackDown() {
-    void f(final List<Value>? st) {
+    void f(List<Value>? st) {
       if (st != null) {
         Value t = st[0];
         st[0] = st[1];
@@ -1235,7 +1235,7 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
 
   /// The R(up arrow) key
   void rotateStackUp() {
-    void f(final List<Value>? st) {
+    void f(List<Value>? st) {
       if (st != null) {
         Value t = st[3];
         st[3] = st[2];
@@ -1655,7 +1655,7 @@ class DoubleWordStatus implements NumStatus {
   @override
   IntegerSignMode get integerSignMode => _model.integerSignMode;
 
-  DoubleWordStatus(final Model model)
+  DoubleWordStatus(Model model)
     : _model = model,
       cFlag = false,
       gFlag = false,

@@ -31,7 +31,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:jrpn/generic_main.dart'
     show LayoutConfiguration, UpperGoldLabel;
@@ -540,11 +540,11 @@ class CalculatorButton extends StatefulWidget with ShiftKeySelected<Operation> {
   bool get isEnter => false;
 
   void paintForPainter(
-    final Canvas canvas,
-    final Size size, {
-    required final bool pressed,
-    required final bool pressedFromKeyboard,
-    required final bool showAccelerators,
+    Canvas canvas,
+    Size size, {
+    required bool pressed,
+    required bool pressedFromKeyboard,
+    required bool showAccelerators,
   }) {
     final double h = height;
     final double w = width;

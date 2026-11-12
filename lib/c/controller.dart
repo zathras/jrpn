@@ -40,9 +40,11 @@ this program; if not, see https://www.gnu.org/licenses/ .
 library;
 
 import 'dart:convert';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:jrpn/generic_main.dart' show ScreenConfiguration, JrpnState;
+
 import '../v/buttons.dart';
 import '../v/main_screen.dart';
 
@@ -540,10 +542,10 @@ class LimitedOperation extends NoArgOperation implements NormalOperation {
   final void Function(LimitedState) _pressed;
 
   LimitedOperation({
-    required void Function(LimitedState) pressed,
+    required this._pressed,
     required super.name,
     this.endsDigitEntry = true,
-  }) : _pressed = pressed;
+  });
 
   @override
   void Function(Model m)? get floatCalc => null;
@@ -647,45 +649,42 @@ class NormalOperation extends NoArgOperation implements ArgDone {
   final int maxOneByteOpcodes;
 
   NormalOperation({
-    void Function(ActiveState)? pressed,
+    this._pressed,
     StackLift? stackLift,
     required void Function(Model m)? calc,
     required super.name,
     this.endsDigitEntry = true,
     this.maxOneByteOpcodes = 9999,
-  }) : _pressed = pressed,
-       _stackLift = stackLift ?? StackLift.enable,
+  }) : _stackLift = stackLift ?? StackLift.enable,
        floatCalc = calc,
        intCalc = calc,
        complexCalc = calc;
 
   NormalOperation.intOnly({
-    void Function(ActiveState)? pressed,
+    this._pressed,
     StackLift? stackLift,
     required void Function(Model) this.intCalc,
     required super.name,
     this.endsDigitEntry = true,
-  }) : _pressed = pressed,
-       _stackLift = stackLift ?? StackLift.enable,
+  }) : _stackLift = stackLift ?? StackLift.enable,
        floatCalc = null,
        complexCalc = null,
        maxOneByteOpcodes = 9999;
 
   NormalOperation.floatOnly({
-    void Function(ActiveState)? pressed,
+    this._pressed,
     StackLift? stackLift,
     required void Function(Model) this.floatCalc,
     void Function(Model)? complexCalc,
     required super.name,
     this.endsDigitEntry = true,
     this.maxOneByteOpcodes = 9999,
-  }) : _pressed = pressed,
-       _stackLift = stackLift ?? StackLift.enable,
+  }) : _stackLift = stackLift ?? StackLift.enable,
        intCalc = null,
        complexCalc = complexCalc ?? floatCalc;
 
   NormalOperation.differentFloatAndInt({
-    void Function(ActiveState)? pressed,
+    this._pressed,
     StackLift? stackLift,
     required void Function(Model) this.intCalc,
     required void Function(Model) this.floatCalc,
@@ -693,8 +692,7 @@ class NormalOperation extends NoArgOperation implements ArgDone {
     required super.name,
     this.endsDigitEntry = true,
     this.maxOneByteOpcodes = 9999,
-  }) : _pressed = pressed,
-       _stackLift = stackLift ?? StackLift.enable,
+  }) : _stackLift = stackLift ?? StackLift.enable,
        complexCalc = complexCalc ?? floatCalc;
 
   @override
@@ -878,11 +876,10 @@ class NormalArgOperationWithBeforeCalc extends NormalArgOperation {
   NormalArgOperationWithBeforeCalc({
     StackLift? stackLift,
     required super.arg,
-    required StackLift Function(Resting) beforeCalculate,
+    required this._beforeCalculate,
     required super.name,
     super.maxOneByteOpcodes,
-  }) : _beforeCalculate = beforeCalculate,
-       super(stackLift: stackLift ?? StackLift.enable);
+  }) : super(stackLift: stackLift ?? StackLift.enable);
 
   @override
   void beforeCalculate(Resting resting) {

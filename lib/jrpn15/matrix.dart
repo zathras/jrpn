@@ -387,7 +387,7 @@ class Matrix extends AMatrix {
     _internalMove(1, last, (i) => i * columns % last);
   }
 
-  void _internalMove(int i, final int last, int Function(int) nextF) {
+  void _internalMove(int i, int last, int Function(int) nextF) {
     final moved = List<bool>.filled(length, false);
     int i = 1;
     assert(!moved[i]);
@@ -417,7 +417,7 @@ class Matrix extends AMatrix {
     if (columns % 2 == 1) {
       throw CalculatorError(11);
     }
-    int newHome(final int i) {
+    int newHome(int i) {
       final r = i ~/ columns; // old row
       final c = i % columns;
       final rn = (c % 2 == 0) ? r : r + rows; // new row
@@ -440,7 +440,7 @@ class Matrix extends AMatrix {
     }
     final newRows = rows ~/ 2;
     final newColumns = columns * 2;
-    int newHome(final int i) {
+    int newHome(int i) {
       final r = i ~/ columns;
       final c = i % columns;
       final rn = r % newRows;

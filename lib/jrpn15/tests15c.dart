@@ -659,7 +659,7 @@ class SelfTests15 extends SelfTests {
   Future<void> testIssue119() async {
     await test('15c Issue 119', () async {
       // Make sure Value.flaotIntPart works
-      Future<void> testIntPart(final int x) async {
+      Future<void> testIntPart(int x) async {
         final Value v = Value.fromDouble(x.toDouble());
         await expect(v.floatIntPart(), x);
         await expect(v.negateAsFloat().floatIntPart(), -x);

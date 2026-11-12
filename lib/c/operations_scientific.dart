@@ -659,7 +659,7 @@ class OperationsScientific extends Operations {
       letters: letterLabelsList,
       iFirst: true,
       negativeIsLineNumber: true,
-      f: (m, final int? label) {
+      f: (m, int? label) {
         if (label == null) {
           throw CalculatorError(4);
         }
@@ -676,7 +676,7 @@ class OperationsScientific extends Operations {
       maxDigit: 19,
       letters: letterLabelsList,
       negativeIsLineNumber: true,
-      f: (m, final int? label) {
+      f: (m, int? label) {
         if (label == null) {
           throw CalculatorError(4);
         }

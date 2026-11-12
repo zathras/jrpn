@@ -19,14 +19,13 @@ this program; if not, see https://www.gnu.org/licenses/ .
 */
 part of 'model.dart';
 
-typedef OpInitFunction =
-    void Function(
-      ArgDone resolved, {
-      required ProgramOperation? shift,
-      required bool argDot,
-      required ProgramOperation? arg,
-      required bool userMode,
-    });
+typedef OpInitFunction = void Function(
+  ArgDone resolved, {
+  required ProgramOperation? shift,
+  required bool argDot,
+  required ProgramOperation? arg,
+  required bool userMode,
+});
 
 abstract class Arg {
   static late final List<ProgramOperation> kDigits;

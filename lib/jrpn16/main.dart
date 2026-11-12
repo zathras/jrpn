@@ -20,7 +20,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 
 library;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'package:jrpn/c/controller.dart';
 import 'package:jrpn/c/operations.dart';
@@ -656,7 +656,7 @@ class Operations16 extends Operations {
     arg: LabelArg(
       maxDigit: 15,
       indirect: true,
-      f: (m, final int? label) {
+      f: (m, int? label) {
         // indirect: set true, because GSB (i) was implemented in the first
         // released versions of JRPN.  I'm pretty sure this isn't implemented
         // in the real 16C.  For stricter simulation, we could disallow it
@@ -675,7 +675,7 @@ class Operations16 extends Operations {
     arg: LabelArg(
       maxDigit: 15,
       indirect: true,
-      f: (m, final int? label) {
+      f: (m, int? label) {
         // indirect: set true, because GTO (i) was implemented in the first
         // released versions of JRPN.  I'm pretty sure this isn't implemented
         // in the real 16C.  For stricter simulation, we could disallow it
@@ -1587,7 +1587,7 @@ Value _rotateLeftCarry(BigInt n, Value arg, Model m) =>
 Value _rotateRightCarry(BigInt n, Value arg, Model m) =>
     _rotateLeftCarryI(m.wordSize + 1 - _rotateCount(n, m.wordSize), arg, m);
 
-Value _rotateLeftCarryI(final int n, Value argV, Model m) {
+Value _rotateLeftCarryI(int n, Value argV, Model m) {
   m.lastX = m.x;
   if (n == 0) {
     return argV; // NOP

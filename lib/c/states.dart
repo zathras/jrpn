@@ -50,6 +50,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'controller.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -146,7 +147,7 @@ abstract class ActiveState extends LimitedState with StackLiftEnabledUser {
 
   void handlePSE() => controller.handlePSE();
 
-  void handleNumberKey(final int num);
+  void handleNumberKey(int num);
   void handleLetterLabel(LetterLabel operation);
   void handleCHS();
   void handleEEX();
@@ -224,7 +225,7 @@ class Resting extends ActiveState {
   }
 
   @override
-  void handleNumberKey(final int num) {
+  void handleNumberKey(int num) {
     if (num >= model.displayMode.radix) {
       return;
     }
@@ -464,7 +465,7 @@ class DigitEntry extends ActiveState {
   int? _exponent;
   bool _negativeExponent = false; // -00 and 00 are different
 
-  void takeOverFrom(final DigitEntry? other) {
+  void takeOverFrom(DigitEntry? other) {
     if (other != null) {
       _entered = other._entered;
       _sign = other._sign;
@@ -487,7 +488,7 @@ class DigitEntry extends ActiveState {
   }
 
   @override
-  void handleNumberKey(final int num) {
+  void handleNumberKey(int num) {
     if (num >= model.displayMode.radix) {
       return;
     }
@@ -510,7 +511,7 @@ class DigitEntry extends ActiveState {
 
   static final _decimalDigits = RegExp('[0-9]');
 
-  bool _tryNewValue(String ent, String sign, int? ex, final bool negEx) {
+  bool _tryNewValue(String ent, String sign, int? ex, bool negEx) {
     int intDigits;
     if (model.isFloatMode) {
       intDigits = 0;
@@ -1025,7 +1026,7 @@ class ProgramEntry extends LimitedState {
   @override
   void handleBST() => _handleRepeatingStep(-1);
 
-  void _handleRepeatingStep(final int delta) {
+  void _handleRepeatingStep(int delta) {
     assert(_autorepeat == null);
     int ticks = 0;
     void task(Timer _) {

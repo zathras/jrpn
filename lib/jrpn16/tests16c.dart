@@ -21,6 +21,7 @@ this program; if not, see https://www.gnu.org/licenses/ .
 library;
 
 import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:jrpn/m/model.dart';
@@ -636,7 +637,7 @@ class SelfTests16 extends SelfTests {
     }
   }
 
-  Future<void> _testFloatConvertAndBack(final Model m, final double dv) async {
+  Future<void> _testFloatConvertAndBack(Model m, double dv) async {
     final Value fv;
     try {
       fv = Value.fromDouble(dv);

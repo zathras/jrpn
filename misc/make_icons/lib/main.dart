@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
 import 'package:jrpn/v/main_screen.dart';
@@ -12,7 +12,9 @@ late final ScalableImage jupiter;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   jupiter = await ScalableImage.fromSIAsset(
-      rootBundle, 'packages/jrpn/assets/jupiter.si');
+    rootBundle,
+    'packages/jrpn/assets/jupiter.si',
+  );
   runApp(const MyApp());
 }
 
@@ -43,7 +45,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
-  initState() {
+  void initState() {
     super.initState();
     unawaited(makeIcons());
   }
@@ -54,34 +56,86 @@ class _MyHomePageState extends State<MyHomePage> {
     print('cwd is ${File(".").absolute}');
     for (final model in ['11', '15', '16']) {
       // https://developer.android.com/distribute/google-play/resources/icon-design-specifications
-      await makeIcon(File('$base/jrpn$model/assets_$model/icon_adaptive.png'),
-          size: 512, border: 92, modelName: '${model}C', adaptive: true);
-      await makeIcon(File('$base/jrpn$model/assets_$model/icon_ios.png'),
-          size: 1024, border: 72, modelName: '${model}C', adaptive: false);
-      await makeIcon(File('$base/jrpn$model/web/icons/app_icon_16.png'),
-          size: 16, border: 1, modelName: '${model}C', adaptive: false);
-      await makeIcon(File('$base/jrpn$model/web/icons/app_icon_32.png'),
-          size: 32, border: 2, modelName: '${model}C', adaptive: false);
-      await makeIcon(File('$base/jrpn$model/web/icons/icon192.png'),
-          size: 192, border: 12, modelName: '${model}C', adaptive: false);
-      await makeIcon(File('$base/jrpn$model/web/icons/icon256.png'),
-          size: 256, border: 16, modelName: '${model}C', adaptive: false);
-      await makeIcon(File('$base/jrpn$model/web/icons/icon512.png'),
-          size: 512, border: 32, modelName: '${model}C', adaptive: false);
-      await makeIcon(File('$base/jrpn$model/web/icons/icon_maskable192.png'),
-          size: 192, border: 12, modelName: '${model}C', adaptive: false);
-      await makeIcon(File('$base/jrpn$model/web/icons/icon_maskable256.png'),
-          size: 256, border: 16, modelName: '${model}C', adaptive: false);
-      await makeIcon(File('$base/jrpn$model/web/icons/icon_maskable512.png'),
-          size: 512, border: 32, modelName: '${model}C', adaptive: false);
+      await makeIcon(
+        File('$base/jrpn$model/assets_$model/icon_adaptive.png'),
+        size: 512,
+        border: 92,
+        modelName: '${model}C',
+        adaptive: true,
+      );
+      await makeIcon(
+        File('$base/jrpn$model/assets_$model/icon_ios.png'),
+        size: 1024,
+        border: 72,
+        modelName: '${model}C',
+        adaptive: false,
+      );
+      await makeIcon(
+        File('$base/jrpn$model/web/icons/app_icon_16.png'),
+        size: 16,
+        border: 1,
+        modelName: '${model}C',
+        adaptive: false,
+      );
+      await makeIcon(
+        File('$base/jrpn$model/web/icons/app_icon_32.png'),
+        size: 32,
+        border: 2,
+        modelName: '${model}C',
+        adaptive: false,
+      );
+      await makeIcon(
+        File('$base/jrpn$model/web/icons/icon192.png'),
+        size: 192,
+        border: 12,
+        modelName: '${model}C',
+        adaptive: false,
+      );
+      await makeIcon(
+        File('$base/jrpn$model/web/icons/icon256.png'),
+        size: 256,
+        border: 16,
+        modelName: '${model}C',
+        adaptive: false,
+      );
+      await makeIcon(
+        File('$base/jrpn$model/web/icons/icon512.png'),
+        size: 512,
+        border: 32,
+        modelName: '${model}C',
+        adaptive: false,
+      );
+      await makeIcon(
+        File('$base/jrpn$model/web/icons/icon_maskable192.png'),
+        size: 192,
+        border: 12,
+        modelName: '${model}C',
+        adaptive: false,
+      );
+      await makeIcon(
+        File('$base/jrpn$model/web/icons/icon_maskable256.png'),
+        size: 256,
+        border: 16,
+        modelName: '${model}C',
+        adaptive: false,
+      );
+      await makeIcon(
+        File('$base/jrpn$model/web/icons/icon_maskable512.png'),
+        size: 512,
+        border: 32,
+        modelName: '${model}C',
+        adaptive: false,
+      );
     }
   }
 
-  Future<void> makeIcon(File out,
-      {required int size,
-      required int border,
-      required String modelName,
-      required bool adaptive}) async {
+  Future<void> makeIcon(
+    File out, {
+    required int size,
+    required int border,
+    required String modelName,
+    required bool adaptive,
+  }) async {
     final recorder = ui.PictureRecorder();
     final Canvas c = Canvas(recorder);
     if (!adaptive) {
@@ -93,34 +147,39 @@ class _MyHomePageState extends State<MyHomePage> {
     final p = JrpnLogoPainter(jupiter, modelName, adaptive: adaptive);
     c.translate(border.toDouble(), border.toDouble());
     p.paint(
-        c, Size(size.toDouble() - 2 * border, size.toDouble() - 2 * border));
+      c,
+      Size(size.toDouble() - 2 * border, size.toDouble() - 2 * border),
+    );
     final ui.Picture pict = recorder.endRecording();
     final ui.Image rendered = await pict.toImage(size, size);
-    final ByteData? bd =
-        await rendered.toByteData(format: ui.ImageByteFormat.png);
+    final ByteData? bd = await rendered.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
     final bytes = Uint8List.fromList(bd!.buffer.asUint8List());
     await out.writeAsBytes(bytes);
     // ignore: avoid_print
     print('Created $out');
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+      ),
+      body: Container(
+        color: Colors.blue,
+        child: Center(
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: CustomPaint(
+              size: const Size(double.infinity, double.infinity),
+              painter: JrpnLogoPainter(jupiter, '15C', adaptive: false),
+            ),
+          ),
         ),
-        body: Container(
-            color: Colors.blue,
-            child: Center(
-              child: AspectRatio(
-                  aspectRatio: 1,
-                  child: CustomPaint(
-                      size: const Size(double.infinity, double.infinity),
-                      painter:
-                          JrpnLogoPainter(jupiter, '15C', adaptive: false))),
-            )));
+      ),
+    );
   }
 }
